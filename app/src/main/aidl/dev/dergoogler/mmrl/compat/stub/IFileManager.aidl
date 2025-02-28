@@ -9,7 +9,7 @@ interface IFileManager {
     String readText(String path);
     byte[] readBytes(String path);
     String readAsBase64(String path);
-    List<String> list(String path);
+    List<String> list(String path, boolean fullPath);
     long stat(String path);
     long size(String path);
     long sizeRecursive(String path);

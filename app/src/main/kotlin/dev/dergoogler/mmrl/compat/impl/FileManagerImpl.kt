@@ -23,7 +23,7 @@ internal class FileManagerImpl : IFileManager.Stub() {
         System.loadLibrary("file-manager")
     }
 
-    private external fun nativeList(path: String): List<String>?
+    private external fun nativeList(path: String, fullPath: Boolean = false): List<String>?
     private external fun nativeStat(path: String): Long
     private external fun nativeSize(path: String): Long
     private external fun nativeSizeRecursive(path: String): Long
@@ -41,6 +41,7 @@ internal class FileManagerImpl : IFileManager.Stub() {
         destPath: String,
         overwrite: Boolean,
     ): Boolean
+
     private external fun nativeSetOwner(path: String, owner: Int, group: Int): Boolean
     private external fun nativeSetPermissions(path: String, mode: Int): Boolean
     private external fun nativeCanExecute(path: String): Boolean
@@ -61,12 +62,15 @@ internal class FileManagerImpl : IFileManager.Stub() {
     override fun writeBytes(path: String, data: ByteArray): Boolean {
         return nativeWriteBytes(path, data)
     }
+
     override fun writeText(path: String, data: String): Boolean =
         nativeWriteBytes(path, data.toByteArray())
+
     override fun readText(path: String): String {
         val buffer = nativeReadByteBuffer(path)
         return StandardCharsets.UTF_8.decode(buffer).toString();
     }
+
     override fun readBytes(path: String): ByteArray? {
         val buffer: ByteBuffer = nativeReadByteBuffer(path) ?: return null
         return ByteArray(buffer.remaining()).apply { buffer.get(this) }
@@ -107,7 +111,7 @@ internal class FileManagerImpl : IFileManager.Stub() {
         }
     }
 
-    override fun list(path: String): List<String>? = nativeList(path)
+    override fun list(path: String, fullPath: Boolean): List<String>? = nativeList(path, fullPath)
     override fun size(path: String): Long = nativeSize(path)
     override fun sizeRecursive(path: String): Long = nativeSizeRecursive(path)
     override fun stat(path: String): Long = nativeStat(path)
@@ -124,12 +128,14 @@ internal class FileManagerImpl : IFileManager.Stub() {
         dest: String,
         overwrite: Boolean,
     ): Boolean = nativeCopyTo(target, dest, overwrite)
+
     override fun canExecute(path: String): Boolean = nativeCanExecute(path)
     override fun canWrite(path: String): Boolean = nativeCanWrite(path)
     override fun canRead(path: String): Boolean = nativeCanRead(path)
     override fun isHidden(path: String): Boolean = nativeIsHidden(path)
     override fun setPermissions(path: String, mode: Int): Boolean =
         nativeSetPermissions(path, mode)
+
     override fun setOwner(path: String, owner: Int, group: Int): Boolean =
         nativeSetOwner(path, owner, group)
 }

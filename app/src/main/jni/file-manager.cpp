@@ -17,9 +17,10 @@
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSetOwner(JNIEnv *env, jobject MMRL_UNUSED(thiz),
-                                                                     jstring path, jint owner,
-                                                                     jint group) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSetOwner(JNIEnv *env,
+                                                                    jobject MMRL_UNUSED(thiz),
+                                                                    jstring path, jint owner,
+                                                                    jint group) {
     const char *cpath = env->GetStringUTFChars(path, nullptr);
     bool success = (chown(cpath, owner, group) == 0);
     env->ReleaseStringUTFChars(path, cpath);
@@ -29,9 +30,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSetOwner(JNIEnv *env,
 extern "C"
 JNIEXPORT jboolean JNICALL
 Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSetPermissions(JNIEnv *env,
-                                                                           jobject MMRL_UNUSED(thiz),
-                                                                           jstring path,
-                                                                           jint mode) {
+                                                                          jobject MMRL_UNUSED(thiz),
+                                                                          jstring path,
+                                                                          jint mode) {
     const char *cpath = env->GetStringUTFChars(path, nullptr);
     bool success = (chmod(cpath, static_cast<mode_t>(mode)) == 0);
     env->ReleaseStringUTFChars(path, cpath);
@@ -40,8 +41,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSetPermissions(JNIEnv
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeReadByteBuffer(JNIEnv *env, jobject MMRL_UNUSED(thiz),
-                                                                    jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeReadByteBuffer(JNIEnv *env,
+                                                                          jobject MMRL_UNUSED(thiz),
+                                                                          jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return nullptr;
 
@@ -60,7 +62,7 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeReadByteBuffer(JNIEnv
         return nullptr;
     }
 
-    void* mappedFile = mmap(nullptr, fileSize, PROT_READ, MAP_PRIVATE | MAP_POPULATE, fd, 0);
+    void *mappedFile = mmap(nullptr, fileSize, PROT_READ, MAP_PRIVATE | MAP_POPULATE, fd, 0);
     close(fd);
 
     if (mappedFile == MAP_FAILED) {
@@ -74,8 +76,10 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeReadByteBuffer(JNIEnv
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeWriteBytes(JNIEnv *env, jobject MMRL_UNUSED(thiz),
-                                                                      jstring path, jbyteArray data) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeWriteBytes(JNIEnv *env,
+                                                                      jobject MMRL_UNUSED(thiz),
+                                                                      jstring path,
+                                                                      jbyteArray data) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;
 
@@ -104,14 +108,17 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeWriteBytes(JNIEnv *en
 
 extern "C"
 JNIEXPORT jobject JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeList(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeList(JNIEnv *env,
+                                                                jobject MMRL_UNUSED(thiz),
+                                                                jstring path, jboolean fullPath) {
     const char *dirPath = env->GetStringUTFChars(path, nullptr);
     if (!dirPath) return nullptr;
 
     DIR *dir = opendir(dirPath);
-    env->ReleaseStringUTFChars(path, dirPath);
-
-    if (!dir) return nullptr;
+    if (!dir) {
+        env->ReleaseStringUTFChars(path, dirPath);
+        return nullptr;
+    }
 
     jclass arrayListClass = env->FindClass("java/util/ArrayList");
     jmethodID arrayListInit = env->GetMethodID(arrayListClass, "<init>", "()V");
@@ -122,18 +129,30 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeList(JNIEnv *env, job
     struct dirent *entry;
     while ((entry = readdir(dir)) != nullptr) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
-        jstring fileName = env->NewStringUTF(entry->d_name);
-        env->CallBooleanMethod(fileList, arrayListAdd, fileName);
-        env->DeleteLocalRef(fileName);
+
+        jstring fileEntry;
+        if (fullPath) {
+            std::string fullFilePath = std::string(dirPath) + "/" + entry->d_name;
+            fileEntry = env->NewStringUTF(fullFilePath.c_str());
+        } else {
+            fileEntry = env->NewStringUTF(entry->d_name);
+        }
+
+        env->CallBooleanMethod(fileList, arrayListAdd, fileEntry);
+        env->DeleteLocalRef(fileEntry);
     }
 
     closedir(dir);
+    env->ReleaseStringUTFChars(path, dirPath);
+
     return fileList;
 }
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSize(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSize(JNIEnv *env,
+                                                                jobject MMRL_UNUSED(thiz),
+                                                                jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return -1;
 
@@ -185,7 +204,9 @@ static jlong getRecursiveSize(const char *rootPath) {
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSizeRecursive(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSizeRecursive(JNIEnv *env,
+                                                                         jobject MMRL_UNUSED(thiz),
+                                                                         jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return -1;
 
@@ -196,7 +217,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeSizeRecursive(JNIEnv 
 
 extern "C"
 JNIEXPORT jlong JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeStat(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeStat(JNIEnv *env,
+                                                                jobject MMRL_UNUSED(thiz),
+                                                                jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return -1;
 
@@ -209,7 +232,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeStat(JNIEnv *env, job
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeExists(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeExists(JNIEnv *env,
+                                                                  jobject MMRL_UNUSED(thiz),
+                                                                  jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;
 
@@ -221,12 +246,15 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeExists(JNIEnv *env, j
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeIsDirectory(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeIsDirectory(JNIEnv *env,
+                                                                       jobject MMRL_UNUSED(thiz),
+                                                                       jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;
 
     struct stat fileStat{};
-    jboolean result = (stat(filePath, &fileStat) == 0 && S_ISDIR(fileStat.st_mode)) ? JNI_TRUE : JNI_FALSE;
+    jboolean result = (stat(filePath, &fileStat) == 0 && S_ISDIR(fileStat.st_mode)) ? JNI_TRUE
+                                                                                    : JNI_FALSE;
 
     env->ReleaseStringUTFChars(path, filePath);
     return result;
@@ -234,12 +262,15 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeIsDirectory(JNIEnv *e
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeIsFile(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeIsFile(JNIEnv *env,
+                                                                  jobject MMRL_UNUSED(thiz),
+                                                                  jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;
 
     struct stat fileStat{};
-    jboolean result = (stat(filePath, &fileStat) == 0 && S_ISREG(fileStat.st_mode)) ? JNI_TRUE : JNI_FALSE;
+    jboolean result = (stat(filePath, &fileStat) == 0 && S_ISREG(fileStat.st_mode)) ? JNI_TRUE
+                                                                                    : JNI_FALSE;
 
     env->ReleaseStringUTFChars(path, filePath);
     return result;
@@ -247,7 +278,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeIsFile(JNIEnv *env, j
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeMkdir(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeMkdir(JNIEnv *env,
+                                                                 jobject MMRL_UNUSED(thiz),
+                                                                 jstring path) {
     const char *dirPath = env->GetStringUTFChars(path, nullptr);
     if (!dirPath) return JNI_FALSE;
 
@@ -259,7 +292,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeMkdir(JNIEnv *env, jo
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeMkdirs(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeMkdirs(JNIEnv *env,
+                                                                  jobject MMRL_UNUSED(thiz),
+                                                                  jstring path) {
     const char *dirPath = env->GetStringUTFChars(path, nullptr);
     if (!dirPath) return JNI_FALSE;
 
@@ -271,7 +306,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeMkdirs(JNIEnv *env, j
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeDelete(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeDelete(JNIEnv *env,
+                                                                  jobject MMRL_UNUSED(thiz),
+                                                                  jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;  // Null path provided
 
@@ -323,7 +360,7 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeDelete(JNIEnv *env, j
         closedir(dir);
 
         // Delete all files first before deleting directory
-        for (const std::string &file : filesToDelete) {
+        for (const std::string &file: filesToDelete) {
             unlink(file.c_str());
         }
 
@@ -338,7 +375,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeDelete(JNIEnv *env, j
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCreateNewFile(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCreateNewFile(JNIEnv *env,
+                                                                         jobject MMRL_UNUSED(thiz),
+                                                                         jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;  // Null path provided
 
@@ -363,7 +402,10 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCreateNewFile(JNIEnv 
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeRenameTo(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring srcPath, jstring destPath) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeRenameTo(JNIEnv *env,
+                                                                    jobject MMRL_UNUSED(thiz),
+                                                                    jstring srcPath,
+                                                                    jstring destPath) {
     const char *src = env->GetStringUTFChars(srcPath, nullptr);
     const char *dest = env->GetStringUTFChars(destPath, nullptr);
 
@@ -382,7 +424,10 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeRenameTo(JNIEnv *env,
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCopyTo(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring srcPath, jstring destPath, jboolean overwrite) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCopyTo(JNIEnv *env,
+                                                                  jobject MMRL_UNUSED(thiz),
+                                                                  jstring srcPath, jstring destPath,
+                                                                  jboolean overwrite) {
     const char *src = env->GetStringUTFChars(srcPath, nullptr);
     const char *dest = env->GetStringUTFChars(destPath, nullptr);
 
@@ -415,7 +460,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCopyTo(JNIEnv *env, j
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanExecute(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanExecute(JNIEnv *env,
+                                                                      jobject MMRL_UNUSED(thiz),
+                                                                      jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;
 
@@ -428,7 +475,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanExecute(JNIEnv *en
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanWrite(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanWrite(JNIEnv *env,
+                                                                    jobject MMRL_UNUSED(thiz),
+                                                                    jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;
 
@@ -441,7 +490,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanWrite(JNIEnv *env,
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanRead(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanRead(JNIEnv *env,
+                                                                   jobject MMRL_UNUSED(thiz),
+                                                                   jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;
 
@@ -454,7 +505,9 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeCanRead(JNIEnv *env, 
 
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeIsHidden(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeIsHidden(JNIEnv *env,
+                                                                    jobject MMRL_UNUSED(thiz),
+                                                                    jstring path) {
     const char *filePath = env->GetStringUTFChars(path, nullptr);
     if (!filePath) return JNI_FALSE;
 

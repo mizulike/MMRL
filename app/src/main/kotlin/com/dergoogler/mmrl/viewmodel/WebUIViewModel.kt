@@ -165,11 +165,9 @@ class WebUIViewModel @AssistedInject constructor(
             return
         }
 
-        fs.list(pluginDir)
+        fs.list(pluginDir, true)
             .filter { it.endsWith(".dex") || it.endsWith(".jar") || it.endsWith(".apk") }
-            .forEach { dexFileName ->
-                val dexPath = "$pluginDir/$dexFileName"
-
+            .forEach { dexPath ->
                 try {
                     val dexFileBytes = fs.readBytes(dexPath)
                     val dexFileBuffer = ByteBuffer.wrap(dexFileBytes);
@@ -180,14 +178,17 @@ class WebUIViewModel @AssistedInject constructor(
                         try {
                             val clazz = loader.loadClass(className)
 
-                            val interfaceName = clazz.getPluginField<String>("interfaceName")
+                            val instanceName = clazz.getPluginField<String>("instanceName")
                             val instance = clazz.getPluginMethod<Any>(
                                 name = "instance",
-                                parameterTypes = listOf(Context::class.java, WebView::class.java),
-                                args = listOf(context, webView)
+                                listOf(Context::class.java, WebView::class.java) to listOf(context, webView),
+                                listOf(WebView::class.java, Context::class.java) to listOf(webView, context),
+                                listOf(Context::class.java) to listOf(context),
+                                listOf(WebView::class.java) to listOf(webView),
+                                emptyList<Class<*>>() to emptyList(),
                             )
 
-                            if (interfaceName == null) {
+                            if (instanceName == null) {
                                 Timber.e("Class $className does not have an interfaceName field")
                                 return
                             }
@@ -204,11 +205,11 @@ class WebUIViewModel @AssistedInject constructor(
                             clazz.setPluginField("fileManager", fs)
                             clazz.setPluginField("rootPlatform", platform)
 
-                            Timber.d("Added plugin $interfaceName from dex file $dexPath")
+                            Timber.d("Added plugin $instanceName from dex file $dexPath")
 
                             webView.addJavascriptInterface(
                                 instance,
-                                interfaceName
+                                instanceName
                             )
                         } catch (e: ClassNotFoundException) {
                             Timber.e("Class $className not found in dex file $dexPath")
@@ -259,6 +260,26 @@ class WebUIViewModel @AssistedInject constructor(
     } catch (e: Exception) {
         null
     }
+
+    private inline fun <reified T> Class<*>.getPluginMethod(
+        name: String,
+        vararg parameterSets: Pair<List<Class<*>>, List<Any>>,
+    ): T? {
+        val method = declaredMethods.find { it.name == name }
+            ?: return null.also { Timber.w("Method $name not found in $this") }
+
+        for ((params, args) in parameterSets) {
+            try {
+                if (method.parameterTypes.contentEquals(params.toTypedArray())) {
+                    return method.apply { isAccessible = true }.invoke(null, *args.toTypedArray()) as? T
+                }
+            } catch (e: Exception) {
+                Timber.i("Skipping $name with parameters ${params.joinToString()}: ${e.message}")
+            }
+        }
+        return null
+    }
+
 
     @AssistedFactory
     interface Factory {
