@@ -178,15 +178,27 @@ class WebUIViewModel @AssistedInject constructor(
                         try {
                             val clazz = loader.loadClass(className)
 
-                            val instanceName = clazz.getPluginField<String>("instanceName")
+                            val instanceName = clazz.getPluginField<String>(
+                                "instanceName",
+                                "interfaceName",
+                                "name"
+                            )
+                            val reservedID =
+                                clazz.getPluginField<String>("reservedID", "onlyForModule")
+
                             val instance = clazz.getPluginMethod<Any>(
                                 name = "instance",
                                 listOf(Context::class.java, WebView::class.java) to listOf(context, webView),
                                 listOf(WebView::class.java, Context::class.java) to listOf(webView, context),
                                 listOf(Context::class.java) to listOf(context),
                                 listOf(WebView::class.java) to listOf(webView),
-                                emptyList<Class<*>>() to emptyList(),
+                                emptyList<Class<*>>() to emptyList()
                             )
+
+                            if (reservedID != modId && reservedID != null) {
+                                Timber.d("Skipping plugin $className with reservedID $reservedID. Not for $modId")
+                                return
+                            }
 
                             if (instanceName == null) {
                                 Timber.e("Class $className does not have an interfaceName field")
@@ -198,6 +210,7 @@ class WebUIViewModel @AssistedInject constructor(
                                 return
                             }
 
+                            clazz.setPluginField("modId", modId)
                             clazz.setPluginField("isProviderAlive", isProviderAlive)
                             clazz.setPluginField("rootShell", rootShell)
                             clazz.setPluginField("rootVersionName", versionName)
@@ -235,6 +248,20 @@ class WebUIViewModel @AssistedInject constructor(
             Timber.w("Failed to set field $name in $modId")
         }
     }
+    private inline fun <reified T> Class<*>.getPluginField(vararg names: String): T? {
+        for (name in names) {
+            try {
+                val field = getDeclaredField(name).apply { isAccessible = true }
+                return field.get(null) as? T
+            } catch (e: NoSuchFieldException) {
+                //
+            } catch (e: IllegalAccessException) {
+                //
+            }
+        }
+        return null
+    }
+
 
     private inline fun <reified T> Class<*>.getPluginField(name: String, instance: Any): T? =
         try {
@@ -263,15 +290,18 @@ class WebUIViewModel @AssistedInject constructor(
 
     private inline fun <reified T> Class<*>.getPluginMethod(
         name: String,
-        vararg parameterSets: Pair<List<Class<*>>, List<Any>>,
+        vararg parameterSets: Pair<List<Class<*>>, List<Any?>>,
     ): T? {
         val method = declaredMethods.find { it.name == name }
             ?: return null.also { Timber.w("Method $name not found in $this") }
 
         for ((params, args) in parameterSets) {
             try {
-                if (method.parameterTypes.contentEquals(params.toTypedArray())) {
-                    return method.apply { isAccessible = true }.invoke(null, *args.toTypedArray()) as? T
+                if (method.parameterTypes.size == params.size && method.parameterTypes.zip(params)
+                        .all { it.first.isAssignableFrom(it.second) }
+                ) {
+                    return method.apply { isAccessible = true }
+                        .invoke(null, *args.toTypedArray()) as? T
                 }
             } catch (e: Exception) {
                 Timber.i("Skipping $name with parameters ${params.joinToString()}: ${e.message}")
