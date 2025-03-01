@@ -59,6 +59,12 @@ class InstallViewModel @Inject constructor(
 
         val bulkModules = uris.mapNotNull { uri ->
             val path = context.getPathForUri(uri)
+
+            if (path == null) {
+                devLog(R.string.unable_to_find_path_for_uri, uri)
+                return@mapNotNull null
+            }
+
             val info = Compat.moduleManager.getModuleInfo(path)
 
             if (info == null) {
