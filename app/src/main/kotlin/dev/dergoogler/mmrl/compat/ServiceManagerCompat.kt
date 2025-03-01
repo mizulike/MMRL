@@ -149,13 +149,6 @@ object ServiceManagerCompat {
         }
 
         companion object {
-            val intent
-                get() = Intent().apply {
-                    component = ComponentName(
-                        context.packageName,
-                        SuService::class.java.name
-                    )
-                }
             private const val WORKING_MODE_KEY = "WORKING_MODE"
 
             fun getIntent(context: Context, mode: WorkingMode) = Intent().apply {

@@ -176,7 +176,7 @@ data class UserPreferencesCompat(
 
         val WorkingMode.isRoot: Boolean
             get() {
-                return this == WorkingMode.MODE_MAGISK || this == WorkingMode.MODE_KERNEL_SU || this == WorkingMode.MODE_KERNEL_SU_NEXT || this == WorkingMode.MODE_APATCH
+                return this == WorkingMode.MODE_MAGISK || this == WorkingMode.MODE_KERNEL_SU || this == WorkingMode.MODE_KERNEL_SU_NEXT || this == WorkingMode.MODE_APATCH || this == WorkingMode.MODE_SHIZUKU
             }
 
         val WorkingMode.isNonRoot: Boolean

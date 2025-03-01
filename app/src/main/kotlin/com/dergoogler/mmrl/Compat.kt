@@ -36,6 +36,7 @@ object Compat {
                 WorkingMode.MODE_APATCH,
                 -> ServiceManagerCompat.fromLibSu(mode)
 
+                WorkingMode.MODE_SHIZUKU -> ServiceManagerCompat.fromShizuku()
                 else -> null
             }
 

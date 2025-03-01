@@ -10,4 +10,5 @@ enum WorkingMode {
   MODE_KERNEL_SU_NEXT = 3;
   MODE_APATCH = 4;
   MODE_NON_ROOT = 5;
+  MODE_SHIZUKU = 6;
 }

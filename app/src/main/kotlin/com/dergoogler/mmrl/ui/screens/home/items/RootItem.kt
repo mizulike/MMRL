@@ -76,6 +76,7 @@ internal fun RootItem(
                         platform.isKernelSU -> R.drawable.kernelsu_logo
                         platform.isKernelSuNext -> R.drawable.kernelsu_next_logo
                         platform.isAPatch -> R.drawable.brand_android
+                        platform.isShizuku -> R.drawable.shizuku
                         else -> R.drawable.circle_check_filled
                     }
                 } else {
