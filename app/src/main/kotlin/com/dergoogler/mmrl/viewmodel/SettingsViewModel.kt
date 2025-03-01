@@ -198,12 +198,6 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setUseShellToLoadWebUIAssets(value: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setUseShellToLoadWebUIAssets(value)
-        }
-    }
-
     fun setBlacklistAlerts(value: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.setBlacklistAlerts(value)

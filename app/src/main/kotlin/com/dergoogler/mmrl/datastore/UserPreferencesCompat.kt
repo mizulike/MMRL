@@ -41,7 +41,6 @@ data class UserPreferencesCompat(
     val clearInstallTerminal: Boolean,
     val allowCancelInstall: Boolean,
     val allowCancelAction: Boolean,
-    val useShellToLoadWebUIAssets: Boolean,
     val blacklistAlerts: Boolean,
     val injectEruda: List<String>,
     val allowedFsModules: List<String>,
@@ -78,7 +77,6 @@ data class UserPreferencesCompat(
         clearInstallTerminal = original.clearInstallTerminal,
         allowCancelInstall = original.allowCancelInstall,
         allowCancelAction = original.allowCancelAction,
-        useShellToLoadWebUIAssets = original.useShellToLoadWebUIAssets,
         blacklistAlerts = original.blacklistAlerts,
         injectEruda = original.injectEruda.split(","),
         allowedFsModules = original.allowedFsModules.split(","),
@@ -132,7 +130,6 @@ data class UserPreferencesCompat(
             .setClearInstallTerminal(clearInstallTerminal)
             .setAllowCancelInstall(allowCancelInstall)
             .setAllowCancelAction(allowCancelAction)
-            .setUseShellToLoadWebUIAssets(useShellToLoadWebUIAssets)
             .setAllowedFsModules(allowedFsModules.joinToString(","))
             .setAllowedKsuModules(allowedKsuModules.joinToString(","))
             .setRepositoryMenu(repositoryMenu.toProto())
@@ -165,7 +162,6 @@ data class UserPreferencesCompat(
             clearInstallTerminal = true,
             allowCancelInstall = false,
             allowCancelAction = false,
-            useShellToLoadWebUIAssets = false,
             useShellForModuleStateChange = true,
             useShellForModuleAction = true,
             webuiAllowRestrictedPaths = false,

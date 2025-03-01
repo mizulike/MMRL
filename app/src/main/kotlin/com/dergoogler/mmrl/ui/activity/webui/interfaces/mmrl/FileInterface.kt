@@ -42,9 +42,12 @@ class FileInterface(
     fun list(path: String): String? = this.list(path, ",")
 
     @JavascriptInterface
-    fun list(path: String, delimiter: String): String? =
+    fun list(path: String, delimiter: String): String? = this.list(path, delimiter, false)
+
+    @JavascriptInterface
+    fun list(path: String, delimiter: String, fullPath: Boolean): String? =
         runTryJsWith(file, "Error while reading files of '$path'") {
-            return@runTryJsWith list(path).joinToString(delimiter)
+            return@runTryJsWith list(path, fullPath)?.joinToString(delimiter)
         }
 
     @JavascriptInterface

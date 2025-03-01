@@ -10,13 +10,13 @@ import android.webkit.WebView
 import android.widget.Toast
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.dergoogler.mmrl.utils.SuFile
 import org.json.JSONObject
-import java.io.File
 
 open class BaseKernelSUAPI(
     val context: Context,
     val webView: WebView,
-    private val modDir: String
+    private val modDir: SuFile
 ) {
 
     @JavascriptInterface
@@ -48,7 +48,7 @@ open class BaseKernelSUAPI(
     fun moduleInfo(): String {
         val currentModuleInfo = JSONObject()
         currentModuleInfo.put("moduleDir", modDir)
-        val moduleId = File(modDir).getName()
+        val moduleId = modDir.getName()
         currentModuleInfo.put("id", moduleId)
         return currentModuleInfo.toString()
     }

@@ -49,8 +49,7 @@ class HomeViewModel @Inject constructor(
             val local = runBlocking { localRepository.getLocalAllAsFlow().first() }
             return@get ModuleAnalytics(
                 context = context,
-                local = local,
-                fileManager = fileManager
+                local = local
             )
         }
     }

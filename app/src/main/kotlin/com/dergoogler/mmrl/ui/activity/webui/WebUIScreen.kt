@@ -115,8 +115,6 @@ fun WebUIScreen(
                     "/",
                     SuFilePathHandler(
                         directory = viewModel.webRoot,
-                        useShell = userPrefs.useShellToLoadWebUIAssets,
-                        shell = viewModel.rootShell,
                     )
                 )
                 .addPathHandler(

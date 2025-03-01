@@ -33,6 +33,7 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.local.versionDisplay
+import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.card.CardDefaults.cardStyle
@@ -136,18 +137,6 @@ fun ModuleItem(
                         color = MaterialTheme.colorScheme.outline
                     )
                 }
-
-                userPreferences.developerMode.takeTrue {
-                    Text(
-                        text = stringResource(
-                            R.string.module_id,
-                            module.id
-                        ) + " | ${module.size.toFormattedFileSize()}",
-                        style = MaterialTheme.typography.bodySmall,
-                        textDecoration = decoration,
-                        color = MaterialTheme.colorScheme.outline
-                    )
-                }
             }
 
             switch?.invoke()
@@ -162,6 +151,29 @@ fun ModuleItem(
             textDecoration = decoration,
             color = MaterialTheme.colorScheme.outline
         )
+
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 8.dp)
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            userPreferences.developerMode.takeTrue {
+                LabelItem(
+                    text = module.id,
+                    upperCase = false
+                )
+            }
+
+            LabelItem(
+                text = module.size.toFormattedFileSize(),
+                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            )
+
+        }
+
 
         when {
             indeterminate -> LinearProgressIndicator(

@@ -9,7 +9,7 @@ interface IFileManager {
     String readText(String path);
     byte[] readBytes(String path);
     String readAsBase64(String path);
-    List<String> list(String path, boolean fullPath);
+    String[] list(String path, boolean fullPath);
     long stat(String path);
     long size(String path);
     long sizeRecursive(String path);
@@ -28,4 +28,6 @@ interface IFileManager {
     boolean isHidden(String path);
     boolean setPermissions(String path, int mode);
     boolean setOwner(String path, int owner, int group);
+    String resolve(in String[] paths);
+    String normalizeStringPosix(String path, boolean allowAboveRoot);
 }

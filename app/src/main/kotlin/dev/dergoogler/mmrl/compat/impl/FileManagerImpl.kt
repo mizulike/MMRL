@@ -17,13 +17,13 @@ import kotlin.math.log
 import kotlin.math.pow
 
 
-internal class FileManagerImpl : IFileManager.Stub() {
+class FileManagerImpl : IFileManager.Stub() {
 
     init {
         System.loadLibrary("file-manager")
     }
 
-    private external fun nativeList(path: String, fullPath: Boolean = false): List<String>?
+    private external fun nativeList(path: String, fullPath: Boolean = false): Array<String>?
     private external fun nativeStat(path: String): Long
     private external fun nativeSize(path: String): Long
     private external fun nativeSizeRecursive(path: String): Long
@@ -111,7 +111,7 @@ internal class FileManagerImpl : IFileManager.Stub() {
         }
     }
 
-    override fun list(path: String, fullPath: Boolean): List<String>? = nativeList(path, fullPath)
+    override fun list(path: String, fullPath: Boolean): Array<String>? = nativeList(path, fullPath)
     override fun size(path: String): Long = nativeSize(path)
     override fun sizeRecursive(path: String): Long = nativeSizeRecursive(path)
     override fun stat(path: String): Long = nativeStat(path)
@@ -138,6 +138,97 @@ internal class FileManagerImpl : IFileManager.Stub() {
 
     override fun setOwner(path: String, owner: Int, group: Int): Boolean =
         nativeSetOwner(path, owner, group)
+
+    private fun assertPath(path: String?) {
+        if (path == null) {
+            throw IllegalArgumentException("Path must be a string. Received null")
+        }
+    }
+
+    override fun resolve(vararg paths: String): String {
+        var resolvedPath = ""
+        var resolvedAbsolute = false
+
+        for (i in paths.indices.reversed()) {
+            val path = paths[i]
+            assertPath(path)
+
+            if (path.isEmpty()) continue
+
+            resolvedPath = "$path/$resolvedPath"
+            resolvedAbsolute = path[0] == '/'
+
+            if (resolvedAbsolute) break
+        }
+
+        resolvedPath = normalizeStringPosix(resolvedPath, !resolvedAbsolute)
+
+        return when {
+            resolvedAbsolute -> if (resolvedPath.isNotEmpty()) "/$resolvedPath" else "/"
+            resolvedPath.isNotEmpty() -> resolvedPath
+            else -> "."
+        }
+    }
+
+    override fun normalizeStringPosix(path: String, allowAboveRoot: Boolean): String {
+        var res = ""
+        var lastSegmentLength = 0
+        var lastSlash = -1
+        var dots = 0
+        var code: Char
+
+        for (i in 0..path.length) {
+            code = if (i < path.length) path[i] else '/'
+
+            if (code == '/') {
+                if (lastSlash == i - 1 || dots == 1) {
+                    // NOOP
+                } else if (lastSlash != i - 1 && dots == 2) {
+                    if (res.length < 2 || lastSegmentLength != 2 || res.takeLast(2) != "..") {
+                        if (res.length > 2) {
+                            val lastSlashIndex = res.lastIndexOf('/')
+                            if (lastSlashIndex != res.length - 1) {
+                                res = if (lastSlashIndex == -1) "" else res.substring(
+                                    0,
+                                    lastSlashIndex
+                                )
+                                lastSegmentLength = res.length - 1 - res.lastIndexOf('/')
+                                lastSlash = i
+                                dots = 0
+                                continue
+                            }
+                        } else if (res.length in 1..2) {
+                            res = ""
+                            lastSegmentLength = 0
+                            lastSlash = i
+                            dots = 0
+                            continue
+                        }
+                    }
+                    if (allowAboveRoot) {
+                        res = if (res.isNotEmpty()) "$res/.." else ".."
+                        lastSegmentLength = 2
+                    }
+                } else {
+                    res = if (res.isNotEmpty()) "$res/${
+                        path.substring(
+                            lastSlash + 1,
+                            i
+                        )
+                    }" else path.substring(lastSlash + 1, i)
+                    lastSegmentLength = i - lastSlash - 1
+                }
+                lastSlash = i
+                dots = 0
+            } else if (code == '.' && dots != -1) {
+                dots++
+            } else {
+                dots = -1
+            }
+        }
+        return res
+    }
+
 }
 
 object FileManagerUtil {
@@ -154,29 +245,3 @@ enum class SizeRepresentation(val base: Int) {
     Binary(1024),
     Decimal(1000)
 }
-
-object FilePermissions {
-    const val READ = 0b100 // 4 in decimal
-    const val WRITE = 0b010 // 2 in decimal
-    const val EXECUTE = 0b001 // 1 in decimal
-
-    const val OWNER_READ = 0b100000000 // 0o400 (256)
-    const val OWNER_WRITE = 0b010000000 // 0o200 (128)
-    const val OWNER_EXECUTE = 0b001000000 // 0o100 (64)
-
-    const val GROUP_READ = 0b000100000 // 0o040 (32)
-    const val GROUP_WRITE = 0b000010000 // 0o020 (16)
-    const val GROUP_EXECUTE = 0b000001000 // 0o010 (8)
-
-    const val OTHERS_READ = 0b000000100 // 0o004 (4)
-    const val OTHERS_WRITE = 0b000000010 // 0o002 (2)
-    const val OTHERS_EXECUTE = 0b000000001 // 0o001 (1)
-
-    const val PERMISSION_777 = 0b111111111 // 0o777 (511) - rwxrwxrwx
-    const val PERMISSION_755 = 0b111101101 // 0o755 (493) - rwxr-xr-x
-    const val PERMISSION_700 = 0b111000000 // 0o700 (448) - rwx------
-    const val PERMISSION_644 = 0b110100100 // 0o644 (420) - rw-r--r--
-    const val PERMISSION_600 = 0b110000000 // 0o600 (384) - rw-------
-    const val PERMISSION_444 = 0b100100100 // 0o444 (292) - r--r--r--
-}
-

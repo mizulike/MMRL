@@ -46,19 +46,6 @@ fun ModulesScreen() {
             }
         )
 
-
-        ListHeader(
-            title = stringResource(id = R.string.view_module_features_webui)
-        )
-
-        ListSwitchItem(
-            enabled = viewModel.isProviderAlive,
-            title = stringResource(id = R.string.settings_use_shell_webui_assets),
-            desc = stringResource(id = R.string.settings_use_shell_webui_assets_desc),
-            checked = userPreferences.useShellToLoadWebUIAssets,
-            onChange = viewModel::setUseShellToLoadWebUIAssets,
-        )
-
         ListHeader(
             title = stringResource(id = R.string.settings_modules_installer)
         )

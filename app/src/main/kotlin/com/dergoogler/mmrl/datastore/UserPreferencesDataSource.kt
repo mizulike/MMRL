@@ -222,14 +222,6 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setUseShellToLoadWebUIAssets(value: Boolean) = withContext(Dispatchers.IO) {
-        userPreferences.updateData {
-            it.copy(
-                useShellToLoadWebUIAssets = value
-            )
-        }
-    }
-
     suspend fun setBlacklistAlerts(value: Boolean) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(

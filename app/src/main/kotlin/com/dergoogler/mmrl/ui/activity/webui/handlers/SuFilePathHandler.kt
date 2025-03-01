@@ -3,34 +3,23 @@ package com.dergoogler.mmrl.ui.activity.webui.handlers
 import android.webkit.WebResourceResponse
 import androidx.annotation.WorkerThread
 import androidx.webkit.WebViewAssetLoader.PathHandler
-import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.ui.activity.webui.MimeUtil.getMimeFromFileName
-import com.topjohnwu.superuser.Shell
-import com.topjohnwu.superuser.io.SuFile
-import com.topjohnwu.superuser.io.SuFileInputStream
+import com.dergoogler.mmrl.utils.SuFile
 import dev.dergoogler.mmrl.compat.core.BrickException
-import dev.dergoogler.mmrl.compat.stub.IFileManager
 import timber.log.Timber
 import java.io.ByteArrayInputStream
-import java.io.File
 import java.io.IOException
 import java.io.InputStream
 import java.util.zip.GZIPInputStream
 
 class SuFilePathHandler(
-    directory: File,
-    private val useShell: Boolean,
-    private val shell: Shell,
+    directory: SuFile,
 ) : PathHandler {
-    private var mDirectory: File
-
-    private val fileManager: IFileManager? = Compat.get(null) {
-        fileManager
-    }
+    private var mDirectory: SuFile
 
     init {
         try {
-            mDirectory = File(getCanonicalDirPath(directory))
+            mDirectory = SuFile(getCanonicalDirPath(directory))
             if (!isAllowedInternalStorageDir()) {
                 throw BrickException(
                     msg = "The given directory \"$directory\" doesn't exist under an allowed app internal storage directory",
@@ -78,18 +67,18 @@ class SuFilePathHandler(
     }
 
     @Throws(IOException::class)
-    fun getCanonicalDirPath(file: File): String {
+    fun getCanonicalDirPath(file: SuFile): String {
         var canonicalPath = file.canonicalPath
         if (!canonicalPath.endsWith("/")) canonicalPath += "/"
         return canonicalPath
     }
 
     @Throws(IOException::class)
-    fun getCanonicalFileIfChild(parent: File, child: String): File? {
+    fun getCanonicalFileIfChild(parent: SuFile, child: String): SuFile? {
         val parentCanonicalPath = getCanonicalDirPath(parent)
-        val childCanonicalPath = File(parent, child).canonicalPath
+        val childCanonicalPath = SuFile(parent, child).canonicalPath
         if (childCanonicalPath.startsWith(parentCanonicalPath)) {
-            return File(childCanonicalPath)
+            return SuFile(childCanonicalPath)
         }
         return null
     }
@@ -102,23 +91,13 @@ class SuFilePathHandler(
         return if (path.endsWith(".svgz")) GZIPInputStream(stream) else stream
     }
 
-    private fun loadWithShell(file: File): InputStream {
-        val suFile = SuFile(file.absolutePath).apply { shell = this.shell }
-        val `is` = SuFileInputStream.open(suFile)
-        return handleSvgzStream(file.path, `is`)
-    }
-
-    private fun openFile(file: File): InputStream? {
-        if (fileManager == null || useShell) {
-            return loadWithShell(file)
-        }
-
-        if (!fileManager.exists(file.path)) {
+    private fun openFile(file: SuFile): InputStream? {
+        if (!file.exists()) {
             Timber.tag(TAG).e("File not found: %s", file.absolutePath)
             return null
         }
 
-        val byteFile = fileManager.readBytes(file.absolutePath)
+        val byteFile = file.readBytes()
         val `is` = ByteArrayInputStream(byteFile)
         return handleSvgzStream(file.path, `is`)
     }
