@@ -107,10 +107,8 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeWriteBytes(JNIEnv *en
 }
 
 extern "C"
-JNIEXPORT jobject JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeList(JNIEnv *env,
-                                                                jobject MMRL_UNUSED(thiz),
-                                                                jstring path, jboolean fullPath) {
+JNIEXPORT jobjectArray JNICALL
+Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeList(JNIEnv *env, jobject MMRL_UNUSED(thiz), jstring path) {
     const char *dirPath = env->GetStringUTFChars(path, nullptr);
     if (!dirPath) return nullptr;
 
@@ -120,30 +118,23 @@ Java_dev_dergoogler_mmrl_compat_impl_FileManagerImpl_nativeList(JNIEnv *env,
         return nullptr;
     }
 
-    jclass arrayListClass = env->FindClass("java/util/ArrayList");
-    jmethodID arrayListInit = env->GetMethodID(arrayListClass, "<init>", "()V");
-    jmethodID arrayListAdd = env->GetMethodID(arrayListClass, "add", "(Ljava/lang/Object;)Z");
-
-    jobject fileList = env->NewObject(arrayListClass, arrayListInit);
-
+    std::vector<std::string> fileNames;
     struct dirent *entry;
     while ((entry = readdir(dir)) != nullptr) {
         if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) continue;
-
-        jstring fileEntry;
-        if (fullPath) {
-            std::string fullFilePath = std::string(dirPath) + "/" + entry->d_name;
-            fileEntry = env->NewStringUTF(fullFilePath.c_str());
-        } else {
-            fileEntry = env->NewStringUTF(entry->d_name);
-        }
-
-        env->CallBooleanMethod(fileList, arrayListAdd, fileEntry);
-        env->DeleteLocalRef(fileEntry);
+        fileNames.emplace_back(entry->d_name);
     }
-
     closedir(dir);
     env->ReleaseStringUTFChars(path, dirPath);
+
+    jclass stringClass = env->FindClass("java/lang/String");
+    jobjectArray fileList = env->NewObjectArray(static_cast<jsize>(fileNames.size()), stringClass, nullptr);
+
+    for (jsize i = 0; i < static_cast<jsize>(fileNames.size()); i++) {
+        jstring fileName = env->NewStringUTF(fileNames[i].c_str());
+        env->SetObjectArrayElement(fileList, i, fileName);
+        env->DeleteLocalRef(fileName);
+    }
 
     return fileList;
 }

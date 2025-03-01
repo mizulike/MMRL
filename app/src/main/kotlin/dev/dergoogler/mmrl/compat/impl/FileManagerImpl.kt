@@ -23,7 +23,7 @@ class FileManagerImpl : IFileManager.Stub() {
         System.loadLibrary("file-manager")
     }
 
-    private external fun nativeList(path: String, fullPath: Boolean = false): Array<String>?
+    private external fun nativeList(path: String): Array<String>?
     private external fun nativeStat(path: String): Long
     private external fun nativeSize(path: String): Long
     private external fun nativeSizeRecursive(path: String): Long
@@ -111,7 +111,7 @@ class FileManagerImpl : IFileManager.Stub() {
         }
     }
 
-    override fun list(path: String, fullPath: Boolean): Array<String>? = nativeList(path, fullPath)
+    override fun list(path: String): Array<String>? = nativeList(path)
     override fun size(path: String): Long = nativeSize(path)
     override fun sizeRecursive(path: String): Long = nativeSizeRecursive(path)
     override fun stat(path: String): Long = nativeStat(path)

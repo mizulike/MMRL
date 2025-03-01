@@ -20,7 +20,6 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.utils.SuFile
-import com.topjohnwu.superuser.Shell
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -65,8 +64,11 @@ class WebUIViewModel @AssistedInject constructor(
             platform
         }
 
-    val moduleDir = SuFile("/data/adb/modules", modId)
+    private val moduleDir = SuFile("/data/adb/modules", modId)
     val webRoot = SuFile(moduleDir, "webroot")
+
+    private val pluginsListFile = SuFile(webRoot, "plugins.json")
+    private val pluginDir = SuFile(webRoot, "plugins")
 
     val sanitizedModId: String
         get() {
@@ -102,14 +104,6 @@ class WebUIViewModel @AssistedInject constructor(
             }
         }
 
-    val rootShell
-        get(): Shell {
-            return Compat.createRootShell(
-                globalMnt = true,
-                devMode = userPrefs.developerMode
-            )
-        }
-
     var recomposeCount by mutableIntStateOf(0)
     var hasRequestedAdvancedKernelSUAPI by mutableStateOf(false)
     var hasRequestFileSystemAPI by mutableStateOf(false)
@@ -130,15 +124,10 @@ class WebUIViewModel @AssistedInject constructor(
         rightInset = (insets.getRight(density, layoutDirection) / density.density).toInt()
     }
 
-
-    private val pluginsListFile = SuFile("/data/adb/modules", modId, "webroot/plugins.json")
-    private val pluginDir = SuFile("/data/adb/modules", modId, "webroot/plugins")
-
     @SuppressLint("JavascriptInterface")
     fun loadDexPluginsFromMemory(context: Context, webView: WebView) {
-
         if (!pluginsListFile.exists()) {
-            if (userPrefs.developerMode) Timber.w("plugins.json does not exist! Plugins not loaded.")
+            if (userPrefs.developerMode) Timber.d("plugins.json does not exist!")
             return
         }
 
@@ -148,19 +137,23 @@ class WebUIViewModel @AssistedInject constructor(
         val pluginsList: List<String>? = jsonAdapter.fromJson(pluginsListJson)
 
         if (pluginsList.isNullOrEmpty()) {
-            Timber.d("plugins.json for $modId is invalid or empty! Plugins not loaded.")
+            Timber.d("plugins.json for $modId is invalid or empty!")
             return
         }
 
         if (!pluginDir.exists()) {
-            if (userPrefs.developerMode) Timber.i("$modId has no plugins.")
+            Timber.d("$modId has no plugins.")
             return
         }
 
-        val pluginDirFiles = pluginDir.listFiles { f -> f.extension == "dex" || f.extension == "jar" || f.extension == "apk" }
+        val pluginDirFiles = pluginDir.listFiles { file ->
+            file.extension == "dex" || file.extension == "jar" || file.extension == "apk"
+        }
 
         pluginDirFiles.forEach {
             val dexPath = it.path
+
+            Timber.d("Loading plugin from dex file $dexPath")
 
             if (!it.isFile) {
                 return@forEach
@@ -216,7 +209,6 @@ class WebUIViewModel @AssistedInject constructor(
 
                         clazz.setPluginField("modId", modId)
                         clazz.setPluginField("isProviderAlive", isProviderAlive)
-                        clazz.setPluginField("rootShell", rootShell)
                         clazz.setPluginField("rootVersionName", versionName)
                         clazz.setPluginField("rootVersionCode", versionCode)
                         clazz.setPluginField("rootPlatform", platform)

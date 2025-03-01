@@ -22,7 +22,6 @@ class SuFile(path: String) : File(path) {
         }.toTypedArray())
     )
 
-
     companion object {
         enum class Permissions(val value: Int) {
             OWNER_READ(0b100000000),  // 0o400 (256) - r-- for owner
@@ -72,12 +71,8 @@ class SuFile(path: String) : File(path) {
         return fs.writeBytes(this.path, data)
     }
 
-    fun list(fullPath: Boolean): Array<String> {
-        return fs.list(this.path, fullPath)
-    }
-
     override fun list(): Array<String> {
-        return fs.list(this.path, false)
+        return fs.list(this.path)
     }
 
     fun size(recursively: Boolean = false): Long {
@@ -178,15 +173,8 @@ class SuFile(path: String) : File(path) {
         return fs.setOwner(this.path, uid, gid)
     }
 
-
-    override fun listFiles(): Array<SuFile?> {
-        val ss = this.list(true)
-        val n = ss.size
-        val fs = arrayOfNulls<SuFile>(n)
-        for (i in 0..<n) {
-            fs[i] = SuFile(ss[i], this)
-        }
-        return fs
+    override fun listFiles(): Array<SuFile> {
+        return this.list().map { SuFile(it, this) }.toTypedArray()
     }
 
     override fun listFiles(filter: FileFilter?): Array<SuFile> {
