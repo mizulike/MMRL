@@ -1,6 +1,5 @@
 package com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl
 
-import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.webkit.JavascriptInterface
@@ -8,10 +7,10 @@ import android.webkit.WebView
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.BuildConfig
+import com.dergoogler.mmrl.app.moshi
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
-import com.squareup.moshi.Moshi
 import dev.dergoogler.mmrl.compat.core.MMRLWebUIInterface
 import dev.dergoogler.mmrl.compat.ext.shareText
 
@@ -30,7 +29,6 @@ class MMRLInterface(
     private val allowedFsApi: Boolean,
     private val allowedKsuApi: Boolean,
 ): MMRLWebUIInterface(webView, context) {
-    private val activity = context as Activity
     private var windowInsetsController: WindowInsetsControllerCompat =
         WindowCompat.getInsetsController(
             activity.window,
@@ -43,7 +41,6 @@ class MMRLInterface(
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
-    var moshi: Moshi = Moshi.Builder().build()
     private var managerAdapter: JsonAdapter<Manager> = moshi.adapter(Manager::class.java)
 
     @get:JavascriptInterface
@@ -99,7 +96,7 @@ class MMRLInterface(
         get() = isDark
 
     @JavascriptInterface
-    fun setLightNavigationBars(isLight: Boolean) = activity.runOnUiThread {
+    fun setLightNavigationBars(isLight: Boolean) = runOnUiThread {
         windowInsetsController.isAppearanceLightNavigationBars = isLight
     }
 
@@ -108,7 +105,7 @@ class MMRLInterface(
         get() = windowInsetsController.isAppearanceLightStatusBars
 
     @JavascriptInterface
-    fun setLightStatusBars(isLight: Boolean) = activity.runOnUiThread {
+    fun setLightStatusBars(isLight: Boolean) = runOnUiThread {
         windowInsetsController.isAppearanceLightStatusBars = isLight
     }
 

@@ -6,7 +6,6 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.datastore.UserPreferencesCompat
-import com.dergoogler.mmrl.utils.SuFile
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
 import com.topjohnwu.superuser.internal.UiThreadHandler
@@ -17,9 +16,8 @@ import java.util.concurrent.CompletableFuture
 class AdvancedKernelSUAPI(
     context: Context,
     webView: WebView,
-    modDir: SuFile,
     private val userPrefs: UserPreferencesCompat,
-) : BaseKernelSUAPI(context, webView, modDir) {
+) : BaseKernelSUAPI(context, webView) {
 
     @JavascriptInterface
     fun exec(cmd: String): String {
@@ -71,14 +69,13 @@ class AdvancedKernelSUAPI(
         val stderr = result.err.joinToString(separator = "\n")
 
         val jsCode =
-            "javascript: (function() { try { ${callbackFunc}(${result.code}, ${
+            "(function() { try { ${callbackFunc}(${result.code}, ${
                 JSONObject.quote(
                     stdout
                 )
             }, ${JSONObject.quote(stderr)}); } catch(e) { console.error(e); } })();"
-        webView.post {
-            webView.loadUrl(jsCode)
-        }
+
+        runJs(jsCode)
     }
 
     @JavascriptInterface
@@ -106,14 +103,13 @@ class AdvancedKernelSUAPI(
 
         val emitData = fun(name: String, data: String) {
             val jsCode =
-                "javascript: (function() { try { ${callbackFunc}.${name}.emit('data', ${
+                "(function() { try { ${callbackFunc}.${name}.emit('data', ${
                     JSONObject.quote(
                         data
                     )
                 }); } catch(e) { console.error('emitData', e); } })();"
-            webView.post {
-                webView.loadUrl(jsCode)
-            }
+
+            runJs(jsCode)
         }
 
         val stdout = object : CallbackList<String>(UiThreadHandler::runAndWait) {
@@ -135,26 +131,23 @@ class AdvancedKernelSUAPI(
 
         completableFuture.thenAccept { result ->
             val emitExitCode =
-                "javascript: (function() { try { ${callbackFunc}.emit('exit', ${result.code}); } catch(e) { console.error(`emitExit error: \${e}`); } })();"
-            webView.post {
-                webView.loadUrl(emitExitCode)
-            }
+                "(function() { try { ${callbackFunc}.emit('exit', ${result.code}); } catch(e) { console.error(`emitExit error: \${e}`); } })();"
+            runJs(emitExitCode)
+
 
             if (result.code != 0) {
                 val emitErrCode =
-                    "javascript: (function() { try { var err = new Error(); err.exitCode = ${result.code}; err.message = ${
+                    "(function() { try { var err = new Error(); err.exitCode = ${result.code}; err.message = ${
                         JSONObject.quote(
                             result.err.joinToString(
                                 "\n"
                             )
                         )
                     };${callbackFunc}.emit('error', err); } catch(e) { console.error('emitErr', e); } })();"
-                webView.post {
-                    webView.loadUrl(emitErrCode)
-                }
+              runJs(emitErrCode)
             }
         }.whenComplete { _, _ ->
-            runCatching { shell.close() }
+            runJsCatching { shell.close() }
         }
     }
 }

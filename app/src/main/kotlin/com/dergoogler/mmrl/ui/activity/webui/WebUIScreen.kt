@@ -191,9 +191,9 @@ fun WebUIScreen(
 
                     addJavascriptInterface(
                         if (allowedKsuApi) {
-                            AdvancedKernelSUAPI(context, this, viewModel.moduleDir, userPrefs)
+                            AdvancedKernelSUAPI(context, this, userPrefs)
                         } else {
-                            BaseKernelSUAPI(context, this, viewModel.moduleDir)
+                            BaseKernelSUAPI(context, this)
                         }, "ksu"
                     )
 
