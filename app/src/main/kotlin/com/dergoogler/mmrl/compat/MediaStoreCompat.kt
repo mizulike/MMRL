@@ -14,7 +14,6 @@ import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
 import dev.dergoogler.mmrl.compat.ext.nullable
-import timber.log.Timber
 import java.io.File
 import java.io.IOException
 import java.io.InputStream
@@ -85,17 +84,13 @@ object MediaStoreCompat {
         } ?: safeUri.toString()
     }
 
-    // fun Context.getFileForUri(uri: Uri) = File(getPathForUri(uri))
-
     private fun Context.findFileForUri(uri: Uri): Uri? {
-        val resolver = this.contentResolver
-
-        return resolver.query(uri, null, null, null, null).use { cursor ->
-            if (cursor != null && cursor.moveToFirst()) {
-                return@use uri
-            } else {
-                Timber.e("Unable to find file for uri: $uri")
-                return@use null
+        return if (uri.scheme == "file") {
+            val file = File(uri.path ?: return null)
+            if (file.exists()) uri else null
+        } else {
+            contentResolver.query(uri, null, null, null, null).use { cursor ->
+                if (cursor != null && cursor.moveToFirst()) uri else null
             }
         }
     }

@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.ui.activity.webui
 
 import android.annotation.SuppressLint
+import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.compose.foundation.layout.WindowInsets
@@ -12,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -137,6 +139,8 @@ fun WebUIScreen(
         AndroidView(
             factory = {
                 webView.apply {
+                    setBackgroundColor(colorScheme.background.toArgb())
+                    background = ColorDrawable(colorScheme.background.toArgb())
                     layoutParams = ViewGroup.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT

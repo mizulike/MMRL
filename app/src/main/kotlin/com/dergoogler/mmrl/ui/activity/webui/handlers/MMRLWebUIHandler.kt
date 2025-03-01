@@ -20,7 +20,7 @@ import kotlin.reflect.full.memberProperties
 
 
 class MMRLWebUIHandler(
-    private val viewModel: WebUIViewModel,
+    private val viewModel: WebUIViewModel? = null,
     private val colorScheme: ColorScheme,
     private val typography: Typography,
     private val filledTonalButtonColors: ButtonColors,
@@ -40,10 +40,10 @@ class MMRLWebUIHandler(
     private fun windowInsetsStyle(): WebResourceResponse {
         val content = """
             :root {
-                --window-inset-top: ${viewModel.topInset}px;
-                --window-inset-bottom: ${viewModel.bottomInset}px;
-                --window-inset-left: ${viewModel.leftInset}px;
-                --window-inset-right: ${viewModel.rightInset}px;
+                --window-inset-top: ${viewModel?.topInset ?: 0}px;
+                --window-inset-bottom: ${viewModel?.bottomInset ?: 0}px;
+                --window-inset-left: ${viewModel?.leftInset ?: 0}px;
+                --window-inset-right: ${viewModel?.rightInset ?: 0}px;
                 --window-inset-horizontal: calc(var(--window-inset-left) + var(--window-inset-right));
                 --window-inset-vertical: calc(var(--window-inset-top) + var(--window-inset-bottom));
                 --window-inset-all: calc(var(--window-inset-horizontal) + var(--window-inset-vertical));
