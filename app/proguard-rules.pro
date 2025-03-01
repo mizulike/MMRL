@@ -8,3 +8,8 @@
 -keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite* {
    <fields>;
 }
+
+-assumenosideeffects class android.util.Log {
+    public static *** d(...);
+    public static *** v(...);
+}
