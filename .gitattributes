@@ -1,0 +1,2 @@
+*.js *.mjs *.cjs linguist-language=Other
+*.js *.mjs *.cjs linguist-detectable=false
