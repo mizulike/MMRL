@@ -38,6 +38,5 @@ data class ModuleAnalytics(
             }
         }
 
-    val totalStorageUsage =
-        ((totalModulesUsageBytes.toFloat() / (1024 * 1024 * 1024)) / (totalDeviceStorageBytes.toFloat() / (1024 * 1024 * 1024))) * 1000
+    val totalStorageUsage = totalModulesUsageBytes.toFloat() / totalDeviceStorageBytes.toFloat()
 }
