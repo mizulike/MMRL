@@ -106,21 +106,25 @@ android {
 
         create("playstore") {
             initWith(buildTypes.getByName("release"))
+            matchingFallbacks += listOf("debug", "release")
             versionNameSuffix = "-playstore"
         }
 
         create("releaseCandidate") {
             initWith(buildTypes.getByName("release"))
+            matchingFallbacks += listOf("debug", "release")
             versionNameSuffix = "-rc"
         }
 
         create("beta") {
             initWith(buildTypes.getByName("release"))
+            matchingFallbacks += listOf("debug", "release")
             versionNameSuffix = "-beta"
         }
 
         create("alpha") {
             initWith(buildTypes.getByName("release"))
+            matchingFallbacks += listOf("debug", "release")
             versionNameSuffix = "-alpha"
         }
 
@@ -139,10 +143,11 @@ android {
         }
 
         create("debugMin") {
-            initWith(buildTypes.getByName("debug"))
+            initWith(buildTypes.getName("debug"))
             versionNameSuffix = "-debugMin"
             isMinifyEnabled = true
             isShrinkResources = true
+            matchingFallbacks += listOf("debug", "release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
