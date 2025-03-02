@@ -11,7 +11,7 @@
 #include <cerrno>
 #include <string>
 #include <fstream>
-#include "logging.h"
+#include <logging.hpp>
 
 #define MMRL_UNUSED(x) x __attribute__((__unused__))
 

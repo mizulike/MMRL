@@ -21,14 +21,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.Platform
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ui.component.LabelItem
+import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.card.CardDefaults
 import dev.dergoogler.mmrl.compat.ext.nullable
 import dev.dergoogler.mmrl.compat.ext.takeTrue
+import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
 
 @Composable
 internal fun RootItem(
     isAlive: Boolean,
+    lkmMode: Int,
     platform: Platform,
     versionCode: Int,
     developerMode: Boolean = false,
@@ -92,21 +96,36 @@ internal fun RootItem(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(
-                text = if (isAlive) {
-                    stringResource(
-                        id = R.string.settings_root_access,
-                        stringResource(id = R.string.settings_root_granted)
-                    )
-                } else {
-                    stringResource(
-                        id = R.string.settings_root_access,
-                        stringResource(id = R.string.settings_root_none)
+
+            TextWithIcon(
+                text = {
+                    Text(
+                        text = if (isAlive) {
+                            stringResource(
+                                id = R.string.settings_root_access,
+                                stringResource(id = R.string.settings_root_granted)
+                            )
+                        } else {
+                            stringResource(
+                                id = R.string.settings_root_access,
+                                stringResource(id = R.string.settings_root_none)
+                            )
+                        },
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 },
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSecondaryContainer
+                icon = {
+                    if (developerMode && platform.isKernelSuOrNext) {
+                        LabelItem(text = when(lkmMode) {
+                            KsuNative.MODE_LTS -> "LTS"
+                            KsuNative.MODE_LKM -> "LKM"
+                            else -> "GKI"
+                        })
+                    }
+                }
             )
+
 
             Text(
                 text = if (isAlive) {

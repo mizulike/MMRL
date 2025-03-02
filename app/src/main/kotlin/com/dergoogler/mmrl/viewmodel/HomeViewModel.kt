@@ -2,8 +2,6 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import android.content.Context
-import android.os.Environment
-import android.os.StatFs
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.Compat.moduleManager
 import com.dergoogler.mmrl.model.local.ModuleAnalytics
@@ -32,6 +30,11 @@ class HomeViewModel @Inject constructor(
             with(moduleManager) { version }
         }
 
+    val lkmMode: Int
+        get() = Compat.get(0) {
+            with(moduleManager) { lkmMode }
+        }
+
     val versionCode
         get() = Compat.get(0) {
             with(moduleManager) { versionCode }
@@ -41,6 +44,13 @@ class HomeViewModel @Inject constructor(
         get() = Compat.get("Failed") {
             with(moduleManager) {
                 seLinuxContext
+            }
+        }
+
+    val superUserCount: Int
+        get() = Compat.get(-1) {
+            with(moduleManager) {
+                superUserCount
             }
         }
 
@@ -56,7 +66,6 @@ class HomeViewModel @Inject constructor(
 
     init {
         Timber.d("HomeViewModel init")
-        Timber.d("${Compat.isAlive}")
     }
 
     fun reboot(reason: String = "") {
@@ -64,11 +73,4 @@ class HomeViewModel @Inject constructor(
             reboot(reason)
         }
     }
-
-    val totalStorageGB: Long
-        get() {
-            val statFs = StatFs(Environment.getExternalStorageDirectory().absolutePath)
-            val totalBytes = statFs.blockSizeLong * statFs.blockCountLong
-            return totalBytes / (1024 * 1024 * 1024)
-        }
 }

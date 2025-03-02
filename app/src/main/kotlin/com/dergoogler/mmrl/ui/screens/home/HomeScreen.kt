@@ -142,6 +142,7 @@ fun HomeScreen(
                 userPreferences.workingMode.isRoot -> RootItem(
                     developerMode = userPreferences.developerMode,
                     isAlive = viewModel.isProviderAlive,
+                    lkmMode = viewModel.lkmMode,
                     platform = viewModel.platform,
                     versionCode = viewModel.versionCode,
                     onClick = {
@@ -252,6 +253,15 @@ fun HomeScreen(
                     title = stringResource(id = R.string.selinux_status),
                     desc = context.seLinuxStatus
                 )
+
+                if (viewModel.platform.isKernelSuOrNext) {
+                    ListItem(
+                        contentPaddingValues = listItemContentPaddingValues,
+                        icon = R.drawable.user_outlined,
+                        title = "SuperUser Apps",
+                        desc = viewModel.superUserCount.toString()
+                    )
+                }
             }
 
             viewModel.isProviderAlive.takeTrue {

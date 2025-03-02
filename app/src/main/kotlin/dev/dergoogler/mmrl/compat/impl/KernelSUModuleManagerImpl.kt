@@ -3,6 +3,8 @@ package dev.dergoogler.mmrl.compat.impl
 import com.topjohnwu.superuser.Shell
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
+import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
+import dev.dergoogler.mmrl.compat.impl.ksu.getKernelVersion
 import dev.dergoogler.mmrl.compat.stub.IModuleOpsCallback
 import dev.dergoogler.mmrl.compat.stub.IShell
 import dev.dergoogler.mmrl.compat.stub.IShellCallback
@@ -12,13 +14,35 @@ internal open class KernelSUModuleManagerImpl(
     seLinuxContext: String,
     fileManager: FileManagerImpl,
 ) : BaseModuleManagerImpl(
-    shell=  shell,
+    shell = shell,
     seLinuxContext = seLinuxContext,
     fileManager = fileManager
 ) {
-    override fun getManagerName(): String {
-        return "KernelSU"
+    override fun getManagerName(): String = "KernelSU"
+
+    override fun getVersion(): String = mVersion
+
+    override fun getVersionCode(): Int = KsuNative.getVersion()
+
+    override fun setSuEnabled(enabled: Boolean): Boolean = KsuNative.setSuEnabled(enabled)
+    override fun isSuEnabled(): Boolean = KsuNative.isSuEnabled()
+
+    override fun isLkmMode(): Boolean = with(KsuNative) {
+        val kernelVersion = getKernelVersion()
+        val ksuVersion = getVersion()
+
+        return if (ksuVersion >= MINIMAL_SUPPORTED_KERNEL_LKM && kernelVersion.isGKI()) {
+            isLkmMode()
+        } else {
+            false
+        }
     }
+
+    override fun getSuperUserCount(): Int = KsuNative.getAllowList().size
+
+    override fun getLkmMode(): Int = KsuNative.getLkmMode()
+
+    override fun isSafeMode(): Boolean = KsuNative.isSafeMode()
 
     override fun getModuleCompatibility() = ModuleCompatibility(
         hasMagicMount = false,

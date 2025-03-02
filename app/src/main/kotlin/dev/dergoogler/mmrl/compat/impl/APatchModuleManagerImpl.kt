@@ -16,9 +16,21 @@ internal class APatchModuleManagerImpl(
     seLinuxContext = seLinuxContext,
     fileManager = fileManager
 ) {
-    override fun getManagerName(): String {
-        return "APatch"
-    }
+    override fun getManagerName(): String = "APatch"
+
+    override fun getVersion(): String = mVersion
+
+    override fun getVersionCode(): Int = mVersionCode
+
+    override fun isSafeMode(): Boolean = false
+
+    override fun getLkmMode(): Int = 0
+    override fun isLkmMode(): Boolean = false
+
+    override fun setSuEnabled(enabled: Boolean): Boolean = true
+    override fun isSuEnabled(): Boolean = true
+
+    override fun getSuperUserCount(): Int = -1
 
     override fun getModuleCompatibility() = ModuleCompatibility(
         hasMagicMount = fileManager.exists("/data/adb/.bind_mount_enable") && (versionCode >= 11011 && !fileManager.exists(

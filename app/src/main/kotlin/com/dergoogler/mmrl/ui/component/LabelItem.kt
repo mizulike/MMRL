@@ -66,6 +66,14 @@ fun KernelSuLabel() {
 }
 
 @Composable
+fun KernelSuNextLabel() {
+    LabelItem(
+        icon = R.drawable.kernelsu_next_logo,
+        text = "KernelSU Next"
+    )
+}
+
+@Composable
 fun MagiskLabel() {
     LabelItem(
         icon = R.drawable.magisk_logo,

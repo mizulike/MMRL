@@ -1,12 +1,10 @@
 package dev.dergoogler.mmrl.compat.impl
 
-//import android.os.IPowerManager // what huh?
 import android.os.SELinux
 import android.system.Os
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.datastore.WorkingMode
-import com.topjohnwu.superuser.ShellUtils
 import dev.dergoogler.mmrl.compat.core.BrickException
 import dev.dergoogler.mmrl.compat.stub.IFileManager
 import dev.dergoogler.mmrl.compat.stub.IModuleManager
@@ -104,11 +102,4 @@ internal class ServiceManagerImpl(
     override fun destroy() {
         exitProcess(0)
     }
-
-    private fun String.execResult() = ShellUtils.fastCmdResult(
-        main, *arrayOf(
-            "export PATH=/data/adb/ksu/bin:/data/adb/ap/bin:/data/adb/magisk:\$PATH",
-            this
-        )
-    )
 }

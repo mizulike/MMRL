@@ -20,6 +20,7 @@ class Platform(private val realPlatform: String) {
     val isNotShizuku get() = realPlatform != shizuku
 
     val isValid get() = isMagisk || isKernelSU || isAPatch || isKernelSuNext || isShizuku
+    val isKernelSuOrNext get() = isKernelSuNext || isKernelSU
 
     val current: String
         get() = when {

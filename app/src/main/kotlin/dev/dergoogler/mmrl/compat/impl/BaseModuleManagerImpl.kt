@@ -1,6 +1,6 @@
 package dev.dergoogler.mmrl.compat.impl
 
-//import java.util.zip.ZipFile
+import android.content.Context
 import android.os.Build
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.Compat
@@ -10,7 +10,6 @@ import com.topjohnwu.superuser.ShellUtils
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.LocalModule
 import dev.dergoogler.mmrl.compat.content.LocalModuleFeatures
-import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
 import dev.dergoogler.mmrl.compat.content.State
 import dev.dergoogler.mmrl.compat.stub.IFileManager
 import dev.dergoogler.mmrl.compat.stub.IModuleManager
@@ -19,41 +18,24 @@ import dev.dergoogler.mmrl.compat.stub.IShellCallback
 import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
 
-internal abstract class BaseModuleManagerImpl(
+abstract class BaseModuleManagerImpl(
     private val shell: Shell,
     private val seLinuxContext: String,
-    private val fileManager: IFileManager
+    private val fileManager: IFileManager,
 ) : IModuleManager.Stub() {
     internal val modulesDir = File(MODULES_PATH)
 
-    private val mVersion by lazy {
+    internal val mVersion by lazy {
         runCatching {
             "su -v".exec()
         }.getOrDefault("unknown")
     }
 
-    private val mVersionCode by lazy {
+    internal val mVersionCode by lazy {
         runCatching {
             "su -V".exec().toInt()
         }.getOrDefault(-1)
     }
-
-    override fun getManagerName(): String {
-        return "Unknown"
-    }
-
-    override fun getVersion(): String {
-        return mVersion
-    }
-
-    override fun getVersionCode(): Int {
-        return mVersionCode
-    }
-
-    override fun getModuleCompatibility() = ModuleCompatibility(
-        hasMagicMount = false,
-        canRestoreModules = true
-    )
 
     override fun getSeLinuxContext(): String = seLinuxContext
 

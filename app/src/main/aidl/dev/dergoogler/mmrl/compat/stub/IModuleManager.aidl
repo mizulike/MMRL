@@ -23,4 +23,14 @@ interface IModuleManager {
     oneway void remove(String id, boolean useShell, IModuleOpsCallback callback);
     IShell install(String path, in List<BulkModule> bulkModule, IShellCallback callback);
     IShell action(String modId, boolean legacy, IShellCallback callback);
+
+    // General
+    int getSuperUserCount();
+
+    // KernelSU (Next) related
+    boolean isLkmMode();
+    int getLkmMode();
+    boolean isSafeMode();
+    boolean setSuEnabled(boolean enabled);
+    boolean isSuEnabled();
 }

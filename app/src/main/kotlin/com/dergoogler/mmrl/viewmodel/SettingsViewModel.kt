@@ -33,6 +33,19 @@ class SettingsViewModel @Inject constructor(
             with(moduleManager) { "$version (${versionCode})" }
         }
 
+    val versionCode
+        get() = Compat.get(-1) {
+            with(moduleManager) { versionCode }
+        }
+
+    val isSuEnabled = Compat.get(true) {
+        with(moduleManager) { isSuEnabled }
+    }
+
+    fun setSuEnabled(value: Boolean) = Compat.get(true) {
+        with(moduleManager) { setSuEnabled(value) }
+    }
+
     init {
         Timber.d("SettingsViewModel init")
     }
