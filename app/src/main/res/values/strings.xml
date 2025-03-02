@@ -357,7 +357,7 @@
     <string name="blacklisted_desc">This module has been blacklisted by MMRL. Installation is disabled to ensure your security. If you still want to install this module, you can disable blacklist alerts in the settings by navigating to **Settings → Security → Blacklist Alerts**.\n@more(Learn more)</string>
     <string name="settings_blacklist_alerts">Blacklist Alerts</string>
     <string name="settings_blacklist_alerts_desc">Display an alert for local and explore modules, and additionally block the installation of any blacklisted modules</string>
-    <string name="page_repositorys">Repositories</string>
+    <string name="page_repositorys">Repos</string>
     <string name="menu_show_modules_count">Show Modules Count</string>
     <string name="settings_modules_permissions">Modules &amp; Permissions</string>
     <string name="settings_modules_permissions_desc">Allow JavaScript APIs and much more about local modules</string>
@@ -384,4 +384,15 @@
     <string name="allow_advanced_kernelsu_api_desc">Allow this module to access the Advanced KernelSU API? If you don\'t feel secure with this module, don\'t allow it!</string>
     <string name="allow_filesystem_api">Allow FileSystem API?</string>
     <string name="allow_filesystem_api_desc">Allow this module to access the FileSystem API? If you don\'t feel secure with this module, don\'t allow it!</string>
+    <string name="page_superuser">SuperUser</string>
+    <string name="menu_always_show_shell">Always Show Shell</string>
+    <string name="menu_show_system_apps">Show System Apps</string>
+    <string name="packages_empty">Packages are empty</string>
+    <string name="app_profile">App Profile</string>
+    <string name="profile_default">Default</string>
+    <string name="profile_template">Template</string>
+    <string name="profile_custom">Custom</string>
+    <string name="failed_to_update_app_profile">Failed to update App Profile for %s</string>
+    <string name="failed_to_update_sepolicy">Failed to update SELinux rules for: %s</string>
+    <string name="su_not_allowed">Granting superuser isn\'t allowed for: %s</string>
 </resources>

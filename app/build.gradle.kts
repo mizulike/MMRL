@@ -10,6 +10,7 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
     alias(libs.plugins.ksp)
     alias(libs.plugins.protobuf)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 val baseVersionName = "5.32.43"
@@ -291,6 +292,7 @@ dependencies {
     implementation(libs.multiplatform.markdown.renderer.android)
     implementation(libs.multiplatform.markdown.renderer.coil3)
     implementation(libs.androidx.multidex)
+    implementation(libs.dev.rikka.rikkax.parcelablelist)
 
     implementation(libs.square.retrofit)
     implementation(libs.square.retrofit.moshi)

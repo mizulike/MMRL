@@ -145,7 +145,7 @@ object ServiceManagerCompat {
                 intent.getSerializableExtra(WORKING_MODE_KEY) as WorkingMode
             }
 
-            return ServiceManagerImpl(mode)
+            return ServiceManagerImpl(context, mode)
         }
 
         companion object {

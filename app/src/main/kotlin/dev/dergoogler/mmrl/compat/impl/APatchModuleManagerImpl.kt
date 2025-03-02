@@ -1,8 +1,10 @@
 package dev.dergoogler.mmrl.compat.impl
 
 import com.topjohnwu.superuser.Shell
+import dev.dergoogler.mmrl.compat.content.AppProfile
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
+import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
 import dev.dergoogler.mmrl.compat.stub.IModuleOpsCallback
 import dev.dergoogler.mmrl.compat.stub.IShell
 import dev.dergoogler.mmrl.compat.stub.IShellCallback
@@ -12,7 +14,7 @@ internal class APatchModuleManagerImpl(
     seLinuxContext: String,
     val fileManager: FileManagerImpl,
 ) : BaseModuleManagerImpl(
-    shell=  shell,
+    shell = shell,
     seLinuxContext = seLinuxContext,
     fileManager = fileManager
 ) {
@@ -31,6 +33,11 @@ internal class APatchModuleManagerImpl(
     override fun isSuEnabled(): Boolean = true
 
     override fun getSuperUserCount(): Int = -1
+
+    override fun setAppProfile(profile: AppProfile?): Boolean = false
+    override fun getAppProfile(key: String?, uid: Int): AppProfile? = null
+
+    override fun uidShouldUmount(uid: Int): Boolean = false
 
     override fun getModuleCompatibility() = ModuleCompatibility(
         hasMagicMount = fileManager.exists("/data/adb/.bind_mount_enable") && (versionCode >= 11011 && !fileManager.exists(

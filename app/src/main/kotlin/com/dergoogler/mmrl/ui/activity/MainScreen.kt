@@ -38,6 +38,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
+import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.datastore.UserPreferencesCompat.Companion.isRoot
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.navigation.MainScreen
@@ -45,6 +46,7 @@ import com.dergoogler.mmrl.ui.navigation.graphs.homeScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.modulesScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.repositoryScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.settingsScreen
+import com.dergoogler.mmrl.ui.navigation.graphs.superUserScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSnackbarHost
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -55,6 +57,7 @@ import com.dergoogler.mmrl.ui.utils.barsWithSystem
 import com.dergoogler.mmrl.ui.utils.navigatePopUpTo
 import com.dergoogler.mmrl.ui.utils.none
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
+import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
 
 @Composable
 fun MainScreen(windowSizeClass: WindowSizeClass) {
@@ -69,18 +72,35 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
     val windowSize = WindowWidthSize(configuration, windowSizeClass)
     val isRoot = userPreferences.workingMode.isRoot
 
-    val mainScreens by remember(isRoot) {
+    val platform = Compat.platform
+    val isKsuManager = KsuNative.becomeManager(context.packageName)
+
+    val mainScreens by remember(platform, isRoot) {
         derivedStateOf {
+            if (platform.isKernelSuOrNext && isKsuManager && isRoot) {
+                return@derivedStateOf listOf(
+                    MainScreen.Home,
+                    MainScreen.SuperUser,
+                    MainScreen.Repository,
+                    MainScreen.Modules,
+                    MainScreen.Settings
+                )
+            }
+
             if (isRoot) {
-                listOf(
+                return@derivedStateOf listOf(
                     MainScreen.Home,
                     MainScreen.Repository,
                     MainScreen.Modules,
                     MainScreen.Settings
                 )
-            } else {
-                listOf(MainScreen.Home, MainScreen.Repository, MainScreen.Settings)
             }
+
+            return@derivedStateOf listOf(
+                MainScreen.Home,
+                MainScreen.Repository,
+                MainScreen.Settings
+            )
         }
     }
 
@@ -117,6 +137,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
                     }
                 ) {
                     homeScreen()
+                    superUserScreen()
                     repositoryScreen(bulkInstallViewModel = bulkInstallViewModel)
                     modulesScreen()
                     settingsScreen()

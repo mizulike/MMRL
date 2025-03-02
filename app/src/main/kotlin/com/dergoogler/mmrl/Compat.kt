@@ -7,6 +7,7 @@ import com.dergoogler.mmrl.datastore.WorkingMode
 import com.topjohnwu.superuser.Shell
 import dev.dergoogler.mmrl.compat.ServiceManagerCompat
 import dev.dergoogler.mmrl.compat.stub.IFileManager
+import dev.dergoogler.mmrl.compat.stub.IKsuService
 import dev.dergoogler.mmrl.compat.stub.IModuleManager
 import dev.dergoogler.mmrl.compat.stub.IServiceManager
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -51,6 +52,8 @@ object Compat {
 
     val moduleManager: IModuleManager get() = mService.moduleManager
     val fileManager: IFileManager get() = mService.fileManager
+    val ksuService: IKsuService get() = mService.ksuService
+
     val platform: Platform
         get() = if (mServiceOrNull != null) Platform(mService.currentPlatform()) else Platform(
             ""

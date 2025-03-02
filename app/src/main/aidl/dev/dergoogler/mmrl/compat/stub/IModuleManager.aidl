@@ -3,6 +3,7 @@ package dev.dergoogler.mmrl.compat.stub;
 import dev.dergoogler.mmrl.compat.content.LocalModule;
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility;
 import dev.dergoogler.mmrl.compat.content.BulkModule;
+import dev.dergoogler.mmrl.compat.content.AppProfile;
 import dev.dergoogler.mmrl.compat.stub.IShellCallback;
 import dev.dergoogler.mmrl.compat.stub.IModuleOpsCallback;
 import dev.dergoogler.mmrl.compat.stub.IShell;
@@ -33,4 +34,7 @@ interface IModuleManager {
     boolean isSafeMode();
     boolean setSuEnabled(boolean enabled);
     boolean isSuEnabled();
+    AppProfile getAppProfile(@nullable String key, int uid);
+    boolean setAppProfile(in AppProfile profile);
+    boolean uidShouldUmount(int uid);
 }

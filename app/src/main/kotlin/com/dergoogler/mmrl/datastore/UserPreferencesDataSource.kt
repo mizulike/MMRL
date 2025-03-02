@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import com.dergoogler.mmrl.datastore.modules.ModulesMenuCompat
 import com.dergoogler.mmrl.datastore.repositories.RepositoriesMenuCompat
 import com.dergoogler.mmrl.datastore.repository.RepositoryMenuCompat
+import com.dergoogler.mmrl.datastore.superuser.SuperUserMenuCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
@@ -263,6 +264,13 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
+    suspend fun setSuperUserMenu(value: SuperUserMenuCompat) = withContext(Dispatchers.IO) {
+        userPreferences.updateData {
+            it.copy(
+                superUserMenu = value
+            )
+        }
+    }
 
     suspend fun setRepositoriesMenu(value: RepositoriesMenuCompat) = withContext(Dispatchers.IO) {
         userPreferences.updateData {

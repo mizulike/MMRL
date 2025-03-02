@@ -1,6 +1,7 @@
 package dev.dergoogler.mmrl.compat.impl
 
 import com.topjohnwu.superuser.Shell
+import dev.dergoogler.mmrl.compat.content.AppProfile
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
 import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
@@ -43,6 +44,12 @@ internal open class KernelSUModuleManagerImpl(
     override fun getLkmMode(): Int = KsuNative.getLkmMode()
 
     override fun isSafeMode(): Boolean = KsuNative.isSafeMode()
+
+    override fun setAppProfile(profile: AppProfile?): Boolean = KsuNative.setAppProfile(profile)
+    override fun getAppProfile(key: String?, uid: Int): AppProfile? =
+        KsuNative.getAppProfile(key, uid)
+
+    override fun uidShouldUmount(uid: Int): Boolean = KsuNative.uidShouldUmount(uid)
 
     override fun getModuleCompatibility() = ModuleCompatibility(
         hasMagicMount = false,

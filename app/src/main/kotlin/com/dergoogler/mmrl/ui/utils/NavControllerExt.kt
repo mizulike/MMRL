@@ -80,6 +80,16 @@ fun NavController.navigateSingleTopTo(
     }
 }
 
+fun <T : Any> NavController.navigateSingleTopTo(
+    route: T,
+    launchSingleTop: Boolean = true,
+    builder: NavOptionsBuilder.() -> Unit = {},
+) = navigate(route) {
+    this.launchSingleTop = launchSingleTop
+    restoreState = true
+    builder()
+}
+
 fun NavController.navigatePopUpTo(
     route: String,
     launchSingleTop: Boolean = true,

@@ -1,6 +1,7 @@
 package dev.dergoogler.mmrl.compat.impl
 
 import com.topjohnwu.superuser.Shell
+import dev.dergoogler.mmrl.compat.content.AppProfile
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
 import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
@@ -37,6 +38,11 @@ internal class MagiskModuleManagerImpl(
     override fun isSuEnabled(): Boolean = true
 
     override fun getSuperUserCount(): Int = -1
+
+    override fun setAppProfile(profile: AppProfile?): Boolean = false
+    override fun getAppProfile(key: String?, uid: Int): AppProfile? = null
+
+    override fun uidShouldUmount(uid: Int): Boolean = false
 
     override fun enable(id: String, useShell: Boolean, callback: IModuleOpsCallback) {
         val dir = modulesDir.resolve(id)

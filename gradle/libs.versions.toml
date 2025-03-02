@@ -41,6 +41,7 @@ runtimeAndroid = "1.7.6"
 workRuntimeKtx = "2.10.0"
 lifecycleProcess = "2.8.7"
 apacheCommons = "1.27.1"
+parcelablelist = "2.0.1"
 
 [libraries]
 apache-commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "apacheCommons" }
@@ -106,6 +107,8 @@ square-okhttp-dnsoverhttps = { group = "com.squareup.okhttp3", name = "okhttp-dn
 square-logging-interceptor = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "squareOkhttp" }
 square-moshi = { group = "com.squareup.moshi", name = "moshi", version.ref = "squareMoshi" }
 square-moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin-codegen", version.ref = "squareMoshi" }
+
+dev-rikka-rikkax-parcelablelist = { module = "dev.rikka.rikkax.parcelablelist:parcelablelist", version.ref = "parcelablelist" }
 
 markwon-core = "io.noties.markwon:core:4.6.2"
 hiddenApiBypass = "org.lsposed.hiddenapibypass:hiddenapibypass:4.3"

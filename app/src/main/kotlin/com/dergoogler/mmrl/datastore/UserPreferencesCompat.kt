@@ -6,6 +6,7 @@ import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.datastore.modules.ModulesMenuCompat
 import com.dergoogler.mmrl.datastore.repositories.RepositoriesMenuCompat
 import com.dergoogler.mmrl.datastore.repository.RepositoryMenuCompat
+import com.dergoogler.mmrl.datastore.superuser.SuperUserMenuCompat
 import com.dergoogler.mmrl.ui.navigation.MainScreen
 import com.dergoogler.mmrl.ui.theme.Colors
 import dev.dergoogler.mmrl.compat.BuildCompat
@@ -47,6 +48,7 @@ data class UserPreferencesCompat(
     val allowedKsuModules: List<String>,
     val repositoryMenu: RepositoryMenuCompat,
     val repositoriesMenu: RepositoriesMenuCompat,
+    val superUserMenu: SuperUserMenuCompat,
     val modulesMenu: ModulesMenuCompat,
 ) {
     constructor(original: UserPreferences) : this(
@@ -88,6 +90,10 @@ data class UserPreferencesCompat(
         repositoriesMenu = when {
             original.hasRepositoriesMenu() -> RepositoriesMenuCompat(original.repositoriesMenu)
             else -> RepositoriesMenuCompat.default()
+        },
+        superUserMenu = when {
+            original.hasSuperUserMenu() -> SuperUserMenuCompat(original.superUserMenu)
+            else -> SuperUserMenuCompat.default()
         },
         modulesMenu = when {
             original.hasModulesMenu() -> ModulesMenuCompat(original.modulesMenu)
@@ -134,6 +140,7 @@ data class UserPreferencesCompat(
             .setAllowedKsuModules(allowedKsuModules.joinToString(","))
             .setRepositoryMenu(repositoryMenu.toProto())
             .setRepositoriesMenu(repositoriesMenu.toProto())
+            .setSuperUserMenu(superUserMenu.toProto())
             .setModulesMenu(modulesMenu.toProto())
             .build()
 
@@ -170,6 +177,7 @@ data class UserPreferencesCompat(
             allowedFsModules = emptyList(),
             allowedKsuModules = emptyList(),
             repositoriesMenu = RepositoriesMenuCompat.default(),
+            superUserMenu = SuperUserMenuCompat.default(),
             repositoryMenu = RepositoryMenuCompat.default(),
             modulesMenu = ModulesMenuCompat.default()
         )

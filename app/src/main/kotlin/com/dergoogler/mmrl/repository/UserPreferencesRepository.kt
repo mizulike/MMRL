@@ -6,6 +6,7 @@ import com.dergoogler.mmrl.datastore.WorkingMode
 import com.dergoogler.mmrl.datastore.modules.ModulesMenuCompat
 import com.dergoogler.mmrl.datastore.repositories.RepositoriesMenuCompat
 import com.dergoogler.mmrl.datastore.repository.RepositoryMenuCompat
+import com.dergoogler.mmrl.datastore.superuser.SuperUserMenuCompat
 import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -100,6 +101,9 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setRepositoryMenu(value: RepositoryMenuCompat) =
         userPreferencesDataSource.setRepositoryMenu(value)
+
+    suspend fun setSuperUserMenu(value: SuperUserMenuCompat) =
+        userPreferencesDataSource.setSuperUserMenu(value)
 
     suspend fun setRepositoriesMenu(value: RepositoriesMenuCompat) =
         userPreferencesDataSource.setRepositoriesMenu(value)
