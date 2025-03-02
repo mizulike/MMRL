@@ -29,5 +29,6 @@ android {
 dependencies {
     annotationProcessor(libs.rikka.refine.compiler)
     compileOnly(libs.rikka.refine.annotation)
+    compileOnly(libs.dev.rikka.rikkax.parcelablelist)
     compileOnly(libs.androidx.annotation)
 }
