@@ -19,7 +19,7 @@ import com.dergoogler.mmrl.datastore.developerMode
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
-import com.dergoogler.mmrl.utils.SuFile
+import com.dergoogler.mmrl.utils.file.SuFile
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

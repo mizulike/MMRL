@@ -4,7 +4,7 @@ import android.webkit.WebResourceResponse
 import androidx.annotation.WorkerThread
 import androidx.webkit.WebViewAssetLoader.PathHandler
 import com.dergoogler.mmrl.ui.activity.webui.MimeUtil.getMimeFromFileName
-import com.dergoogler.mmrl.utils.SuFile
+import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.core.BrickException
 import timber.log.Timber
 import java.io.ByteArrayInputStream

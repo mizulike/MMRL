@@ -4,7 +4,7 @@ import android.app.usage.StorageStatsManager
 import android.content.Context
 import android.os.Environment
 import android.os.storage.StorageManager
-import com.dergoogler.mmrl.utils.SuFile
+import com.dergoogler.mmrl.utils.file.SuFile
 import timber.log.Timber
 import java.io.IOException
 

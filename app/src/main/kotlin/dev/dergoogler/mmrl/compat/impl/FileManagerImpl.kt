@@ -13,8 +13,6 @@ import java.io.IOException
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-import kotlin.math.log
-import kotlin.math.pow
 
 
 class FileManagerImpl : IFileManager.Stub() {
@@ -229,19 +227,4 @@ class FileManagerImpl : IFileManager.Stub() {
         return res
     }
 
-}
-
-object FileManagerUtil {
-    fun getStorageSizeRepresentation(storageSizeInBytes: Double): SizeRepresentation {
-        return if (log(storageSizeInBytes / (1024.0.pow(3)), 2.0) % 1.0 == 0.0) {
-            SizeRepresentation.Binary
-        } else {
-            SizeRepresentation.Decimal
-        }
-    }
-}
-
-enum class SizeRepresentation(val base: Int) {
-    Binary(1024),
-    Decimal(1000)
 }
