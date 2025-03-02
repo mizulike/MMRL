@@ -143,7 +143,7 @@ android {
         }
 
         create("debugMin") {
-            initWith(buildTypes.getName("debug"))
+            initWith(buildTypes.getByName("debug"))
             versionNameSuffix = "-debugMin"
             isMinifyEnabled = true
             isShrinkResources = true
