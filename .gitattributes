@@ -1,2 +1,7 @@
-*.js *.mjs *.cjs linguist-language=Other
-*.js *.mjs *.cjs linguist-detectable=false
+*.js linguist-language=Other
+*.mjs linguist-language=Other
+*.cjs linguist-language=Other
+
+*.js  linguist-detectable=false
+*.mjs linguist-detectable=false
+*.cjs linguist-detectable=false
