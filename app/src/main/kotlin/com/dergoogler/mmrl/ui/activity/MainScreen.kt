@@ -70,7 +70,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
     val configuration = LocalConfiguration.current
 
     val windowSize = WindowWidthSize(configuration, windowSizeClass)
-    val isRoot = userPreferences.workingMode.isRoot
+    val isRoot = userPreferences.workingMode.isRoot && Compat.isAlive
 
     val platform = Compat.platform
     val isKsuManager = KsuNative.becomeManager(context.packageName)
