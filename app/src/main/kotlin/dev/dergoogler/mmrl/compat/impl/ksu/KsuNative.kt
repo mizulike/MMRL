@@ -29,6 +29,8 @@ object KsuNative {
         System.loadLibrary("kernelsu")
     }
 
+    external fun grantRoot(): Boolean
+
     external fun becomeManager(pkg: String?): Boolean
 
     external fun getAllowList(): IntArray

@@ -22,6 +22,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.windowsizeclass.WindowSizeClass
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -39,6 +40,7 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.UserPreferencesCompat.Companion.isRoot
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.navigation.MainScreen
@@ -74,6 +76,17 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
 
     val platform = Compat.platform
     val isKsuManager = KsuNative.becomeManager(context.packageName)
+
+    LaunchedEffect(platform, isRoot, isKsuManager) {
+        if (!platform.isKernelSuOrNext) return@LaunchedEffect
+        if (!isKsuManager) return@LaunchedEffect
+
+        if (!KsuNative.grantRoot()) {
+            snackbarHostState.showSnackbar(
+                message = context.getString(R.string.failed_to_grant_root)
+            )
+        }
+    }
 
     val mainScreens by remember(platform, isRoot) {
         derivedStateOf {

@@ -395,4 +395,5 @@
     <string name="failed_to_update_app_profile">Failed to update App Profile for %s</string>
     <string name="failed_to_update_sepolicy">Failed to update SELinux rules for: %s</string>
     <string name="su_not_allowed">Granting superuser isn\'t allowed for: %s</string>
+    <string name="failed_to_grant_root">Failed to Grant Root</string>
 </resources>

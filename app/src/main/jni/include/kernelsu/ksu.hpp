@@ -2,7 +2,35 @@
 #define KERNELSU_KSU_HPP
 
 #include <linux/capability.h>
-#include <stdint.h>
+#include <cstdint>
+
+#define KERNEL_SU_OPTION 0xDEADBEEF
+
+#define CMD_GRANT_ROOT 0
+
+#define CMD_BECOME_MANAGER 1
+#define CMD_GET_VERSION 2
+#define CMD_ALLOW_SU 3
+#define CMD_DENY_SU 4
+#define CMD_GET_SU_LIST 5
+#define CMD_GET_DENY_LIST 6
+#define CMD_CHECK_SAFEMODE 9
+
+#define CMD_GET_APP_PROFILE 10
+#define CMD_SET_APP_PROFILE 11
+
+#define CMD_IS_UID_GRANTED_ROOT 12
+#define CMD_IS_UID_SHOULD_UMOUNT 13
+#define CMD_IS_SU_ENABLED 14
+#define CMD_ENABLE_SU 15
+
+static bool ksuctl(int cmd, void* arg1, void* arg2) {
+    int32_t result = 0;
+    prctl(KERNEL_SU_OPTION, cmd, arg1, arg2, &result);
+    return result == KERNEL_SU_OPTION;
+}
+
+bool grant_root();
 
 bool become_manager(const char *);
 

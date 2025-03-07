@@ -6,6 +6,12 @@
 
 extern "C"
 JNIEXPORT jboolean JNICALL
+Java_dev_dergoogler_mmrl_compat_impl_ksu_KsuNative_grantRoot(JNIEnv *env, jobject) {
+    return grant_root();
+}
+
+extern "C"
+JNIEXPORT jboolean JNICALL
 Java_dev_dergoogler_mmrl_compat_impl_ksu_KsuNative_becomeManager(JNIEnv *env, jobject, jstring pkg) {
     auto cpkg = env->GetStringUTFChars(pkg, nullptr);
     auto result = become_manager(cpkg);
