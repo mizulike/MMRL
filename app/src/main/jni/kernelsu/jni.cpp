@@ -47,11 +47,10 @@ Java_dev_dergoogler_mmrl_compat_impl_ksu_KsuNative_isSafeMode(JNIEnv *env, jobje
 }
 
 extern "C"
-JNIEXPORT jint JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_ksu_KsuNative_getLkmMode(JNIEnv *env, jobject) {
-    return get_lkm_mode();
+JNIEXPORT jobject JNICALL
+Java_dev_dergoogler_mmrl_compat_impl_ksu_KsuNative_isLkmMode(JNIEnv *env, jobject thiz) {
+    return reinterpret_cast<jobject>(is_lkm_mode());
 }
-
 
 static void fillIntArray(JNIEnv *env, jobject list, int *data, int count) {
     auto cls = env->GetObjectClass(list);

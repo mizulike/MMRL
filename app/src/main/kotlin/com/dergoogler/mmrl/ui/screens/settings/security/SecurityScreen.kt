@@ -54,7 +54,13 @@ fun SecurityScreen() {
                 mutableStateOf(!viewModel.isSuEnabled)
             }
 
-            val isSuCompatSupported = viewModel.versionCode >= KsuNative.MINIMAL_SUPPORTED_SU_COMPAT
+            val isSuCompatSupported = if (viewModel.platform.isKernelSU) {
+                viewModel.versionCode >= KsuNative.MINIMAL_SUPPORTED_SU_COMPAT
+            } else if (viewModel.platform.isKernelSuNext) {
+                viewModel.versionCode >= KsuNative.MINIMAL_SUPPORTED_SU_COMPAT_NEXT
+            } else {
+                false
+            }
 
             ListHeader(title = stringResource(id = R.string.working_mode_kernelsu_title))
 

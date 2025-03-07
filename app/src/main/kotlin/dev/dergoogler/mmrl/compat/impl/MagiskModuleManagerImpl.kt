@@ -4,7 +4,7 @@ import com.topjohnwu.superuser.Shell
 import dev.dergoogler.mmrl.compat.content.AppProfile
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
-import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
+import dev.dergoogler.mmrl.compat.content.NullableBoolean
 import dev.dergoogler.mmrl.compat.stub.IModuleOpsCallback
 import dev.dergoogler.mmrl.compat.stub.IShell
 import dev.dergoogler.mmrl.compat.stub.IShellCallback
@@ -30,9 +30,7 @@ internal class MagiskModuleManagerImpl(
     override fun getVersionCode(): Int = mVersionCode
 
     override fun isSafeMode(): Boolean = false
-
-    override fun getLkmMode(): Int = 0
-    override fun isLkmMode(): Boolean = false
+    override fun isLkmMode(): NullableBoolean = NullableBoolean(null)
 
     override fun setSuEnabled(enabled: Boolean): Boolean = true
     override fun isSuEnabled(): Boolean = true

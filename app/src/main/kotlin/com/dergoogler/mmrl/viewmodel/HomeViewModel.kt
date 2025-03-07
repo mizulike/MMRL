@@ -9,6 +9,7 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dev.dergoogler.mmrl.compat.content.NullableBoolean
 import dev.dergoogler.mmrl.compat.viewmodel.MMRLViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -30,9 +31,9 @@ class HomeViewModel @Inject constructor(
             with(moduleManager) { version }
         }
 
-    val lkmMode: Int
-        get() = Compat.get(0) {
-            with(moduleManager) { lkmMode }
+    val isLkmMode: NullableBoolean
+        get() = Compat.get(NullableBoolean(null)) {
+            with(moduleManager) { isLkmMode }
         }
 
     val versionCode

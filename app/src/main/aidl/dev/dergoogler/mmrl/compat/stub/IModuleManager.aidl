@@ -4,6 +4,7 @@ import dev.dergoogler.mmrl.compat.content.LocalModule;
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility;
 import dev.dergoogler.mmrl.compat.content.BulkModule;
 import dev.dergoogler.mmrl.compat.content.AppProfile;
+import dev.dergoogler.mmrl.compat.content.NullableBoolean;
 import dev.dergoogler.mmrl.compat.stub.IShellCallback;
 import dev.dergoogler.mmrl.compat.stub.IModuleOpsCallback;
 import dev.dergoogler.mmrl.compat.stub.IShell;
@@ -29,8 +30,7 @@ interface IModuleManager {
     int getSuperUserCount();
 
     // KernelSU (Next) related
-    boolean isLkmMode();
-    int getLkmMode();
+    NullableBoolean isLkmMode();
     boolean isSafeMode();
     boolean setSuEnabled(boolean enabled);
     boolean isSuEnabled();

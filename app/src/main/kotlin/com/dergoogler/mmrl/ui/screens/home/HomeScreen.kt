@@ -141,10 +141,7 @@ fun HomeScreen(
             when {
                 userPreferences.workingMode.isRoot -> RootItem(
                     developerMode = userPreferences.developerMode,
-                    isAlive = viewModel.isProviderAlive,
-                    lkmMode = viewModel.lkmMode,
-                    platform = viewModel.platform,
-                    versionCode = viewModel.versionCode,
+                    viewModel = viewModel,
                     onClick = {
                         workingModeBottomSheet = true
                     }

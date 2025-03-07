@@ -25,7 +25,11 @@ bool become_manager(const char *pkg) {
 
 int get_version() {
     int32_t version = -1;
-    ksuctl(CMD_GET_VERSION, &version, nullptr);
+    int32_t lkm = 0;
+    ksuctl(CMD_GET_VERSION, &version, &lkm);
+    if (!is_lkm && lkm != 0) {
+        is_lkm = true;
+    }
     return version;
 }
 
@@ -37,11 +41,8 @@ bool is_safe_mode() {
     return ksuctl(CMD_CHECK_SAFEMODE, nullptr, nullptr);
 }
 
-int get_lkm_mode() {
-    int32_t version = -1;
-    int32_t lkm = 0;
-    ksuctl(CMD_GET_VERSION, &version, &lkm);
-    return lkm;
+bool is_lkm_mode() {
+    return is_lkm;
 }
 
 bool uid_should_umount(int uid) {

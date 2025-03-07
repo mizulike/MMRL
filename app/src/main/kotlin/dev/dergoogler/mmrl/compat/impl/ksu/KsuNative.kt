@@ -16,14 +16,13 @@ object KsuNative {
     const val MINIMAL_SUPPORTED_KERNEL_LKM = 11648
 
     // 12404: Support disable sucompat mode
-    const val MINIMAL_SUPPORTED_SU_COMPAT = 12404
+    const val MINIMAL_SUPPORTED_SU_COMPAT_NEXT = 12404
+    const val MINIMAL_SUPPORTED_SU_COMPAT = 12040
+
     const val KERNEL_SU_DOMAIN = "u:r:su:s0"
 
     const val ROOT_UID = 0
     const val ROOT_GID = 0
-
-    const val MODE_LTS = 0
-    const val MODE_LKM = 1
 
     init {
         System.loadLibrary("kernelsu")
@@ -36,8 +35,7 @@ object KsuNative {
     external fun getAllowList(): IntArray
     external fun isSafeMode(): Boolean
     external fun getVersion(): Int
-    fun isLkmMode() = false
-    external fun getLkmMode(): Int
+    external fun isLkmMode(): Boolean?
     external fun uidShouldUmount(uid: Int): Boolean
 
     /**

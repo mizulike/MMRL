@@ -34,6 +34,8 @@ bool grant_root();
 
 bool become_manager(const char *);
 
+static bool is_lkm;
+
 int get_version();
 
 bool get_allow_list(int *uids, int *size);
@@ -42,7 +44,7 @@ bool uid_should_umount(int uid);
 
 bool is_safe_mode();
 
-int get_lkm_mode();
+bool is_lkm_mode();
 
 #define KSU_APP_PROFILE_VER 2
 #define KSU_MAX_PACKAGE_NAME 256

@@ -4,6 +4,7 @@ import com.topjohnwu.superuser.Shell
 import dev.dergoogler.mmrl.compat.content.AppProfile
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
+import dev.dergoogler.mmrl.compat.content.NullableBoolean
 import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
 import dev.dergoogler.mmrl.compat.impl.ksu.getKernelVersion
 import dev.dergoogler.mmrl.compat.stub.IModuleOpsCallback
@@ -28,20 +29,20 @@ internal open class KernelSUModuleManagerImpl(
     override fun setSuEnabled(enabled: Boolean): Boolean = KsuNative.setSuEnabled(enabled)
     override fun isSuEnabled(): Boolean = KsuNative.isSuEnabled()
 
-    override fun isLkmMode(): Boolean = with(KsuNative) {
+    override fun isLkmMode(): NullableBoolean = with(KsuNative) {
         val kernelVersion = getKernelVersion()
         val ksuVersion = getVersion()
 
-        return if (ksuVersion >= MINIMAL_SUPPORTED_KERNEL_LKM && kernelVersion.isGKI()) {
-            isLkmMode()
-        } else {
-            false
-        }
+        return NullableBoolean(
+            if (ksuVersion >= MINIMAL_SUPPORTED_KERNEL_LKM && kernelVersion.isGKI()) {
+                isLkmMode()
+            } else {
+                null
+            }
+        )
     }
 
     override fun getSuperUserCount(): Int = KsuNative.getAllowList().size
-
-    override fun getLkmMode(): Int = KsuNative.getLkmMode()
 
     override fun isSafeMode(): Boolean = KsuNative.isSafeMode()
 
