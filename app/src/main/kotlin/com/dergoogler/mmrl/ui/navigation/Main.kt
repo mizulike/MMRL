@@ -17,13 +17,6 @@ enum class MainScreen(
         iconFilled = R.drawable.home_filled
     ),
 
-    SuperUser(
-        route = "SuperUserScreen",
-        label = R.string.page_superuser,
-        icon = R.drawable.shield,
-        iconFilled = R.drawable.shield_filled
-    ),
-    
     Repository(
         route = "RepositoriesScreen",
         label = R.string.page_repositorys,

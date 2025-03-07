@@ -36,7 +36,7 @@ object KsuNative {
     external fun getAllowList(): IntArray
     external fun isSafeMode(): Boolean
     external fun getVersion(): Int
-    external fun isLkmMode(): Boolean
+    fun isLkmMode() = false
     external fun getLkmMode(): Int
     external fun uidShouldUmount(uid: Int): Boolean
 

@@ -47,15 +47,9 @@ Java_dev_dergoogler_mmrl_compat_impl_ksu_KsuNative_isSafeMode(JNIEnv *env, jobje
 }
 
 extern "C"
-JNIEXPORT jboolean JNICALL
-Java_dev_dergoogler_mmrl_compat_impl_ksu_KsuNative_isLkmMode(JNIEnv *env, jobject) {
-    return is_lkm_mode();
-}
-
-extern "C"
 JNIEXPORT jint JNICALL
 Java_dev_dergoogler_mmrl_compat_impl_ksu_KsuNative_getLkmMode(JNIEnv *env, jobject) {
-    return lkm_mode;
+    return get_lkm_mode();
 }
 
 

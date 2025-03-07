@@ -59,7 +59,7 @@ fun SecurityScreen() {
             ListHeader(title = stringResource(id = R.string.working_mode_kernelsu_title))
 
             ListSwitchItem(
-                enabled = false /*isSuCompatSupported*/,
+                enabled = isSuCompatSupported,
                 title = "Disable SU Compatibility",
                 desc = "Temporarily disable the ability of any app to gain root privileges via the su command (existing root processes won't be affected)",
                 checked = isSuDisabled,

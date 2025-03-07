@@ -115,17 +115,16 @@ internal fun RootItem(
                         color = MaterialTheme.colorScheme.onSecondaryContainer
                     )
                 },
-                icon = {
-                    if (developerMode && platform.isKernelSuOrNext) {
-                        LabelItem(text = when(lkmMode) {
+                icon = (developerMode && platform.isKernelSuOrNext) nullable {
+                    LabelItem(
+                        text = when (lkmMode) {
                             KsuNative.MODE_LTS -> "LTS"
                             KsuNative.MODE_LKM -> "LKM"
                             else -> "GKI"
-                        })
-                    }
+                        }
+                    )
                 }
             )
-
 
             Text(
                 text = if (isAlive) {

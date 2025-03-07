@@ -8,6 +8,7 @@ import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 
 @Parcelize
 @Serializable
@@ -45,4 +46,6 @@ data class AppInfo(
                 !profile.nonRootUseDefault
             }
         }
+
+    fun toJson() = Json.encodeToString(serializer(), this)
 }

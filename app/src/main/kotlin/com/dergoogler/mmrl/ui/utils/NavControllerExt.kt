@@ -9,6 +9,7 @@ import com.dergoogler.mmrl.app.moshi
 import dev.dergoogler.mmrl.compat.core.BrickException
 import dev.dergoogler.mmrl.compat.ext.toDecodedUrl
 import dev.dergoogler.mmrl.compat.ext.toEncodedUrl
+import kotlinx.serialization.json.Json
 
 /**
  * Retrieves the arguments associated with the current navigation back stack entry.
@@ -43,6 +44,9 @@ fun Bundle.loadString(key: String, force: Boolean = false): String? {
 fun Bundle.panicString(key: String, force: Boolean = false): String {
     return this.loadString(key, force) ?: throw BrickException("Key '$key' is null")
 }
+
+inline fun <reified T : Any> Bundle.panicJson(key: String): T =
+    Json.decodeFromString<T>(panicString(key))
 
 inline fun <reified T> Bundle.panicMoshiParcelable(key: String): T {
     val json = panicString(key)

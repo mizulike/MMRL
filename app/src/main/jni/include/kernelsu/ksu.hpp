@@ -42,9 +42,7 @@ bool uid_should_umount(int uid);
 
 bool is_safe_mode();
 
-static int lkm_mode = 0;
-
-bool is_lkm_mode();
+int get_lkm_mode();
 
 #define KSU_APP_PROFILE_VER 2
 #define KSU_MAX_PACKAGE_NAME 256
