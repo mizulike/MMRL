@@ -97,7 +97,7 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setAutoUpdateReposInterval(value: Int) = withContext(Dispatchers.IO) {
+    suspend fun setAutoUpdateReposInterval(value: Long) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
                 autoUpdateReposInterval = value
@@ -113,7 +113,7 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setCheckModuleUpdatesInterval(value: Int) = withContext(Dispatchers.IO) {
+    suspend fun setCheckModuleUpdatesInterval(value: Long) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
                 checkModuleUpdatesInterval = value

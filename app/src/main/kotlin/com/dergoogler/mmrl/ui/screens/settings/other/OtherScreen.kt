@@ -1,11 +1,7 @@
 package com.dergoogler.mmrl.ui.screens.settings.other
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
@@ -42,28 +38,25 @@ fun OtherScreen() {
             onChange = viewModel::setUseDoh
         )
 
-        var useProviderAsBackgroundService by remember(userPreferences.useProviderAsBackgroundService) {
-            mutableStateOf(userPreferences.useProviderAsBackgroundService)
-        }
-
         ListSwitchItem(
             title = stringResource(id = R.string.settings_provider_service),
             desc = stringResource(id = R.string.settings_provider_service_desc),
-            checked = useProviderAsBackgroundService,
-            onChange = viewModel::setUseProviderAsBackgroundService,
-            base = {
-                learnMoreText = R.string.stop_service
-                learnMore = {
+            checked = userPreferences.useProviderAsBackgroundService,
+            onChange = {
+                if (!it) {
                     ProviderService.stop(context)
                     scope.launch {
                         while (ProviderService.isActive.value) {
                             delay(100)
                         }
-                        useProviderAsBackgroundService = false
-                        viewModel.setUseProviderAsBackgroundService(false)
-                        snackbarHost.showSnackbar("Provider service stopped")
+                        viewModel.setUseProviderAsBackgroundService(it)
+                        snackbarHost.showSnackbar(context.getString(R.string.provider_service_stopped))
                     }
+
+                    return@ListSwitchItem
                 }
+
+                viewModel.setUseProviderAsBackgroundService(it)
             }
         )
     }

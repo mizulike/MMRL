@@ -38,13 +38,13 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setAutoUpdateRepos(value: Boolean) =
         userPreferencesDataSource.setAutoUpdateRepos(value)
 
-    suspend fun setAutoUpdateReposInterval(value: Int) =
+    suspend fun setAutoUpdateReposInterval(value: Long) =
         userPreferencesDataSource.setAutoUpdateReposInterval(value)
 
     suspend fun setCheckModuleUpdates(value: Boolean) =
         userPreferencesDataSource.setCheckModuleUpdates(value)
 
-    suspend fun setCheckModuleUpdatesInterval(value: Int) =
+    suspend fun setCheckModuleUpdatesInterval(value: Long) =
         userPreferencesDataSource.setCheckModuleUpdatesInterval(value)
 
     suspend fun setCheckAppUpdates(value: Boolean) =

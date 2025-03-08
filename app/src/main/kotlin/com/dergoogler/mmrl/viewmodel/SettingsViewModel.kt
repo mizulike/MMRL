@@ -115,7 +115,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setAutoUpdateReposInterval(value: Int) {
+    fun setAutoUpdateReposInterval(value: Long) {
         viewModelScope.launch {
             userPreferencesRepository.setAutoUpdateReposInterval(value)
         }
@@ -127,7 +127,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setCheckModuleUpdatesInterval(value: Int) {
+    fun setCheckModuleUpdatesInterval(value: Long) {
         viewModelScope.launch {
             userPreferencesRepository.setCheckModuleUpdatesInterval(value)
         }

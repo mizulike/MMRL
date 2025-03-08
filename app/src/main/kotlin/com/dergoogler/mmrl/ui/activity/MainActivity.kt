@@ -25,7 +25,9 @@ import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isSetup
 import com.dergoogler.mmrl.network.NetworkUtils
+import com.dergoogler.mmrl.service.ModuleService
 import com.dergoogler.mmrl.service.ProviderService
+import com.dergoogler.mmrl.service.RepositoryService
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
@@ -96,6 +98,24 @@ class MainActivity : MMRLComponentActivity() {
                 setInstallActivityEnabled(preferences.workingMode.isRoot)
                 setWebUIActivityEnabled(preferences.workingMode.isRoot)
                 setActionActivityEnabled(preferences.workingMode.isRoot)
+            }
+
+            LaunchedEffect(preferences.autoUpdateRepos, preferences.autoUpdateReposInterval) {
+                if (preferences.autoUpdateRepos) {
+                    RepositoryService.start(
+                        context = baseContext,
+                        interval = preferences.autoUpdateReposInterval,
+                    )
+                }
+            }
+
+            LaunchedEffect(preferences.checkModuleUpdates, preferences.checkModuleUpdatesInterval, preferences.useProviderAsBackgroundService) {
+                if (preferences.useProviderAsBackgroundService && preferences.checkModuleUpdates) {
+                    ModuleService.start(
+                        context = baseContext,
+                        interval = preferences.checkModuleUpdatesInterval,
+                    )
+                }
             }
 
             Crossfade(

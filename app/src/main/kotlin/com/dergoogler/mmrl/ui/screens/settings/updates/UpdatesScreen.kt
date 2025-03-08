@@ -4,23 +4,55 @@ import android.content.Intent
 import android.provider.Settings
 import android.widget.Toast
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.service.ModuleService
+import com.dergoogler.mmrl.service.RepositoryService
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.ListHeader
+import com.dergoogler.mmrl.ui.component.listItem.ListRadioCheckItem
 import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
+import com.dergoogler.mmrl.ui.component.listItem.RadioOptionItem
 import com.dergoogler.mmrl.ui.providable.LocalSettings
+import com.dergoogler.mmrl.ui.providable.LocalSnackbarHost
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
-private val optionsOfHours = listOf(1, 2, 3, 4, 5, 10, 12, 16, 24, 48, 72)
+@Composable
+fun radioOptionItem(interval: Long): RadioOptionItem<Long> {
+    return RadioOptionItem(
+        title = pluralStringResource(id = R.plurals.hours, count = interval.toInt()),
+        value = interval
+    )
+}
 
 @Composable
 fun UpdatesScreen() {
     val viewModel = LocalSettings.current
     val userPreferences = LocalUserPreferences.current
+    val snackbarHost = LocalSnackbarHost.current
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
+
+    val optionsOfHours = listOf(
+        radioOptionItem(1),
+        radioOptionItem(2),
+        radioOptionItem(3),
+        radioOptionItem(4),
+        radioOptionItem(5),
+        radioOptionItem(6),
+        radioOptionItem(10),
+        radioOptionItem(12),
+        radioOptionItem(16),
+        radioOptionItem(24),
+        radioOptionItem(48),
+        radioOptionItem(72),
+    )
 
     SettingsScaffold(
         title = R.string.settings_updates,
@@ -62,59 +94,86 @@ fun UpdatesScreen() {
             onChange = viewModel::setCheckAppUpdatesPreReleases
         )
 
-//        ListHeader(
-//            title = stringResource(id = R.string.page_repository)
-//        )
-//
-//        ListSwitchItem(
-//            title = stringResource(id = R.string.settings_auto_update_repos),
-//            desc = stringResource(id = R.string.settings_auto_update_repos_desc),
-//            checked = userPreferences.autoUpdateRepos,
-//            enabled = false,
-//            onChange = viewModel::setAutoUpdateRepos
-//        )
-//
-//        ListRadioCheckItem(
-//            title = stringResource(R.string.settings_repo_update_interval),
-//            desc = stringResource(
-//                R.string.settings_repo_update_interval_desc,
-//                userPreferences.autoUpdateReposInterval
-//            ),
-//            // enabled = userPreferences.autoUpdateRepos,
-//            enabled = false,
-//            suffix = stringResource(id = R.string.settings_repo_update_interval_suffix),
-//            value = userPreferences.autoUpdateReposInterval,
-//            options = optionsOfHours,
-//            onConfirm = {
-//                viewModel.setAutoUpdateReposInterval(it)
-//            })
-//
-//        ListHeader(
-//            title = stringResource(id = R.string.page_modules)
-//        )
-//
-//        ListSwitchItem(
-//            title = stringResource(id = R.string.settings_check_modules_update),
-//            desc = stringResource(id = R.string.settings_check_modules_update_desc),
-//            checked = userPreferences.checkModuleUpdates,
-//            enabled = false,
-//            onChange = viewModel::setCheckModuleUpdates
-//        )
-//
-//        ListRadioCheckItem(
-//            title = stringResource(R.string.settings_check_modules_update_interval),
-//            desc = stringResource(
-//                R.string.settings_check_modules_update_interval_desc,
-//                userPreferences.checkModuleUpdatesInterval
-//            ),
-//            // enabled = userPreferences.checkModuleUpdates,
-//            enabled = false,
-//            suffix = stringResource(id = R.string.settings_check_modules_update_interval_suffix),
-//            value = userPreferences.checkModuleUpdatesInterval,
-//            options = optionsOfHours,
-//            onConfirm = {
-//                viewModel.setCheckModuleUpdatesInterval(it)
-//            }
-//        )
+        ListHeader(
+            title = stringResource(id = R.string.page_repository)
+        )
+
+        ListSwitchItem(
+            title = stringResource(id = R.string.settings_auto_update_repos),
+            desc = stringResource(id = R.string.settings_auto_update_repos_desc),
+            checked = userPreferences.autoUpdateRepos,
+            onChange = {
+                if (!it) {
+                    RepositoryService.stop(context)
+                    scope.launch {
+                        while (RepositoryService.isActive.value) {
+                            delay(100)
+                        }
+                        viewModel.setAutoUpdateRepos(it)
+                        snackbarHost.showSnackbar(context.getString(R.string.repository_service_stopped))
+                    }
+
+                    return@ListSwitchItem
+                }
+
+                viewModel.setAutoUpdateRepos(it)
+            }
+        )
+
+        ListRadioCheckItem(
+            title = stringResource(R.string.settings_repo_update_interval),
+            desc = stringResource(
+                R.string.settings_repo_update_interval_desc,
+                userPreferences.autoUpdateReposInterval
+            ),
+            enabled = userPreferences.autoUpdateRepos,
+            suffix = stringResource(id = R.string.settings_repo_update_interval_suffix),
+            value = userPreferences.autoUpdateReposInterval,
+            options = optionsOfHours,
+            onConfirm = {
+                viewModel.setAutoUpdateReposInterval(it.value)
+            })
+
+        ListHeader(
+            title = stringResource(id = R.string.page_modules)
+        )
+
+        ListSwitchItem(
+            title = stringResource(id = R.string.settings_check_modules_update),
+            desc = stringResource(id = R.string.settings_check_modules_update_desc),
+            checked = userPreferences.checkModuleUpdates,
+            enabled = userPreferences.useProviderAsBackgroundService,
+            onChange = {
+                if (!it) {
+                    ModuleService.stop(context)
+                    scope.launch {
+                        while (ModuleService.isActive.value) {
+                            delay(100)
+                        }
+                        viewModel.setCheckModuleUpdates(it)
+                        snackbarHost.showSnackbar(context.getString(R.string.module_service_stopped))
+                    }
+
+                    return@ListSwitchItem
+                }
+
+                viewModel.setCheckModuleUpdates(it)
+            }
+        )
+
+        ListRadioCheckItem(
+            title = stringResource(R.string.settings_check_modules_update_interval),
+            desc = stringResource(
+                R.string.settings_check_modules_update_interval_desc,
+                userPreferences.checkModuleUpdatesInterval
+            ),
+            enabled = userPreferences.useProviderAsBackgroundService && userPreferences.checkModuleUpdates,
+            suffix = stringResource(id = R.string.settings_check_modules_update_interval_suffix),
+            value = userPreferences.checkModuleUpdatesInterval,
+            options = optionsOfHours,
+            onConfirm = {
+                viewModel.setCheckModuleUpdatesInterval(it.value)
+            }
+        )
     }
 }

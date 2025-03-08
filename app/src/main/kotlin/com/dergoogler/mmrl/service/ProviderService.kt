@@ -57,7 +57,7 @@ class ProviderService : LifecycleService() {
     }
 
     private fun baseNotificationBuilder() =
-        NotificationCompat.Builder(this, NotificationUtils.CHANNEL_ID_DOWNLOAD)
+        NotificationCompat.Builder(this, NotificationUtils.CHANNEL_ID_PROVIDER)
             .setSmallIcon(R.drawable.launcher_outline)
 
     private fun setForeground() {
@@ -69,7 +69,7 @@ class ProviderService : LifecycleService() {
             .setGroupSummary(true)
             .build()
 
-        startForeground(NotificationUtils.NOTIFICATION_ID_DOWNLOAD, notification)
+        startForeground(NotificationUtils.NOTIFICATION_ID_PROVIDER, notification)
     }
 
     companion object {

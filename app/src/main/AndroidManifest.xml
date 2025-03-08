@@ -129,9 +129,19 @@
             android:foregroundServiceType="dataSync" />
 
         <service
+            android:name=".service.RepositoryService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <service
+            android:name=".service.ModuleService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <service
             android:name=".service.ProviderService"
             android:exported="false"
-            android:foregroundServiceType="specialUse"  />
+            android:foregroundServiceType="specialUse" />
 
         <service
             android:name=".service.LogcatService"
@@ -162,8 +172,7 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths">
-            </meta-data>
+                android:resource="@xml/provider_paths" />
         </provider>
 
         <provider
