@@ -1,17 +1,18 @@
 package com.dergoogler.mmrl.ui.screens.settings.developer
 
-import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.developerMode
-import com.dergoogler.mmrl.ui.component.Alert
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
-import com.dergoogler.mmrl.ui.component.listItem.ListEditTextItem
+import com.dergoogler.mmrl.ui.component.listItem.ListEditTextSwitchItem
 import com.dergoogler.mmrl.ui.component.listItem.ListHeader
 import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
 import com.dergoogler.mmrl.ui.providable.LocalSettings
@@ -23,6 +24,28 @@ import dev.dergoogler.mmrl.compat.ext.takeTrue
 fun DeveloperScreen() {
     val viewModel = LocalSettings.current
     val userPreferences = LocalUserPreferences.current
+
+    var webuiRemoteUrlInfo by remember { mutableStateOf(false) }
+    if (webuiRemoteUrlInfo) AlertDialog(
+        title = {
+            Text(text = stringResource(id = R.string.settings_webui_remote_url))
+        },
+        text = {
+            Text(text = stringResource(id = R.string.settings_webui_remote_url_alert_desc))
+        },
+        onDismissRequest = {
+            webuiRemoteUrlInfo = false
+        },
+        confirmButton = {
+            TextButton(
+                onClick = {
+                    webuiRemoteUrlInfo = false
+                }
+            ) {
+                Text(text = stringResource(id = R.string.dialog_ok))
+            }
+        },
+    )
 
     SettingsScaffold(
         title = R.string.settings_developer
@@ -36,32 +59,22 @@ fun DeveloperScreen() {
 
         ListHeader(title = stringResource(id = R.string.view_module_features_webui))
 
-        userPreferences.developerMode({ useWebUiDevUrl }) {
-            Alert(
-                title = stringResource(id = R.string.settings_webui_remote_url),
-                message = stringResource(id = R.string.settings_webui_remote_url_alert_desc),
-                backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                textColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                modifier = Modifier.padding(16.dp),
-            )
-        }
-
-        ListSwitchItem(
+        ListEditTextSwitchItem(
             enabled = userPreferences.developerMode,
-            title = stringResource(id = R.string.settings_enable_webui_remote_url),
-            checked = userPreferences.useWebUiDevUrl,
-            onChange = viewModel::setUseWebUiDevUrl,
-        )
-
-        ListEditTextItem(
-            enabled = userPreferences.developerMode && userPreferences.useWebUiDevUrl,
             title = stringResource(id = R.string.settings_webui_remote_url),
             desc = stringResource(id = R.string.settings_webui_remote_url_desc),
             value = userPreferences.webUiDevUrl,
+            checked = userPreferences.useWebUiDevUrl,
+            onChange = viewModel::setUseWebUiDevUrl,
             onConfirm = {
                 viewModel.setWebUiDevUrl(it)
             },
             onValid = { !it.isLocalWifiUrl() },
+            base = {
+                learnMore = {
+                    webuiRemoteUrlInfo = true
+                }
+            },
             dialog = {
                 supportingText = { isError ->
                     isError.takeTrue {

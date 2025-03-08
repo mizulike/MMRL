@@ -76,7 +76,7 @@ fun ListEditTextItem(
 }
 
 @Composable
-private fun EditTextDialog(
+fun EditTextDialog(
     title: String,
     value: String,
     onValid: ((String) -> Boolean)? = null,
