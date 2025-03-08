@@ -228,4 +228,10 @@ class SettingsViewModel @Inject constructor(
             userPreferencesRepository.setAllowedKsuModules(value)
         }
     }
+
+    fun setUseProviderAsBackgroundService(value: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setUseProviderAsBackgroundService(value)
+        }
+    }
 }

@@ -273,4 +273,13 @@ class UserPreferencesDataSource @Inject constructor(
             )
         }
     }
+
+
+    suspend fun setUseProviderAsBackgroundService(value: Boolean) = withContext(Dispatchers.IO) {
+        userPreferences.updateData {
+            it.copy(
+                useProviderAsBackgroundService = value
+            )
+        }
+    }
 }

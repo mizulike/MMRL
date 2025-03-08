@@ -103,4 +103,7 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setModulesMenu(value: ModulesMenu) =
         userPreferencesDataSource.setModulesMenu(value)
+
+    suspend fun setUseProviderAsBackgroundService(value: Boolean) =
+        userPreferencesDataSource.setUseProviderAsBackgroundService(value)
 }

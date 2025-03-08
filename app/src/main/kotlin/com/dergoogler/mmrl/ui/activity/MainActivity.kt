@@ -17,7 +17,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.background.BootBroadcastReceiver
@@ -26,6 +25,7 @@ import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isSetup
 import com.dergoogler.mmrl.network.NetworkUtils
+import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
@@ -82,7 +82,10 @@ class MainActivity : MMRLComponentActivity() {
 
                 modulesRepository.getBlacklist()
 
-                Compat.init(preferences.workingMode)
+                ProviderService.start(
+                    context = baseContext,
+                    preferences = preferences,
+                )
 
                 if (!preferences.workingMode.isSetup) BootBroadcastReceiver.startWorkManagers(
                     this@MainActivity,

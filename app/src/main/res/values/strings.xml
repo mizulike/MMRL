@@ -396,4 +396,7 @@
     <string name="failed_to_update_sepolicy">Failed to update SELinux rules for: %s</string>
     <string name="su_not_allowed">Granting superuser isn\'t allowed for: %s</string>
     <string name="failed_to_grant_root">Failed to Grant Root</string>
+    <string name="settings_provider_service">Provider Service</string>
+    <string name="settings_provider_service_desc">Keep the provider running in the background to significantly reduce startup times and improve overall responsiveness</string>
+    <string name="stop_service">Stop Service</string>
 </resources>

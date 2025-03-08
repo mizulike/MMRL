@@ -54,6 +54,7 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     val injectEruda: List<String> = emptyList(),
     val allowedFsModules: List<String> = emptyList(),
     val allowedKsuModules: List<String> = emptyList(),
+    val useProviderAsBackgroundService: Boolean = false,
 ) {
     @Composable
     fun isDarkMode() = when (darkMode) {
