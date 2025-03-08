@@ -26,7 +26,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun radioOptionItem(interval: Long): RadioOptionItem<Long> {
     return RadioOptionItem(
-        title = pluralStringResource(id = R.plurals.hours, count = interval.toInt()),
+        title = pluralStringResource(id = R.plurals.hours, count = interval.toInt(), interval),
         value = interval
     )
 }
@@ -127,7 +127,6 @@ fun UpdatesScreen() {
                 userPreferences.autoUpdateReposInterval
             ),
             enabled = userPreferences.autoUpdateRepos,
-            suffix = stringResource(id = R.string.settings_repo_update_interval_suffix),
             value = userPreferences.autoUpdateReposInterval,
             options = optionsOfHours,
             onConfirm = {
@@ -168,7 +167,6 @@ fun UpdatesScreen() {
                 userPreferences.checkModuleUpdatesInterval
             ),
             enabled = userPreferences.useProviderAsBackgroundService && userPreferences.checkModuleUpdates,
-            suffix = stringResource(id = R.string.settings_check_modules_update_interval_suffix),
             value = userPreferences.checkModuleUpdatesInterval,
             options = optionsOfHours,
             onConfirm = {

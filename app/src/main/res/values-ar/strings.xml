@@ -2,9 +2,6 @@
 <resources>
     <!-- Setup -->
     <string name="setup_mode">وضع العمل</string>
-    <string name="setup_root_title">الروت</string>
-    <string name="setup_root_desc">يتطلب أذونات الروت المقدمة من Magisk أو KernelSU</string>
-    <string name="setup_shizuku_desc">يتطلب الإذن المقدم من Sui أو Shizuku (روت)</string>
     <string name="setup_non_root_title">بدون روت</string>
     <string name="setup_non_root_desc">لا يتطلب أذونات الروت، فقط وظيفة تنزيل الإضافة متاحة</string>
     <!-- Install -->
@@ -40,15 +37,8 @@
     <string name="menu_sort_repolistmode_detailed">مُفصَّل</string>
     <string name="menu_sort_repolistmode_compact">مضغوط</string>
     <!-- View Module -->
-    <string name="view_module_page_overview">نظرة عامة</string>
-    <string name="view_module_page_versions">الإصدارات</string>
-    <string name="view_module_page_about">حول</string>
-    <string name="view_module_page_readme">اقرأني</string>
-    <string name="view_module_description">الوصف</string>
-    <string name="view_module_cloud">السحابة</string>
     <string name="view_module_version">الإصدار</string>
     <string name="view_module_last_updated">آخر تحديث</string>
-    <string name="view_module_local">محلي</string>
     <string name="view_module_update_notify">إعلام</string>
     <string name="view_module_update_ignore">تجاهل</string>
     <string name="view_module_provided">مقدم من %s</string>
@@ -60,8 +50,6 @@
     <string name="view_module_type">النوع: %s</string>
     <string name="view_module_added">تم الإضافة في: %s</string>
     <string name="view_module_file_size">حجم الملف</string>
-    <string name="view_module_screenshots">لقطات الشاشة</string>
-    <string name="view_module_help">المساعدة</string>
     <string name="view_module_antifeatures">ميزات مضادة/عيوب</string>
     <string name="view_module_unsupported">غير مدعوم</string>
     <string name="view_module_unsupported_desc">يبدو أن جهازك لا يدعم هذا الإصدار من الإضافة. قم بالتثبيت على مسؤوليتك الخاصة!</string>
@@ -96,9 +84,6 @@
     <string name="module_update">تحديث</string>
     <!-- Settings -->
     <string name="settings_app">التطبيق</string>
-    <string name="settings_app_desc">إعدادات حول تطبيق MMRL نفسه</string>
-    <string name="settings_repo">المستودعات</string>
-    <string name="settings_repo_desc">إدارة مستودعات إضافات Magisk</string>
     <string name="settings_about">حول</string>
     <string name="settings_resources">الموارد</string>
     <string name="settings_resources_desc">المستندات، المستودعات المدعومة وأي شيء آخر</string>
@@ -134,18 +119,14 @@
     <string name="settings_blacklist_desc">إضافات مدرجة قد تكون مغلقة المصدر أو خطيرة</string>
     <string name="settings_date_pattern">نمط التاريخ</string>
     <string name="settings_date_pattern_desc">استخدم تنسيق التاريخ الخاص بك</string>
-    <string name="settings_recommended_repos">المستودعات الموصى بها</string>
-    <string name="settings_recommended_repos_desc">استكشف مستودعات جديدة وأضفها مباشرة</string>
     <string name="settings_updates">التحديثات</string>
     <string name="settings_updates_desc">إدارة تفضيلاتك في عملية التحديث</string>
     <string name="settings_auto_update_repos">تحديث المستودع تلقائيًا</string>
     <string name="settings_auto_update_repos_desc">تحديث المستودعات تلقائيًا في الخلفية</string>
     <string name="settings_repo_update_interval">فترة تحديث المستودع</string>
-    <string name="settings_repo_update_interval_suffix">\u0020ساعة/ساعات</string>
     <string name="settings_repo_update_interval_desc">حدد الفترة الزمنية لتحديث المستودعات</string>
     <string name="settings_check_modules_update">التحقق من تحديثات الإضافات</string>
     <string name="settings_check_modules_update_desc">يمكنك التحقق من التحديثات للإضافات المثبتة</string>
-    <string name="settings_check_modules_update_interval_suffix">\u0020ساعة/ساعات</string>
     <string name="settings_check_modules_update_interval">فترة التحقق من تحديث الإضافات</string>
     <string name="settings_check_modules_update_interval_desc">حدد الفترة الزمنية للتحقق من الإضافات المثبتة لديك</string>
     <!-- App Theme -->
@@ -194,20 +175,13 @@
     <string name="search_placeholder">بحث…</string>
     <!-- Other -->
     <string name="unknown_error">خطأ غير معروف</string>
-    <string name="verified">تم التحقق</string>
-    <string name="open">فتح</string>
     <string name="help">مساعدة</string>
-    <string name="module_config">الإعدادات</string>
     <string name="we_hit_a_brick_crash">لقد واجهتنا مشكلة!</string>
     <string name="report_to_issues">الإبلاغ عن مشاكل</string>
     <string name="stack_trace_truncated">%s\n… %d المزيد</string>
     <string name="additional_notes">ملاحظات إضافية</string>
     <string name="repo_added">تم إضافة المستودع</string>
     <!-- Work Manager -->
-<string name="work_repository_updates">تحديثات المستودعات</string>
-    <string name="work_updates_for_repositories">تحديثات للمستودعات</string>
-    <string name="work_module_updates">تحديثات الإضافات</string>
-    <string name="work_update_checker_for_modules">مدقق تحديثات الإضافات</string>
     <!-- Repo Update Service -->
 <string name="repo_update_service">تم تحديث المستودعات بنجاح</string>
     <string name="repo_update_service_desc">لا تقلق، MMRL قام بتحديث المستودعات المثبتة لديك. 😋</string>
@@ -228,13 +202,10 @@
     <string name="view_module_required_os">نظام التشغيل المطلوب</string>
     <string name="view_module_required_os_value">اندرويد %1$s فيما فوق</string>
     <string name="view_module_share">مشاركة</string>
-    <string name="view_module_not_found">لم يتم العثور على الإضافة</string>
-    <string name="view_module_dependencies_not_found">لم يتم العثور على المتطلبات</string>
     <string name="view_module_install_confirm_title">تود تثبيت هذه الإضافة ؟</string>
     <string name="view_module_install_confirm_confirm_deps">تثبيت (المتطلبات)</string>
     <string name="view_module_install_confirm_confirm">تثبيت</string>
     <string name="module_reinstall">إعادة تثبيت</string>
-    <string name="module_id">المعرف: %1$s</string>
     <string name="settings_open_notification_settings">فتح إعدادات الاشعارات</string>
     <string name="settings_check_app_updates">تحقق من تحديثات التطبيق</string>
     <string name="settings_hide_fingerprint">إخفاء معرف الجهاز (بصمة الجهاز)</string>
@@ -260,7 +231,6 @@
     <string name="home_enabled_modules">الإضافات المُفَعَّلة</string>
     <string name="home_updated_modules">الاضافات المُحدثة</string>
     <string name="home_disabled_modules">الإضافات الغير مُفعلة</string>
-    <string name="home_installed_modules_with_service_files">الإضافات المُثبتة ذات ملفات الخدمة</string>
     <string name="bulk_install_module_already_added">تمت إضافتها بالفعل</string>
     <string name="bulk_module_install">تثبيت الإضافات دفعة واحدة</string>
     <string name="events_birthday">%1$s سنوات من MMRL !</string>
@@ -268,7 +238,6 @@
     <string name="events_christmas">شجرة ←</string>
     <string name="events_new_years_eve">عام جديد!</string>
     <string name="open_source">مفتوح المصدر</string>
-    <string name="maintained_by">تم صيانته بواسطة</string>
     <string name="kernel">Kernel</string>
     <string name="manager_version">اصدار MMRL</string>
     <string name="fingerprint">معرف الجهاز (بصمة الجهاز)</string>
