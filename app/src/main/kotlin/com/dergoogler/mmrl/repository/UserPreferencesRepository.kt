@@ -1,13 +1,12 @@
 package com.dergoogler.mmrl.repository
 
-import com.dergoogler.mmrl.datastore.DarkMode
 import com.dergoogler.mmrl.datastore.UserPreferencesDataSource
-import com.dergoogler.mmrl.datastore.WorkingMode
-import com.dergoogler.mmrl.datastore.modules.ModulesMenuCompat
-import com.dergoogler.mmrl.datastore.repositories.RepositoriesMenuCompat
-import com.dergoogler.mmrl.datastore.repository.RepositoryMenuCompat
-import com.dergoogler.mmrl.datastore.superuser.SuperUserMenuCompat
-import java.io.File
+import com.dergoogler.mmrl.datastore.model.DarkMode
+import com.dergoogler.mmrl.datastore.model.Homepage
+import com.dergoogler.mmrl.datastore.model.ModulesMenu
+import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
+import com.dergoogler.mmrl.datastore.model.RepositoryMenu
+import com.dergoogler.mmrl.datastore.model.WorkingMode
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -27,7 +26,7 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setUseDoh(value: Boolean) = userPreferencesDataSource.setUseDoh(value)
 
-    suspend fun setDownloadPath(value: File) = userPreferencesDataSource.setDownloadPath(value)
+    suspend fun setDownloadPath(value: String) = userPreferencesDataSource.setDownloadPath(value)
 
     suspend fun setConfirmReboot(value: Boolean) = userPreferencesDataSource.setConfirmReboot(value)
 
@@ -57,7 +56,7 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setHideFingerprintInHome(value: Boolean) =
         userPreferencesDataSource.setHideFingerprintInHome(value)
 
-    suspend fun setHomepage(value: String) =
+    suspend fun setHomepage(value: Homepage) =
         userPreferencesDataSource.setHomepage(value)
 
     suspend fun setWebUiDevUrl(value: String) =
@@ -74,9 +73,6 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setUseShellForModuleAction(value: Boolean) =
         userPreferencesDataSource.setUseShellForModuleAction(value)
-
-    suspend fun setWebuiAllowRestrictedPaths(value: Boolean) =
-        userPreferencesDataSource.setWebuiAllowRestrictedPaths(value)
 
     suspend fun setClearInstallTerminal(value: Boolean) =
         userPreferencesDataSource.setClearInstallTerminal(value)
@@ -99,15 +95,12 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setAllowedKsuModules(value: List<String>) =
         userPreferencesDataSource.setAllowedKsuModules(value)
 
-    suspend fun setRepositoryMenu(value: RepositoryMenuCompat) =
+    suspend fun setRepositoryMenu(value: RepositoryMenu) =
         userPreferencesDataSource.setRepositoryMenu(value)
 
-    suspend fun setSuperUserMenu(value: SuperUserMenuCompat) =
-        userPreferencesDataSource.setSuperUserMenu(value)
-
-    suspend fun setRepositoriesMenu(value: RepositoriesMenuCompat) =
+    suspend fun setRepositoriesMenu(value: RepositoriesMenu) =
         userPreferencesDataSource.setRepositoriesMenu(value)
 
-    suspend fun setModulesMenu(value: ModulesMenuCompat) =
+    suspend fun setModulesMenu(value: ModulesMenu) =
         userPreferencesDataSource.setModulesMenu(value)
 }

@@ -10,7 +10,6 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.ListHeader
-import com.dergoogler.mmrl.ui.component.listItem.ListRadioCheckItem
 import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -63,59 +62,59 @@ fun UpdatesScreen() {
             onChange = viewModel::setCheckAppUpdatesPreReleases
         )
 
-        ListHeader(
-            title = stringResource(id = R.string.page_repository)
-        )
-
-        ListSwitchItem(
-            title = stringResource(id = R.string.settings_auto_update_repos),
-            desc = stringResource(id = R.string.settings_auto_update_repos_desc),
-            checked = userPreferences.autoUpdateRepos,
-            enabled = false,
-            onChange = viewModel::setAutoUpdateRepos
-        )
-
-        ListRadioCheckItem(
-            title = stringResource(R.string.settings_repo_update_interval),
-            desc = stringResource(
-                R.string.settings_repo_update_interval_desc,
-                userPreferences.autoUpdateReposInterval
-            ),
-            // enabled = userPreferences.autoUpdateRepos,
-            enabled = false,
-            suffix = stringResource(id = R.string.settings_repo_update_interval_suffix),
-            value = userPreferences.autoUpdateReposInterval,
-            options = optionsOfHours,
-            onConfirm = {
-                viewModel.setAutoUpdateReposInterval(it)
-            })
-
-        ListHeader(
-            title = stringResource(id = R.string.page_modules)
-        )
-
-        ListSwitchItem(
-            title = stringResource(id = R.string.settings_check_modules_update),
-            desc = stringResource(id = R.string.settings_check_modules_update_desc),
-            checked = userPreferences.checkModuleUpdates,
-            enabled = false,
-            onChange = viewModel::setCheckModuleUpdates
-        )
-
-        ListRadioCheckItem(
-            title = stringResource(R.string.settings_check_modules_update_interval),
-            desc = stringResource(
-                R.string.settings_check_modules_update_interval_desc,
-                userPreferences.checkModuleUpdatesInterval
-            ),
-            // enabled = userPreferences.checkModuleUpdates,
-            enabled = false,
-            suffix = stringResource(id = R.string.settings_check_modules_update_interval_suffix),
-            value = userPreferences.checkModuleUpdatesInterval,
-            options = optionsOfHours,
-            onConfirm = {
-                viewModel.setCheckModuleUpdatesInterval(it)
-            }
-        )
+//        ListHeader(
+//            title = stringResource(id = R.string.page_repository)
+//        )
+//
+//        ListSwitchItem(
+//            title = stringResource(id = R.string.settings_auto_update_repos),
+//            desc = stringResource(id = R.string.settings_auto_update_repos_desc),
+//            checked = userPreferences.autoUpdateRepos,
+//            enabled = false,
+//            onChange = viewModel::setAutoUpdateRepos
+//        )
+//
+//        ListRadioCheckItem(
+//            title = stringResource(R.string.settings_repo_update_interval),
+//            desc = stringResource(
+//                R.string.settings_repo_update_interval_desc,
+//                userPreferences.autoUpdateReposInterval
+//            ),
+//            // enabled = userPreferences.autoUpdateRepos,
+//            enabled = false,
+//            suffix = stringResource(id = R.string.settings_repo_update_interval_suffix),
+//            value = userPreferences.autoUpdateReposInterval,
+//            options = optionsOfHours,
+//            onConfirm = {
+//                viewModel.setAutoUpdateReposInterval(it)
+//            })
+//
+//        ListHeader(
+//            title = stringResource(id = R.string.page_modules)
+//        )
+//
+//        ListSwitchItem(
+//            title = stringResource(id = R.string.settings_check_modules_update),
+//            desc = stringResource(id = R.string.settings_check_modules_update_desc),
+//            checked = userPreferences.checkModuleUpdates,
+//            enabled = false,
+//            onChange = viewModel::setCheckModuleUpdates
+//        )
+//
+//        ListRadioCheckItem(
+//            title = stringResource(R.string.settings_check_modules_update_interval),
+//            desc = stringResource(
+//                R.string.settings_check_modules_update_interval_desc,
+//                userPreferences.checkModuleUpdatesInterval
+//            ),
+//            // enabled = userPreferences.checkModuleUpdates,
+//            enabled = false,
+//            suffix = stringResource(id = R.string.settings_check_modules_update_interval_suffix),
+//            value = userPreferences.checkModuleUpdatesInterval,
+//            options = optionsOfHours,
+//            onConfirm = {
+//                viewModel.setCheckModuleUpdatesInterval(it)
+//            }
+//        )
     }
 }

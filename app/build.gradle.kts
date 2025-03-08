@@ -184,7 +184,7 @@ android {
     applicationVariants.configureEach {
         outputs.configureEach {
             (this as? ApkVariantOutputImpl)?.outputFileName =
-                "MMRL-${versionName}-${versionCode}-${name}.apk"
+                "MMRL-${versionName.replace("-$name", "")}-${versionCode}-${name}.apk"
         }
     }
 }
@@ -195,51 +195,6 @@ androidComponents {
             val capName = variant.name.capitalized()
             tasks.getByName<KotlinCompile>("ksp${capName}Kotlin") {
                 setSource(tasks.getByName("generate${capName}Proto").outputs)
-            }
-
-            val versionCode = android.defaultConfig.versionCode
-            val versionName = android.defaultConfig.versionName
-
-            val buildInfoYaml = """
-            versionCode: $versionCode
-            versionName: $versionName
-            variant: ${variant.name}
-        """.trimIndent()
-
-            val projectDir = layout.projectDirectory.asFile
-            val buildDir = projectDir.resolve(variant.name)
-            val baselineProfiles = buildDir.resolve("baselineProfiles")
-            val outputMeta = buildDir.resolve("output-metadata.json")
-
-            if (outputMeta.exists()) {
-                outputMeta.delete()
-            }
-
-            if (baselineProfiles.exists()) {
-                baselineProfiles.deleteRecursively()
-            }
-
-            if (buildDir.exists()) {
-                val buildInfo = buildDir.resolve("metadata.yaml")
-                buildInfo.writeText(buildInfoYaml)
-
-                println("Build information saved to: ${buildInfo.absolutePath}")
-            }
-        }
-    }
-}
-
-protobuf {
-    protoc {
-        artifact = libs.protobuf.protoc.get().toString()
-    }
-
-    generateProtoTasks {
-        all().forEach { task ->
-            task.builtins {
-                register("java") {
-                    option("lite")
-                }
             }
         }
     }
@@ -290,6 +245,7 @@ dependencies {
     implementation(libs.androidx.navigation.runtime.ktx)
     implementation(libs.kotlinx.coroutines.android)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.kotlinx.datetime)
     implementation(libs.kotlin.reflect)
     implementation(libs.protobuf.kotlin.lite)

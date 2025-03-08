@@ -20,8 +20,8 @@ import java.io.File
 
 @Composable
 fun DownloadPathItem(
-    downloadPath: File,
-    onChange: (File) -> Unit
+    downloadPath: String,
+    onChange: (String) -> Unit
 ) {
     var edit by remember { mutableStateOf(false) }
     if (edit) OpenDocumentTreeDialog(
@@ -32,19 +32,19 @@ fun DownloadPathItem(
 
     ListButtonItem(
         title = stringResource(id = R.string.settings_download_path),
-        desc = downloadPath.absolutePath,
+        desc = File(downloadPath).absolutePath,
         onClick = { edit = true }
     )
 }
 
 @Composable
 private fun OpenDocumentTreeDialog(
-    path : File,
+    path : String,
     onClose: () -> Unit,
-    onConfirm: (File) -> Unit
+    onConfirm: (String) -> Unit
 ) {
     var name by remember {
-        mutableStateOf(path.toRelativeString(Const.PUBLIC_DOWNLOADS))
+        mutableStateOf(File(path).toRelativeString(Const.PUBLIC_DOWNLOADS))
     }
 
     TextFieldDialog(
@@ -55,7 +55,7 @@ private fun OpenDocumentTreeDialog(
             TextButton(
                 onClick = {
                     val new = Const.PUBLIC_DOWNLOADS.resolve(name)
-                    onConfirm(new)
+                    onConfirm(new.path)
                     onClose()
                 },
             ) {

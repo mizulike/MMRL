@@ -23,6 +23,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -63,7 +64,7 @@ class BulkInstallViewModel @Inject constructor(
         onFailure: (Throwable) -> Unit,
     ) {
         viewModelScope.launch {
-            val downloadPath = userPreferencesRepository.data.first().downloadPath
+            val downloadPath = File(userPreferencesRepository.data.first().downloadPath)
 
             val downloadedFiles = mutableListOf<Uri>()
             val exceptions = mutableListOf<Throwable>()

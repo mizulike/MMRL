@@ -13,7 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.WorkingMode
+import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.ui.component.WorkingModeItems
 
 @Composable

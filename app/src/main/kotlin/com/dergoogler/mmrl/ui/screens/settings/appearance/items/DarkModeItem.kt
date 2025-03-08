@@ -32,7 +32,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.DarkMode
+import com.dergoogler.mmrl.datastore.model.DarkMode
 
 private enum class DarkModeItem(
     val value: DarkMode,
@@ -40,19 +40,19 @@ private enum class DarkModeItem(
     val text: Int
 ) {
     Auto(
-        value = DarkMode.FOLLOW_SYSTEM,
+        value = DarkMode.FollowSystem,
         icon = R.drawable.brightness_2,
         text = R.string.app_theme_dark_theme_auto
     ),
 
     Light(
-        value = DarkMode.ALWAYS_OFF,
+        value = DarkMode.AlwaysOff,
         icon = R.drawable.sun,
         text = R.string.app_theme_dark_theme_light
     ),
 
     Dark(
-        value = DarkMode.ALWAYS_ON,
+        value = DarkMode.AlwaysOn,
         icon = R.drawable.moon_stars,
         text = R.string.app_theme_dark_theme_dark
     )

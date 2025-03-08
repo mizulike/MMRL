@@ -3,7 +3,7 @@ package com.dergoogler.mmrl
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.dergoogler.mmrl.datastore.WorkingMode
+import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.topjohnwu.superuser.Shell
 import dev.dergoogler.mmrl.compat.ServiceManagerCompat
 import dev.dergoogler.mmrl.compat.stub.IFileManager

@@ -2,7 +2,7 @@ package com.dergoogler.mmrl.background
 
 import android.content.Context
 import android.content.Intent
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat
+import com.dergoogler.mmrl.datastore.model.UserPreferences
 import dev.dergoogler.mmrl.compat.worker.MMRLBroadcastReceiver
 import kotlinx.coroutines.flow.first
 import timber.log.Timber
@@ -17,7 +17,7 @@ class BootBroadcastReceiver : MMRLBroadcastReceiver() {
     }
 
     companion object {
-        fun startWorkManagers(context: Context, userPreferences: UserPreferencesCompat) {
+        fun startWorkManagers(context: Context, userPreferences: UserPreferences) {
 //            startWorkTask(
 //                workerClass = RepoUpdateWorker::class.java,
 //                context = context,

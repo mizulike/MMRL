@@ -4,8 +4,8 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat
 import com.dergoogler.mmrl.datastore.UserPreferencesSerializer
+import com.dergoogler.mmrl.datastore.model.UserPreferences
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,10 +21,10 @@ object DataStoreModule {
     fun providesUserPreferencesDataStore(
         @ApplicationContext context: Context,
         userPreferencesSerializer: UserPreferencesSerializer
-    ): DataStore<UserPreferencesCompat> =
+    ): DataStore<UserPreferences> =
         DataStoreFactory.create(
             serializer = userPreferencesSerializer
         ) {
-            context.dataStoreFile("user_preferences.pb")
+            context.dataStoreFile("preferences.pb")
         }
 }

@@ -21,8 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.repositories.RepositoriesMenuCompat
-import com.dergoogler.mmrl.datastore.repository.Option
+import com.dergoogler.mmrl.datastore.model.Option
+import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.MenuChip
 import com.dergoogler.mmrl.ui.component.Segment
@@ -32,7 +32,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 
 @Composable
 fun RepositoriesMenu(
-    setMenu: (RepositoriesMenuCompat) -> Unit,
+    setMenu: (RepositoriesMenu) -> Unit,
 ) {
     val userPreferences = LocalUserPreferences.current
     var open by rememberSaveable { mutableStateOf(false) }
@@ -58,12 +58,12 @@ fun RepositoriesMenu(
 @Composable
 private fun MenuBottomSheet(
     onClose: () -> Unit,
-    menu: RepositoriesMenuCompat,
-    setMenu: (RepositoriesMenuCompat) -> Unit,
+    menu: RepositoriesMenu,
+    setMenu: (RepositoriesMenu) -> Unit,
 ) = BottomSheet(onDismissRequest = onClose) {
     val options = listOf(
-        Option.NAME to R.string.menu_sort_option_name,
-        Option.UPDATED_TIME to R.string.menu_sort_option_updated
+        Option.Name to R.string.menu_sort_option_name,
+        Option.UpdatedTime to R.string.menu_sort_option_updated
     )
 
     Text(

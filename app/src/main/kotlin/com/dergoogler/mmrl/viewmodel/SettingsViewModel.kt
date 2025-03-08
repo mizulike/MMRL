@@ -3,8 +3,9 @@ package com.dergoogler.mmrl.viewmodel
 import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.Compat
-import com.dergoogler.mmrl.datastore.DarkMode
-import com.dergoogler.mmrl.datastore.WorkingMode
+import com.dergoogler.mmrl.datastore.model.DarkMode
+import com.dergoogler.mmrl.datastore.model.Homepage
+import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
@@ -15,7 +16,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
-import java.io.File
 import javax.inject.Inject
 
 @HiltViewModel
@@ -85,7 +85,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setDownloadPath(value: File) {
+    fun setDownloadPath(value: String) {
         viewModelScope.launch {
             userPreferencesRepository.setDownloadPath(value)
         }
@@ -151,7 +151,7 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setHomepage(value: String) {
+    fun setHomepage(value: Homepage) {
         viewModelScope.launch {
             userPreferencesRepository.setHomepage(value)
         }
@@ -184,12 +184,6 @@ class SettingsViewModel @Inject constructor(
     fun setUseShellForModuleAction(value: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.setUseShellForModuleAction(value)
-        }
-    }
-
-    fun setWebuiAllowRestrictedPaths(value: Boolean) {
-        viewModelScope.launch {
-            userPreferencesRepository.setWebuiAllowRestrictedPaths(value)
         }
     }
 

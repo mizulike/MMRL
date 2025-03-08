@@ -147,8 +147,8 @@ class ModuleViewModel @AssistedInject constructor(
         onSuccess: (File) -> Unit,
     ) {
         viewModelScope.launch {
-            val downloadPath = userPreferencesRepository.data
-                .first().downloadPath
+            val downloadPath = File(userPreferencesRepository.data
+                .first().downloadPath)
 
             val filename = Utils.getFilename(
                 name = online.name,

@@ -12,7 +12,7 @@ import android.widget.Toast
 import androidx.core.net.toUri
 import androidx.webkit.WebViewAssetLoader
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat
+import com.dergoogler.mmrl.datastore.model.UserPreferences
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import dev.dergoogler.mmrl.compat.core.MMRLUriHandlerImpl
 
@@ -21,7 +21,7 @@ class MMRLWebClient(
     private val context: Context,
     private val viewModel: WebUIViewModel,
     private val browser: MMRLUriHandlerImpl,
-    private val userPrefs: UserPreferencesCompat,
+    private val userPrefs: UserPreferences,
     private val webViewAssetLoader: WebViewAssetLoader,
 ) : WebViewClient() {
     override fun shouldOverrideUrlLoading(

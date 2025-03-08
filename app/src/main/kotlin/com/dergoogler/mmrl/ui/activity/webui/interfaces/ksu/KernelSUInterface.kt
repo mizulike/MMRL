@@ -5,7 +5,7 @@ import android.text.TextUtils
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.dergoogler.mmrl.Compat
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat
+import com.dergoogler.mmrl.datastore.model.UserPreferences
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
 import com.topjohnwu.superuser.internal.UiThreadHandler
@@ -16,7 +16,7 @@ import java.util.concurrent.CompletableFuture
 class AdvancedKernelSUAPI(
     context: Context,
     webView: WebView,
-    private val userPrefs: UserPreferencesCompat,
+    private val userPrefs: UserPreferences,
 ) : BaseKernelSUAPI(context, webView) {
 
     @JavascriptInterface

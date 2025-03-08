@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.repositories.RepositoriesMenuCompat
+import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
 import com.dergoogler.mmrl.model.local.BulkModule
 import com.dergoogler.mmrl.ui.animate.slideInTopToBottom
 import com.dergoogler.mmrl.ui.animate.slideOutBottomToTop
@@ -262,7 +262,7 @@ private fun TopBar(
     onUpdate: () -> Unit,
     onAdd: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
-    setMenu: KFunction1<RepositoriesMenuCompat, Unit>,
+    setMenu: KFunction1<RepositoriesMenu, Unit>,
 ) {
     val windowSize = LocalWindowWidthSizeClass.current
 

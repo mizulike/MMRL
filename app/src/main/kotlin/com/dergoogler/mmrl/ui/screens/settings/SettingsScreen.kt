@@ -20,7 +20,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
-import com.dergoogler.mmrl.datastore.WorkingMode
+import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarTitle
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet

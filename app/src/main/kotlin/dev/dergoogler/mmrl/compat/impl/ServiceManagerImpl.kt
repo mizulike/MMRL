@@ -5,7 +5,7 @@ import android.os.SELinux
 import android.system.Os
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.app.Const
-import com.dergoogler.mmrl.datastore.WorkingMode
+import com.dergoogler.mmrl.datastore.model.WorkingMode
 import dev.dergoogler.mmrl.compat.core.BrickException
 import dev.dergoogler.mmrl.compat.stub.IFileManager
 import dev.dergoogler.mmrl.compat.stub.IKsuService

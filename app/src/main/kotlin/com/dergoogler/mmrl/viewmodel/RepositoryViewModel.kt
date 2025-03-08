@@ -7,8 +7,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.Compat
-import com.dergoogler.mmrl.datastore.repository.Option
-import com.dergoogler.mmrl.datastore.repository.RepositoryMenuCompat
+import com.dergoogler.mmrl.datastore.model.Option
+import com.dergoogler.mmrl.datastore.model.RepositoryMenu
 import com.dergoogler.mmrl.model.online.OnlineModule
 import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.model.state.OnlineState.Companion.createState
@@ -169,16 +169,14 @@ class RepositoryViewModel @AssistedInject constructor(
         descending: Boolean,
     ): Comparator<Pair<OnlineState, OnlineModule>> = if (descending) {
         when (option) {
-            Option.NAME -> compareByDescending { it.second.name.lowercase() }
-            Option.UPDATED_TIME -> compareBy { it.first.lastUpdated }
-            else -> compareByDescending { null }
+            Option.Name -> compareByDescending { it.second.name.lowercase() }
+            Option.UpdatedTime -> compareBy { it.first.lastUpdated }
         }
 
     } else {
         when (option) {
-            Option.NAME -> compareBy { it.second.name.lowercase() }
-            Option.UPDATED_TIME -> compareByDescending { it.first.lastUpdated }
-            else -> compareByDescending { null }
+            Option.Name -> compareBy { it.second.name.lowercase() }
+            Option.UpdatedTime -> compareByDescending { it.first.lastUpdated }
         }
     }
 
@@ -195,7 +193,7 @@ class RepositoryViewModel @AssistedInject constructor(
         keyFlow.value = ""
     }
 
-    fun setRepositoryMenu(value: RepositoryMenuCompat) {
+    fun setRepositoryMenu(value: RepositoryMenu) {
         viewModelScope.launch {
             userPreferencesRepository.setRepositoryMenu(value)
         }

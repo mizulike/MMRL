@@ -21,9 +21,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.repository.Option
-import com.dergoogler.mmrl.datastore.repository.RepoListMode
-import com.dergoogler.mmrl.datastore.repository.RepositoryMenuCompat
+import com.dergoogler.mmrl.datastore.model.Option
+import com.dergoogler.mmrl.datastore.model.RepoListMode
+import com.dergoogler.mmrl.datastore.model.RepositoryMenu
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.MenuChip
 import com.dergoogler.mmrl.ui.component.Segment
@@ -33,7 +33,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 
 @Composable
 fun RepositoryMenu(
-    setMenu: (RepositoryMenuCompat) -> Unit
+    setMenu: (RepositoryMenu) -> Unit
 ) {
     val userPreferences = LocalUserPreferences.current
     var open by rememberSaveable { mutableStateOf(false) }
@@ -59,17 +59,17 @@ fun RepositoryMenu(
 @Composable
 private fun MenuBottomSheet(
     onClose: () -> Unit,
-    menu: RepositoryMenuCompat,
-    setMenu: (RepositoryMenuCompat) -> Unit
+    menu: RepositoryMenu,
+    setMenu: (RepositoryMenu) -> Unit
 ) = BottomSheet(onDismissRequest = onClose) {
     val options = listOf(
-        Option.NAME to R.string.menu_sort_option_name,
-        Option.UPDATED_TIME to R.string.menu_sort_option_updated
+        Option.Name to R.string.menu_sort_option_name,
+        Option.UpdatedTime to R.string.menu_sort_option_updated
     )
 
     val optionsRepoListMode = listOf(
-        RepoListMode.DETAILED to R.string.menu_sort_repolistmode_detailed,
-        RepoListMode.COMPACT to R.string.menu_sort_repolistmode_compact
+        RepoListMode.Detailed to R.string.menu_sort_repolistmode_detailed,
+        RepoListMode.Compact to R.string.menu_sort_repolistmode_compact
     )
 
     Text(

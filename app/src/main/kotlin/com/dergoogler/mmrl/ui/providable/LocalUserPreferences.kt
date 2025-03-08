@@ -1,6 +1,6 @@
 package com.dergoogler.mmrl.ui.providable
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat
+import com.dergoogler.mmrl.datastore.model.UserPreferences
 
-val LocalUserPreferences = staticCompositionLocalOf { UserPreferencesCompat.default() }
+val LocalUserPreferences = staticCompositionLocalOf { UserPreferences() }

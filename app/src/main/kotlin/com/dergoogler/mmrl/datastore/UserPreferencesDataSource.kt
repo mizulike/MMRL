@@ -1,17 +1,19 @@
 package com.dergoogler.mmrl.datastore
 
 import androidx.datastore.core.DataStore
-import com.dergoogler.mmrl.datastore.modules.ModulesMenuCompat
-import com.dergoogler.mmrl.datastore.repositories.RepositoriesMenuCompat
-import com.dergoogler.mmrl.datastore.repository.RepositoryMenuCompat
-import com.dergoogler.mmrl.datastore.superuser.SuperUserMenuCompat
+import com.dergoogler.mmrl.datastore.model.DarkMode
+import com.dergoogler.mmrl.datastore.model.Homepage
+import com.dergoogler.mmrl.datastore.model.ModulesMenu
+import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
+import com.dergoogler.mmrl.datastore.model.RepositoryMenu
+import com.dergoogler.mmrl.datastore.model.UserPreferences
+import com.dergoogler.mmrl.datastore.model.WorkingMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.io.File
 import javax.inject.Inject
 
 class UserPreferencesDataSource @Inject constructor(
-    private val userPreferences: DataStore<UserPreferencesCompat>,
+    private val userPreferences: DataStore<UserPreferences>,
 ) {
     val data get() = userPreferences.data
 
@@ -55,7 +57,7 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setDownloadPath(value: File) = withContext(Dispatchers.IO) {
+    suspend fun setDownloadPath(value: String) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
                 downloadPath = value
@@ -143,7 +145,7 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setHomepage(value: String) = withContext(Dispatchers.IO) {
+    suspend fun setHomepage(value: Homepage) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
                 homepage = value
@@ -187,14 +189,6 @@ class UserPreferencesDataSource @Inject constructor(
         userPreferences.updateData {
             it.copy(
                 useShellForModuleAction = value
-            )
-        }
-    }
-
-    suspend fun setWebuiAllowRestrictedPaths(value: Boolean) = withContext(Dispatchers.IO) {
-        userPreferences.updateData {
-            it.copy(
-                webuiAllowRestrictedPaths = value
             )
         }
     }
@@ -256,7 +250,7 @@ class UserPreferencesDataSource @Inject constructor(
     }
 
 
-    suspend fun setRepositoryMenu(value: RepositoryMenuCompat) = withContext(Dispatchers.IO) {
+    suspend fun setRepositoryMenu(value: RepositoryMenu) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
                 repositoryMenu = value
@@ -264,15 +258,7 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setSuperUserMenu(value: SuperUserMenuCompat) = withContext(Dispatchers.IO) {
-        userPreferences.updateData {
-            it.copy(
-                superUserMenu = value
-            )
-        }
-    }
-
-    suspend fun setRepositoriesMenu(value: RepositoriesMenuCompat) = withContext(Dispatchers.IO) {
+    suspend fun setRepositoriesMenu(value: RepositoriesMenu) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
                 repositoriesMenu = value
@@ -280,7 +266,7 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
-    suspend fun setModulesMenu(value: ModulesMenuCompat) = withContext(Dispatchers.IO) {
+    suspend fun setModulesMenu(value: ModulesMenu) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
                 modulesMenu = value

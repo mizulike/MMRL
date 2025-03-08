@@ -28,16 +28,22 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
 
+data class RadioOptionItem<I>(
+    val value: I,
+    val title: String? = null,
+    val enabled: Boolean = true,
+)
+
 @Composable
 fun <T> ListRadioCheckItem(
     modifier: Modifier = Modifier,
     title: String,
     desc: String? = null,
     value: T,
-    options: List<T>,
+    options: List<RadioOptionItem<T>>,
     suffix: String? = null,
     prefix: String? = null,
-    onConfirm: (T) -> Unit,
+    onConfirm: (RadioOptionItem<T>) -> Unit,
     contentPaddingValues: PaddingValues = PaddingValues(vertical = 16.dp, horizontal = 25.dp),
     itemTextStyle: ListItemTextStyle = ListItemDefaults.itemStyle,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
@@ -77,14 +83,14 @@ fun <T> RadioCheckDialog(
     title: String,
     suffix: String? = null,
     prefix: String? = null,
-    options: List<T>,
+    options: List<RadioOptionItem<T>>,
     onClose: () -> Unit,
-    onConfirm: (T) -> Unit,
+    onConfirm: (RadioOptionItem<T>) -> Unit,
 ) {
     var selectedOption by remember { mutableStateOf(value) }
 
     val onDone: () -> Unit = {
-        onConfirm(selectedOption)
+        onConfirm(RadioOptionItem(selectedOption))
         onClose()
     }
 
@@ -98,15 +104,18 @@ fun <T> RadioCheckDialog(
                 items(
                     items = options,
                 ) { option ->
-                    val checked = option == selectedOption
+                    val checked = option.value == selectedOption
                     val interactionSource = remember { MutableInteractionSource() }
+
+                    if (option.title == null) return@items
 
                     Row(
                         modifier = Modifier
                             .toggleable(
+                                enabled = option.enabled,
                                 value = checked,
                                 onValueChange = {
-                                    selectedOption = option
+                                    selectedOption = option.value
                                 },
                                 role = Role.RadioButton,
                                 interactionSource = interactionSource,
@@ -116,6 +125,7 @@ fun <T> RadioCheckDialog(
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         RadioButton(
+                            enabled = option.enabled,
                             selected = checked,
                             onClick = null
                         )
@@ -123,9 +133,9 @@ fun <T> RadioCheckDialog(
                         Spacer(modifier = Modifier.width(8.dp))
 
                         when {
-                            prefix != null -> Text(text = "$prefix${option.toString()}")
-                            suffix != null -> Text(text = "${option.toString()}$suffix")
-                            else -> Text(text = option.toString())
+                            prefix != null -> Text(text = "$prefix${option.title}")
+                            suffix != null -> Text(text = "${option.title}$suffix")
+                            else -> Text(text = option.title)
                         }
                     }
                 }

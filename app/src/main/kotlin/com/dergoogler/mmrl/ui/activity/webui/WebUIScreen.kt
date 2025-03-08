@@ -24,7 +24,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.webkit.WebViewAssetLoader
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.developerMode
+import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebClient
 import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebUIHandler
 import com.dergoogler.mmrl.ui.activity.webui.handlers.SuFilePathHandler

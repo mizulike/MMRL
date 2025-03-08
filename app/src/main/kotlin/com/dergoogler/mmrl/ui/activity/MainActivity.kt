@@ -22,9 +22,9 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.background.BootBroadcastReceiver
 import com.dergoogler.mmrl.database.entity.Repo.Companion.toRepo
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat.Companion.isRoot
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat.Companion.isSetup
-import com.dergoogler.mmrl.datastore.WorkingMode
+import com.dergoogler.mmrl.datastore.model.WorkingMode
+import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
+import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isSetup
 import com.dergoogler.mmrl.network.NetworkUtils
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity

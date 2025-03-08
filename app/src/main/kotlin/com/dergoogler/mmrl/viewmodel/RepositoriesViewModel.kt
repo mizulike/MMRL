@@ -6,8 +6,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.database.entity.Repo.Companion.toRepo
-import com.dergoogler.mmrl.datastore.repositories.RepositoriesMenuCompat
-import com.dergoogler.mmrl.datastore.repository.Option
+import com.dergoogler.mmrl.datastore.model.Option
+import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
 import com.dergoogler.mmrl.model.state.RepoState
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
@@ -90,20 +90,18 @@ class RepositoriesViewModel @Inject constructor(
         descending: Boolean,
     ): Comparator<RepoState> = if (descending) {
         when (option) {
-            Option.NAME -> compareByDescending { it.name.lowercase() }
-            Option.UPDATED_TIME -> compareBy { it.timestamp }
-            else -> compareByDescending { null }
+            Option.Name -> compareByDescending { it.name.lowercase() }
+            Option.UpdatedTime -> compareBy { it.timestamp }
         }
 
     } else {
         when (option) {
-            Option.NAME -> compareBy { it.name.lowercase() }
-            Option.UPDATED_TIME -> compareByDescending { it.timestamp }
-            else -> compareByDescending { null }
+            Option.Name -> compareBy { it.name.lowercase() }
+            Option.UpdatedTime -> compareByDescending { it.timestamp }
         }
     }
 
-    fun setRepositoriesMenu(value: RepositoriesMenuCompat) {
+    fun setRepositoriesMenu(value: RepositoriesMenu) {
         viewModelScope.launch {
             userPreferencesRepository.setRepositoriesMenu(value)
         }

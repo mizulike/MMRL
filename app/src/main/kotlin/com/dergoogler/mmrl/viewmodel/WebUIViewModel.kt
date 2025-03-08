@@ -15,7 +15,7 @@ import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.Platform
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.app.moshi
-import com.dergoogler.mmrl.datastore.developerMode
+import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository

@@ -14,8 +14,8 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.Compat
-import com.dergoogler.mmrl.datastore.modules.ModulesMenuCompat
-import com.dergoogler.mmrl.datastore.repository.Option
+import com.dergoogler.mmrl.datastore.model.ModulesMenu
+import com.dergoogler.mmrl.datastore.model.Option
 import com.dergoogler.mmrl.model.json.UpdateJson
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
@@ -219,16 +219,14 @@ class ModulesViewModel @Inject constructor(
         descending: Boolean,
     ): Comparator<LocalModule> = if (descending) {
         when (option) {
-            Option.NAME -> compareByDescending { it.name.lowercase() }
-            Option.UPDATED_TIME -> compareBy { it.lastUpdated }
-            else -> compareByDescending { null }
+            Option.Name -> compareByDescending { it.name.lowercase() }
+            Option.UpdatedTime -> compareBy { it.lastUpdated }
         }
 
     } else {
         when (option) {
-            Option.NAME -> compareBy { it.name.lowercase() }
-            Option.UPDATED_TIME -> compareByDescending { it.lastUpdated }
-            else -> compareByDescending { null }
+            Option.Name -> compareBy { it.name.lowercase() }
+            Option.UpdatedTime -> compareByDescending { it.lastUpdated }
         }
     }
 
@@ -251,7 +249,7 @@ class ModulesViewModel @Inject constructor(
         }
     }
 
-    fun setModulesMenu(value: ModulesMenuCompat) {
+    fun setModulesMenu(value: ModulesMenu) {
         viewModelScope.launch {
             userPreferencesRepository.setModulesMenu(value)
         }
@@ -358,7 +356,7 @@ class ModulesViewModel @Inject constructor(
             val listener = object : DownloadService.IDownloadListener {
                 override fun getProgress(value: Float) {}
                 override fun onSuccess() {
-                    onSuccess(downloadPath.resolve(filename))
+                    onSuccess(File(downloadPath).resolve(filename))
                 }
 
                 override fun onFailure(e: Throwable) {

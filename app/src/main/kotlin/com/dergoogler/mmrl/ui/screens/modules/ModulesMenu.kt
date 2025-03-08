@@ -26,8 +26,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.modules.ModulesMenuCompat
-import com.dergoogler.mmrl.datastore.repository.Option
+import com.dergoogler.mmrl.datastore.model.ModulesMenu
+import com.dergoogler.mmrl.datastore.model.Option
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.MenuChip
 import com.dergoogler.mmrl.ui.component.Segment
@@ -41,7 +41,7 @@ import dev.dergoogler.mmrl.compat.ext.toFormattedFileSize
 
 @Composable
 fun ModulesMenu(
-    setMenu: (ModulesMenuCompat) -> Unit,
+    setMenu: (ModulesMenu) -> Unit,
 ) {
     val userPreferences = LocalUserPreferences.current
     var open by rememberSaveable { mutableStateOf(false) }
@@ -67,12 +67,12 @@ fun ModulesMenu(
 @Composable
 private fun MenuBottomSheet(
     onClose: () -> Unit,
-    menu: ModulesMenuCompat,
-    setMenu: (ModulesMenuCompat) -> Unit,
+    menu: ModulesMenu,
+    setMenu: (ModulesMenu) -> Unit,
 ) = BottomSheet(onDismissRequest = onClose) {
     val options = listOf(
-        Option.NAME to R.string.menu_sort_option_name,
-        Option.UPDATED_TIME to R.string.menu_sort_option_updated
+        Option.Name to R.string.menu_sort_option_name,
+        Option.UpdatedTime to R.string.menu_sort_option_updated
     )
 
     val context = LocalContext.current

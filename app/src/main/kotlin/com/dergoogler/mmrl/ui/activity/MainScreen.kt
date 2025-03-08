@@ -39,7 +39,8 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dergoogler.mmrl.Compat
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat.Companion.isRoot
+import com.dergoogler.mmrl.datastore.model.Homepage
+import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.navigation.MainScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.homeScreen
@@ -89,6 +90,24 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
         }
     }
 
+    val startDestination by remember(isRoot, userPreferences.homepage) {
+        derivedStateOf {
+            if (isRoot) {
+                return@derivedStateOf when (userPreferences.homepage) {
+                    Homepage.Home -> MainScreen.Home.route
+                    Homepage.Repositories -> MainScreen.Repository.route
+                    Homepage.Modules -> MainScreen.Modules.route
+                }
+            }
+
+            return@derivedStateOf when (userPreferences.homepage) {
+                Homepage.Home -> MainScreen.Home.route
+                Homepage.Repositories -> MainScreen.Repository.route
+                else -> MainScreen.Home.route
+            }
+        }
+    }
+
     Scaffold(
         bottomBar = {
             if (windowSize.isRailShown) return@Scaffold
@@ -114,12 +133,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
                         return@let it.padding(bottom = paddingValues.calculateBottomPadding())
                     },
                     navController = navController,
-                    startDestination = when (userPreferences.homepage) {
-                        context.getString(MainScreen.Home.label) -> MainScreen.Home.route
-                        context.getString(MainScreen.Repository.label) -> MainScreen.Repository.route
-                        context.getString(MainScreen.Modules.label) -> MainScreen.Modules.route
-                        else -> MainScreen.Home.route
-                    }
+                    startDestination = startDestination
                 ) {
                     homeScreen()
                     repositoryScreen(bulkInstallViewModel = bulkInstallViewModel)

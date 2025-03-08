@@ -12,7 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.dergoogler.mmrl.datastore.repository.RepoListMode
+import com.dergoogler.mmrl.datastore.model.RepoListMode
 import com.dergoogler.mmrl.model.online.OnlineModule
 import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.ui.component.scrollbar.VerticalFastScrollbar
@@ -33,9 +33,8 @@ fun ModulesList(
     val userPreferences = LocalUserPreferences.current
     val menu = userPreferences.repositoryMenu
     when (menu.repoListMode) {
-        RepoListMode.COMPACT -> Compact(before, after, list, state, navController)
-        RepoListMode.DETAILED -> Detailed(before, after, list, state, navController)
-        RepoListMode.UNRECOGNIZED -> Detailed(before, after, list, state, navController)
+        RepoListMode.Compact -> Compact(before, after, list, state, navController)
+        RepoListMode.Detailed -> Detailed(before, after, list, state, navController)
     }
 }
 

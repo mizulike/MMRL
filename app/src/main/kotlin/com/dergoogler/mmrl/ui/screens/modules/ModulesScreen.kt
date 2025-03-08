@@ -36,7 +36,7 @@ import androidx.core.net.toUri
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.modules.ModulesMenuCompat
+import com.dergoogler.mmrl.datastore.model.ModulesMenu
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.VersionItem
 import com.dergoogler.mmrl.ui.component.Loading
@@ -154,7 +154,7 @@ private fun TopBar(
     onQueryChange: (String) -> Unit,
     onOpenSearch: () -> Unit,
     onCloseSearch: () -> Unit,
-    setMenu: (ModulesMenuCompat) -> Unit,
+    setMenu: (ModulesMenu) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
     val windowSize = LocalWindowWidthSizeClass.current

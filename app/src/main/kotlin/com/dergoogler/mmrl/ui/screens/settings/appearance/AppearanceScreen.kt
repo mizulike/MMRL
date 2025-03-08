@@ -2,14 +2,19 @@ package com.dergoogler.mmrl.ui.screens.settings.appearance
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.ListEditTextItem
 import com.dergoogler.mmrl.ui.component.listItem.ListRadioCheckItem
 import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
+import com.dergoogler.mmrl.ui.component.listItem.RadioOptionItem
 import com.dergoogler.mmrl.ui.navigation.MainScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
@@ -64,12 +69,22 @@ fun AppearanceScreen() {
             desc = stringResource(R.string.settings_homepage_desc),
             value = userPreferences.homepage,
             options = listOf(
-                context.getString(MainScreen.Home.label),
-                context.getString(MainScreen.Repository.label),
-                context.getString(MainScreen.Modules.label)
+                RadioOptionItem(
+                    value = Homepage.Home,
+                    title = stringResource(R.string.page_home)
+                ),
+                RadioOptionItem(
+                    value = Homepage.Repositories,
+                    title = stringResource(R.string.page_repositorys)
+                ),
+                RadioOptionItem(
+                    value = Homepage.Modules,
+                    enabled = viewModel.isProviderAlive,
+                    title = stringResource(R.string.page_modules)
+                )
             ),
             onConfirm = {
-                viewModel.setHomepage(it)
+                viewModel.setHomepage(it.value)
             }
         )
     }

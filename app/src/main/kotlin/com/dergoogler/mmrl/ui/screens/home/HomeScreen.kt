@@ -41,8 +41,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat.Companion.isNonRoot
-import com.dergoogler.mmrl.datastore.UserPreferencesCompat.Companion.isRoot
+import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isNonRoot
+import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.stub.IMMRLApiManager
