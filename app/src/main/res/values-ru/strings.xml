@@ -2,9 +2,6 @@
 <resources>
     <!-- Setup -->
     <string name="setup_mode">Режим работы</string>
-    <string name="setup_root_title">Root</string>
-    <string name="setup_root_desc">Требуются Root права, предоставляемые Magisk или KernelSU</string>
-    <string name="setup_shizuku_desc">Требуются права, предоставляемые Sui или Shizuku (root)</string>
     <string name="setup_non_root_title">Без Root</string>
     <string name="setup_non_root_desc">Не требует Root прав, доступна только функция загрузки модулей</string>
     <!-- Install -->
@@ -40,15 +37,8 @@
     <string name="menu_sort_repolistmode_detailed">Подробный</string>
     <string name="menu_sort_repolistmode_compact">Компактный</string>
     <!-- View Module -->
-    <string name="view_module_page_overview">Обзор</string>
-    <string name="view_module_page_versions">Версии</string>
-    <string name="view_module_page_about">О модуле</string>
-    <string name="view_module_page_readme">Readme</string>
-    <string name="view_module_description">Описание</string>
-    <string name="view_module_cloud">Облако</string>
     <string name="view_module_version">Версия</string>
     <string name="view_module_last_updated">Последнее обновление</string>
-    <string name="view_module_local">Локально</string>
     <string name="view_module_update_notify">Уведомлять</string>
     <string name="view_module_update_ignore">Игнорировать</string>
     <string name="view_module_provided">Предоставлено %s</string>
@@ -60,8 +50,6 @@
     <string name="view_module_type">Тип: %s</string>
     <string name="view_module_added">Добавлено: %s</string>
     <string name="view_module_file_size">Размер файла</string>
-    <string name="view_module_screenshots">Скриншоты</string>
-    <string name="view_module_help">Помощь</string>
     <string name="view_module_antifeatures">Анти-функции</string>
     <string name="view_module_unsupported">Не поддерживается</string>
     <string name="view_module_unsupported_desc">Похоже, ваше устройство не поддерживает эту версию модуля. Устанавливайте на свой страх и риск!</string>
@@ -96,9 +84,6 @@
     <string name="module_update">Обновить</string>
     <!-- Settings -->
     <string name="settings_app">Приложение</string>
-    <string name="settings_app_desc">Настройки приложения MMRL</string>
-    <string name="settings_repo">Репозитории</string>
-    <string name="settings_repo_desc">Управление репозиториями модулей</string>
     <string name="settings_about">О приложении</string>
     <string name="settings_resources">Ресурсы</string>
     <string name="settings_resources_desc">Документация, поддерживаемые репозитории и прочее</string>
@@ -134,8 +119,6 @@
     <string name="settings_blacklist_desc">Список модулей, которые могут иметь закрытый код или считаться опасными</string>
     <string name="settings_date_pattern">Формат даты</string>
     <string name="settings_date_pattern_desc">Используйте свой собственный формат даты</string>
-    <string name="settings_recommended_repos">Рекомендуемые репозитории</string>
-    <string name="settings_recommended_repos_desc">Изучите новые репозитории и добавьте их напрямую</string>
     <string name="settings_updates">Обновления</string>
     <string name="settings_updates_desc">Управляйте своими предпочтениями над процессом обновления</string>
     <string name="settings_homepage">Домашняя страница приложения</string>
@@ -143,11 +126,9 @@
     <string name="settings_auto_update_repos">Автоматическое обновление репозиториев</string>
     <string name="settings_auto_update_repos_desc">Автоматически обновлять репозитории в фоновом режиме</string>
     <string name="settings_repo_update_interval">Интервал обновления репозиториев</string>
-    <string name="settings_repo_update_interval_suffix">" час/с"</string>
     <string name="settings_repo_update_interval_desc">Выберите интервал времени для обновления репозиториев</string>
     <string name="settings_check_modules_update">Проверять наличие обновлений модулей</string>
     <string name="settings_check_modules_update_desc">Включает проверку обновлений для установленных модулей</string>
-    <string name="settings_check_modules_update_interval_suffix">" час/с"</string>
     <string name="settings_check_modules_update_interval">Интервал проверки обновлений модулей</string>
     <string name="settings_check_modules_update_interval_desc">Выберите интервал времени для проверки установленных модулей</string>
     <!-- App Theme -->
@@ -197,20 +178,11 @@
     <string name="search_placeholder">Поиск…</string>
     <!-- Other -->
     <string name="unknown_error">Неизвестная ошибка</string>
-    <string name="verified">Проверено</string>
-    <string name="open">Открыть</string>
-    <string name="help">Помощь</string>
-    <string name="module_config">Настройки</string>
     <string name="we_hit_a_brick_crash">Мы наткнулись на препятствие!</string>
     <string name="report_to_issues">Сообщить о проблеме</string>
     <string name="stack_trace_truncated">%s\n… еще %d</string>
     <string name="additional_notes">Дополнительные примечания</string>
     <string name="repo_added">Репозиторий добавлен</string>
-    <!-- Work Manager -->
-    <string name="work_repository_updates">Обновления репозиториев</string>
-    <string name="work_updates_for_repositories">Обновления для репозиториев</string>
-    <string name="work_module_updates">Обновления модулей</string>
-    <string name="work_update_checker_for_modules">Проверка обновлений для модулей</string>
     <!-- Repo Update Service -->
     <string name="repo_update_service">Репозитории успешно обновлены</string>
     <string name="repo_update_service_desc">Не волнуйтесь, MMRL обновил ваши установленные репозитории. 😋</string>
@@ -223,16 +195,13 @@
     <string name="events_christmas">← Ёлка.</string>
     <string name="events_new_years_eve">Канун Нового года!</string>
     <string name="open_source">Открытый исходный код</string>
-    <string name="maintained_by">Поддерживается</string>
     <string name="view_module_features_action_sub">Позволяет пользователю выполнять скрипт одним нажатием кнопки</string>
     <string name="settings_developer">Разработчик</string>
     <string name="view_module_low_root_version_desc">Похоже, у вас старая версия менеджера Root прав. Проверьте, есть ли обновления и установите их.</string>
     <string name="view_module_unsupported_arch_desc">Похоже, ваше устройство не поддерживает требуемую архитектуру процессора, заявленную разработчиком.</string>
     <string name="settings_open_notification_settings">Открыть настройки уведомлений</string>
-    <string name="settings_allow_javascript_api">Разрешить API JavaScript</string>
     <string name="settings_developer_desc">Инструменты отладки для разработчиков</string>
     <string name="home_support_content">MMRL есть и всегда будет бесплатным и с открытым исходным кодом. Однако вы можете показать мне, что вам не все равно, сделав пожертвование.</string>
-    <string name="generic_disclaimer_desc">**MMRL** не несет ответственности за любой ущерб вашему устройству, включая, помимо прочего, окирпичивание устройства, поврежденные SD-карты, термоядерные войны или потерю работы из-за сбоя в работе приложения-будильника. Перед тем как продолжить, пожалуйста, тщательно изучите особенности и риски использования этого модуля. *Вы вносите изменения в устройство на свой страх и риск*.</string>
     <string name="manager_version">Версия менеджера</string>
     <string name="settings_security_allow_advanced_kernelsu_api">Разрешить расширенное API KernelSU</string>
     <string name="menu_show_modules_count">Показать количество модулей</string>
@@ -261,13 +230,11 @@
     <string name="view_module_unsupported_arch">Неподдерживаемая архитектура</string>
     <string name="view_module_unsupported_device_desc">Похоже, ваши устройства не поддерживаются этими модулями или были исключены.</string>
     <string name="module_reinstall">Переустановить</string>
-    <string name="module_id">ID: %1$s</string>
     <string name="settings_check_app_updates">Проверять на наличие обновлений</string>
     <string name="settings_modules">Модули и установка</string>
     <string name="reboot_download">Перезагрузка в режим загрузки</string>
     <string name="reboot_edl">Перезагрузка в EDL</string>
     <string name="home_support_title">Поддержать меня</string>
-    <string name="generic_disclaimer_title">Вы несете ответственность!</string>
     <string name="working_mode_magisk_title">Magisk</string>
     <string name="working_mode_kernelsu_title">KernelSU</string>
     <string name="working_mode_kernelsu_next_title">KernelSU Next</string>
@@ -275,9 +242,7 @@
     <string name="view_module_required_os">Требуемая ОС</string>
     <string name="view_module_required_os_value">Android %1$s и выше</string>
     <string name="view_module_dependencies">Зависимости</string>
-    <string name="view_module_dependencies_not_found">Требуемые зависимости не найдены</string>
     <string name="view_module_share">Поделиться</string>
-    <string name="view_module_not_found">Модуль не найден</string>
     <string name="view_module_install_confirm_title">Установить этот модуль?</string>
     <string name="view_module_install_confirm_confirm_deps">Установить (зав.)</string>
     <string name="view_module_install_confirm_desc"><![CDATA[Вы уверены, что хотите установить <font color=\"%1$s\">%2$s</font>?]]></string>
@@ -296,7 +261,6 @@
     <string name="install_screen_cancel_text">Вы уверены, что хотите отменить установку?</string>
     <string name="learn_more">Узнать больше</string>
     <string name="sponsors">Спонсоры</string>
-    <string name="all_the_sponsors_of_the_project_click_on_learn_more_to_get_included">Все спонсоры проекта. Нажмите \"Узнать больше\", чтобы попасть в список.</string>
     <string name="page_home">Главная</string>
     <string name="view_module_license">Лицензия</string>
     <string name="view_module_install_confirm_desc_deps"><![CDATA[Вы уверены, что хотите установить <font color=\"%1$s\">%2$s</font>? Этот модуль также требует:]]></string>
@@ -325,7 +289,6 @@
     <string name="working_mode_apatch_desc">Патчинг ядра и системы Android. Новое рут-решение на основе ядра с поддержкой модулей (как в Magisk) и внедрением функций в ядро (требуется inline-hook и syscall-table-hook). Основано и модифицировано из KernelSU.</string>
     <string name="working_mode_kernelsu_next_desc">Продвинутое рут-решение на основе ядра с поддержкой Magic Mount, расширенным контролем над пользовательскими приложениями и настраиваемыми правами суперпользователя.</string>
     <string name="working_mode_magisk_desc">Набор инструментов для настройки Android, предоставляющий root-доступ, поддержку модулей, модификацию загрузочного образа и выполнение кода на уровне процессов с помощью Zygisk.</string>
-    <string name="view_module_mod_infos_disclaimer">Информация, отмеченная ****, может отличаться из-за нескольких добавленных репозиториев. Вы можете просмотреть актуальную информацию, нажав на @track(Просмотр трека) выше.</string>
     <string name="settings_shell_module_state_change_desc">Использует shell вместо создания файлов в директории модуля. После включения вы не сможете использовать кнопку восстановления из-за ограничений.</string>
     <string name="settings_shell_module_state_change">Использовать Shell для состояний</string>
 </resources>

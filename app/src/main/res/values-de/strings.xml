@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="setup_root_title">Root</string>
     <string name="setup_non_root_title">Ohne Root</string>
     <string name="install_flashing">Installiert</string>
     <string name="install_failure">Fehlgeschlagen</string>
@@ -15,16 +14,10 @@
     <string name="menu_pin_updatable">Updatefähige anheften</string>
     <string name="menu_show_icon">Icon anzeigen</string>
     <string name="menu_show_license">Lizenz anzeigen</string>
-    <string name="view_module_page_overview">Übersicht</string>
-    <string name="view_module_page_versions">Versionen</string>
-    <string name="view_module_page_about">Über</string>
-    <string name="view_module_description">Beschreibung</string>
     <string name="view_module_last_updated">Letztes Update</string>
     <string name="view_module_provided">Bereitgestellt von %s</string>
     <string name="page_repository">Repository</string>
-    <string name="view_module_cloud">Online</string>
     <string name="view_module_version">Version</string>
-    <string name="view_module_local">Lokal</string>
     <string name="view_module_source">Quellcode</string>
     <string name="modules_empty">Keine Module gefunden</string>
     <string name="module_remove">Entfernen</string>
@@ -36,8 +29,6 @@
     <string name="view_module_added">Hinzugefügt am: %s</string>
     <string name="module_version_author">%1$s von %2$s</string>
     <string name="view_module_view_track">Track ansehen</string>
-    <string name="settings_app_desc">Einstellungen der MMRL App selbst</string>
-    <string name="settings_repo_desc">Magisk Modul Repositories anpassen</string>
     <string name="settings_about">Über</string>
     <string name="settings_root_access">Root Zugriff: %s</string>
     <string name="settings_root_granted">Gewährt</string>
@@ -50,7 +41,6 @@
     <string name="settings_delete_zip">Zip Datei löschen</string>
     <string name="module_download">Herunterladen</string>
     <string name="settings_app">App</string>
-    <string name="settings_repo">Repositories</string>
     <string name="settings_root_provider">Anbieter: %s</string>
     <string name="app_theme_palette">Farbpaletten</string>
     <string name="app_theme_dark_theme">Nachtmodus</string>
@@ -104,15 +94,10 @@
     <string name="menu_show_verified">Verifizierung anzeigen</string>
     <string name="menu_sort_repolistmode_detailed">Detaliert</string>
     <string name="menu_sort_repolistmode_compact">Kompakt</string>
-    <string name="view_module_page_readme">Readme</string>
     <string name="view_module_file_size">Dateigröße</string>
-    <string name="view_module_screenshots">Screenshots</string>
-    <string name="view_module_help">Hilfe</string>
     <string name="view_module_antifeatures">Anti-Features</string>
     <string name="view_module_unsupported">Nicht unterstützt</string>
     <string name="install_screen_reboot_title">Getät neu starten?</string>
-    <string name="setup_root_desc">Benötigt Root-Rechte, entweder durch Magisk oder KernelSU</string>
-    <string name="setup_shizuku_desc">Benögt Berechtigungen von Sui oder Shizuku (Root)</string>
     <string name="install_screen_reboot_dismiss">Verwerfen</string>
     <string name="setup_non_root_desc">Es sind keine Root-Berechtigungen erforderlich, es ist nur die Funktion zum Herunterladen des Moduls verfügbar</string>
     <string name="view_module_unsupported_desc">Sieht aus, als wenn dein Gerät diese Modul Version nicht unterstützt. Installation auf eigene Gefahr!</string>

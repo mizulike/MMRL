@@ -104,7 +104,7 @@ fun ListEditTextSwitchItem(
         )
 
         VerticalDivider(
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
+            modifier = Modifier.padding(16.dp),
             thickness = 0.9.dp,
         )
 

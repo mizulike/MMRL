@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="setup_root_title">Root</string>
     <string name="setup_mode">Çalışma Modu</string>
     <string name="setup_non_root_title">Rootsuz</string>
     <string name="install_flashing">Flaşlanıyor</string>
@@ -14,11 +13,6 @@
     <string name="page_settings">Ayarlar</string>
     <string name="repository_empty">Repo boş</string>
     <string name="module_installed">Yüklü</string>
-    <string name="view_module_page_overview">Genel bakış</string>
-    <string name="view_module_page_versions">Sürümler</string>
-    <string name="view_module_page_about">Hakkında</string>
-    <string name="view_module_description">Açıklama</string>
-    <string name="view_module_local">Yerel</string>
     <string name="view_module_version">Sürüm</string>
     <string name="view_module_provided">%s tarafından sağlanmıştır</string>
     <string name="view_module_version_dialog_desc">Modülün bu sürümünü yüklemek veya indirmek istiyor musunuz\?</string>
@@ -28,8 +22,6 @@
     <string name="module_restore">Geri yükle</string>
     <string name="module_install">Yükle</string>
     <string name="module_download">İndir</string>
-    <string name="settings_repo">Repolar</string>
-    <string name="settings_repo_desc">Magisk modül repolarını yönetin</string>
     <string name="settings_app">Uygulama</string>
     <string name="settings_about">Hakkında</string>
     <string name="settings_root_access">Root erişimi: %s</string>
@@ -65,10 +57,8 @@
     <string name="search_placeholder">Ara…</string>
     <string name="unknown_error">Bilinmeyen hata</string>
     <string name="settings_delete_zip_desc">Yükleme başarıyla tamamlandıktan sonra modülün zip dosyasını sil, bu Superuser ile gerçekleştirilir</string>
-    <string name="settings_app_desc">MMRL uygulamasının ayarları</string>
     <string name="settings_root_not_available">Mevcut değil</string>
     <string name="view_module_last_updated">Son güncelleme</string>
-    <string name="view_module_cloud">Bulut</string>
     <string name="view_module_homepage">Anaysayfa</string>
     <string name="view_module_source">Kaynak kodu</string>
     <string name="view_module_support">Destek</string>
@@ -97,8 +87,6 @@
     <string name="view_module_update_ignore">Yoksay</string>
     <string name="settings_doh_desc">Bazı ülkelerde DNS zehirlenmesine geçici çözüm</string>
     <string name="module_update">Güncelle</string>
-    <string name="setup_root_desc">Magisk veya KernelSU tarafından sağlanan Root izni gerektirir</string>
-    <string name="setup_shizuku_desc">Sui veya Shizuku tarafından sağlanan Root izni gerektirir</string>
     <string name="setup_non_root_desc">Root izni gerekli değil, sadece modül indirme işlevi aktif</string>
     <string name="working_mode_magisk_title">Magisk</string>
     <string name="working_mode_kernelsu_title">KernelSU</string>

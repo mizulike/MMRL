@@ -2,9 +2,6 @@
 <resources>
     <!-- Setup -->
     <string name="setup_mode">工作模式</string>
-    <string name="setup_root_title">Root</string>
-    <string name="setup_root_desc">需要由 Magisk 或 KernelSU 提供 Root 权限</string>
-    <string name="setup_shizuku_desc">需要由 Sui 或 Shizuku (root) 提供权限</string>
     <string name="setup_non_root_title">无 Root</string>
     <string name="setup_non_root_desc">不需要 Root 权限，只有模块下载功能可用</string>
     <!-- Install -->
@@ -41,15 +38,8 @@
     <string name="menu_sort_repolistmode_detailed">详细</string>
     <string name="menu_sort_repolistmode_compact">紧凑</string>
     <!-- View Module -->
-    <string name="view_module_page_overview">概览</string>
-    <string name="view_module_page_versions">版本</string>
-    <string name="view_module_page_about">关于</string>
-    <string name="view_module_page_readme">Readme 文档</string>
-    <string name="view_module_description">描述</string>
-    <string name="view_module_cloud">云端</string>
     <string name="view_module_version">版本</string>
     <string name="view_module_last_updated">上次更新</string>
-    <string name="view_module_local">本地</string>
     <string name="view_module_update_notify">通知</string>
     <string name="view_module_update_ignore">忽略</string>
     <string name="view_module_provided">由 %s 提供</string>
@@ -61,8 +51,6 @@
     <string name="view_module_type">类型: %s</string>
     <string name="view_module_added">添加于: %s</string>
     <string name="view_module_file_size">文件大小</string>
-    <string name="view_module_screenshots">屏幕截图</string>
-    <string name="view_module_help">帮助</string>
     <string name="view_module_antifeatures">不受欢迎的功能</string>
     <string name="view_module_unsupported">不支持的</string>
     <string name="view_module_unsupported_desc">你的设备不支持这个版本的模块，请自行承担安装风险！</string>
@@ -91,7 +79,6 @@
     <string name="view_module_provided_by">提供者</string>
     <string name="view_module_added_on">附加信息</string>
     <string name="view_module_about_this_module">关于此模块</string>
-    <string name="view_module_mod_infos_disclaimer">标有 **** 的信息可能会因添加了多个仓库而有所不同。您可以点击上面的 @track查看实际信息。</string>
     <string name="view_module_section_count">%1$s+</string>
     <string name="view_module_donate">捐赠</string>
     <string name="view_module_donate_desc">通过捐赠一杯咖啡表达对开发者的支持 ☕</string>
@@ -99,9 +86,7 @@
     <string name="view_module_required_os">要求的系统</string>
     <string name="view_module_required_os_value">Android %1$s 及以上</string>
     <string name="view_module_dependencies">依赖</string>
-    <string name="view_module_dependencies_not_found">依赖项未找到</string>
     <string name="view_module_share">分享</string>
-    <string name="view_module_not_found">未找到模块</string>
     <string name="view_module_install_confirm_title">安装此模块?</string>
     <string name="view_module_install_confirm_confirm_deps">安装 (deps)</string>
     <string name="view_module_install_confirm_confirm">安装</string>
@@ -117,12 +102,8 @@
     <string name="module_reinstall">重新安装</string>
     <string name="module_download">下载</string>
     <string name="module_update">更新</string>
-    <string name="module_id">ID: %1$s</string>
     <!-- Settings-->
     <string name="settings_app">应用</string>
-    <string name="settings_app_desc">关于 MMRL 应用本身的设置</string>
-    <string name="settings_repo">仓库</string>
-    <string name="settings_repo_desc">管理 Magisk 模块仓库</string>
     <string name="settings_about">关于</string>
     <string name="settings_resources">资源</string>
     <string name="settings_resources_desc">文档, 支持的仓库及其他</string>
@@ -159,8 +140,6 @@
     <string name="settings_blacklist_desc">显示闭源的或者不安全的模块</string>
     <string name="settings_date_pattern">日期设置</string>
     <string name="settings_date_pattern_desc">自定义日期格式</string>
-    <string name="settings_recommended_repos">推荐仓库</string>
-    <string name="settings_recommended_repos_desc">探索新仓库并直接添加</string>
     <string name="settings_updates">更新</string>
     <string name="settings_updates_desc">管理你的更新配置</string>
     <string name="settings_homepage">应用主页</string>
@@ -168,7 +147,6 @@
     <string name="settings_auto_update_repos">自动更新仓库</string>
     <string name="settings_auto_update_repos_desc">在后台自动更新仓库</string>
     <string name="settings_repo_update_interval">仓库更新间隔</string>
-    <string name="settings_repo_update_interval_suffix">\u0020hour/s</string>
     <string name="settings_repo_update_interval_desc">选择应用更新间隔</string>
     <string name="settings_check_app_updates">检查应用更新</string>
     <string name="settings_check_app_updates_desc">启动应用时检查更新</string>
@@ -176,7 +154,6 @@
     <string name="settings_hide_fingerprint_desc">无论系统指纹是真的还是假的</string>
     <string name="settings_check_modules_update">检查模块更新</string>
     <string name="settings_check_modules_update_desc">启用对已安装的模块检查更新</string>
-    <string name="settings_check_modules_update_interval_suffix">\u0020hour/s</string>
     <string name="settings_check_modules_update_interval">模块检查更新间隔</string>
     <string name="settings_check_modules_update_interval_desc">设置检查已安装模块的更新间隔</string>
     <string name="settings_include_preleases">包括预发行版</string>
@@ -232,20 +209,12 @@
     <string name="search_placeholder">搜索…</string>
     <!-- Other -->
     <string name="unknown_error">未知错误</string>
-    <string name="verified">已认证</string>
-    <string name="open">打开</string>
     <string name="help">帮助</string>
-    <string name="module_config">配置</string>
     <string name="we_hit_a_brick_crash">我们遇到了问题!</string>
     <string name="report_to_issues">汇报 issue</string>
     <string name="stack_trace_truncated">%s\n… %d 更多</string>
     <string name="additional_notes">附加说明</string>
     <string name="repo_added">仓库已添加</string>
-    <!-- Work Manager -->
-    <string name="work_repository_updates">仓库更新</string>
-    <string name="work_updates_for_repositories">检查仓库更新</string>
-    <string name="work_module_updates">模块更新</string>
-    <string name="work_update_checker_for_modules">检查模块更新</string>
     <!-- Repo Update Service -->
     <string name="repo_update_service">仓库更新成功</string>
     <string name="repo_update_service_desc">别担心，MMRL 已经为你更新了安装的仓库 😋</string>
@@ -267,7 +236,6 @@
     <string name="home_support_content">MMRL 永远是免费、开源的软件，欢迎向我捐赠。</string>
     <string name="home_installed_modules">安装模块</string>
     <string name="home_enabled_modules">启用模块</string>
-    <string name="home_installed_modules_with_service_files">带有服务的模块</string>
     <string name="home_disabled_modules">禁用模块</string>
     <string name="home_updated_modules">更新模块</string>
     <string name="bulk_install_module_already_added">模块已存在</string>
@@ -280,7 +248,6 @@
     <string name="events_christmas">← 这里有棵树。</string>
     <string name="events_new_years_eve">新年快乐！</string>
     <string name="open_source">项目地址</string>
-    <string name="maintained_by">维护者</string>
     <string name="kernel">内核版本</string>
     <string name="manager_version">管理器版本</string>
     <string name="fingerprint">系统指纹</string>
@@ -294,8 +261,6 @@
     <string name="view_module_unsupported_device">不支持的设备</string>
     <string name="view_module_features_action">Action</string>
     <string name="view_module_unsupported_arch_desc">您的设备似乎不支持开发者声明的所需架构。</string>
-    <string name="settings_shell_module_action">使用 Shell 执行 Action</string>
-    <string name="settings_shell_module_action_desc">当您的 Root 方案不支持 action.sh 时，这将很有用</string>
     <string name="settings_modules">模块操作 &amp; 安装</string>
     <string name="settings_modules_desc">修改模块处理流程或更多关于模块的内容</string>
     <string name="settings_modules_installer">安装</string>
@@ -304,18 +269,14 @@
     <string name="bulk_add_as_bulk">批量添加</string>
     <string name="action_activity">Action</string>
     <string name="action_failure">Action 执行失败</string>
-    <string name="generic_disclaimer_title">你要负责！</string>
     <string name="view_module_low_root_version_desc">看起来你的 Root 方案版本过旧。检查是否有更新版本的 Root 方案。</string>
     <string name="view_module_features_action_sub">允许用户通过点击按钮来执行脚本</string>
     <string name="view_module_unsupported_arch">不支持的处理器架构</string>
     <string name="view_module_unsupported_device_desc">您的设备似乎不支持此模块或此模块已被排除。</string>
     <string name="view_module_low_root_version">Root 方案版本太低！</string>
-    <string name="generic_disclaimer_desc">**MMRL** 对执行这些选项所造成的您的设备任何损坏不承担责任，包括但不限于设备变砖、设备硬件损坏，或因为应用故障导致的部分系统功能损坏。在继续操作之前，请彻底研究使用此模块的功能和风险。*您选择进行这些操作的风险由您自行承担*。</string>
     <string name="settings_security_allow_advanced_kernelsu_api">允许高级 KernelSU API</string>
     <string name="settings_security_allow_filesystem_api">允许文件系统 API</string>
-    <string name="settings_allow_javascript_api">允许 JavaScript API</string>
     <string name="menu_export_modules_as_text">以文本导出模块</string>
-    <string name="home_enabled_disabled_modules_ratio">Ratio 开关</string>
     <string name="working_mode_magisk_title">Magisk</string>
     <string name="working_mode_kernelsu_title">KernelSU</string>
     <string name="working_mode_kernelsu_next_title">KernelSU Next</string>
@@ -333,7 +294,6 @@
     <string name="settings_developer_desc">开发者调试工具</string>
     <string name="settings_webui_remote_url">WebUI 远程链接</string>
     <string name="invalid_ip">本地地址不可用！</string>
-    <string name="settings_enable_webui_remote_url">启用 WebUI 远程链接</string>
     <string name="settings_webui_remote_url_alert_desc">WebUI 指定一个网络地址，使所有模块可以忽略 SSL 错误，并阻止对于 /data/adb/modules/{ID}/webroot 的访问。注意以个人名义签署本地网页服务才需要使用此功能，仅用于调试，风险自负。</string>
     <string name="settings_webui_remote_url_desc">启动一个 localhost 页面以便于调试。参见上方的注意事项了解更多信息。</string>
     <string name="install_screen_cancel_title">取消安装？</string>
@@ -343,12 +303,9 @@
     <string name="home_storage_usage">占用空间</string>
     <string name="menu_pin_action">固定操作</string>
     <string name="menu_pin_webui">固定 WebUI</string>
-    <string name="settings_use_shell_webui_assets">通过 Shell 加载 WebUI 资源</string>
-    <string name="settings_use_shell_webui_assets_desc">启用此功能将使用通过 Shell 读取文件，从而绕过文件容量最大只能为 2GB 的限制，关闭此功能后将由系统文件管理器读取文件。注意：通过文件管理器读取文件比使用 Shell 要快。</string>
     <string name="learn_more">了解更多</string>
     <string name="settings_use_generic_action">­使用通用 Action</string>
     <string name="settings_use_generic_action_desc">大部分 Root 权限提供方不支持以脚本形式执行 CLI 命令动作，你可以通过通用脚本来解决兼容性问题</string>
-    <string name="all_the_sponsors_of_the_project_click_on_learn_more_to_get_included">此项目的所有捐赠者。点击\"了解更多\"获取加入他们的方式。</string>
     <string name="sponsors">捐赠者</string>
     <string name="page_repositorys">仓库</string>
     <string name="blacklisted">已拉黑</string>

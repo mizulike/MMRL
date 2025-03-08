@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="setup_mode">வேலை முறை</string>
-    <string name="setup_root_title">மூலம்</string>
-    <string name="setup_root_desc">மேகிச்க் அல்லது கர்னல்சு வழங்கிய ரூட் அனுமதிகள் தேவை</string>
-    <string name="setup_shizuku_desc">சுன் அல்லது சிசுகு (ரூட்) வழங்கிய இசைவு தேவை</string>
     <string name="setup_non_root_title">ரூட் அல்லாத</string>
     <string name="setup_non_root_desc">ரூட் அனுமதிகள் தேவையில்லை, பதிவிறக்க தொகுதி செயல்பாடு மட்டுமே கிடைக்கிறது</string>
     <string name="working_mode_magisk_title">மந்திர</string>
@@ -18,18 +15,15 @@
     <string name="module_reinstall">மீண்டும் நிறுவவும்</string>
     <string name="module_download">பதிவிறக்கம்</string>
     <string name="module_update">புதுப்பிப்பு</string>
-    <string name="module_id">ஐடி: %1$s</string>
     <string name="settings_app">பயன்பாடு</string>
     <string name="settings_other">மற்றொன்று</string>
     <string name="settings_other_desc">DOH, பாதை மற்றும் பலவற்றை பதிவிறக்கவும்</string>
     <string name="settings_text_wrap">உரை மடக்கு</string>
     <string name="settings_updates_desc">புதுப்பித்தல் செயல்பாட்டில் உங்கள் விருப்பங்களை நிர்வகிக்கவும்</string>
     <string name="settings_homepage">பயன்பாட்டு முகப்புப்பக்கம்</string>
-    <string name="settings_shell_module_action">செயலுக்கு செல் பயன்படுத்தவும்</string>
     <string name="settings_modules_desc">தொகுதிகள் அல்லது தொகுதிகள் பற்றி இன்னும் பலவற்றிற்கான கையாளுபவர்களின் நடத்தையை மாற்றவும்</string>
     <string name="settings_modules_handlers">கையாளுபவர்கள்</string>
     <string name="settings_modules_installer">நிறுவி</string>
-    <string name="settings_allow_javascript_api">சாவாச்கிரிப்ட் பநிஇ அனுமதிக்கவும்</string>
     <string name="settings_security_allow_advanced_kernelsu_api">மேம்பட்ட கர்னல்சு பநிஇ ஐ அனுமதிக்கவும்</string>
     <string name="settings_security_allow_filesystem_api">கோப்பு முறைமை பநிஇ ஐ அனுமதிக்கவும்</string>
     <string name="settings_developer">உருவாக்குநர்</string>
@@ -41,10 +35,8 @@
     <string name="menu_sort_option_name">பெயர்</string>
     <string name="menu_sort_option_updated">புதுப்பிக்கப்பட்ட நேரம்</string>
     <string name="additional_notes">கூடுதல் குறிப்புகள்</string>
-    <string name="home_enabled_disabled_modules_ratio">இயக்கப்பட்ட / முடக்கப்பட்ட விகிதம்</string>
     <string name="events_new_years_eve">புத்தாண்டு ஈவ்!</string>
     <string name="open_source">திறந்த மூல</string>
-    <string name="maintained_by">மூலம் பராமரிக்கப்படுகிறது</string>
     <string name="kernel">கர்னல்</string>
     <string name="manager_version">மேலாளர் பதிப்பு</string>
     <string name="fingerprint">கைரேகை</string>
@@ -55,7 +47,6 @@
     <string name="copy_logs">பதிவுகளை நகலெடுக்கவும்</string>
     <string name="selected">தேர்ந்தெடுக்கப்பட்டது</string>
     <string name="invalid_ip">இது செல்லுபடியாகும் உள்ளக டொமைன் அல்ல!</string>
-    <string name="settings_enable_webui_remote_url">WebUI ரிமோட் முகவரி ஐ இயக்கவும்</string>
     <string name="learn_more">மேலும் அறிக</string>
     <string name="working_mode_kernelsu_title">கர்னல்சு</string>
     <string name="working_mode_kernelsu_next_title">கர்னல்சு அடுத்து</string>
@@ -87,15 +78,8 @@
     <string name="menu_show_verified">சரிபார்க்கப்பட்ட காட்டு</string>
     <string name="menu_sort_repolistmode_detailed">விவரிக்கப்பட்ட</string>
     <string name="menu_sort_repolistmode_compact">கச்சிதமான</string>
-    <string name="view_module_page_overview">கண்ணோட்டம்</string>
-    <string name="view_module_page_versions">பதிப்புகள்</string>
-    <string name="view_module_page_about">பற்றி</string>
-    <string name="view_module_page_readme">README</string>
-    <string name="view_module_description">விவரம்</string>
-    <string name="view_module_cloud">முகில்</string>
     <string name="view_module_version">பதிப்பு</string>
     <string name="view_module_last_updated">கடைசியாக புதுப்பிக்கப்பட்டது</string>
-    <string name="view_module_local">உள்ளக</string>
     <string name="view_module_update_notify">அறிவிக்கவும்</string>
     <string name="view_module_update_ignore">புறக்கணிக்கவும்</string>
     <string name="view_module_provided">%s ஆல் வழங்கப்படுகிறது</string>
@@ -107,8 +91,6 @@
     <string name="view_module_type">வகை: %s</string>
     <string name="view_module_added">சேர்க்கப்பட்டது: %s</string>
     <string name="view_module_file_size">கோப்பு அளவு</string>
-    <string name="view_module_screenshots">திரைக்காட்சிகள்</string>
-    <string name="view_module_help">உதவி</string>
     <string name="view_module_antifeatures">விரோத எதிர்ப்பு</string>
     <string name="view_module_unsupported">ஆதரிக்கப்படாதது</string>
     <string name="view_module_unsupported_desc">இந்த தொகுதி பதிப்பை நீங்கள் சாதனம் ஆதரிக்கவில்லை என்று தெரிகிறது. உங்கள் சொந்த ஆபத்தில் நிறுவவும்!</string>
@@ -138,7 +120,6 @@
     <string name="view_module_provided_by">வழங்கியவர்</string>
     <string name="view_module_added_on">சேர்க்கப்பட்டது</string>
     <string name="view_module_about_this_module">இந்த தொகுதி பற்றி</string>
-    <string name="view_module_mod_infos_disclaimer">**** உடன் குறிக்கப்பட்ட இன்ஃபோச் பல கூடுதல் களஞ்சியங்களால் வேறுபடலாம். மேலே உள்ள @track (ஐக் காண்க) என்பதைக் சொடுக்கு செய்வதன் மூலம் உண்மையான தகவல்களைக் காணலாம்.</string>
     <string name="view_module_section_count">%1$s+</string>
     <string name="view_module_donate">நன்கொடை</string>
     <string name="view_module_donate_desc">டெவலப்பருக்கு ஒரு காபியை நன்கொடையாக வழங்குவதன் மூலம் இந்த தொகுதி டெவலப்பருக்கு கொஞ்சம் அன்பைக் காட்டுங்கள்! .</string>
@@ -146,9 +127,7 @@
     <string name="view_module_required_os">தேவையான OS</string>
     <string name="view_module_required_os_value">ஆண்ட்ராய்டு %1$s மற்றும் அதற்கு மேல்</string>
     <string name="view_module_dependencies">சார்புநிலைகள்</string>
-    <string name="view_module_dependencies_not_found">தேவையான சார்புகள் காணப்படவில்லை</string>
     <string name="view_module_share">பங்கு</string>
-    <string name="view_module_not_found">தொகுதி கிடைக்கவில்லை</string>
     <string name="view_module_install_confirm_title">இந்த தொகுதியை நிறுவவா?</string>
     <string name="view_module_install_confirm_confirm_deps">நிறுவவும் (deps)</string>
     <string name="view_module_install_confirm_confirm">நிறுவவும்</string>
@@ -162,9 +141,6 @@
     <string name="view_module_unsupported_device_desc">உங்கள் சாதனங்கள் இந்த தொகுதிகளால் ஆதரிக்கப்படவில்லை அல்லது விலக்கப்பட்டுள்ளன என்று தெரிகிறது.</string>
     <string name="modules_empty">தொகுதிகள் எதுவும் கிடைக்கவில்லை</string>
     <string name="module_version_author">%1$s %2$s</string>
-    <string name="settings_app_desc">எம்.எம்.ஆர்.எல் பயன்பாட்டைப் பற்றிய அமைப்புகள்</string>
-    <string name="settings_repo">களஞ்சியங்கள்</string>
-    <string name="settings_repo_desc">மேகிச்க் தொகுதிகள் களஞ்சியங்களை நிர்வகிக்கவும்</string>
     <string name="settings_about">பற்றி</string>
     <string name="settings_resources">வளங்கள்</string>
     <string name="settings_resources_desc">ஆவணங்கள், ஆதரிக்கப்பட்ட களஞ்சியங்கள் மற்றும் வேறு எதையும்</string>
@@ -196,14 +172,11 @@
     <string name="settings_blacklist_desc">மூலமாக அல்லது ஆபத்தான மூடிய பட்டியலிடப்பட்ட தொகுதிகள்</string>
     <string name="settings_date_pattern">தேதி முறை</string>
     <string name="settings_date_pattern_desc">உங்கள் சொந்த தேதி வடிவமைப்பைப் பயன்படுத்தவும்</string>
-    <string name="settings_recommended_repos">பரிந்துரைக்கப்பட்ட களஞ்சியங்கள்</string>
-    <string name="settings_recommended_repos_desc">புதிய களஞ்சியங்களை ஆராய்ந்து அவற்றை நேரடியாகச் சேர்க்கவும்</string>
     <string name="settings_updates">புதுப்பிப்புகள்</string>
     <string name="settings_homepage_desc">பயன்பாட்டின் தொடக்கத் திரையைத் தேர்ந்தெடுக்கவும்</string>
     <string name="settings_auto_update_repos">ஆட்டோ புதுப்பிப்பு ரெப்போ</string>
     <string name="settings_auto_update_repos_desc">பின்னணியில் உள்ள களஞ்சியங்களை தானாகவே புதுப்பிக்கவும்</string>
     <string name="settings_repo_update_interval">ரெப்போ புதுப்பிப்பு இடைவெளி</string>
-    <string name="settings_repo_update_interval_suffix">" மணி/கள்"</string>
     <string name="settings_repo_update_interval_desc">களஞ்சியங்களை புதுப்பிக்க நேர இடைவெளியைத் தேர்ந்தெடுக்கவும்</string>
     <string name="settings_check_app_updates">பயன்பாட்டு புதுப்பிப்புகளைச் சரிபார்க்கவும்</string>
     <string name="settings_check_app_updates_desc">பயன்பாட்டைத் திறக்கும்போது பயன்பாட்டு புதுப்பிப்புகளை தானாகவே சரிபார்க்கிறது</string>
@@ -211,7 +184,6 @@
     <string name="settings_hide_fingerprint_desc">இது ஒரு உண்மையான அல்லது போலி என்றால் பரவாயில்லை</string>
     <string name="settings_check_modules_update">தொகுதி புதுப்பிப்புகளைச் சரிபார்க்கவும்</string>
     <string name="settings_check_modules_update_desc">நிறுவப்பட்ட தொகுதிகளுக்கான புதுப்பிப்பு காசோலையை இயக்குகிறது</string>
-    <string name="settings_check_modules_update_interval_suffix">" மணி/கள்"</string>
     <string name="settings_check_modules_update_interval">தொகுதி புதுப்பிப்பு சோதனை இடைவெளி</string>
     <string name="settings_check_modules_update_interval_desc">உங்கள் நிறுவப்பட்ட தொகுதிகளை சரிபார்க்க நேர இடைவெளியைத் தேர்ந்தெடுக்கவும்</string>
     <string name="settings_include_preleases">முன் வெளியீடுகளைச் சேர்க்கவும்</string>
@@ -222,7 +194,6 @@
     <string name="settings_clear_install_terminal_desc">ஒன்றுக்கு மேற்பட்ட தொகுதிகளை நிறுவும் போது முனையத்தை நிறுவவும்</string>
     <string name="settings_shell_module_state_change">மாநிலங்களுக்கு செல் பயன்படுத்தவும்</string>
     <string name="settings_shell_module_state_change_desc">தொகுதி கோப்பகத்தில் கோப்புகளை உருவாக்குவதற்கு பதிலாக செல்லைப் பயன்படுத்துகிறது. இயக்கப்பட்டதும், மீட்டெடுப்பு பொத்தானை உரிய வரம்புகள் பயன்படுத்த முடியாது.</string>
-    <string name="settings_shell_module_action_desc">உங்கள் ரூட் வழங்குநர் action.sh கோப்பை ஆதரிக்காதபோது இது பயனுள்ளதாக இருக்கும்</string>
     <string name="settings_modules">தொகுதிகள் மற்றும் நிறுவி</string>
     <string name="settings_webui_remote_url">Webii ரிமோட் முகவரி</string>
     <string name="settings_webui_remote_url_desc">பிழைத்திருத்தத்தை எளிமைப்படுத்த, http: // localhost போன்ற உள்ளக களத்தை வழங்கவும். மேலும் மேலும் எச்சரிக்கையை காண்க.</string>
@@ -262,18 +233,11 @@
     <string name="search_empty">வெற்று பட்டியல்</string>
     <string name="search_placeholder">தேடுங்கள்…</string>
     <string name="unknown_error">தெரியாத பிழை</string>
-    <string name="verified">சரிபார்க்கப்பட்டது</string>
-    <string name="open">திற</string>
     <string name="help">உதவி</string>
-    <string name="module_config">கட்டமைப்பு</string>
     <string name="we_hit_a_brick_crash">நாங்கள் ஒரு செங்கல் அடித்தோம்!</string>
     <string name="report_to_issues">சிக்கல்களுக்கு அறிக்கை</string>
     <string name="stack_trace_truncated">%s\n … %d மேலும்</string>
     <string name="repo_added">ரெப்போ சேர்க்கப்பட்டது</string>
-    <string name="work_repository_updates">களஞ்சிய புதுப்பிப்புகள்</string>
-    <string name="work_updates_for_repositories">களஞ்சியங்களுக்கான புதுப்பிப்புகள்</string>
-    <string name="work_module_updates">தொகுதி புதுப்பிப்புகள்</string>
-    <string name="work_update_checker_for_modules">தொகுதிகளுக்கான செக்கரை புதுப்பிக்கவும்</string>
     <string name="repo_update_service">களஞ்சியங்கள் வெற்றிகரமாக புதுப்பிக்கப்பட்டன</string>
     <string name="repo_update_service_desc">கவலைப்பட வேண்டாம், எம்.எம்.ஆர்.எல் உங்களுக்காக நிறுவப்பட்ட களஞ்சியங்களை புதுப்பித்தது. .</string>
     <string name="repo_update_service_failed">களஞ்சியங்களுக்கு புதுப்பிப்புகள் எதுவும் கிடைக்கவில்லை</string>
@@ -293,7 +257,6 @@
     <string name="home_support_content">எம்.எம்.ஆர்.எல் என்பது எப்போதும், இலவசமாகவும், திறந்த மூலமாகவும் இருக்கும். இருப்பினும் நீங்கள் நன்கொடை அளிப்பதன் மூலம் அக்கறை காட்டுகிறீர்கள் என்பதை நீங்கள் எனக்குக் காட்டலாம்.</string>
     <string name="home_installed_modules">நிறுவப்பட்ட தொகுதிகள்</string>
     <string name="home_enabled_modules">இயக்கப்பட்ட தொகுதிகள்</string>
-    <string name="home_installed_modules_with_service_files">பணி கோப்புகளுடன் நிறுவப்பட்ட தொகுதிகள்</string>
     <string name="home_disabled_modules">முடக்கப்பட்ட தொகுதிகள்</string>
     <string name="home_updated_modules">புதுப்பிக்கப்பட்ட தொகுதிகள்</string>
     <string name="home_storage_usage">சேமிப்பக பயன்பாடு</string>
@@ -306,8 +269,6 @@
     <string name="action_activity">செயல்</string>
     <string name="action_failure">செயல் தோல்வி</string>
     <string name="action_executing">செயல்படுத்துதல்…</string>
-    <string name="generic_disclaimer_title">நீங்கள் பொறுப்பு!</string>
-    <string name="generic_disclaimer_desc">. தொடர்வதற்கு முன், தயவுசெய்து இந்த தொகுதியைப் பயன்படுத்துவதன் நற்பொருத்தங்கள் மற்றும் அபாயங்களை முழுமையாக ஆராய்ச்சி செய்யுங்கள். *இந்த மாற்றங்களை உங்கள் சொந்த ஆபத்தில் செய்ய நீங்கள் தேர்வு செய்கிறீர்கள்*.</string>
     <string name="has_a_new_update">%1$s ஒரு புதிய புதுப்பிப்பைக் கொண்டுள்ளது!</string>
     <string name="update_available_from_to">புதுப்பிப்பு %s ( %d) முதல் %s ( %d) வரை கிடைக்கும்.</string>
     <string name="events_birthday">%1$s ஆண்டுகள் MMRL!</string>
@@ -320,9 +281,6 @@
     <string name="settings_use_generic_action">பொதுவான செயலைப் பயன்படுத்தவும்</string>
     <string name="settings_use_generic_action_desc">பெரும்பாலான ரூட் வழங்குநர்கள் ஒரு செயல் CLI கட்டளையை ஆதரிக்கவில்லை. அதற்கு பதிலாக, நீங்கள் ஒரு பொதுவான ச்கிரிப்டைப் பயன்படுத்தலாம்</string>
     <string name="sponsors">ஒப்புரவாளர்கள்</string>
-    <string name="all_the_sponsors_of_the_project_click_on_learn_more_to_get_included">திட்டத்தின் அனைத்து ச்பான்சர்களும். சேர்க்க \"மேலும் அறிக\" என்பதைக் சொடுக்கு செய்க.</string>
-    <string name="settings_use_shell_webui_assets">WebUI சொத்துக்களை ஏற்ற செல் பயன்படுத்தவும்</string>
-    <string name="settings_use_shell_webui_assets_desc">இந்த அம்சத்தை இயக்குவது, சொத்து பைட்டுகளை நேரடியாகப் படிப்பதற்குப் பதிலாக செல்லைப் பயன்படுத்த பாதையை கையாளுபவர் அனுமதிக்கிறது, இது 2 சிபி கோப்பு அளவு வரம்பை நீக்குகிறது. நேரடி பைட்-வாசிப்பு முறை வேகமாக உள்ளது என்பதை நினைவில் கொள்க.</string>
     <string name="blacklisted">தடுப்புப்பட்டியலில்</string>
     <string name="blacklisted_desc">இந்த தொகுதி எம்.எம்.ஆர்.எல். உங்கள் பாதுகாப்பை உறுதிப்படுத்த நிறுவல் முடக்கப்பட்டுள்ளது. இந்த தொகுதியை நீங்கள் இன்னும் நிறுவ விரும்பினால், ** அமைப்புகள் → பாதுகாப்பு → பிளாக்லிச்ட் எச்சரிக்கைகள் ** க்கு செல்லுவதன் மூலம் அமைப்புகளில் தடுப்புப்பட்டியல் எச்சரிக்கைகளை முடக்கலாம்.\n @மோர் (மேலும் அறிக)</string>
     <string name="settings_blacklist_alerts">தடுப்புப்பட்டியல் எச்சரிக்கைகள்</string>

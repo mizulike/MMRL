@@ -2,9 +2,6 @@
 <resources>
     <!-- Setup -->
     <string name="setup_mode">動作モード</string>
-    <string name="setup_root_title">Root</string>
-    <string name="setup_root_desc">Magisk または KernelSU による root 権限の許可が必要です</string>
-    <string name="setup_shizuku_desc">Sui または Shizuku (root) による許可が必要です</string>
     <string name="setup_non_root_title">Non-Root</string>
     <string name="setup_non_root_desc">root 権限は不要で、モジュールのダウンロード機能のみが使用可能です。</string>
     <!-- Install -->
@@ -41,15 +38,8 @@
     <string name="menu_sort_repolistmode_detailed">詳細</string>
     <string name="menu_sort_repolistmode_compact">コンパクト</string>
     <!-- View Module -->
-    <string name="view_module_page_overview">概要</string>
-    <string name="view_module_page_versions">バージョン</string>
-    <string name="view_module_page_about">情報</string>
-    <string name="view_module_page_readme">README</string>
-    <string name="view_module_description">説明</string>
-    <string name="view_module_cloud">クラウド</string>
     <string name="view_module_version">バージョン</string>
     <string name="view_module_last_updated">最終更新</string>
-    <string name="view_module_local">ローカル</string>
     <string name="view_module_update_notify">通知</string>
     <string name="view_module_update_ignore">無視</string>
     <string name="view_module_provided">提供元: %s</string>
@@ -61,8 +51,6 @@
     <string name="view_module_type">タイプ: %s</string>
     <string name="view_module_added">追加日: %s</string>
     <string name="view_module_file_size">ファイルサイズ</string>
-    <string name="view_module_screenshots">スクリーンショット</string>
-    <string name="view_module_help">ヘルプ</string>
     <string name="view_module_antifeatures">アンチ機能</string>
     <string name="view_module_unsupported">非対応</string>
     <string name="view_module_unsupported_desc">使用中のデバイスは、このモジュールのバージョンに対応していないようです。自己責任でインストールしてください！</string>
@@ -91,7 +79,6 @@
     <string name="view_module_provided_by">提供元</string>
     <string name="view_module_added_on">追加日</string>
     <string name="view_module_about_this_module">このモジュールについて</string>
-    <string name="view_module_mod_infos_disclaimer">**** のマークの付いた情報は、複数のリポジトリが追加されているため異なる場合があります。実際の情報は、上記の @track(トラックを表示) をタップで表示されます。</string>
     <string name="view_module_section_count">%1$s+</string>
     <string name="view_module_donate">寄付</string>
     <string name="view_module_donate_desc">このモジュールの開発者にコーヒーをご馳走して愛を伝えましょう！ ☕</string>
@@ -99,9 +86,7 @@
     <string name="view_module_required_os">必要な OS 環境</string>
     <string name="view_module_required_os_value">Android %1$s 以降</string>
     <string name="view_module_dependencies">依存関係</string>
-    <string name="view_module_dependencies_not_found">必要な依存関係は見つかりません</string>
     <string name="view_module_share">共有</string>
-    <string name="view_module_not_found">モジュールが見つかりません</string>
     <string name="view_module_install_confirm_title">このモジュールをインストールしますか？</string>
     <string name="view_module_install_confirm_confirm_deps">インストール (一部)</string>
     <string name="view_module_install_confirm_confirm">インストール</string>
@@ -117,12 +102,8 @@
     <string name="module_reinstall">再インストール</string>
     <string name="module_download">ダウンロード</string>
     <string name="module_update">更新</string>
-    <string name="module_id">ID: %1$s</string>
     <!-- Settings -->
     <string name="settings_app">アプリ</string>
-    <string name="settings_app_desc">MMRL アプリの設定をします</string>
-    <string name="settings_repo">リポジトリ</string>
-    <string name="settings_repo_desc">Magisk モジュールリポジトリを管理します</string>
     <string name="settings_about">アプリについて</string>
     <string name="settings_resources">リソース</string>
     <string name="settings_resources_desc">ドキュメント、対応しているリポジトリなど</string>
@@ -159,8 +140,6 @@
     <string name="settings_blacklist_desc">クローズドソースまたは危険な可能性のあるモジュールの一覧</string>
     <string name="settings_date_pattern">日付のパターン</string>
     <string name="settings_date_pattern_desc">日付形式を変更します。</string>
-    <string name="settings_recommended_repos">おすすめのリポジトリ</string>
-    <string name="settings_recommended_repos_desc">新しいリポジトリを探して追加します</string>
     <string name="settings_updates">更新</string>
     <string name="settings_updates_desc">更新プロセスに関する設定を管理します</string>
     <string name="settings_homepage">アプリホームページ</string>
@@ -168,7 +147,6 @@
     <string name="settings_auto_update_repos">リポジトリの自動更新</string>
     <string name="settings_auto_update_repos_desc">バックグラウンドでリポジトリの自動更新をします。</string>
     <string name="settings_repo_update_interval">リポジトリ更新の間隔</string>
-    <string name="settings_repo_update_interval_suffix">" 時間ごと"</string>
     <string name="settings_repo_update_interval_desc">リポジトリを自動更新する間隔を設定します。</string>
     <string name="settings_check_app_updates">アプリの更新を確認</string>
     <string name="settings_check_app_updates_desc">アプリを開いたときに自動でアプリの更新を確認します。</string>
@@ -176,7 +154,6 @@
     <string name="settings_hide_fingerprint_desc">ホームのフィンガープリントを隠します (本物か偽物かは関係ありません)。</string>
     <string name="settings_check_modules_update">モジュールの更新を確認する</string>
     <string name="settings_check_modules_update_desc">インストールされているモジュールの更新を自動で確認します。</string>
-    <string name="settings_check_modules_update_interval_suffix">" 時間ごと"</string>
     <string name="settings_check_modules_update_interval">モジュールの更新を確認する間隔</string>
     <string name="settings_check_modules_update_interval_desc">インストールされたモジュールを自動で確認する間隔を設定します。</string>
     <string name="settings_include_preleases">プレリリースを含める</string>
@@ -234,20 +211,12 @@
     <string name="search_placeholder">検索…</string>
     <!-- Other -->
     <string name="unknown_error">不明なエラー</string>
-    <string name="verified">認証済み</string>
-    <string name="open">開く</string>
     <string name="help">ヘルプ</string>
-    <string name="module_config">設定</string>
     <string name="we_hit_a_brick_crash">レンガが当たった！</string>
     <string name="report_to_issues">問題を報告</string>
     <string name="stack_trace_truncated">%s\n… %d 件以上</string>
     <string name="additional_notes">補足事項</string>
     <string name="repo_added">リポジトリを追加しました</string>
-    <!-- Work Manager -->
-    <string name="work_repository_updates">リポジトリの更新</string>
-    <string name="work_updates_for_repositories">リポジトリの更新</string>
-    <string name="work_module_updates">モジュールの更新</string>
-    <string name="work_update_checker_for_modules">モジュール更新チェッカー</string>
     <!-- Repo Update Service -->
     <string name="repo_update_service">リポジトリが正常に更新されました</string>
     <string name="repo_update_service_desc">ご心配なく、MMRL はインストールしたリポジトリを更新しました。😋</string>
@@ -269,7 +238,6 @@
     <string name="home_support_content">MMRL は無料であり、オープンソースです。ですが、寄付をすることで開発者の今後の励みに繋がります。</string>
     <string name="home_installed_modules">インストール済みのモジュール</string>
     <string name="home_enabled_modules">有効化済みのモジュール</string>
-    <string name="home_installed_modules_with_service_files">インストール済みのモジュール (サービスファイルを含む)</string>
     <string name="home_disabled_modules">無効化済みのモジュール</string>
     <string name="home_updated_modules">更新済みのモジュール</string>
     <string name="bulk_install_module_already_added">モジュールはすでに追加されています</string>
@@ -282,7 +250,6 @@
     <string name="events_christmas">← ツリー。</string>
     <string name="events_new_years_eve">大晦日です！</string>
     <string name="open_source">ソースを開く</string>
-    <string name="maintained_by">管理者:</string>
     <string name="kernel">カーネル</string>
     <string name="manager_version">マネージャーのバージョン</string>
     <string name="fingerprint">フィンガープリント</string>
@@ -302,21 +269,15 @@
     <string name="bulk_add_as_bulk">一括インストールに追加</string>
     <string name="action_failure">アクションに失敗しました</string>
     <string name="action_executing">実行中…</string>
-    <string name="generic_disclaimer_title">自己責任です！</string>
     <string name="settings_modules_desc">モジュールのハンドラの動作を変更、モジュールに関するその他の情報を変更します</string>
-    <string name="settings_shell_module_action_desc">この機能は、root プロバイダーが action.sh ファイルをサポートしていない場合に役立ちます</string>
     <string name="view_module_unsupported_device_desc">使用しているデバイスは、このモジュールに対応していないか除外されているようです。</string>
-    <string name="settings_shell_module_action">アクションにシェルを使用</string>
-    <string name="generic_disclaimer_desc">**MMRL** は、デバイスや SD カードの破損やアラームアプリの誤動作による失業、熱核戦争などのデバイスに生じた損害については一切責任を負いません。続行をする前に、このモジュールの機能と使用時のリスクを徹底的に調べてください。*これらの変更は自己責任で行ってください*。</string>
-    <string name="view_module_unsupported_arch_desc">使用しているデバイスは、開発者が宣言した必要なアーキテクチャに対応していないようです。</string>
+      <string name="view_module_unsupported_arch_desc">使用しているデバイスは、開発者が宣言した必要なアーキテクチャに対応していないようです。</string>
     <string name="settings_modules">モジュールとインストーラー</string>
     <string name="action_activity">アクション</string>
     <string name="settings_security_allow_filesystem_api">ファイルシステム API を許可</string>
     <string name="settings_security_allow_advanced_kernelsu_api">高度な KernelSU API を許可</string>
     <string name="menu_export_modules_as_text">モジュールをテキストでエクスポート</string>
-    <string name="home_enabled_disabled_modules_ratio">比率を有効化または無効化</string>
     <string name="copy_logs">ログをコピー</string>
-    <string name="settings_allow_javascript_api">JavaScript API を許可</string>
     <string name="working_mode_magisk_title">Magisk</string>
     <string name="working_mode_kernelsu_next_title">KernelSU Next</string>
     <string name="settings_root_version">バージョン: %s</string>
@@ -328,7 +289,6 @@
     <string name="settings_developer">開発者</string>
     <string name="settings_webui_remote_url">WebUI リモート URL</string>
     <string name="invalid_ip">有効なローカルドメインではありません！</string>
-    <string name="settings_enable_webui_remote_url">WebUI リモート URL を有効化</string>
     <string name="settings_developer_desc">開発者向けデバッグツール</string>
     <string name="working_mode_kernelsu_next_desc">Magic Mount のサポート、ユーザー空間アプリに対する強化された制御とカスタマイズ可能な root 権限を備えた、高度なカーネルベースの root ソリューションです。</string>
     <string name="working_mode_magisk_desc">Android カスタマイズ用のツールスイートです。root アクセス、モジュールのサポートと boot イメージの変更、Zygisk によるプロセスレベルのコード実行を提供します。</string>
@@ -341,9 +301,7 @@
     <string name="action_screen_cancel_text">アクションをキャンセルしてもよろしいですか？</string>
     <string name="learn_more">詳しく見る</string>
     <string name="sponsors">スポンサー</string>
-    <string name="settings_use_shell_webui_assets">シェルを使用して WebUI アセットを読み込む</string>
-    <string name="settings_use_shell_webui_assets_desc">この機能を有効化すると、パスハンドラーはアセットバイトを直接読み取る代わりにシェルが使用できるようになり、2 GB のファイルサイズ制限がなくなります。直接なバイト読み取り方式が高速であることにご注意ください。</string>
-    <string name="blacklisted">ブラックリスト済み</string>
+   <string name="blacklisted">ブラックリスト済み</string>
     <string name="settings_blacklist_alerts">ブラックリストアラート</string>
     <string name="settings_blacklist_alerts_desc">ローカルのモジュールとモジュールを探すでアラートを表示してブラックリストに登録済みのモジュールのインストールをブロックします。</string>
     <string name="install_screen_cancel_title">インストールをキャンセルしますか？</string>
@@ -352,7 +310,6 @@
     <string name="working_mode_kernelsu_desc">ユーザー空間アプリに対する強化された制御とカスタマイズ可能な root 権限、OverlayFS を使用した Systemless モジュールのサポートを提供するカーネルベースの root ソリューションです。</string>
     <string name="settings_webui_remote_url_alert_desc">WebUI はすべてのモジュールに対して、提供されたアドレスを一貫して使用してSSL エラーをバイパスし、/data/adb/modules/{ID}/webroot へのアクセスを無効化するようになりました。この機能を使用するには、自己署名されたローカル Web サーバーが必要です。この機能はデバッグを目的としており、日常的な使用を意図した物ではありません。自己責任で使用してください。</string>
     <string name="settings_use_generic_action_desc">ほとんどの root プロバイダーはアクション CLI コマンドをサポートしていません。代わりに汎用スクリプトを使用できます。</string>
-    <string name="all_the_sponsors_of_the_project_click_on_learn_more_to_get_included">プロジェクトのすべてのスポンサーです。参加するには「詳しく見る」をタップしてください。</string>
     <string name="blacklisted_desc">このモジュールは、MMRL によってブラックリストに登録されています。セキュリティを確保するためにインストールは無効化されています。それでもインストールする場合は、 **設定 → セキュリティ → ブラックリストアラート**でブラックリストアラートを停止することができます。\n@詳細を表示</string>
     <string name="page_repositorys">リポジトリ</string>
     <string name="menu_show_modules_count">モジュールの数を表示</string>

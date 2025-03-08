@@ -2,9 +2,6 @@
 <resources>
     <!-- 初次設定畫面 -->
     <string name="setup_mode">運作模式</string>
-    <string name="setup_root_title">Root</string>
-    <string name="setup_root_desc">需經 Magisk 或 KernelSU 授權 Root 存取</string>
-    <string name="setup_shizuku_desc">需經 Sui 或 Shizuku（Root 模式）授權</string>
     <string name="setup_non_root_title">無授權</string>
     <string name="setup_non_root_desc">不以 Root 存取權執行本應用程式。僅可使用模組下載功能</string>
     <!-- 安裝介面 -->
@@ -41,15 +38,8 @@
     <string name="menu_sort_repolistmode_detailed">細緻型排版</string>
     <string name="menu_sort_repolistmode_compact">緊縮型排版</string>
     <!-- 模組檢視介面 -->
-    <string name="view_module_page_overview">概觀</string>
-    <string name="view_module_page_versions">版本</string>
-    <string name="view_module_page_about">關於</string>
-    <string name="view_module_page_readme">手冊</string>
-    <string name="view_module_description">說明</string>
-    <string name="view_module_cloud">雲端庫存資訊</string>
     <string name="view_module_version">模組版本</string>
     <string name="view_module_last_updated">更新日期</string>
-    <string name="view_module_local">本機模組資訊</string>
     <string name="view_module_update_notify">通知</string>
     <string name="view_module_update_ignore">忽略</string>
     <string name="view_module_provided">模組倉庫：%s</string>
@@ -61,8 +51,6 @@
     <string name="view_module_type">資料分類：%s</string>
     <string name="view_module_added">新增日期：%s</string>
     <string name="view_module_file_size">檔案大小</string>
-    <string name="view_module_screenshots">螢幕截圖</string>
-    <string name="view_module_help">關連網頁</string>
     <string name="view_module_antifeatures">權益警示</string>
     <string name="view_module_unsupported">未受支援</string>
     <string name="view_module_unsupported_desc">你的裝置尚未支援此模組版本。謹慎安裝，風險自負！</string>
@@ -91,7 +79,6 @@
     <string name="view_module_provided_by">模組倉庫</string>
     <string name="view_module_added_on">上架日期</string>
     <string name="view_module_about_this_module">關於模組</string>
-    <string name="view_module_mod_infos_disclaimer">留有 * 標記的資訊，其內容在各模組倉庫之間稍有不同。欲知詳情，請點選上方的@track(中繼資料檢視)。</string>
     <string name="view_module_section_count">%1$s+</string>
     <string name="view_module_donate">小額捐款</string>
     <string name="view_module_donate_desc">一杯咖啡 ☕ 的錢，表達對模組開發人員的大力支持！</string>
@@ -99,9 +86,7 @@
     <string name="view_module_required_os">所需作業系統版本</string>
     <string name="view_module_required_os_value">Android %1$s 以上</string>
     <string name="view_module_dependencies">相依模組</string>
-    <string name="view_module_dependencies_not_found">查無所需的相依模組</string>
     <string name="view_module_share">分享</string>
-    <string name="view_module_not_found">查無模組</string>
     <!-- 模組主畫面 -->
     <string name="modules_empty">查無模組</string>
     <!-- 模組管理介面 -->
@@ -112,12 +97,8 @@
     <string name="module_reinstall">重新安裝</string>
     <string name="module_download">下載</string>
     <string name="module_update">更新</string>
-    <string name="module_id">模組代號：%1$s</string>
     <!-- 設定 -->
     <string name="settings_app">應用程式</string>
-    <string name="settings_app_desc">有關《MMRL》應用程式自身的設定項目</string>
-    <string name="settings_repo">模組倉庫</string>
-    <string name="settings_repo_desc">管理 Magisk 模組倉庫</string>
     <string name="settings_about">本體資訊</string>
     <string name="settings_resources">線上資源</string>
     <string name="settings_resources_desc">包含說明手冊、模組倉庫支援清單等等，應有盡有</string>
@@ -154,8 +135,6 @@
     <string name="settings_blacklist_desc">羅列封閉了原始碼以及尚有濫用風險的模組</string>
     <string name="settings_date_pattern">日期樣式</string>
     <string name="settings_date_pattern_desc">套上自己習慣書寫的日期格式</string>
-    <string name="settings_recommended_repos">倉庫名冊</string>
-    <string name="settings_recommended_repos_desc">瀏覽各家模組倉庫，一指將其納入庫存</string>
     <string name="settings_updates">更新檢查</string>
     <string name="settings_updates_desc">管理你的更新過程偏好</string>
     <string name="settings_homepage">應用程式主畫面</string>
@@ -163,7 +142,6 @@
     <string name="settings_auto_update_repos">自動執行模組倉庫更新</string>
     <string name="settings_auto_update_repos_desc">自動在背景執行模組倉庫更新</string>
     <string name="settings_repo_update_interval">模組倉庫更新間隔</string>
-    <string name="settings_repo_update_interval_suffix">" 小時／次"</string>
     <string name="settings_repo_update_interval_desc">選擇每次更新之間相隔的時長</string>
     <string name="settings_check_app_updates">檢查應用程式更新</string>
     <string name="settings_check_app_updates_desc">進入主畫面時自動檢查應用程式更新</string>
@@ -171,7 +149,6 @@
     <string name="settings_hide_fingerprint_desc">不論真實與否，一律隱藏</string>
     <string name="settings_check_modules_update">檢查模組更新</string>
     <string name="settings_check_modules_update_desc">為已啟用模組檢查更新</string>
-    <string name="settings_check_modules_update_interval_suffix">" 小時／次"</string>
     <string name="settings_check_modules_update_interval">模組更新間隔</string>
     <string name="settings_check_modules_update_interval_desc">選擇每次更新之間相隔的時長</string>
     <string name="settings_include_preleases">檢查預先發布版本</string>
@@ -227,20 +204,12 @@
     <string name="search_placeholder">開始搜尋……</string>
     <!-- 其他 -->
     <string name="unknown_error">錯誤內容不詳</string>
-    <string name="verified">已驗證</string>
-    <string name="open">開啟</string>
     <string name="help">協助</string>
-    <string name="module_config">組態</string>
     <string name="we_hit_a_brick_crash">發生錯誤！</string>
     <string name="report_to_issues">提起錯誤回報</string>
     <string name="stack_trace_truncated">%s\n……尚有 %d 行</string>
     <string name="additional_notes">附加提示</string>
     <string name="repo_added">已新增模組倉庫</string>
-    <!-- 即時管理工具 -->
-    <string name="work_repository_updates">模組倉庫更新服務</string>
-    <string name="work_updates_for_repositories">用於檢查模組倉庫更新</string>
-    <string name="work_module_updates">模組更新服務</string>
-    <string name="work_update_checker_for_modules">用於檢查模組更新</string>
     <!-- 中介平臺更新背景服務 -->
     <string name="repo_update_service">已成功更新所有模組倉庫</string>
     <string name="repo_update_service_desc">《MMRL》已為你更新了所有模組倉庫。😋</string>
@@ -262,7 +231,6 @@
     <string name="home_support_content">《MMRL》一向以免費製品與開放原始碼自居，矢志不渝。若想協助本人進行開發，請以小額捐款表達你對專案發展的大力支持。</string>
     <string name="home_installed_modules">已安裝模組</string>
     <string name="home_enabled_modules">已啟用模組</string>
-    <string name="home_installed_modules_with_service_files">已安裝模組（背景服務）</string>
     <string name="home_disabled_modules">已停用模組</string>
     <string name="home_updated_modules">已更新模組</string>
     <string name="has_a_new_update">%1$s 已可更新！</string>
@@ -272,7 +240,6 @@
     <string name="events_christmas">← 聖誕樹。</string>
     <string name="events_new_years_eve">祝跨年愉快！</string>
     <string name="open_source">開放原始碼</string>
-    <string name="maintained_by">維護人員</string>
     <string name="kernel">裝置核心</string>
     <string name="manager_version">管理工具</string>
     <string name="fingerprint">指紋資訊</string>
@@ -299,23 +266,17 @@
     <string name="view_module_required_root_version">所需授權版本</string>
     <string name="view_module_features_action">腳本執行</string>
     <string name="view_module_features_action_sub">准許使用者按下按鈕後執行指令碼</string>
-    <string name="settings_shell_module_action">以系統外殼執行腳本</string>
     <string name="settings_modules_desc">更改大量模組所遭遇的處置行為</string>
     <string name="settings_modules_handlers">處置程序</string>
     <string name="settings_modules">程序處置</string>
     <string name="action_failure">無法執行腳本</string>
-    <string name="generic_disclaimer_title">請自行承擔風險！</string>
     <string name="action_activity">執行</string>
     <string name="action_executing">正在執行……</string>
-    <string name="settings_shell_module_action_desc">推薦在授權平臺不支援 action.sh 檔案的情況下啟用</string>
     <string name="bulk_add_as_bulk">新增至模組安裝佇列</string>
     <string name="settings_modules_installer">安裝程序</string>
-    <string name="generic_disclaimer_desc">若因自身裝置變故而蒙受損失（不限於無法開機、SD 記憶卡故障、引發熱核子戰爭，或是鬧鐘應用程式秀逗而讓你被炒魷魚），**《MMRL》**概不負責。執行之前，請確認好本功能之於模組的作用與風險。*在你同意進行模組修改過後，其風險責任應由你承擔*。</string>
     <string name="settings_security_allow_advanced_kernelsu_api">進階 KernelSU 介面存取權</string>
-    <string name="settings_allow_javascript_api">為 JavaScript 程式授予權限</string>
     <string name="settings_security_allow_filesystem_api">檔案系統存取權</string>
     <string name="menu_export_modules_as_text">匯出模組為文字檔</string>
-    <string name="home_enabled_disabled_modules_ratio">已啟用／已停用占比</string>
     <string name="copy_logs">複製記錄檔內容</string>
     <string name="working_mode_apatch_title">APatch</string>
     <string name="working_mode_kernelsu_next_desc">一套基於裝置核心的進階型 Root 解決方案：以支援 Magic Mount 為特色，不僅更強大地掌控使用者應用程式，更能自訂授予給程式的具體權限。</string>
@@ -334,7 +295,6 @@
     <string name="settings_developer_desc">可供開發人員調用的偵錯工具</string>
     <string name="settings_webui_remote_url">遠端連線網址</string>
     <string name="invalid_ip">此串不為有效的本機網域！</string>
-    <string name="settings_enable_webui_remote_url">啟用 WebUI 介面遠端連線</string>
     <string name="settings_webui_remote_url_alert_desc">WebUI 介面得以指定的網路位址，為所有模組忽略與安全通訊層（SSL）的連線問題，以及收回對 /data/adb/modules/{代號}/webroot 的存取權。謹記：以個人名義簽署的本機網站伺服器才需要開啟此功能。謹慎偵錯，風險自負。</string>
     <string name="install_screen_cancel_title">取消安裝？</string>
     <string name="action_screen_cancel_title">取消腳本執行？</string>
@@ -347,9 +307,6 @@
     <string name="learn_more">深入瞭解</string>
     <string name="settings_use_generic_action_desc">大多數授權平臺仍未支援以腳本形式執行指令介面：此時改採通用格式的指令碼，便可解決相容性問題</string>
     <string name="sponsors">贊助人員</string>
-    <string name="all_the_sponsors_of_the_project_click_on_learn_more_to_get_included">本專案的所有贊助人員。點選「深入瞭解」便可得知成為贊助人員的方式。</string>
-    <string name="settings_use_shell_webui_assets">以系統外殼載入 WebUI 資源</string>
-    <string name="settings_use_shell_webui_assets_desc">功能啟用後，便准許處置程序調用系統外殼來讀取檔案；功能停用時，僅開放處置程序逕自讀取 2 GB 以內的資源檔案。請注意：後者由處置程序逕自讀取檔案的速度會比前者更加快速。</string>
     <string name="blacklisted">已受封鎖</string>
     <string name="blacklisted_desc">此模組已受《MMRL》封鎖。為保護你的安全，安裝程序無法進行。若仍執意安裝此模組，請停用**設定 → 安全措施 → 模組封鎖**選項。\n@more(深入了解)</string>
     <string name="settings_blacklist_alerts">模組封鎖</string>
