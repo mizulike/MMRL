@@ -1,5 +1,6 @@
 package dev.dergoogler.mmrl.compat.worker
 
+import android.app.ActivityManager
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
@@ -15,6 +16,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.random.Random
+
 
 @AndroidEntryPoint
 open class MMRLLifecycleService : LifecycleService() {
@@ -65,8 +67,10 @@ open class MMRLLifecycleService : LifecycleService() {
         title: String,
         message: String,
         pendingIntent: PendingIntent? = null,
-        @DrawableRes icon: Int = R.drawable.box
+        @DrawableRes icon: Int = R.drawable.box,
     ) {
+        if (isAppForeground) return
+
         val notification = baseNotificationBuilder().apply {
             setContentTitle(title)
             setContentText(message)
@@ -78,5 +82,18 @@ open class MMRLLifecycleService : LifecycleService() {
         }.build()
 
         notificationManager.notify(id, notification)
+    }
+
+    val isAppForeground get(): Boolean {
+        val mActivityManager = applicationContext.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        val l = mActivityManager.runningAppProcesses
+
+        for (info in l) {
+            if (info.uid == applicationContext.applicationInfo.uid && info.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                return true
+            }
+        }
+
+        return false
     }
 }

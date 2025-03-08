@@ -78,6 +78,7 @@ class RepositoryService : MMRLLifecycleService() {
 
     private fun sendSuccessNotification() {
         pushNotification(
+            icon = R.drawable.cloud,
             title = applicationContext.getString(R.string.repo_update_service),
             message = applicationContext.getString(R.string.repo_update_service_desc)
         )
@@ -85,6 +86,7 @@ class RepositoryService : MMRLLifecycleService() {
 
     private fun sendFailureNotification() {
         pushNotification(
+            icon = R.drawable.cloud,
             title = applicationContext.getString(R.string.repo_update_service_failed),
             message = applicationContext.getString(R.string.repo_update_service_failed_desc)
         )
