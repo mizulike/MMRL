@@ -271,7 +271,7 @@
     <string name="action_executing">実行中…</string>
     <string name="settings_modules_desc">モジュールのハンドラの動作を変更、モジュールに関するその他の情報を変更します</string>
     <string name="view_module_unsupported_device_desc">使用しているデバイスは、このモジュールに対応していないか除外されているようです。</string>
-      <string name="view_module_unsupported_arch_desc">使用しているデバイスは、開発者が宣言した必要なアーキテクチャに対応していないようです。</string>
+    <string name="view_module_unsupported_arch_desc">使用しているデバイスは、開発者が宣言した必要なアーキテクチャに対応していないようです。</string>
     <string name="settings_modules">モジュールとインストーラー</string>
     <string name="action_activity">アクション</string>
     <string name="settings_security_allow_filesystem_api">ファイルシステム API を許可</string>
@@ -301,7 +301,7 @@
     <string name="action_screen_cancel_text">アクションをキャンセルしてもよろしいですか？</string>
     <string name="learn_more">詳しく見る</string>
     <string name="sponsors">スポンサー</string>
-   <string name="blacklisted">ブラックリスト済み</string>
+    <string name="blacklisted">ブラックリスト済み</string>
     <string name="settings_blacklist_alerts">ブラックリストアラート</string>
     <string name="settings_blacklist_alerts_desc">ローカルのモジュールとモジュールを探すでアラートを表示してブラックリストに登録済みのモジュールのインストールをブロックします。</string>
     <string name="install_screen_cancel_title">インストールをキャンセルしますか？</string>
@@ -352,4 +352,12 @@
     <string name="failed_to_update_sepolicy">SELinux のルール更新に失敗しました: %s</string>
     <string name="su_not_allowed">スーパーユーザーが許可されていません: %s</string>
     <string name="failed_to_grant_root">root 権限の付与に失敗しました</string>
+    <string name="settings_provider_service">プロバイダーサービス</string>
+    <string name="notification_name_module">モジュールサービス</string>
+    <string name="notification_name_repository">リポジトリサービス</string>
+    <string name="module_service_stopped">モジュールサービスを停止しました</string>
+    <string name="settings_provider_service_desc">プロバイダーをバックグラウンドで実行し続けることで、起動時間の短縮と全体的なレスポンスを向上させます</string>
+    <string name="notification_name_provider">プロバイダーサービス</string>
+    <string name="provider_service_stopped">プロバイダーサービスを停止しました</string>
+    <string name="repository_service_stopped">リポジトリサービスを停止しました</string>
 </resources>
