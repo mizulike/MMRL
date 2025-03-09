@@ -329,4 +329,5 @@
     <string name="module_service_started">Layanan Module Dimulai</string>
     <string name="working_mode_change_dialog_desc">Dengan mengubah Mode Kerja, Anda diharuskan untuk memulai ulang aplikasi dan semua layanan terkait agar mode baru dapat diterapkan dengan benar. Harap perhatikan bahwa dengan menekan \"Terapkan\", Anda akan memulai proses yang akan memulai ulang aplikasi dan semua layanan untuk memastikan perubahan berlaku seperti yang diharapkan.</string>
     <string name="repository_service_started">Layanan Repositori Dimulai</string>
+    <string name="keep">Simpan</string>
 </resources>
