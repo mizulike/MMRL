@@ -2,8 +2,10 @@ package dev.dergoogler.mmrl.compat.activity
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -170,6 +172,25 @@ open class MMRLComponentActivity : ComponentActivity() {
 
             context.startActivity(intent)
         }
+    }
+
+
+    inline fun <reified A : MMRLComponentActivity> setActivityEnabled(enable: Boolean) {
+        val component = ComponentName(
+            this, A::class.java
+        )
+
+        val state = if (enable) {
+            PackageManager.COMPONENT_ENABLED_STATE_ENABLED
+        } else {
+            PackageManager.COMPONENT_ENABLED_STATE_DISABLED
+        }
+
+        packageManager.setComponentEnabledSetting(
+            component,
+            state,
+            PackageManager.DONT_KILL_APP
+        )
     }
 }
 

@@ -76,9 +76,10 @@ class MainActivity : MMRLComponentActivity() {
                 )
 
                 NetworkUtils.setEnableDoh(preferences.useDoh)
-                setInstallActivityEnabled(preferences.workingMode.isRoot)
-                setWebUIActivityEnabled(preferences.workingMode.isRoot)
-                setActionActivityEnabled(preferences.workingMode.isRoot)
+
+                setActivityEnabled<InstallActivity>(preferences.workingMode.isRoot)
+                setActivityEnabled<WebUIActivity>(preferences.workingMode.isRoot)
+                setActivityEnabled<ActionActivity>(preferences.workingMode.isRoot)
             }
 
             LaunchedEffect(preferences.autoUpdateRepos, preferences.autoUpdateReposInterval) {
@@ -118,59 +119,5 @@ class MainActivity : MMRLComponentActivity() {
         lifecycleScope.launch {
             userPreferencesRepository.setWorkingMode(value)
         }
-    }
-
-    private fun setWebUIActivityEnabled(enable: Boolean) {
-        val component = ComponentName(
-            this, WebUIActivity::class.java
-        )
-
-        val state = if (enable) {
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-        } else {
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-        }
-
-        packageManager.setComponentEnabledSetting(
-            component,
-            state,
-            PackageManager.DONT_KILL_APP
-        )
-    }
-
-    private fun setActionActivityEnabled(enable: Boolean) {
-        val component = ComponentName(
-            this, ActionActivity::class.java
-        )
-
-        val state = if (enable) {
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-        } else {
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-        }
-
-        packageManager.setComponentEnabledSetting(
-            component,
-            state,
-            PackageManager.DONT_KILL_APP
-        )
-    }
-
-    private fun setInstallActivityEnabled(enable: Boolean) {
-        val component = ComponentName(
-            this, InstallActivity::class.java
-        )
-
-        val state = if (enable) {
-            PackageManager.COMPONENT_ENABLED_STATE_ENABLED
-        } else {
-            PackageManager.COMPONENT_ENABLED_STATE_DISABLED
-        }
-
-        packageManager.setComponentEnabledSetting(
-            component,
-            state,
-            PackageManager.DONT_KILL_APP
-        )
     }
 }
