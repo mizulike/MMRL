@@ -78,6 +78,7 @@ import com.dergoogler.mmrl.model.online.hasCategories
 import com.dergoogler.mmrl.model.online.hasScreenshots
 import com.dergoogler.mmrl.model.online.hasValidMessage
 import com.dergoogler.mmrl.model.online.isBlacklisted
+import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.component.APatchLabel
 import com.dergoogler.mmrl.ui.component.Alert
 import com.dergoogler.mmrl.ui.component.AntiFeaturesItem
@@ -107,7 +108,6 @@ import com.dergoogler.mmrl.ui.utils.panicString
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoryViewModel
-import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import dev.dergoogler.mmrl.compat.ext.fadingEdge
 import dev.dergoogler.mmrl.compat.ext.ifNotEmpty
 import dev.dergoogler.mmrl.compat.ext.ifNotNullOrBlank
@@ -161,9 +161,10 @@ fun NewViewScreen(
         viewModel.downloader(context, item) {
             if (install) {
                 installConfirm = false
-                MMRLComponentActivity.startInstallActivity(
+                InstallActivity.start(
                     context = context,
-                    uri = it.toUri()
+                    uri = it.toUri(),
+                    confirm = false
                 )
             }
         }
@@ -218,9 +219,10 @@ fun NewViewScreen(
                         items = bulkModules,
                         onAllSuccess = { uris ->
                             installConfirm = false
-                            MMRLComponentActivity.startInstallActivity(
+                            InstallActivity.start(
                                 context = context,
-                                uri = uris
+                                uri = uris,
+                                confirm = false
                             )
                         },
                         onFailure = { err ->

@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -29,7 +28,6 @@ import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.ui.activity.CrashHandlerActivity
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
-import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.providable.LocalLifecycle
 import com.dergoogler.mmrl.ui.providable.LocalLifecycleScope
@@ -171,19 +169,6 @@ open class MMRLComponentActivity : ComponentActivity() {
                 }
 
             context.startActivity(intent)
-        }
-
-        fun startInstallActivity(context: Context, uri: List<Uri>) {
-            val intent = Intent(context, InstallActivity::class.java)
-                .apply {
-                    putParcelableArrayListExtra("uris", ArrayList(uri))
-                }
-
-            context.startActivity(intent)
-        }
-
-        fun startInstallActivity(context: Context, uri: Uri) {
-            startInstallActivity(context, listOf(uri))
         }
     }
 }

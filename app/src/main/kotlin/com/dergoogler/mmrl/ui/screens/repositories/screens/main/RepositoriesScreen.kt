@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
 import com.dergoogler.mmrl.model.local.BulkModule
+import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.animate.slideInTopToBottom
 import com.dergoogler.mmrl.ui.animate.slideOutBottomToTop
 import com.dergoogler.mmrl.ui.component.Loading
@@ -56,7 +57,6 @@ import com.dergoogler.mmrl.ui.utils.isScrollingUp
 import com.dergoogler.mmrl.ui.utils.none
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
-import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import dev.dergoogler.mmrl.compat.ext.systemBarsPaddingEnd
 import timber.log.Timber
 import kotlin.reflect.KFunction1
@@ -111,7 +111,7 @@ fun RepositoriesScreen(
                 bulkInstallViewModel.clearBulkModules()
                 bulkInstallBottomSheet = false
                 if (install) {
-                    MMRLComponentActivity.startInstallActivity(
+                    InstallActivity.start(
                         context = context,
                         uri = it
                     )

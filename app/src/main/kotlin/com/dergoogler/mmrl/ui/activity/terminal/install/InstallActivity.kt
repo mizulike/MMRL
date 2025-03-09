@@ -1,5 +1,7 @@
 package com.dergoogler.mmrl.ui.activity.terminal.install
 
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
@@ -41,13 +43,21 @@ class InstallActivity : MMRLComponentActivity() {
             }
         }
 
+        Timber.d("InstallActivity onCreate: $uris")
+
+        val confirm = intent.getBooleanExtra("confirm", true)
+
         if (uris.isNullOrEmpty()) {
             finish()
             return
         }
 
+        if (!confirm) {
+            initModule(uris.toList())
+        }
+
         setBaseContent {
-            if (confirmDialog) ConfirmDialog(
+            if (confirm && confirmDialog) ConfirmDialog(
                 title = R.string.install_screen_confirm_title,
                 description = R.string.install_screen_confirm_text,
                 onClose = {
@@ -58,7 +68,6 @@ class InstallActivity : MMRLComponentActivity() {
                 },
                 onConfirm = {
                     confirmDialog = false
-                    Timber.d("InstallActivity onCreate: $uris")
                     initModule(uris.toList())
                 }
             )
@@ -78,6 +87,22 @@ class InstallActivity : MMRLComponentActivity() {
             viewModel.installModules(
                 uris = uris
             )
+        }
+    }
+
+    companion object {
+        fun start(context: Context, uri: List<Uri>, confirm: Boolean = true) {
+            val intent = Intent(context, InstallActivity::class.java)
+                .apply {
+                    putExtra("confirm", confirm)
+                    putParcelableArrayListExtra("uris", ArrayList(uri))
+                }
+
+            context.startActivity(intent)
+        }
+
+        fun start(context: Context, uri: Uri, confirm: Boolean = true) {
+            start(context, listOf(uri), confirm)
         }
     }
 }
