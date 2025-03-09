@@ -1,4 +1,5 @@
 [versions]
+adaptiveAndroid = "1.1.0-rc01"
 androidGradlePlugin = "8.4.2"
 androidxActivity = "1.9.3"
 androidxAnnotation = "1.9.1"
@@ -14,6 +15,7 @@ androidxLifecycle = "2.8.7"
 androidxNavigation = "2.8.5"
 foundation = "1.7.3"
 multiplatformMarkdownRenderer = "0.27.0"
+processPhoenix = "3.0.0"
 webkit = "1.12.1"
 multidex = "2.0.1"
 navigationRuntimeKtx = "2.8.5"
@@ -45,6 +47,10 @@ parcelablelist = "2.0.1"
 zoomableVersion = "2.2.0"
 
 [libraries]
+androidx-adaptive = { module = "androidx.compose.material3.adaptive:adaptive", version.ref = "adaptiveAndroid" }
+androidx-adaptive-android = { module = "androidx.compose.material3.adaptive:adaptive-android", version.ref = "adaptiveAndroid" }
+androidx-adaptive-layout = { module = "androidx.compose.material3.adaptive:adaptive-layout", version.ref = "adaptiveAndroid" }
+androidx-adaptive-navigation = { module = "androidx.compose.material3.adaptive:adaptive-navigation", version.ref = "adaptiveAndroid" }
 apache-commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "apacheCommons" }
 androidx-activity-compose = { group = "androidx.activity", name = "activity-compose", version.ref = "androidxActivity" }
 androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidxAnnotation" }
@@ -93,6 +99,7 @@ libsu-io = { module = "com.github.topjohnwu.libsu:io", version.ref = "libsu" }
 multiplatform-markdown-renderer-android = { module = "com.mikepenz:multiplatform-markdown-renderer-android", version.ref = "multiplatformMarkdownRenderer" }
 multiplatform-markdown-renderer-coil3 = { module = "com.mikepenz:multiplatform-markdown-renderer-coil3", version.ref = "multiplatformMarkdownRenderer" }
 multiplatform-markdown-renderer-m3 = { module = "com.mikepenz:multiplatform-markdown-renderer-m3", version.ref = "multiplatformMarkdownRenderer" }
+process-phoenix = { module = "com.jakewharton:process-phoenix", version.ref = "processPhoenix" }
 protobuf-kotlin-lite = { group = "com.google.protobuf", name = "protobuf-kotlin-lite", version.ref = "protobuf" }
 protobuf-protoc = { group = "com.google.protobuf", name = "protoc", version.ref = "protobuf" }
 rikka-refine-annotation = { module = "dev.rikka.tools.refine:annotation", version.ref = "hiddenApiRefine" }

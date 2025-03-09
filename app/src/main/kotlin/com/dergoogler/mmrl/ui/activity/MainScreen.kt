@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -60,7 +59,6 @@ import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 
 @Composable
 fun MainScreen(windowSizeClass: WindowSizeClass) {
-    val context = LocalContext.current
     val userPreferences = LocalUserPreferences.current
     val bulkInstallViewModel: BulkInstallViewModel = hiltViewModel()
 

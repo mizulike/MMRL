@@ -11,15 +11,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.WorkingMode
+import com.dergoogler.mmrl.service.ModuleService
+import com.dergoogler.mmrl.service.ProviderService
+import com.dergoogler.mmrl.service.RepositoryService
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.SettingsViewModel
+import com.jakewharton.processphoenix.ProcessPhoenix
 import dev.dergoogler.mmrl.compat.ext.nullable
-import kotlin.system.exitProcess
 
 @Composable
 fun WorkingModeBottomSheet(
@@ -112,6 +116,7 @@ fun WorkingModeItem(
     mode: WorkingMode,
     setMode: (WorkingMode) -> Unit,
 ) {
+    val context = LocalContext.current
     var restartDialog by remember { mutableStateOf(false) }
 
     if (restartDialog) ConfirmDialog(
@@ -123,9 +128,13 @@ fun WorkingModeItem(
         },
         confirmText = R.string.apply,
         onConfirm = {
-            restartDialog = false
             setMode(mode)
-            exitProcess(0)
+            val services = listOf(RepositoryService::class.java, ModuleService::class.java, ProviderService::class.java)
+            services.forEach { service ->
+                ProcessPhoenix.triggerServiceRebirth(context, service)
+            }
+            restartDialog = false
+            ProcessPhoenix.triggerRebirth(context)
         }
     )
 

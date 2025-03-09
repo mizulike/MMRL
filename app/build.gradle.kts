@@ -255,6 +255,11 @@ dependencies {
     implementation(libs.androidx.multidex)
     implementation(libs.dev.rikka.rikkax.parcelablelist)
     implementation(libs.lib.zoomable)
+    implementation(libs.process.phoenix)
+    // implementation(libs.androidx.adaptive)
+    // implementation(libs.androidx.adaptive.android)
+    // implementation(libs.androidx.adaptive.layout)
+    // implementation(libs.androidx.adaptive.navigation)
 
     implementation(libs.square.retrofit)
     implementation(libs.square.retrofit.moshi)
