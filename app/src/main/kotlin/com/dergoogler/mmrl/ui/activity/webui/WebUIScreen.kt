@@ -10,8 +10,8 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
@@ -68,12 +68,6 @@ fun WebUIScreen(
         Timber.d("Insets calculated: top = ${viewModel.topInset}, bottom = ${viewModel.bottomInset}, left = ${viewModel.leftInset}, right = ${viewModel.rightInset}")
     }
 
-    DisposableEffect(webView) {
-        onDispose {
-            webView.destroy()
-        }
-    }
-
     val allowedFsApi = viewModel.modId in userPrefs.allowedFsModules
     val allowedKsuApi = viewModel.modId in userPrefs.allowedKsuModules
 
@@ -89,6 +83,7 @@ fun WebUIScreen(
                 viewModel.dialogRequestAdvancedKernelSUAPI = false
                 val newModules = userPrefs.allowedKsuModules + viewModel.modId
                 settingsViewModel.setAllowedKsuModules(newModules)
+                viewModel.recomposeCount++
             }
         )
     }
@@ -105,6 +100,7 @@ fun WebUIScreen(
                 viewModel.dialogRequestFileSystemAPI = false
                 val newModules = userPrefs.allowedFsModules + viewModel.modId
                 settingsViewModel.setAllowedFsModules(newModules)
+                viewModel.recomposeCount++
             }
         )
     }
@@ -136,82 +132,84 @@ fun WebUIScreen(
                 .build()
         }
 
-        AndroidView(
-            factory = {
-                webView.apply {
-                    setBackgroundColor(colorScheme.background.toArgb())
-                    background = ColorDrawable(colorScheme.background.toArgb())
-                    layoutParams = ViewGroup.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT,
-                        ViewGroup.LayoutParams.MATCH_PARENT
-                    )
+        key(viewModel.recomposeCount) {
+            AndroidView(
+                factory = {
+                    webView.apply {
+                        setBackgroundColor(colorScheme.background.toArgb())
+                        background = ColorDrawable(colorScheme.background.toArgb())
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
 
-                    ViewCompat.setOnApplyWindowInsetsListener(this) { _, _ ->
-                        WindowInsetsCompat.CONSUMED
-                    }
-
-                    viewModel.loadDexPluginsFromMemory(context, this)
-
-                    webViewClient = MMRLWebClient(
-                        context = context,
-                        browser = browser,
-                        webViewAssetLoader = webViewAssetLoader,
-                        userPrefs = userPrefs,
-                        viewModel = viewModel,
-                    )
-
-                    addJavascriptInterface(
-                        VersionInterface(
-                            context = context,
-                            webView = this,
-                            viewModel = viewModel,
-                        ), "mmrl"
-                    )
-                }
-            },
-            update = {
-                it.apply {
-                    settings.apply {
-                        javaScriptEnabled = true
-                        domStorageEnabled = true
-                        allowFileAccess = false
-                        userPrefs.developerMode({ useWebUiDevUrl }) {
-                            mixedContentMode =
-                                android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                        ViewCompat.setOnApplyWindowInsetsListener(this) { _, _ ->
+                            WindowInsetsCompat.CONSUMED
                         }
-                        userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
-                    }
 
-                    addJavascriptInterface(
-                        MMRLInterface(
-                            viewModel = viewModel,
+                        viewModel.loadDexPluginsFromMemory(context, this)
+
+                        webViewClient = MMRLWebClient(
                             context = context,
-                            isDark = isDarkMode,
-                            webView = this,
-                            allowedFsApi = allowedFsApi,
-                            allowedKsuApi = allowedKsuApi
-                        ), "$${viewModel.sanitizedModId}"
-                    )
+                            browser = browser,
+                            webViewAssetLoader = webViewAssetLoader,
+                            userPrefs = userPrefs,
+                            viewModel = viewModel,
+                        )
 
-                    addJavascriptInterface(
-                        if (allowedKsuApi) {
-                            AdvancedKernelSUAPI(context, this, userPrefs)
-                        } else {
-                            BaseKernelSUAPI(context, this)
-                        }, "ksu"
-                    )
-
-                    if (allowedFsApi) {
                         addJavascriptInterface(
-                            FileInterface(this, context),
-                            viewModel.sanitizedModIdWithFile
+                            VersionInterface(
+                                context = context,
+                                webView = this,
+                                viewModel = viewModel,
+                            ), "mmrl"
                         )
                     }
+                },
+                update = {
+                    it.apply {
+                        settings.apply {
+                            javaScriptEnabled = true
+                            domStorageEnabled = true
+                            allowFileAccess = false
+                            userPrefs.developerMode({ useWebUiDevUrl }) {
+                                mixedContentMode =
+                                    android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                            }
+                            userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
+                        }
 
-                    loadUrl(viewModel.domainUrl)
+                        addJavascriptInterface(
+                            MMRLInterface(
+                                viewModel = viewModel,
+                                context = context,
+                                isDark = isDarkMode,
+                                webView = this,
+                                allowedFsApi = allowedFsApi,
+                                allowedKsuApi = allowedKsuApi
+                            ), "$${viewModel.sanitizedModId}"
+                        )
+
+                        addJavascriptInterface(
+                            if (allowedKsuApi) {
+                                AdvancedKernelSUAPI(context, this, userPrefs)
+                            } else {
+                                BaseKernelSUAPI(context, this)
+                            }, "ksu"
+                        )
+
+                        if (allowedFsApi) {
+                            addJavascriptInterface(
+                                FileInterface(this, context),
+                                viewModel.sanitizedModIdWithFile
+                            )
+                        }
+
+                        loadUrl(viewModel.domainUrl)
+                    }
                 }
-            }
-        )
+            )
+        }
     } else {
         Loading()
     }
