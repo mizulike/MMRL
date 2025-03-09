@@ -8,8 +8,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.utils.NotificationUtils
+import com.dergoogler.mmrl.database.entity.Repo
 import com.dergoogler.mmrl.database.entity.Repo.Companion.toRepo
 import dev.dergoogler.mmrl.compat.worker.MMRLLifecycleService
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
@@ -50,20 +54,7 @@ class RepositoryService : MMRLLifecycleService() {
                     try {
                         val repoDao = database.repoDao()
                         val repos = repoDao.getAll()
-
-                        repos.forEach { repo ->
-                            try {
-                                modulesRepository.getRepo(repo.url.toRepo())
-                                    .onSuccess {
-                                        sendSuccessNotification()
-                                    }.onFailure {
-                                        sendFailureNotification()
-                                    }
-                            } catch (e: Exception) {
-                                Timber.e(e)
-                            }
-                        }
-
+                        processRepos(repos)
                     } catch (e: Exception) {
                         sendFailureNotification()
                     }
@@ -76,12 +67,35 @@ class RepositoryService : MMRLLifecycleService() {
         return START_STICKY
     }
 
-    private fun sendSuccessNotification() {
-        pushNotification(
-            icon = R.drawable.cloud,
-            title = applicationContext.getString(R.string.repo_update_service),
-            message = applicationContext.getString(R.string.repo_update_service_desc)
-        )
+    private suspend fun processRepos(repos: List<Repo>) {
+        coroutineScope {
+            var successCount = 0
+            var failureCount = 0
+
+            repos.map { repo ->
+                async {
+                    try {
+                        modulesRepository.getRepo(repo.url.toRepo())
+                            .onSuccess { successCount++ }
+                            .onFailure { failureCount++ }
+                    } catch (e: Exception) {
+                        Timber.e(e)
+                        failureCount++
+                    }
+                }
+            }.awaitAll()
+
+            val repositoriesUpdateMessage =
+                applicationContext.resources.getStringArray(R.array.repositories_update_message)
+            val randomNotificationMessages =
+                repositoriesUpdateMessage.toList().random()
+
+            pushNotification(
+                icon = R.drawable.cloud,
+                title = applicationContext.getString(R.string.repo_update_service),
+                message = randomNotificationMessages.format(successCount, failureCount)
+            )
+        }
     }
 
     private fun sendFailureNotification() {
