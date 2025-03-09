@@ -1,6 +1,8 @@
 package dev.dergoogler.mmrl.compat.ext
 
 import android.app.Activity
+import android.app.ActivityManager
+import android.app.Application.ACTIVITY_SERVICE
 import android.content.Context
 import android.content.ContextWrapper
 import android.net.Uri
@@ -14,6 +16,7 @@ import com.dergoogler.mmrl.R
 import com.topjohnwu.superuser.Shell
 import kotlinx.datetime.LocalDateTime
 import java.io.File
+
 
 val Context.tmpDir
     get() = cacheDir.resolve("tmp")
@@ -111,4 +114,17 @@ fun Context.findActivity(): Activity? {
         context = context.baseContext
     }
     return null
+}
+
+val Context.isAppForeground get(): Boolean {
+    val mActivityManager = this.getSystemService(ACTIVITY_SERVICE) as ActivityManager
+    val l = mActivityManager.runningAppProcesses
+
+    for (info in l) {
+        if (info.uid == this.applicationInfo.uid && info.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+            return true
+        }
+    }
+
+    return false
 }

@@ -7,11 +7,14 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
+import dev.dergoogler.mmrl.compat.ext.nullable
 
 @Composable
 fun ConfirmDialog(
-    title: @Composable() (() -> Unit)?,
-    description: @Composable() (() -> Unit)?,
+    title: @Composable (() -> Unit)?,
+    description: @Composable (() -> Unit)?,
+    confirmText: @Composable (() -> Unit)?,
+    closeText: @Composable (() -> Unit)?,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
 ) {
@@ -27,7 +30,7 @@ fun ConfirmDialog(
                     onConfirm()
                 }
             ) {
-                Text(text = stringResource(id = R.string.install_screen_reboot_confirm))
+                confirmText?.invoke()
             }
         },
         dismissButton = {
@@ -36,7 +39,7 @@ fun ConfirmDialog(
                     onClose()
                 }
             ) {
-                Text(text = stringResource(id = R.string.dialog_cancel))
+                closeText?.invoke()
             }
         }
     )
@@ -46,6 +49,8 @@ fun ConfirmDialog(
 fun ConfirmDialog(
     title: String,
     description: String,
+    confirmText: String = stringResource(id = R.string.install_screen_reboot_confirm),
+    closeText: String = stringResource(id = R.string.dialog_cancel),
     onClose: () -> Unit,
     onConfirm: () -> Unit,
 ) = ConfirmDialog(
@@ -55,6 +60,12 @@ fun ConfirmDialog(
     description = {
         Text(text = description)
     },
+    confirmText = {
+        Text(text = confirmText)
+    },
+    closeText = {
+        Text(text = closeText)
+    },
     onClose = onClose,
     onConfirm = onConfirm
 )
@@ -63,6 +74,8 @@ fun ConfirmDialog(
 fun ConfirmDialog(
     @StringRes title: Int,
     @StringRes description: Int,
+    @StringRes confirmText: Int? = null,
+    @StringRes closeText: Int? = null,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
 ) = ConfirmDialog(
@@ -71,6 +84,10 @@ fun ConfirmDialog(
     },
     description = {
         Text(text = stringResource(description))
+    },
+    confirmText = confirmText.nullable { { Text(text = stringResource(it)) } },
+    closeText = closeText.nullable {
+        { Text(text = stringResource(it)) }
     },
     onClose = onClose,
     onConfirm = onConfirm

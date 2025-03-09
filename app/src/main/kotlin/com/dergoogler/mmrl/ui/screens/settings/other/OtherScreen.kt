@@ -42,6 +42,7 @@ fun OtherScreen() {
             title = stringResource(id = R.string.settings_provider_service),
             desc = stringResource(id = R.string.settings_provider_service_desc),
             checked = userPreferences.useProviderAsBackgroundService,
+            enabled = viewModel.platform.isValid,
             onChange = {
                 if (!it) {
                     ProviderService.stop(context)

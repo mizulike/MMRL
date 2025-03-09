@@ -347,7 +347,11 @@
     <string name="notification_name_repository">Repository Service</string>
     <string name="notification_name_provider">Provider Service</string>
     <string name="notification_name_module">Module Service</string>
-    <string name="provider_service_stopped">Provider service stopped</string>
-    <string name="repository_service_stopped">Repository service stopped</string>
-    <string name="module_service_stopped">Module service stopped</string>
+    <string name="provider_service_stopped">Provider Service stopped</string>
+    <string name="repository_service_stopped">Repository Service stopped</string>
+    <string name="module_service_stopped">Module Service stopped</string>
+    <string name="working_mode_change_dialog_title">Change Working Mode?</string>
+    <string name="working_mode_change_dialog_desc">By changing the Working Mode, you are required to restart the app and all associated services for the new mode to be properly applied. Please note that by pressing \"Apply\", you\'re initiating the process that will restart the app and all services to ensure the changes take effect as expected.</string>
+    <string name="keep">Keep</string>
+    <string name="apply">Apply</string>
 </resources>

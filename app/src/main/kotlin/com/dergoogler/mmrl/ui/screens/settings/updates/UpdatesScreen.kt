@@ -141,7 +141,7 @@ fun UpdatesScreen() {
             title = stringResource(id = R.string.settings_check_modules_update),
             desc = stringResource(id = R.string.settings_check_modules_update_desc),
             checked = userPreferences.checkModuleUpdates,
-            enabled = userPreferences.useProviderAsBackgroundService,
+            enabled = viewModel.isProviderAlive && userPreferences.useProviderAsBackgroundService,
             onChange = {
                 if (!it) {
                     ModuleService.stop(context)

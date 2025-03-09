@@ -38,7 +38,7 @@ class MainActivity : MMRLComponentActivity() {
     private var isLoading by mutableStateOf(true)
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
-    override val requirePermissions = listOf(Manifest.permission.POST_NOTIFICATIONS)
+    override val requirePermissions = listOf(Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.SCHEDULE_EXACT_ALARM)
 
     @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
