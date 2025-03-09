@@ -340,4 +340,7 @@
     <string name="settings_provider_service_desc">Utrzymuj działanie dostawcy w tle, aby znacznie skrócić czas uruchamiania i poprawić ogólną responsywność</string>
     <string name="working_mode_change_dialog_title">Zmienić tryb pracy?</string>
     <string name="settings_provider_service">Usługa dostawcy</string>
+    <string name="provider_service_started">Uruchomiono usługę dostawcy</string>
+    <string name="module_service_started">Uruchomiono usługę modułu</string>
+    <string name="repository_service_started">Uruchomiono usługę repozytorium</string>
 </resources>
