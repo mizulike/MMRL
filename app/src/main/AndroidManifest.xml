@@ -94,6 +94,17 @@
         </activity>
 
         <activity
+            android:name=".ui.activity.ScreenshotsPreviewActivity"
+            android:excludeFromRecents="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".ui.activity.terminal.action.ActionActivity"
             android:excludeFromRecents="true"
             android:exported="true"

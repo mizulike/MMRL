@@ -1,6 +1,8 @@
 package dev.dergoogler.mmrl.compat.ext
 
+import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
@@ -101,3 +103,12 @@ fun Context.getLogPath(name: String) = logDir
     .find {
         it.name.startsWith(name) && it.extension == "log"
     } ?: createLog(name)
+
+fun Context.findActivity(): Activity? {
+    var context = this
+    while (context is ContextWrapper) {
+        if (context is Activity) return context
+        context = context.baseContext
+    }
+    return null
+}

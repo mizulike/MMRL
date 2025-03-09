@@ -42,6 +42,7 @@ workRuntimeKtx = "2.10.0"
 lifecycleProcess = "2.8.7"
 apacheCommons = "1.27.1"
 parcelablelist = "2.0.1"
+zoomableVersion = "2.2.0"
 
 [libraries]
 apache-commons-compress = { group = "org.apache.commons", name = "commons-compress", version.ref = "apacheCommons" }
@@ -85,6 +86,7 @@ kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-serialization-protobuf = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-protobuf", version.ref = "kotlinxSerialization" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlinxCoroutines" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinxDatetime" }
+lib-zoomable = { module = "net.engawapg.lib:zoomable", version.ref = "zoomableVersion" }
 libsu-core = { group = "com.github.topjohnwu.libsu", name = "core", version.ref = "libsu" }
 libsu-service = { group = "com.github.topjohnwu.libsu", name = "service", version.ref = "libsu" }
 libsu-io = { module = "com.github.topjohnwu.libsu:io", version.ref = "libsu" }

@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.ui.screens.repositories.screens.view
 import android.os.Build
 import androidx.annotation.StringRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -17,6 +18,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,6 +45,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarColors
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -69,6 +73,10 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
+import coil.compose.rememberAsyncImagePainter
+import coil.request.CachePolicy
+import coil.request.ImageRequest
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.local.BulkModule
 import com.dergoogler.mmrl.model.local.State
@@ -78,6 +86,7 @@ import com.dergoogler.mmrl.model.online.hasCategories
 import com.dergoogler.mmrl.model.online.hasScreenshots
 import com.dergoogler.mmrl.model.online.hasValidMessage
 import com.dergoogler.mmrl.model.online.isBlacklisted
+import com.dergoogler.mmrl.ui.activity.ScreenshotsPreviewActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.component.APatchLabel
 import com.dergoogler.mmrl.ui.component.Alert
@@ -746,7 +755,7 @@ fun NewViewScreen(
                     }
                 }
 
-                module.hasScreenshots {
+                module.hasScreenshots { screens ->
                     Spacer(modifier = Modifier.height(16.dp))
 
                     LazyRow(
@@ -757,12 +766,27 @@ fun NewViewScreen(
                         contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
 
                     ) {
-                        items(it.size) { index ->
+                        itemsIndexed(
+                            items = screens,
+                        ) { index, screen ->
+                            val interactionSource = remember { MutableInteractionSource() }
+
                             AsyncImage(
-                                model = it[index],
+                                model = screen,
                                 contentDescription = null,
                                 modifier = Modifier
                                     .height(160.dp)
+                                    .clickable(
+                                        interactionSource = interactionSource,
+                                        indication = ripple(),
+                                        onClick = {
+                                            ScreenshotsPreviewActivity.start(
+                                                context,
+                                                screens,
+                                                index
+                                            )
+                                        }
+                                    )
                                     .aspectRatio(9f / 16f)
                                     .clip(RoundedCornerShape(10.dp)),
                                 contentScale = ContentScale.Crop
