@@ -317,10 +317,16 @@
     <string name="help">Bantuan</string>
     <string name="settings_provider_service">Penyedia Layanan</string>
     <string name="notification_name_provider">Penyedia Layanan</string>
-    <string name="provider_service_stopped">Penyedia layanan terhenti</string>
-    <string name="module_service_stopped">Layanan modul terhenti</string>
-    <string name="repository_service_stopped">Layanan repositori terhenti</string>
+    <string name="provider_service_stopped">Penyedia Layanan dihentikan</string>
+    <string name="module_service_stopped">Layanan Modul dihentikan</string>
+    <string name="repository_service_stopped">Layanan Repositori dihentikan</string>
     <string name="settings_provider_service_desc">Biarkan penyedia berjalan di latar belakang untuk mengurangi waktu startup secara signifikan dan meningkatkan responsivitas secara keseluruhan</string>
     <string name="notification_name_repository">Layanan Repositori</string>
     <string name="notification_name_module">Layanan Modul</string>
+    <string name="apply">Terapkan</string>
+    <string name="provider_service_started">Layanan Penyedia Dimulai</string>
+    <string name="working_mode_change_dialog_title">Ubah Mode Kerja?</string>
+    <string name="module_service_started">Layanan Module Dimulai</string>
+    <string name="working_mode_change_dialog_desc">Dengan mengubah Mode Kerja, Anda diharuskan untuk memulai ulang aplikasi dan semua layanan terkait agar mode baru dapat diterapkan dengan benar. Harap perhatikan bahwa dengan menekan \"Terapkan\", Anda akan memulai proses yang akan memulai ulang aplikasi dan semua layanan untuk memastikan perubahan berlaku seperti yang diharapkan.</string>
+    <string name="repository_service_started">Layanan Repositori Dimulai</string>
 </resources>
