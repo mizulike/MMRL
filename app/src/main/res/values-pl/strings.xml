@@ -328,4 +328,16 @@
     <string name="failed_to_update_app_profile">Nie udało się zaktualizować profilu aplikacji dla: %s</string>
     <string name="su_not_allowed">Udzielenie uprawnień root nie jest dozwolone dla: %s</string>
     <string name="failed_to_grant_root">Nie udało się przyznać uprawnień roota</string>
+    <string name="notification_name_repository">Usługa repozytorium</string>
+    <string name="notification_name_provider">Usługa dostawcy</string>
+    <string name="notification_name_module">Usługa modułu</string>
+    <string name="module_service_stopped">Usługa modułu zatrzymana</string>
+    <string name="repository_service_stopped">Usługa repozytorium zatrzymana</string>
+    <string name="provider_service_stopped">Usługa dostawcy zatrzymana</string>
+    <string name="working_mode_change_dialog_desc">Zmieniając tryb pracy, musisz ponownie uruchomić aplikację i wszystkie powiązane usługi, aby nowy tryb został prawidłowo zastosowany. Należy pamirtać, że naciskając „Zastosuj”, inicjujesz proces, który ponownie uruchomi aplikację i wszystkie usługi, aby upewnić się, że zmiany zostaną zastosowane zgodnie z oczekiwaniami.</string>
+    <string name="keep">Zachowaj</string>
+    <string name="apply">Zastosuj</string>
+    <string name="settings_provider_service_desc">Utrzymuj działanie dostawcy w tle, aby znacznie skrócić czas uruchamiania i poprawić ogólną responsywność</string>
+    <string name="working_mode_change_dialog_title">Zmienić tryb pracy?</string>
+    <string name="settings_provider_service">Usługa dostawcy</string>
 </resources>
