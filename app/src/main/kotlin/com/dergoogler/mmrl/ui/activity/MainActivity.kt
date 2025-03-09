@@ -1,8 +1,6 @@
 package com.dergoogler.mmrl.ui.activity
 
 import android.Manifest
-import android.content.ComponentName
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.annotation.RequiresApi
@@ -17,15 +15,14 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.database.entity.Repo.Companion.toRepo
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isSetup
 import com.dergoogler.mmrl.network.NetworkUtils
-import com.dergoogler.mmrl.service.ModuleService
 import com.dergoogler.mmrl.service.ProviderService
-import com.dergoogler.mmrl.service.RepositoryService
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
@@ -70,34 +67,15 @@ class MainActivity : MMRLComponentActivity() {
 
                 modulesRepository.getBlacklist()
 
-                ProviderService.start(
-                    context = baseContext,
-                    preferences = preferences,
-                )
+                if (!ProviderService.isActive) {
+                    Compat.init(baseContext, preferences.workingMode)
+                }
 
                 NetworkUtils.setEnableDoh(preferences.useDoh)
 
                 setActivityEnabled<InstallActivity>(preferences.workingMode.isRoot)
                 setActivityEnabled<WebUIActivity>(preferences.workingMode.isRoot)
                 setActivityEnabled<ActionActivity>(preferences.workingMode.isRoot)
-            }
-
-            LaunchedEffect(preferences.autoUpdateRepos, preferences.autoUpdateReposInterval) {
-                if (preferences.autoUpdateRepos) {
-                    RepositoryService.start(
-                        context = baseContext,
-                        interval = preferences.autoUpdateReposInterval,
-                    )
-                }
-            }
-
-            LaunchedEffect(preferences.checkModuleUpdates, preferences.checkModuleUpdatesInterval, preferences.useProviderAsBackgroundService) {
-                if (preferences.useProviderAsBackgroundService && preferences.checkModuleUpdates) {
-                    ModuleService.start(
-                        context = baseContext,
-                        interval = preferences.checkModuleUpdatesInterval,
-                    )
-                }
             }
 
             Crossfade(

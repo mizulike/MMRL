@@ -354,4 +354,7 @@
     <string name="working_mode_change_dialog_desc">By changing the Working Mode, you are required to restart the app and all associated services for the new mode to be properly applied. Please note that by pressing \"Apply\", you\'re initiating the process that will restart the app and all services to ensure the changes take effect as expected.</string>
     <string name="keep">Keep</string>
     <string name="apply">Apply</string>
+    <string name="repository_service_started">Repository Service Started</string>
+    <string name="module_service_started">Module Service Started</string>
+    <string name="provider_service_started">Provider Service Started</string>
 </resources>

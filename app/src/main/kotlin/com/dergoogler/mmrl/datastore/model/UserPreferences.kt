@@ -32,8 +32,10 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     @ProtoNumber(11) val confirmReboot: Boolean = true,
     @ProtoNumber(12) val terminalTextWrap: Boolean = false,
     @ProtoNumber(13) val datePattern: String = "d MMMM yyyy",
+    @Deprecated("Replaced by RepositoryService.isActive")
     @ProtoNumber(14) val autoUpdateRepos: Boolean = false,
     @ProtoNumber(15) val autoUpdateReposInterval: Long = 6,
+    @Deprecated("Replaced by ModuleService.isActive")
     @ProtoNumber(16) val checkModuleUpdates: Boolean = false,
     @ProtoNumber(17) val checkModuleUpdatesInterval: Long = 6,
     @ProtoNumber(18) val checkAppUpdates: Boolean = true,
@@ -51,6 +53,7 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     @ProtoNumber(30) val injectEruda: List<String> = emptyList(),
     @ProtoNumber(31) val allowedFsModules: List<String> = emptyList(),
     @ProtoNumber(32) val allowedKsuModules: List<String> = emptyList(),
+    @Deprecated("Replaced by ProviderService.isActive")
     @ProtoNumber(33) val useProviderAsBackgroundService: Boolean = false,
 ) {
     @Composable

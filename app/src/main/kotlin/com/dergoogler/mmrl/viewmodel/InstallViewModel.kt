@@ -51,7 +51,7 @@ class InstallViewModel @Inject constructor(
         event = Event.LOADING
         var allSucceeded = true
 
-        if (!Compat.init(userPreferences.workingMode)) {
+        if (!Compat.init(context, userPreferences.workingMode)) {
             event = Event.FAILED
             log(R.string.service_is_not_available)
             return@launch

@@ -1,6 +1,5 @@
 package dev.dergoogler.mmrl.compat.impl
 
-import android.content.Context
 import android.os.SELinux
 import android.system.Os
 import com.dergoogler.mmrl.Compat
@@ -8,7 +7,6 @@ import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import dev.dergoogler.mmrl.compat.core.BrickException
 import dev.dergoogler.mmrl.compat.stub.IFileManager
-import dev.dergoogler.mmrl.compat.stub.IKsuService
 import dev.dergoogler.mmrl.compat.stub.IModuleManager
 import dev.dergoogler.mmrl.compat.stub.IServiceManager
 import kotlin.system.exitProcess
@@ -22,7 +20,6 @@ const val HELP_MESSAGE =
 - A way to reproduce the issue"""
 
 internal class ServiceManagerImpl(
-    private val context: Context,
     private val mode: WorkingMode,
 ) : IServiceManager.Stub() {
     private val main by lazy { Compat.ServiceShell }
@@ -45,11 +42,6 @@ internal class ServiceManagerImpl(
         FileManagerImpl()
     }
 
-    private val ksuService by lazy {
-        KsuServiceImpl(
-            context = context
-        )
-    }
 
     private val moduleManager by lazy {
         when (platform) {
@@ -102,10 +94,6 @@ internal class ServiceManagerImpl(
 
     override fun getModuleManager(): IModuleManager {
         return moduleManager
-    }
-
-    override fun getKsuService(): IKsuService {
-        return ksuService
     }
 
     override fun getFileManager(): IFileManager {

@@ -135,7 +135,9 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
                 ) {
                     homeScreen()
                     repositoryScreen(bulkInstallViewModel = bulkInstallViewModel)
-                    modulesScreen()
+                    if (isRoot) {
+                        modulesScreen()
+                    }
                     settingsScreen()
                 }
             }

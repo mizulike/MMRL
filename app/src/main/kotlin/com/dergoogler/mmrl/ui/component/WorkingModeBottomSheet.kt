@@ -16,9 +16,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.WorkingMode
-import com.dergoogler.mmrl.service.ModuleService
-import com.dergoogler.mmrl.service.ProviderService
-import com.dergoogler.mmrl.service.RepositoryService
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.SettingsViewModel
@@ -129,10 +126,6 @@ fun WorkingModeItem(
         confirmText = R.string.apply,
         onConfirm = {
             setMode(mode)
-            val services = listOf(RepositoryService::class.java, ModuleService::class.java, ProviderService::class.java)
-            services.forEach { service ->
-                ProcessPhoenix.triggerServiceRebirth(context, service)
-            }
             restartDialog = false
             ProcessPhoenix.triggerRebirth(context)
         }

@@ -4,6 +4,9 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.os.Build
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.core.app.NotificationCompat
 import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
@@ -11,9 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.utils.NotificationUtils
-import com.dergoogler.mmrl.datastore.model.UserPreferences
 import com.dergoogler.mmrl.datastore.model.WorkingMode
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -22,13 +23,13 @@ class ProviderService : LifecycleService() {
     override fun onCreate() {
         Timber.d("onCreate")
         super.onCreate()
-        isActive.value = true
+        isActive = true
         setForeground()
     }
 
     override fun onDestroy() {
         ServiceCompat.stopForeground(this, ServiceCompat.STOP_FOREGROUND_REMOVE)
-        isActive.value = false
+        isActive = false
         Timber.d("onDestroy")
         super.onDestroy()
     }
@@ -50,7 +51,7 @@ class ProviderService : LifecycleService() {
         }
 
         lifecycleScope.launch {
-            isActive.value = Compat.init(mode)
+            isActive = Compat.init(baseContext, mode)
         }
 
         return START_STICKY
@@ -73,27 +74,23 @@ class ProviderService : LifecycleService() {
     }
 
     companion object {
-        val isActive = MutableStateFlow(false)
+        var isActive by mutableStateOf(false)
+            private set
         private const val GROUP_KEY = "PROVIDER_SERVICE_GROUP_KEY"
         private const val WORKING_MODE_KEY = "WORKING_MODE"
 
-        suspend fun start(
+        fun start(
             context: Context,
-            preferences: UserPreferences,
-        ): Boolean? {
-            if (preferences.useProviderAsBackgroundService) {
-                val intent = Intent().apply {
-                    component = ComponentName(
-                        context.packageName,
-                        ProviderService::class.java.name
-                    )
-                    putExtra(WORKING_MODE_KEY, preferences.workingMode)
-                }
-                context.startService(intent)
-                return null
+            mode: WorkingMode,
+        ) {
+            val intent = Intent().apply {
+                component = ComponentName(
+                    context.packageName,
+                    ProviderService::class.java.name
+                )
+                putExtra(WORKING_MODE_KEY, mode)
             }
-
-            return Compat.init(preferences.workingMode)
+            context.startService(intent)
         }
 
         fun stop(

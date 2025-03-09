@@ -10,7 +10,6 @@ import android.os.IBinder
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
-import dev.dergoogler.mmrl.compat.delegate.ContextDelegate
 import dev.dergoogler.mmrl.compat.impl.ServiceManagerImpl
 import dev.dergoogler.mmrl.compat.stub.IServiceManager
 import kotlinx.coroutines.Dispatchers
@@ -22,18 +21,9 @@ import rikka.shizuku.Shizuku
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-object ServiceManagerCompat {
-    internal const val VERSION_CODE = 1
-
-    private const val TIMEOUT_MILLIS = 15_000L
-
-    private val context by lazy { ContextDelegate.getContext() }
-
-    fun setHiddenApiExemptions() = when {
-        BuildCompat.atLeastP -> HiddenApiBypass.addHiddenApiExemptions("")
-        else -> true
-    }
-
+class ServiceManagerCompat(
+    private val context: Context
+) {
     interface IProvider {
         val name: String
         fun isAvailable(): Boolean
@@ -80,7 +70,7 @@ object ServiceManagerCompat {
         }
     }
 
-    private class ShizukuService : Shizuku.UserServiceArgs(
+    private class ShizukuService(context: Context) : Shizuku.UserServiceArgs(
         ComponentName(
             context.packageName,
             ServiceManagerImpl::class.java.name
@@ -94,7 +84,7 @@ object ServiceManagerCompat {
         }
     }
 
-    private class ShizukuProvider : IProvider {
+    private class ShizukuProvider(private val context: Context) : IProvider {
         override val name = "Shizuku"
 
         override fun isAvailable(): Boolean {
@@ -123,17 +113,17 @@ object ServiceManagerCompat {
         }
 
         override fun bind(connection: ServiceConnection) {
-            Shizuku.bindUserService(ShizukuService(), connection)
+            Shizuku.bindUserService(ShizukuService(context), connection)
         }
 
         override fun unbind(connection: ServiceConnection) {
-            Shizuku.unbindUserService(ShizukuService(), connection, true)
+            Shizuku.unbindUserService(ShizukuService(context), connection, true)
         }
 
         private val isGranted get() = Shizuku.checkSelfPermission() == PackageManager.PERMISSION_GRANTED
     }
 
-    suspend fun fromShizuku() = from(ShizukuProvider())
+    suspend fun fromShizuku() = from(ShizukuProvider(context))
 
     private class SuService : RootService() {
         override fun onBind(intent: Intent): IBinder {
@@ -145,23 +135,13 @@ object ServiceManagerCompat {
                 intent.getSerializableExtra(WORKING_MODE_KEY) as WorkingMode
             }
 
-            return ServiceManagerImpl(context, mode)
+            return ServiceManagerImpl(mode)
         }
 
-        companion object {
-            private const val WORKING_MODE_KEY = "WORKING_MODE"
-
-            fun getIntent(context: Context, mode: WorkingMode) = Intent().apply {
-                component = ComponentName(
-                    context.packageName,
-                    SuService::class.java.name
-                )
-                putExtra(WORKING_MODE_KEY, mode)
-            }
-        }
     }
 
     private class LibSuProvider(
+        private val context: Context,
         private val mode: WorkingMode
     ) : IProvider {
         override val name = "LibSu"
@@ -190,11 +170,11 @@ object ServiceManagerCompat {
         }
 
         override fun bind(connection: ServiceConnection) {
-            RootService.bind(SuService.getIntent(context, mode), connection)
+            RootService.bind(getWorkingModeIntent(context, mode), connection)
         }
 
         override fun unbind(connection: ServiceConnection) {
-            RootService.stop(SuService.getIntent(context, mode))
+            RootService.stop(getWorkingModeIntent(context, mode))
         }
 
         private class SuShellInitializer : Shell.Initializer() {
@@ -202,5 +182,25 @@ object ServiceManagerCompat {
         }
     }
 
-    suspend fun fromLibSu(mode: WorkingMode) = from(LibSuProvider(mode))
+    suspend fun fromLibSu(mode: WorkingMode) = from(LibSuProvider(context, mode))
+
+    companion object {
+        internal const val VERSION_CODE = 1
+        private const val TIMEOUT_MILLIS = 15_000L
+
+        private const val WORKING_MODE_KEY = "WORKING_MODE"
+
+        fun getWorkingModeIntent(context: Context, mode: WorkingMode) = Intent().apply {
+            component = ComponentName(
+                context.packageName,
+                SuService::class.java.name
+            )
+            putExtra(WORKING_MODE_KEY, mode)
+        }
+
+        fun setHiddenApiExemptions() = when {
+            BuildCompat.atLeastP -> HiddenApiBypass.addHiddenApiExemptions("")
+            else -> true
+        }
+    }
 }

@@ -1,7 +1,6 @@
 package dev.dergoogler.mmrl.compat.impl
 
 import com.topjohnwu.superuser.Shell
-import dev.dergoogler.mmrl.compat.content.AppProfile
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
 import dev.dergoogler.mmrl.compat.content.NullableBoolean
@@ -53,10 +52,6 @@ internal open class KernelSUModuleManagerImpl(
     override fun getSuperUserCount(): Int = KsuNative.getAllowList().size
 
     override fun isSafeMode(): Boolean = KsuNative.isSafeMode()
-
-    override fun setAppProfile(profile: AppProfile?): Boolean = KsuNative.setAppProfile(profile)
-    override fun getAppProfile(key: String?, uid: Int): AppProfile? =
-        KsuNative.getAppProfile(key, uid)
 
     override fun uidShouldUmount(uid: Int): Boolean = KsuNative.uidShouldUmount(uid)
 

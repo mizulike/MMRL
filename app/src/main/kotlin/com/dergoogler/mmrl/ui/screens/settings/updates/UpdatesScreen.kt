@@ -10,6 +10,7 @@ import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.service.ModuleService
+import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.service.RepositoryService
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
@@ -101,22 +102,20 @@ fun UpdatesScreen() {
         ListSwitchItem(
             title = stringResource(id = R.string.settings_auto_update_repos),
             desc = stringResource(id = R.string.settings_auto_update_repos_desc),
-            checked = userPreferences.autoUpdateRepos,
+            checked = RepositoryService.isActive,
             onChange = {
-                if (!it) {
-                    RepositoryService.stop(context)
-                    scope.launch {
-                        while (RepositoryService.isActive.value) {
+                scope.launch {
+                    if (it) {
+                        RepositoryService.start(context, userPreferences.autoUpdateReposInterval)
+                        snackbarHost.showSnackbar(context.getString(R.string.repository_service_started))
+                    } else {
+                        RepositoryService.stop(context)
+                        while (RepositoryService.isActive) {
                             delay(100)
                         }
-                        viewModel.setAutoUpdateRepos(it)
                         snackbarHost.showSnackbar(context.getString(R.string.repository_service_stopped))
                     }
-
-                    return@ListSwitchItem
                 }
-
-                viewModel.setAutoUpdateRepos(it)
             }
         )
 
@@ -126,7 +125,7 @@ fun UpdatesScreen() {
                 R.string.settings_repo_update_interval_desc,
                 userPreferences.autoUpdateReposInterval
             ),
-            enabled = userPreferences.autoUpdateRepos,
+            enabled = RepositoryService.isActive,
             value = userPreferences.autoUpdateReposInterval,
             options = optionsOfHours,
             onConfirm = {
@@ -140,23 +139,21 @@ fun UpdatesScreen() {
         ListSwitchItem(
             title = stringResource(id = R.string.settings_check_modules_update),
             desc = stringResource(id = R.string.settings_check_modules_update_desc),
-            checked = userPreferences.checkModuleUpdates,
-            enabled = viewModel.isProviderAlive && userPreferences.useProviderAsBackgroundService,
+            checked = ModuleService.isActive,
+            enabled = viewModel.isProviderAlive && ProviderService.isActive,
             onChange = {
-                if (!it) {
-                    ModuleService.stop(context)
-                    scope.launch {
-                        while (ModuleService.isActive.value) {
+                scope.launch {
+                    if (it) {
+                        ModuleService.start(context, userPreferences.autoUpdateReposInterval)
+                        snackbarHost.showSnackbar(context.getString(R.string.module_service_started))
+                    } else {
+                        ModuleService.stop(context)
+                        while (ModuleService.isActive) {
                             delay(100)
                         }
-                        viewModel.setCheckModuleUpdates(it)
                         snackbarHost.showSnackbar(context.getString(R.string.module_service_stopped))
                     }
-
-                    return@ListSwitchItem
                 }
-
-                viewModel.setCheckModuleUpdates(it)
             }
         )
 
@@ -166,7 +163,7 @@ fun UpdatesScreen() {
                 R.string.settings_check_modules_update_interval_desc,
                 userPreferences.checkModuleUpdatesInterval
             ),
-            enabled = userPreferences.useProviderAsBackgroundService && userPreferences.checkModuleUpdates,
+            enabled = viewModel.isProviderAlive && ModuleService.isActive && ProviderService.isActive,
             value = userPreferences.checkModuleUpdatesInterval,
             options = optionsOfHours,
             onConfirm = {

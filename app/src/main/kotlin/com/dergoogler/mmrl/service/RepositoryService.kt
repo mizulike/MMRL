@@ -3,6 +3,9 @@ package com.dergoogler.mmrl.service
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -15,7 +18,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -29,12 +31,12 @@ class RepositoryService : MMRLLifecycleService() {
 
     override fun onCreate() {
         super.onCreate()
-        isActive.value = true
+        isActive = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        isActive.value = false
+        isActive = false
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -107,7 +109,8 @@ class RepositoryService : MMRLLifecycleService() {
     }
 
     companion object {
-        val isActive = MutableStateFlow(false)
+        var isActive by mutableStateOf(false)
+            private set
         private const val INTERVAL_KEY = "INTERVAL"
 
         fun start(

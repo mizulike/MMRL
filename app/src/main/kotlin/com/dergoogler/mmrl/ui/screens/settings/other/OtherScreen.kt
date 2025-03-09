@@ -41,23 +41,20 @@ fun OtherScreen() {
         ListSwitchItem(
             title = stringResource(id = R.string.settings_provider_service),
             desc = stringResource(id = R.string.settings_provider_service_desc),
-            checked = userPreferences.useProviderAsBackgroundService,
-            enabled = viewModel.platform.isValid,
+            checked = ProviderService.isActive,
             onChange = {
-                if (!it) {
-                    ProviderService.stop(context)
-                    scope.launch {
-                        while (ProviderService.isActive.value) {
+                scope.launch {
+                    if (it) {
+                        ProviderService.start(context, userPreferences.workingMode)
+                        snackbarHost.showSnackbar(context.getString(R.string.provider_service_started))
+                    } else {
+                        ProviderService.stop(context)
+                        while (ProviderService.isActive) {
                             delay(100)
                         }
-                        viewModel.setUseProviderAsBackgroundService(it)
                         snackbarHost.showSnackbar(context.getString(R.string.provider_service_stopped))
                     }
-
-                    return@ListSwitchItem
                 }
-
-                viewModel.setUseProviderAsBackgroundService(it)
             }
         )
     }

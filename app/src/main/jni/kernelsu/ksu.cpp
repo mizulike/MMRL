@@ -56,14 +56,6 @@ bool uid_should_umount(int uid) {
     return ksuctl(CMD_IS_UID_SHOULD_UMOUNT, reinterpret_cast<void *>(uid), &should) && should;
 }
 
-bool set_app_profile(const app_profile *profile) {
-    return ksuctl(CMD_SET_APP_PROFILE, (void *) profile, nullptr);
-}
-
-bool get_app_profile(p_key_t key, app_profile *profile) {
-    return ksuctl(CMD_GET_APP_PROFILE, (void *) profile, nullptr);
-}
-
 bool set_su_enabled(bool enabled) {
     return ksuctl(CMD_ENABLE_SU, (void *) enabled, nullptr);
 }

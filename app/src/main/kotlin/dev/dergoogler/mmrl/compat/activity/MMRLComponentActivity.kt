@@ -72,6 +72,7 @@ open class MMRLComponentActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         Thread.setDefaultUncaughtExceptionHandler { thread, throwable ->
+            throwable.printStackTrace()
             startCrashActivity(thread, throwable)
         }
 

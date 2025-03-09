@@ -40,7 +40,7 @@ fun BottomSheet(
     scrimColor: Color = BottomSheetDefaults.ScrimColor,
     dragHandle: @Composable (() -> Unit)? = { BottomSheetDefaults.DragHandle() },
     windowInsets: WindowInsets = WindowInsets(0),
-    properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties(),
+    properties: ModalBottomSheetProperties = ModalBottomSheetDefaults.properties,
     enabledNavigationSpacer: Boolean = true,
     columnHorizontalAlignment: Alignment. Horizontal = Alignment.Start,
     content: @Composable ColumnScope.() -> Unit,
