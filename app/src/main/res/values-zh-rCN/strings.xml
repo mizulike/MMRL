@@ -352,4 +352,12 @@
     <string name="menu_show_system_apps">显示系统应用</string>
     <string name="failed_to_update_app_profile">无法为 %s 更新 App Profile</string>
     <string name="profile_template">模板</string>
+    <string name="notification_name_provider">提供方服务</string>
+    <string name="repository_service_stopped">存储库服务已停止</string>
+    <string name="module_service_stopped">模块服务已停止</string>
+    <string name="settings_provider_service">提供方服务</string>
+    <string name="provider_service_stopped">提供方服务已停止</string>
+    <string name="settings_provider_service_desc">让提供方程序在后台运行，大大缩短启动时间，提高整体响应速度</string>
+    <string name="notification_name_module">模块服务</string>
+    <string name="notification_name_repository">存储库服务</string>
 </resources>
