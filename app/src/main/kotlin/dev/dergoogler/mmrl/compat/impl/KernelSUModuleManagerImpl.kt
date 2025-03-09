@@ -24,7 +24,15 @@ internal open class KernelSUModuleManagerImpl(
 
     override fun getVersion(): String = mVersion
 
-    override fun getVersionCode(): Int = KsuNative.getVersion()
+    override fun getVersionCode(): Int {
+        val ksuVersion = KsuNative.getVersion()
+
+        return if (ksuVersion != -1) {
+            ksuVersion
+        } else {
+            mVersionCode
+        }
+    }
 
     override fun setSuEnabled(enabled: Boolean): Boolean = KsuNative.setSuEnabled(enabled)
     override fun isSuEnabled(): Boolean = KsuNative.isSuEnabled()
