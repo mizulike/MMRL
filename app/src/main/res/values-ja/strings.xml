@@ -360,4 +360,10 @@
     <string name="notification_name_provider">プロバイダーサービス</string>
     <string name="provider_service_stopped">プロバイダーサービスを停止しました</string>
     <string name="repository_service_stopped">リポジトリサービスを停止しました</string>
+    <string name="working_mode_change_dialog_title">動作モードを変更しますか？</string>
+    <string name="keep">維持</string>
+    <string name="apply">適用</string>
+    <string name="repository_service_started">リポジトリサービスを開始しました</string>
+    <string name="provider_service_started">プロバイダーサービスを開始しました</string>
+    <string name="module_service_started">モジュールサービスを開始しました</string>
 </resources>
