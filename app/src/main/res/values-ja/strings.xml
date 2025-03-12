@@ -162,7 +162,7 @@
     <string name="settings_privacy_policy">プライバシーポリシー</string>
     <string name="settings_clear_install_terminal">ターミナルログを消去</string>
     <string name="settings_clear_install_terminal_desc">複数のモジュールをインストール時にインストールターミナルのログを消去します。</string>
-    <string name="settings_shell_module_state_change">状態にシェルを使用</string>
+    <string name="settings_shell_module_state_change">状態にシェルを使用する</string>
     <string name="settings_shell_module_state_change_desc">モジュールディレクトリにファイルを作成する代わりにシェルを使用します (一度有効化すると復元ボタンが使用不可能になります)。</string>
     <!-- App Theme -->
     <string name="app_theme_palette">テーマパレット</string>
@@ -366,4 +366,5 @@
     <string name="repository_service_started">リポジトリサービスを開始しました</string>
     <string name="provider_service_started">プロバイダーサービスを開始しました</string>
     <string name="module_service_started">モジュールサービスを開始しました</string>
+    <string name="working_mode_change_dialog_desc">動作モードを変更すると、新しく設定した動作モードを適切に適用するためにアプリと関連するすべてのサービスを再起動する必要があります。「適用」を押すとアプリとサービスを再起動するプロセスが開始されることに注意してください。</string>
 </resources>
