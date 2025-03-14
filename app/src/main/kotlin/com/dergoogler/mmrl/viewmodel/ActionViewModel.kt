@@ -97,7 +97,7 @@ class ActionViewModel @Inject constructor(
                     actionResult.complete(true)
                 }
 
-                override fun onFailure() {
+                override fun onFailure(module: LocalModule?) {
                     log(R.string.execution_failed_try_to_use_shell_for_the_action_execution_settings_module_use_shell_for_module_action)
                     actionResult.complete(false)
                 }
