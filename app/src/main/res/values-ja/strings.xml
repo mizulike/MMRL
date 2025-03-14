@@ -162,7 +162,7 @@
     <string name="settings_privacy_policy">プライバシーポリシー</string>
     <string name="settings_clear_install_terminal">ターミナルログを消去</string>
     <string name="settings_clear_install_terminal_desc">複数のモジュールをインストール時にインストールターミナルのログを消去します。</string>
-    <string name="settings_shell_module_state_change">状態にシェルを使用</string>
+    <string name="settings_shell_module_state_change">状態にシェルを使用する</string>
     <string name="settings_shell_module_state_change_desc">モジュールディレクトリにファイルを作成する代わりにシェルを使用します (一度有効化すると復元ボタンが使用不可能になります)。</string>
     <!-- App Theme -->
     <string name="app_theme_palette">テーマパレット</string>
@@ -271,7 +271,7 @@
     <string name="action_executing">実行中…</string>
     <string name="settings_modules_desc">モジュールのハンドラの動作を変更、モジュールに関するその他の情報を変更します</string>
     <string name="view_module_unsupported_device_desc">使用しているデバイスは、このモジュールに対応していないか除外されているようです。</string>
-      <string name="view_module_unsupported_arch_desc">使用しているデバイスは、開発者が宣言した必要なアーキテクチャに対応していないようです。</string>
+    <string name="view_module_unsupported_arch_desc">使用しているデバイスは、開発者が宣言した必要なアーキテクチャに対応していないようです。</string>
     <string name="settings_modules">モジュールとインストーラー</string>
     <string name="action_activity">アクション</string>
     <string name="settings_security_allow_filesystem_api">ファイルシステム API を許可</string>
@@ -301,7 +301,7 @@
     <string name="action_screen_cancel_text">アクションをキャンセルしてもよろしいですか？</string>
     <string name="learn_more">詳しく見る</string>
     <string name="sponsors">スポンサー</string>
-   <string name="blacklisted">ブラックリスト済み</string>
+    <string name="blacklisted">ブラックリスト済み</string>
     <string name="settings_blacklist_alerts">ブラックリストアラート</string>
     <string name="settings_blacklist_alerts_desc">ローカルのモジュールとモジュールを探すでアラートを表示してブラックリストに登録済みのモジュールのインストールをブロックします。</string>
     <string name="install_screen_cancel_title">インストールをキャンセルしますか？</string>
@@ -338,4 +338,33 @@
     <string name="allow_filesystem_api_desc">このモジュールでファイルシステム API にアクセスすることを許可しますか？このモジュールが安全でないと思われる場合は、許可しないでください！</string>
     <string name="explore_more_repositories">さらにリポジトリを探す</string>
     <string name="allow_advanced_kernelsu_api_desc">このモジュールで高度な KernelSU API にアクセスすることを許可しますか？このモジュールが安全でないと思われる場合は、許可しないでください！</string>
+    <string name="menu_always_show_shell">シェルを常に表示</string>
+    <string name="working_mode_shizuku_title">Shizuku</string>
+    <string name="menu_show_system_apps">システムアプリを表示</string>
+    <string name="page_superuser">スーパーユーザー</string>
+    <string name="packages_empty">パッケージは空です</string>
+    <string name="app_profile">アプリプロファイル</string>
+    <string name="profile_default">デフォルト</string>
+    <string name="profile_template">テンプレート</string>
+    <string name="profile_custom">カスタム</string>
+    <string name="working_mode_shizuku_desc">完全な root アクセスなしで、アプリがシステムレベルのコマンドを実行できるようにする権限ベースのソリューションです。Sui または Shizuku から権限の許可を行うことで、システムの整合性を維持しながら特定の操作に対して昇格された権限を有効化します。</string>
+    <string name="failed_to_update_app_profile">「%s」のアプリプロファイルを更新できませんでした</string>
+    <string name="failed_to_update_sepolicy">SELinux のルール更新に失敗しました: %s</string>
+    <string name="su_not_allowed">スーパーユーザーが許可されていません: %s</string>
+    <string name="failed_to_grant_root">root 権限の付与に失敗しました</string>
+    <string name="settings_provider_service">プロバイダーサービス</string>
+    <string name="notification_name_module">モジュールサービス</string>
+    <string name="notification_name_repository">リポジトリサービス</string>
+    <string name="module_service_stopped">モジュールサービスを停止しました</string>
+    <string name="settings_provider_service_desc">プロバイダーをバックグラウンドで実行し続けることで、起動時間の短縮と全体的なレスポンスを向上させます</string>
+    <string name="notification_name_provider">プロバイダーサービス</string>
+    <string name="provider_service_stopped">プロバイダーサービスを停止しました</string>
+    <string name="repository_service_stopped">リポジトリサービスを停止しました</string>
+    <string name="working_mode_change_dialog_title">動作モードを変更しますか？</string>
+    <string name="keep">維持</string>
+    <string name="apply">適用</string>
+    <string name="repository_service_started">リポジトリサービスを開始しました</string>
+    <string name="provider_service_started">プロバイダーサービスを開始しました</string>
+    <string name="module_service_started">モジュールサービスを開始しました</string>
+    <string name="working_mode_change_dialog_desc">動作モードを変更すると、新しく設定した動作モードを適切に適用するためにアプリと関連するすべてのサービスを再起動する必要があります。「適用」を押すとアプリとサービスを再起動するプロセスが開始されることに注意してください。</string>
 </resources>
