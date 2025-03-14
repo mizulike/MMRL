@@ -66,7 +66,10 @@ class InstallViewModel @Inject constructor(
             }
 
             if (userPreferences.strictMode && !path.endsWith(".zip")) {
-                log("! $path is not a module file. Magisk modules must be .zip files. Skipping...")
+                log(
+                    R.string.is_not_a_module_file_magisk_modules_must_be_zip_files_skipping,
+                    path
+                )
                 return@mapNotNull null
             }
 
