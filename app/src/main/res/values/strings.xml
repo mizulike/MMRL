@@ -358,4 +358,5 @@
     <string name="module_service_started">Module Service Started</string>
     <string name="provider_service_started">Provider Service Started</string>
     <string name="file_already_exists">File already exists</string>
+    <string name="settings_strict_mode">Strict Mode</string>
 </resources>

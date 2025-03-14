@@ -15,6 +15,7 @@ import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
+import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
 import timber.log.Timber
 
@@ -22,7 +23,7 @@ import timber.log.Timber
 fun SecurityScreen() {
     val viewModel = LocalSettings.current
     val userPreferences = LocalUserPreferences.current
-
+val browser = LocalUriHandler.current
     val navController = LocalNavController.current
 
     SettingsScaffold(
@@ -47,6 +48,17 @@ fun SecurityScreen() {
             desc = stringResource(id = R.string.settings_hide_fingerprint_desc),
             checked = userPreferences.hideFingerprintInHome,
             onChange = viewModel::setHideFingerprintInHome
+        )
+
+        ListSwitchItem(
+            title = stringResource(id = R.string.settings_strict_mode),
+            checked = userPreferences.strictMode,
+            onChange = viewModel::setStrictMode,
+            base = {
+                learnMore = {
+                    browser.openUri("https://mmrl.dev/guide/strict-mode")
+                }
+            }
         )
 
         if (viewModel.platform.isKernelSuOrNext) {

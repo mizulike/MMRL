@@ -145,6 +145,14 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
+    suspend fun setStrictMode(value: Boolean) = withContext(Dispatchers.IO) {
+        userPreferences.updateData {
+            it.copy(
+                strictMode = value
+            )
+        }
+    }
+
     suspend fun setHomepage(value: Homepage) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(

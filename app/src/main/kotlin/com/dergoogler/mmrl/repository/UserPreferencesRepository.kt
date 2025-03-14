@@ -56,6 +56,9 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setHideFingerprintInHome(value: Boolean) =
         userPreferencesDataSource.setHideFingerprintInHome(value)
 
+    suspend fun setStrictMode(value: Boolean) =
+        userPreferencesDataSource.setStrictMode(value)
+
     suspend fun setHomepage(value: Homepage) =
         userPreferencesDataSource.setHomepage(value)
 

@@ -151,6 +151,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setStrictMode(value: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setStrictMode(value)
+        }
+    }
+
     fun setHomepage(value: Homepage) {
         viewModelScope.launch {
             userPreferencesRepository.setHomepage(value)
