@@ -7,14 +7,17 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
-import dev.dergoogler.mmrl.compat.ext.nullable
 
 @Composable
 fun ConfirmDialog(
     title: @Composable (() -> Unit)?,
     description: @Composable (() -> Unit)?,
-    confirmText: @Composable (() -> Unit)?,
-    closeText: @Composable (() -> Unit)?,
+    confirmText: @Composable () -> Unit = {
+        Text(text = stringResource(R.string.install_screen_reboot_confirm))
+    },
+    closeText: @Composable () -> Unit = {
+        Text(text = stringResource(R.string.dialog_cancel))
+    },
     onClose: () -> Unit,
     onConfirm: () -> Unit,
 ) {
@@ -30,7 +33,7 @@ fun ConfirmDialog(
                     onConfirm()
                 }
             ) {
-                confirmText?.invoke()
+                confirmText.invoke()
             }
         },
         dismissButton = {
@@ -39,7 +42,7 @@ fun ConfirmDialog(
                     onClose()
                 }
             ) {
-                closeText?.invoke()
+                closeText.invoke()
             }
         }
     )
@@ -74,8 +77,8 @@ fun ConfirmDialog(
 fun ConfirmDialog(
     @StringRes title: Int,
     @StringRes description: Int,
-    @StringRes confirmText: Int? = null,
-    @StringRes closeText: Int? = null,
+    @StringRes confirmText: Int = R.string.install_screen_reboot_confirm,
+    @StringRes closeText: Int = R.string.dialog_cancel,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
 ) = ConfirmDialog(
@@ -85,9 +88,11 @@ fun ConfirmDialog(
     description = {
         Text(text = stringResource(description))
     },
-    confirmText = confirmText.nullable { { Text(text = stringResource(it)) } },
-    closeText = closeText.nullable {
-        { Text(text = stringResource(it)) }
+    confirmText = {
+        Text(text = stringResource(confirmText))
+    },
+    closeText = {
+        Text(text = stringResource(closeText))
     },
     onClose = onClose,
     onConfirm = onConfirm
