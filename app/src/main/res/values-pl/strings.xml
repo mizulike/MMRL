@@ -331,4 +331,6 @@
     <string name="provider_service_started">Uruchomiono usługę dostawcy</string>
     <string name="module_service_started">Uruchomiono usługę modułu</string>
     <string name="repository_service_started">Uruchomiono usługę repozytorium</string>
+    <string name="settings_strict_mode">Tryb ścisły</string>
+    <string name="file_already_exists">Plik już istnieje</string>
 </resources>
