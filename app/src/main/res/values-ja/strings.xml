@@ -355,4 +355,10 @@
     <string name="provider_service_started">プロバイダーサービスを開始しました</string>
     <string name="module_service_started">モジュールサービスを開始しました</string>
     <string name="working_mode_change_dialog_desc">動作モードを変更すると、新しく設定した動作モードを適切に適用するためにアプリと関連するすべてのサービスを再起動する必要があります。「適用」を押すとアプリとサービスを再起動するプロセスが開始されることに注意してください。</string>
+    <string name="allow_cancel_installation">インストールのキャンセルを許可</string>
+    <string name="allow_cancel_action">キャンセルのアクションを許可</string>
+    <string name="failed_to_close_the_action_execution">アクションの実行を終了できませんでした</string>
+    <string name="failed_to_close_the_installer">インストーラーを終了できませんでした</string>
+    <string name="file_already_exists">ファイルは既に存在します</string>
+    <string name="settings_strict_mode">厳格モード</string>
 </resources>
