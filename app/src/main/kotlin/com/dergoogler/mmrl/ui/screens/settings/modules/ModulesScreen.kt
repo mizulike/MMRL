@@ -64,5 +64,21 @@ fun ModulesScreen() {
             onChange = viewModel::setDeleteZipFile,
             enabled = userPreferences.workingMode.isRoot
         )
+
+        ListSwitchItem(
+            title = stringResource(R.string.allow_cancel_installation),
+            checked = userPreferences.allowCancelInstall,
+            onChange = viewModel::setAllowCancelInstall,
+        )
+
+        ListHeader(
+            title = stringResource(id = R.string.action_activity)
+        )
+
+        ListSwitchItem(
+            title = stringResource(R.string.allow_cancel_action),
+            checked = userPreferences.allowCancelAction,
+            onChange = viewModel::setAllowCancelAction,
+        )
     }
 }

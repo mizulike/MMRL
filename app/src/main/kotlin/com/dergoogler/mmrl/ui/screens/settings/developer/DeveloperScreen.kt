@@ -87,22 +87,5 @@ fun DeveloperScreen() {
                 }
             },
         )
-
-        ListHeader(title = stringResource(id = R.string.page_modules))
-
-        ListSwitchItem(
-            enabled = userPreferences.developerMode,
-            title = "Allow Cancel Install",
-            checked = userPreferences.allowCancelInstall,
-            onChange = viewModel::setAllowCancelInstall,
-        )
-
-        ListSwitchItem(
-            enabled = userPreferences.developerMode,
-            title = "Allow Cancel Action",
-            checked = userPreferences.allowCancelAction,
-            onChange = viewModel::setAllowCancelAction,
-        )
-
     }
 }

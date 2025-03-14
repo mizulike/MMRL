@@ -44,7 +44,6 @@ import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.app.Event.Companion.isFinished
 import com.dergoogler.mmrl.app.Event.Companion.isLoading
 import com.dergoogler.mmrl.app.Event.Companion.isSucceeded
-import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.ui.component.ConfirmDialog
 import com.dergoogler.mmrl.ui.component.Console
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
@@ -81,7 +80,7 @@ fun InstallScreen(
     val shell = viewModel.shell
     val event = viewModel.event
 
-    val allowCancel = userPreferences.developerMode { allowCancelInstall }
+    val allowCancel = userPreferences.allowCancelInstall
 
     LaunchedEffect(focusRequester) {
         focusRequester.requestFocus()
@@ -154,8 +153,19 @@ fun InstallScreen(
         description = R.string.install_screen_cancel_text,
         onClose = { cancelInstall = false },
         onConfirm = {
-            cancelInstall = false
-            shell?.close()
+            scope.launch {
+                cancelInstall = false
+
+                if (shell == null) {
+                    snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.failed_to_close_the_installer),
+                        duration = SnackbarDuration.Short
+                    )
+                    return@launch
+                }
+
+                shell.close()
+            }
         }
     )
 

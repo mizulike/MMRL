@@ -38,7 +38,6 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.app.Event.Companion.isFinished
 import com.dergoogler.mmrl.app.Event.Companion.isLoading
-import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.ui.component.ConfirmDialog
 import com.dergoogler.mmrl.ui.component.Console
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
@@ -79,7 +78,7 @@ fun ActionScreen(
     val shell = viewModel.shell
     val event = viewModel.event
 
-    val allowCancel = userPreferences.developerMode { allowCancelAction }
+    val allowCancel = userPreferences.allowCancelAction
 
     val backHandler = {
         if (allowCancel && shell != null) {
@@ -129,8 +128,19 @@ fun ActionScreen(
         description = R.string.action_screen_cancel_text,
         onClose = { cancelAction = false },
         onConfirm = {
-            cancelAction = false
-            shell?.close()
+            scope.launch {
+                cancelAction = false
+                
+                if (shell == null) {
+                    snackbarHostState.showSnackbar(
+                        message = context.getString(R.string.failed_to_close_the_action_execution),
+                        duration = SnackbarDuration.Short
+                    )
+                    return@launch
+                }
+                
+                shell.close()
+            }
         }
     )
 

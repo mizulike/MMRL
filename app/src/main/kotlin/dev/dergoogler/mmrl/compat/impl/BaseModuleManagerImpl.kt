@@ -1,6 +1,5 @@
 package dev.dergoogler.mmrl.compat.impl
 
-import android.content.Context
 import android.os.Build
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.Compat
@@ -241,13 +240,11 @@ abstract class BaseModuleManagerImpl(
                 if (result.isSuccess) {
                     callback.onSuccess(module)
                 } else {
-                    callback.onFailure()
+                    callback.onFailure(module)
                 }
             }
 
-            override fun close() {
-                main.close()
-            }
+            override fun close() = main.close()
         }
 
     internal fun String.submit(cb: Shell.ResultCallback) = shell

@@ -16,6 +16,7 @@ import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.dergoogler.mmrl.compat.content.BulkModule
 import dev.dergoogler.mmrl.compat.content.State
+import dev.dergoogler.mmrl.compat.ext.isNotNull
 import dev.dergoogler.mmrl.compat.ext.tmpDir
 import dev.dergoogler.mmrl.compat.stub.IShellCallback
 import dev.dergoogler.mmrl.compat.viewmodel.TerminalViewModel
@@ -197,7 +198,17 @@ class InstallViewModel @Inject constructor(
                     installationResult.complete(true)
                 }
 
-                override fun onFailure() {
+                override fun onFailure(module: LocalModule?) {
+                    if (module != null && shell.isNotNull() && !shell!!.isAlive) {
+                        runCatching {
+                            Compat.fileManager.delete("/data/adb/modules_update/${module.id}")
+                        }.onFailure {
+                            Timber.e(it)
+                            log(R.string.failed_to_remove_updated_folder)
+                        }.onSuccess {
+                            devLog(R.string.removed_updated_folder)
+                        }
+                    }
                     installationResult.complete(false)
                 }
             }
