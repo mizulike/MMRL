@@ -333,4 +333,8 @@
     <string name="repository_service_started">Uruchomiono usługę repozytorium</string>
     <string name="settings_strict_mode">Tryb ścisły</string>
     <string name="file_already_exists">Plik już istnieje</string>
+    <string name="allow_cancel_installation">Zezwól na anulowanie instalacji</string>
+    <string name="failed_to_close_the_action_execution">Nie udało się zamknąć wykonania akcji</string>
+    <string name="allow_cancel_action">Zezwól na anulowanie akcji</string>
+    <string name="failed_to_close_the_installer">Nie udało się zamknąć instalatora</string>
 </resources>
