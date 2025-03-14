@@ -52,7 +52,7 @@ class SuFilePathHandler(
 
         return try {
             val file = getCanonicalFileIfChild(mDirectory, path) ?: run {
-                Timber.tag(TAG).e(
+                Timber.e(
                     "The requested file: %s is outside the mounted directory: %s",
                     path, mDirectory
                 )
@@ -61,7 +61,7 @@ class SuFilePathHandler(
 
             WebResourceResponse(guessMimeType(path), null, openFile(file))
         } catch (e: IOException) {
-            Timber.tag(TAG).e(e, "Error opening the requested path: %s", path)
+            Timber.e(e, "Error opening the requested path: %s", path)
             null
         }
     }
@@ -93,7 +93,7 @@ class SuFilePathHandler(
 
     private fun openFile(file: SuFile): InputStream? {
         if (!file.exists()) {
-            Timber.tag(TAG).e("File not found: %s", file.absolutePath)
+            Timber.e("File not found: %s", file.absolutePath)
             return null
         }
 

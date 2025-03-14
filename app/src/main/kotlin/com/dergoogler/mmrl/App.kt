@@ -4,20 +4,15 @@ import android.app.Application
 import android.content.Context
 import com.dergoogler.mmrl.app.utils.NotificationUtils
 import com.dergoogler.mmrl.network.NetworkUtils
-import com.dergoogler.mmrl.utils.timber.DebugTree
-import com.dergoogler.mmrl.utils.timber.ReleaseTree
+import com.toxicbakery.logging.Arbor
+import com.toxicbakery.logging.LogCatSeedling
 import dagger.hilt.android.HiltAndroidApp
 import dev.dergoogler.mmrl.compat.ServiceManagerCompat
-import timber.log.Timber
 
 @HiltAndroidApp
 class App : Application() {
     init {
-        if (BuildConfig.IS_DEV_VERSION) {
-            Timber.plant(DebugTree())
-        } else {
-            Timber.plant(ReleaseTree())
-        }
+        Arbor.sow(LogCatSeedling())
     }
 
     override fun onCreate() {

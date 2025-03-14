@@ -205,7 +205,9 @@ dependencies {
     compileOnly(projects.hiddenApi)
 
     implementation(libs.hiddenApiBypass)
-    implementation(libs.timber)
+    // implementation(libs.timber)
+    implementation(libs.arbor.jvm)
+    implementation(libs.arbor.android)
 
     implementation(libs.semver)
     implementation(libs.coil.compose)
