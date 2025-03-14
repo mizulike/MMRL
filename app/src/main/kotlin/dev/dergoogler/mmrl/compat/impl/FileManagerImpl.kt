@@ -1,5 +1,6 @@
 package dev.dergoogler.mmrl.compat.impl
 
+import android.os.ParcelFileDescriptor
 import android.util.Base64
 import android.util.Base64OutputStream
 import dev.dergoogler.mmrl.compat.stub.IFileManager
@@ -227,4 +228,7 @@ class FileManagerImpl : IFileManager.Stub() {
         return res
     }
 
+    override fun parcelFile(filePath: String): ParcelFileDescriptor {
+        return ParcelFileDescriptor.open(File(filePath), ParcelFileDescriptor.MODE_READ_ONLY)
+    }
 }

@@ -30,4 +30,5 @@ interface IFileManager {
     boolean setOwner(String path, int owner, int group);
     String resolve(in String[] paths);
     String normalizeStringPosix(String path, boolean allowAboveRoot);
+    ParcelFileDescriptor parcelFile(String path);
 }
