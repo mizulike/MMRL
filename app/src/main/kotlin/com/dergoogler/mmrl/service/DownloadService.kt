@@ -87,6 +87,13 @@ class DownloadService : LifecycleService() {
             val downloadPath = userPreferences.downloadPath
             val file = File(downloadPath, item.filename)
 
+            if (file.exists()) {
+                Timber.d("File already exists: ${file.absolutePath}")
+                listeners[item]?.onFileExists()
+                listeners[item]?.onSuccess()
+                return@launch
+            }
+
             val listener = object : IDownloadListener {
                 override fun getProgress(value: Float) {
                     listeners[item]?.getProgress(value)
@@ -223,6 +230,7 @@ class DownloadService : LifecycleService() {
 
     interface IDownloadListener {
         fun getProgress(value: Float) {}
+        fun onFileExists() {}
         fun onSuccess() {}
         fun onFailure(e: Throwable) {}
     }

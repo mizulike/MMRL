@@ -65,6 +65,11 @@ class InstallViewModel @Inject constructor(
                 return@mapNotNull null
             }
 
+            if (userPreferences.strictMode && !path.endsWith(".zip")) {
+                log("! $path is not a module file. Magisk modules must be .zip files. Skipping...")
+                return@mapNotNull null
+            }
+
             val info = Compat.moduleManager.getModuleInfo(path)
 
             if (info == null) {

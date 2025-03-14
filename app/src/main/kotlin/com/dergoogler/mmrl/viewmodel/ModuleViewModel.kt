@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.viewmodel
 import android.app.Application
 import android.content.Context
 import android.os.Bundle
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -13,6 +14,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.Platform
+import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.database.entity.Repo
 import com.dergoogler.mmrl.database.entity.Repo.Companion.toRepo
 import com.dergoogler.mmrl.model.json.UpdateJson
@@ -167,6 +169,10 @@ class ModuleViewModel @AssistedInject constructor(
 
             val listener = object : DownloadService.IDownloadListener {
                 override fun getProgress(value: Float) {}
+                override fun onFileExists() {
+                    Toast.makeText(context,
+                        context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT).show()
+                }
                 override fun onSuccess() {
                     if (downloadPath.exists() && downloadPath.mkdirs()) {
                         Timber.d("Created directory: $downloadPath")

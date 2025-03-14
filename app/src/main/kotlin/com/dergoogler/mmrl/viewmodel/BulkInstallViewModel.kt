@@ -2,6 +2,7 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.core.net.toUri
@@ -90,7 +91,10 @@ class BulkInstallViewModel @Inject constructor(
                 val downloadDeferred = CompletableDeferred<Uri>()
                 val listener = object : DownloadService.IDownloadListener {
                     override fun getProgress(value: Float) {}
-
+                    override fun onFileExists() {
+                        Toast.makeText(context,
+                            context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT).show()
+                    }
                     override fun onSuccess() {
                         val file = downloadPath.resolve(filename)
                         downloadDeferred.complete(file.toUri())

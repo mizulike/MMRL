@@ -357,4 +357,5 @@
     <string name="repository_service_started">Repository Service Started</string>
     <string name="module_service_started">Module Service Started</string>
     <string name="provider_service_started">Provider Service Started</string>
+    <string name="file_already_exists">File already exists</string>
 </resources>

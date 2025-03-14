@@ -2,6 +2,7 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
@@ -14,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.ModulesMenu
 import com.dergoogler.mmrl.datastore.model.Option
 import com.dergoogler.mmrl.model.json.UpdateJson
@@ -355,6 +357,10 @@ class ModulesViewModel @Inject constructor(
 
             val listener = object : DownloadService.IDownloadListener {
                 override fun getProgress(value: Float) {}
+                override fun onFileExists() {
+                    Toast.makeText(context,
+                        context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT).show()
+                }
                 override fun onSuccess() {
                     onSuccess(File(downloadPath).resolve(filename))
                 }

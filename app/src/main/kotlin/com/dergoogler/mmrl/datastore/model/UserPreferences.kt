@@ -55,6 +55,7 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     @ProtoNumber(32) val allowedKsuModules: List<String> = emptyList(),
     @Deprecated("Replaced by ProviderService.isActive")
     @ProtoNumber(33) val useProviderAsBackgroundService: Boolean = false,
+    @ProtoNumber(34) val strictMode: Boolean = true,
 ) {
     @Composable
     fun isDarkMode() = when (darkMode) {
