@@ -103,4 +103,11 @@
     <string name="working_mode_kernelsu_desc">Una soluzione root basata sul kernel che offre un controllo avanzato sulle app dello spazio utente, privilegi root personalizzabili e supporto per moduli senza sistema tramite OverlayFS.</string>
     <string name="working_mode_magisk_desc">Una suite di strumenti per la personalizzazione di Android, che offre accesso root, supporto dei moduli, modifica delle immagini di avvio ed esecuzione di codice a livello di processo con Zygisk.</string>
     <string name="working_mode_shizuku_desc">Una soluzione basata su permessi che consente alle app di eseguire comandi a livello di sistema senza accesso root completo. Richiede l\'autorizzazione di Sui o Shizuku, abilitando privilegi elevati per operazioni specifiche mantenendo l\'integrità del sistema.</string>
+    <string name="view_module_features_sepolicy_sub">Aggiunge criteri di sicurezza personalizzati (regole SEPolicy).</string>
+    <string name="view_module_features_action">Azione</string>
+    <string name="view_module_features_post_mount">Post Montaggio</string>
+    <string name="view_module_features_boot_completed">Avvio completato</string>
+    <string name="view_module_features_service_sub">Esegue il codice in un secondo momento durante l\'avvio (più sistema inizializzato).</string>
+    <string name="view_module_features_post_fs_data_sub">Esegue il codice subito dopo l\'avvio (sistema parzialmente avviato).</string>
+    <string name="view_module_features_resetprop_sub">Imposta le proprietà di sistema caricate da resetprop di Magisk.</string>
 </resources>
