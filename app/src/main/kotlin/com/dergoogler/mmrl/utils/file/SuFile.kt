@@ -4,6 +4,7 @@ import com.dergoogler.mmrl.Compat
 import dev.dergoogler.mmrl.compat.core.BrickException
 import java.io.File
 import java.io.FileFilter
+import java.io.FileInputStream
 
 private val fs = Compat.fileManager
 
@@ -24,6 +25,11 @@ class SuFile(path: String) : File(path) {
 
     fun readText(): String {
         return fs.readText(this.path)
+    }
+
+    fun parcelStream(): FileInputStream {
+        val fd = fs.parcelFile(this.path)
+        return FileInputStream(fd.fileDescriptor)
     }
 
     fun readBytes(): ByteArray {

@@ -7,7 +7,6 @@ import com.dergoogler.mmrl.ui.activity.webui.MimeUtil.getMimeFromFileName
 import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.core.BrickException
 import timber.log.Timber
-import java.io.ByteArrayInputStream
 import java.io.IOException
 import java.io.InputStream
 import java.util.zip.GZIPInputStream
@@ -97,9 +96,7 @@ class SuFilePathHandler(
             return null
         }
 
-        val byteFile = file.readBytes()
-        val `is` = ByteArrayInputStream(byteFile)
-        return handleSvgzStream(file.path, `is`)
+        return handleSvgzStream(file.path, file.parcelStream())
     }
 
     private fun guessMimeType(filePath: String): String {
