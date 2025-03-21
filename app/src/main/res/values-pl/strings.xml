@@ -223,7 +223,7 @@
     <string name="manager_version">Wersja menedżera</string>
     <string name="fingerprint">Odcisk palca</string>
     <string name="new_version_available">Nowa wersja %s jest dostępna, kliknij aby zaktualizować.</string>
-    <string name="hidden">Ukryte</string>
+    <string name="hidden">Ukryty</string>
     <string name="pre_release">Wersja wstępna</string>
     <string name="view_module_install_confirm_title">Zainstalować ten moduł?</string>
     <string name="settings_shell_module_state_change">Użyj powłoki dla stanów</string>
