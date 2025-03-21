@@ -20,6 +20,7 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.webui.plugin.Plugin
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -160,10 +161,8 @@ class WebUIViewModel @AssistedInject constructor(
             }
 
             try {
-                val dexFileBytes = it.readBytes()
-                val dexFileBuffer = ByteBuffer.wrap(dexFileBytes);
-
-                val loader = InMemoryDexClassLoader(dexFileBuffer, context.classLoader)
+                val dexFileParcel = it.readBytes()
+                val loader = InMemoryDexClassLoader(ByteBuffer.wrap(dexFileParcel), context.classLoader)
 
                 pluginsList.forEach { className ->
                     try {
@@ -179,6 +178,16 @@ class WebUIViewModel @AssistedInject constructor(
 
                         val instance = clazz.getPluginMethod<Any>(
                             name = "instance",
+                            listOf(Plugin::class.java) to listOf(
+                                Plugin(
+                                    modId,
+                                    context,
+                                    webView,
+                                    Compat.fileManager,
+                                    platform,
+                                    isProviderAlive
+                                )
+                            ),
                             listOf(Context::class.java, WebView::class.java) to listOf(
                                 context,
                                 webView
@@ -206,12 +215,6 @@ class WebUIViewModel @AssistedInject constructor(
                             Timber.e("Class $className does not have an instance method")
                             return
                         }
-
-                        clazz.setPluginField("modId", modId)
-                        clazz.setPluginField("isProviderAlive", isProviderAlive)
-                        clazz.setPluginField("rootVersionName", versionName)
-                        clazz.setPluginField("rootVersionCode", versionCode)
-                        clazz.setPluginField("rootPlatform", platform)
 
                         Timber.d("Added plugin $instanceName from dex file $dexPath")
 

@@ -5,6 +5,9 @@ import dev.dergoogler.mmrl.compat.core.BrickException
 import java.io.File
 import java.io.FileFilter
 import java.io.FileInputStream
+import java.io.RandomAccessFile
+import java.nio.ByteBuffer
+import java.nio.channels.FileChannel
 
 private val fs = Compat.fileManager
 
@@ -32,6 +35,22 @@ class SuFile(path: String) : File(path) {
         return FileInputStream(fd.fileDescriptor)
     }
 
+    fun parcelByteBuffer(): ByteBuffer {
+        return if (length() <= 1024 * 1024) { // Use heap/direct buffer for files ≤ 1MB
+            parcelStream().channel.use { channel ->
+                val size = channel.size().toInt()
+                ByteBuffer.allocateDirect(size).apply {
+                    while (channel.read(this) > 0);
+                    flip()
+                }
+            }
+        } else { // Use memory-mapped buffer for larger files
+            RandomAccessFile(this, "r").channel.use { channel ->
+                channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size())
+            }
+        }
+    }
+
     fun readBytes(): ByteArray {
         return fs.readBytes(this.path)
     }
@@ -50,6 +69,10 @@ class SuFile(path: String) : File(path) {
 
     override fun list(): Array<String> {
         return fs.list(this.path)
+    }
+
+    override fun length(): Long {
+        return this.size(false)
     }
 
     fun size(recursively: Boolean = false): Long {
