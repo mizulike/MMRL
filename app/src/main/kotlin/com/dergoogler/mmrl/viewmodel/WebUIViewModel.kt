@@ -11,10 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.Platform
 import com.dergoogler.mmrl.app.Const
-import com.dergoogler.mmrl.app.moshi
 import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
@@ -22,6 +22,7 @@ import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.utils.file.SuFile
 import com.dergoogler.webui.plugin.Instance
 import com.dergoogler.webui.plugin.Plugin
+import com.dergoogler.webui.webUiConfig
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 import java.nio.ByteBuffer
+
 
 @HiltViewModel(assistedFactory = WebUIViewModel.Factory::class)
 class WebUIViewModel @AssistedInject constructor(
@@ -69,7 +71,7 @@ class WebUIViewModel @AssistedInject constructor(
     private val moduleDir = SuFile("/data/adb/modules", modId)
     val webRoot = SuFile(moduleDir, "webroot")
 
-    private val pluginsListFile = SuFile(webRoot, "plugins.json")
+    private val configFile = SuFile(webRoot, "config.mmrl.json")
     private val pluginDir = SuFile(webRoot, "plugins")
 
     val sanitizedModId: String
@@ -98,6 +100,8 @@ class WebUIViewModel @AssistedInject constructor(
         }
     }
 
+    val config = webUiConfig(modId)
+
     private val indexFile
         get() = webRoot.list()
             .filter { !SuFile(it).isFile }
@@ -112,7 +116,11 @@ class WebUIViewModel @AssistedInject constructor(
 
     val domainUrl
         get(): String {
-            val default = "https://mui.kernelsu.org/$indexFile"
+            val default = when {
+                BuildConfig.VERSION_CODE < config.require.version.required -> "https://mui.kernelsu.org/mmrl/assets/webui/requireNewVersion.html?versionCode=${config.require.version.required}&supportText=${config.require.version.supportText}&supportLink=${config.require.version.supportLink}"
+                else -> "https://mui.kernelsu.org/$indexFile"
+            }
+
             return userPrefs.developerMode({ useWebUiDevUrl }, default) {
                 webUiDevUrl
             }
@@ -140,18 +148,8 @@ class WebUIViewModel @AssistedInject constructor(
 
     @SuppressLint("JavascriptInterface")
     fun loadDexPluginsFromMemory(context: Context, webView: WebView) {
-        if (!pluginsListFile.exists()) {
-            if (userPrefs.developerMode) Timber.d("plugins.json does not exist!")
-            return
-        }
-
-        val pluginsListJson = pluginsListFile.readText()
-
-        val jsonAdapter = moshi.adapter<List<String>>(List::class.java)
-        val pluginsList: List<String>? = jsonAdapter.fromJson(pluginsListJson)
-
-        if (pluginsList.isNullOrEmpty()) {
-            Timber.d("plugins.json for $modId is invalid or empty!")
+        if (config.plugins.isEmpty()) {
+            Timber.d("config.mmrl.json plugins for $modId is invalid or empty!")
             return
         }
 
@@ -178,7 +176,7 @@ class WebUIViewModel @AssistedInject constructor(
                 val loader =
                     InMemoryDexClassLoader(ByteBuffer.wrap(dexFileParcel), context.classLoader)
 
-                pluginsList.forEach { className ->
+                config.plugins.forEach { className ->
                     try {
                         val clazz = loader.loadClass(className)
 

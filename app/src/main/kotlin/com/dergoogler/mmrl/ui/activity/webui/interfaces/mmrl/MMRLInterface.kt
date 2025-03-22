@@ -9,6 +9,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.app.moshi
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
+import com.dergoogler.webui.model.WebUIPermissions
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import dev.dergoogler.mmrl.compat.core.MMRLWebUIInterface
@@ -28,7 +29,7 @@ class MMRLInterface(
     private val viewModel: WebUIViewModel,
     private val allowedFsApi: Boolean,
     private val allowedKsuApi: Boolean,
-): MMRLWebUIInterface(webView, context) {
+) : MMRLWebUIInterface(webView, context) {
     private var windowInsetsController: WindowInsetsControllerCompat =
         WindowCompat.getInsetsController(
             activity.window,
@@ -144,6 +145,11 @@ class MMRLInterface(
 
     @JavascriptInterface
     fun requestFileSystemAPI() {
+        if (!viewModel.config.hasFileSystemPermission) {
+            console.error("${WebUIPermissions.FILESYSTEM} is not declared in \\'config.mmrl.json\\'.")
+            return
+        }
+
         if (viewModel.hasRequestFileSystemAPI) {
             console.error("WebUI has already requested to access the FileSystem API and it was rejected")
             return

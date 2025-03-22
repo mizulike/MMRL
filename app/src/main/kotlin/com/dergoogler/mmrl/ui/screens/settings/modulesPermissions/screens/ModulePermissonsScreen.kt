@@ -11,8 +11,8 @@ import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.ModulePermissionsViewModel
+import com.dergoogler.webui.webUiConfig
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
-import dev.dergoogler.mmrl.compat.ext.isNotNull
 
 @Composable
 fun ModulePermissionsScreen(mViewModel: ModulePermissionsViewModel) {
@@ -26,74 +26,78 @@ fun ModulePermissionsScreen(mViewModel: ModulePermissionsViewModel) {
 
     val module = mViewModel.local
 
-    if (module.isNotNull()) {
-        SettingsScaffold(
-            modifier = ScaffoldDefaults.settingsScaffoldModifier,
-            title = module.name
-        ) {
-            ListHeader(title = R.string.debugging)
-
-            ListSwitchItem(
-                enabled = module.features.webui,
-                title = stringResource(R.string.settings_security_inject_eruda),
-                desc= stringResource(id = R.string.settings_security_inject_eruda_desc),
-                base = {
-                  learnMore  ={
-                      browser.openUri("https://mmrl.dev/guide/webui/#javascript-api")
-                  }
-                },
-                checked = module.id in injectEruda,
-                onChange = { checked ->
-                    if (checked) {
-                        val newModules = injectEruda + module.id
-                        viewModel.setInjectEruda(newModules)
-                    } else {
-                        val newModules = injectEruda.filter { it != module.id }
-                        viewModel.setInjectEruda(newModules)
-                    }
-                }
-            )
-
-            ListHeader(title = R.string.view_module_features_webui)
-
-            ListSwitchItem(
-                enabled = module.features.webui,
-                title = stringResource(R.string.settings_security_allow_filesystem_api),
-                checked = module.id in allowedFsModules,
-                onChange = { checked ->
-                    if (checked) {
-                        val newModules = allowedFsModules + module.id
-                        viewModel.setAllowedFsModules(newModules)
-                    } else {
-                        val newModules = allowedFsModules.filter { it != module.id }
-                        viewModel.setAllowedFsModules(newModules)
-                    }
-                }
-            )
-
-            ListSwitchItem(
-                title = stringResource(R.string.settings_security_allow_advanced_kernelsu_api),
-                enabled = module.features.webui,
-                checked = module.id in allowedKsuModules,
-                onChange = { checked ->
-                    if (checked) {
-                        val newModules = allowedKsuModules + module.id
-                        viewModel.setAllowedKsuModules(newModules)
-                    } else {
-                        val newModules = allowedKsuModules.filter { it != module.id }
-                        viewModel.setAllowedKsuModules(newModules)
-                    }
-                }
-            )
-        }
-
-    } else {
+    if (module == null) {
         SettingsScaffold(
             modifier = ScaffoldDefaults.settingsScaffoldModifier,
             title = R.string.unknown_error
         ) {
             Loading()
         }
+
+        return
     }
 
+    val config = webUiConfig(module.id)
+    val canUseFileSystemApi =
+        config.hasFileSystemPermission && module.features.webui
+
+    SettingsScaffold(
+        modifier = ScaffoldDefaults.settingsScaffoldModifier,
+        title = module.name
+    ) {
+        ListHeader(title = R.string.debugging)
+
+        ListSwitchItem(
+            enabled = module.features.webui,
+            title = stringResource(R.string.settings_security_inject_eruda),
+            desc = stringResource(id = R.string.settings_security_inject_eruda_desc),
+            base = {
+                learnMore = {
+                    browser.openUri("https://mmrl.dev/guide/webui/#javascript-api")
+                }
+            },
+            checked = module.id in injectEruda,
+            onChange = { checked ->
+                if (checked) {
+                    val newModules = injectEruda + module.id
+                    viewModel.setInjectEruda(newModules)
+                } else {
+                    val newModules = injectEruda.filter { it != module.id }
+                    viewModel.setInjectEruda(newModules)
+                }
+            }
+        )
+
+        ListHeader(title = R.string.view_module_features_webui)
+
+        ListSwitchItem(
+            enabled = canUseFileSystemApi,
+            title = stringResource(R.string.settings_security_allow_filesystem_api),
+            checked = module.id in allowedFsModules,
+            onChange = { checked ->
+                if (checked) {
+                    val newModules = allowedFsModules + module.id
+                    viewModel.setAllowedFsModules(newModules)
+                } else {
+                    val newModules = allowedFsModules.filter { it != module.id }
+                    viewModel.setAllowedFsModules(newModules)
+                }
+            }
+        )
+
+        ListSwitchItem(
+            title = stringResource(R.string.settings_security_allow_advanced_kernelsu_api),
+            enabled = module.features.webui,
+            checked = module.id in allowedKsuModules,
+            onChange = { checked ->
+                if (checked) {
+                    val newModules = allowedKsuModules + module.id
+                    viewModel.setAllowedKsuModules(newModules)
+                } else {
+                    val newModules = allowedKsuModules.filter { it != module.id }
+                    viewModel.setAllowedKsuModules(newModules)
+                }
+            }
+        )
+    }
 }

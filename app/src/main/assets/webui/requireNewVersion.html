@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <link href="https://mui.kernelsu.org/mmrl/insets.css" rel="stylesheet">
+    <link href="https://mui.kernelsu.org/mmrl/colors.css" rel="stylesheet">
+    <title>Version Required</title>
+    <style>
+        body {
+          user-select: none;
+          font-family: Arial, sans-serif;
+          margin: 0;
+          padding: 0;
+          background-color: var(--background);
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          box-sizing: border-box;
+        }
+
+        .container {
+          background-color: var(--tonalSurface);
+          padding: 20px;
+          border-radius: 8px;
+          text-align: center;
+          box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+          max-width: 400px;
+          width: 100%;
+          margin: 32px;
+        }
+
+        h1 {
+          font-size: 24px;
+          color: var(--onSurface);
+          margin-bottom: 20px;
+        }
+
+        p {
+          font-size: 16px;
+          color: var(--onSurfaceVariant);
+          margin-bottom: 30px;
+        }
+
+        .button {
+          /* display: inline-block; */
+          display: none;
+          background-color: var(--primary);
+          color: var(--onPrimary);
+          padding: 10px 20px;
+          border-radius: 5px;
+          text-decoration: none;
+          font-size: 16px;
+          transition: all 0.3s;
+        }
+
+        code {
+          padding: .2em .4em;
+          margin: 0;
+          font-size: 85%;
+          white-space: break-spaces;
+          color: var(--onSurface);
+          background-color: var(--filledTonalButtonContainerColor);
+          border-radius: 6px;
+        }
+
+        .button:hover {
+          color: var(--onPrimaryContainer);
+          background-color: var(--filledTonalButtonContainerColor);
+        }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h1>Version Required</h1>
+    <p>The developer of this module has declared that this WebUI requires at least MMRL with the version code
+        <code id="versionCode">null</code>.
+    </p>
+    <a class="button" href="null" id="supportButton">null</a>
+</div>
+
+<script>
+    const params = new URLSearchParams(window.location.search);
+
+    const versionCode = document.getElementById('versionCode');
+    const supportButton = document.getElementById('supportButton');
+
+    const versionCodeParam = params.get('versionCode');
+    const supportTextParam = params.get('supportText');
+    const supportLinkParam = params.get('supportLink');
+
+    const hasVersionCode = versionCodeParam !== "null" && versionCodeParam != null && versionCodeParam.length > 0;
+    const hasSupportText = supportTextParam !== "null" && supportLinkParam != null && supportTextParam.length > 0;
+    const hasSupportLink = supportLinkParam !== "null" && supportLinkParam != null && supportLinkParam.length > 0;
+
+
+    if (hasVersionCode) {
+      versionCode.textContent = versionCodeParam
+    }
+
+    if (hasSupportText && hasSupportLink) {
+      supportButton.href = supportLinkParam
+      supportButton.textContent = supportTextParam;
+      supportButton.style.display = 'inline-block';
+    }
+</script>
+</body>
+
+</html>

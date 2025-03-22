@@ -88,7 +88,7 @@ fun WebUIScreen(
         )
     }
 
-    if (!allowedFsApi && !viewModel.hasRequestFileSystemAPI && viewModel.dialogRequestFileSystemAPI) {
+    if (viewModel.config.hasFileSystemPermission && !allowedFsApi && !viewModel.hasRequestFileSystemAPI && viewModel.dialogRequestFileSystemAPI) {
         ConfirmDialog(
             title = stringResource(R.string.allow_filesystem_api),
             description = stringResource(R.string.allow_filesystem_api_desc),
