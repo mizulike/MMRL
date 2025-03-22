@@ -20,6 +20,7 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.webui.plugin.Instance
 import com.dergoogler.webui.plugin.Plugin
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -168,15 +169,7 @@ class WebUIViewModel @AssistedInject constructor(
                     try {
                         val clazz = loader.loadClass(className)
 
-                        val instanceName = clazz.getPluginField<String>(
-                            "instanceName",
-                            "interfaceName",
-                            "name"
-                        )
-                        val reservedID =
-                            clazz.getPluginField<String>("reservedID", "onlyForModule")
-
-                        val instance = clazz.getPluginMethod<Any>(
+                        val instance = clazz.getPluginMethod<Instance>(
                             name = "instance",
                             listOf(Plugin::class.java) to listOf(
                                 Plugin(
@@ -188,38 +181,27 @@ class WebUIViewModel @AssistedInject constructor(
                                     isProviderAlive
                                 )
                             ),
-                            listOf(Context::class.java, WebView::class.java) to listOf(
-                                context,
-                                webView
-                            ),
-                            listOf(WebView::class.java, Context::class.java) to listOf(
-                                webView,
-                                context
-                            ),
-                            listOf(Context::class.java) to listOf(context),
-                            listOf(WebView::class.java) to listOf(webView),
                             emptyList<Class<*>>() to emptyList()
                         )
-
-                        if (reservedID != modId && reservedID != null) {
-                            Timber.d("Skipping plugin $className with reservedID $reservedID. Not for $modId")
-                            return
-                        }
-
-                        if (instanceName == null) {
-                            Timber.e("Class $className does not have an interfaceName field")
-                            return
-                        }
 
                         if (instance == null) {
                             Timber.e("Class $className does not have an instance method")
                             return
                         }
 
+                        val targetModules = instance.targetModules
+                        val instanceName = instance.name
+                        val instanceObject = instance.instance
+
+                        if (modId in targetModules) {
+                            Timber.d("Skipping plugin $className with reserved for ${targetModules.joinToString(",")}. Not for $modId")
+                            return
+                        }
+
                         Timber.d("Added plugin $instanceName from dex file $dexPath")
 
                         webView.addJavascriptInterface(
-                            instance,
+                            instanceObject,
                             instanceName
                         )
                     } catch (e: ClassNotFoundException) {
