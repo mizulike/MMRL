@@ -271,4 +271,10 @@
     <string name="settings_clear_install_terminal">Effacer le terminal d\'installation</string>
     <string name="settings_strict_mode">Mode Strict</string>
     <string name="file_already_exists">Le fichier existe déjà</string>
+    <string name="view_module_features_dex_loader">Plugins WebUI</string>
+    <string name="view_module_features_dex_loader_sub">Ce module prend en charge les plugins WebUI pour ajouter de nouvelles API JavaScript.</string>
+    <string name="view_module_features_filesystem_sub">Ce module peut utiliser l\'API FileSystem fournie par MMRL.</string>
+    <string name="view_module_features_eruda_sub">Ce module dispose d\'une console de développement commutable.</string>
+    <string name="view_module_features_mmrl_webui_config_sub">Ce module utilise un fichier de configuration pour les interfaces Web avec MMRL</string>
+    <string name="repo_options_website">Site Web</string>
 </resources>
