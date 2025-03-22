@@ -4,6 +4,7 @@ package com.dergoogler.mmrl.model.online
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
+@Deprecated("Use permissions instead")
 @JsonClass(generateAdapter = true)
 data class ModuleFeatures(
     val service: Boolean? = null,

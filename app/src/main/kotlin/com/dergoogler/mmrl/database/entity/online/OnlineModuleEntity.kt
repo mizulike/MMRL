@@ -33,6 +33,7 @@ data class OnlineModuleEntity(
     val require: List<String>? = null,
     val devices: List<String>? = null,
     val arch: List<String>? = null,
+    val permissions: List<String>? = null,
 
     @Embedded val manager: ModuleManagerEntity? = null,
     @Embedded val root: ModuleRootEntity? = null,
@@ -71,7 +72,7 @@ data class OnlineModuleEntity(
         readme = original.readme,
         verified = original.verified,
         manager = ModuleManagerEntity(original.manager),
-
+        permissions = original.permissions,
         require = original.require,
         devices = original.devices,
         arch = original.arch,
@@ -104,7 +105,7 @@ data class OnlineModuleEntity(
         readme = readme,
         verified = verified,
         manager = manager?.toManager(),
-
+        permissions = permissions,
         require = require,
         devices = devices,
         arch = arch,

@@ -41,6 +41,7 @@ data class OnlineModule(
     val root: ModuleRoot? = null,
     val note: ModuleNote? = null,
     val features: ModuleFeatures? = null,
+    val permissions: List<String>? = null,
     @Transient val blacklist: Blacklist? = null,
 ) {
     val versionDisplay get() = Utils.getVersionDisplay(version, versionCode)

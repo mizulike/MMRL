@@ -363,4 +363,14 @@
     <string name="allow_cancel_installation">Allow Cancel Installation</string>
     <string name="failed_to_close_the_installer">Failed to close the installer</string>
     <string name="failed_to_close_the_action_execution">Failed to close the action execution</string>
+    <string name="view_module_features_mmrl_webui">MMRL WebUI</string>
+    <string name="view_module_features_mmrl_webui_sub">This module includes a MMRL only WebUI.</string>
+    <string name="view_module_features_mmrl_webui_config">MMRL WebUI Config</string>
+    <string name="view_module_features_mmrl_webui_config_sub">This module uses a config file for WebUI\'s in MMRL</string>
+    <string name="view_module_features_filesystem">FileSystem API</string>
+    <string name="view_module_features_filesystem_sub">This module maybe used the FileSystem API provided by MMRL.</string>
+    <string name="view_module_features_eruda">Eruda Console</string>
+    <string name="view_module_features_eruda_sub">This module has a toggable developer console.</string>
+    <string name="view_module_features_dex_loader">WebUI Plugins</string>
+    <string name="view_module_features_dex_loader_sub">This module supports WebUI Plugins to add new JavaScript APIs.</string>
 </resources>

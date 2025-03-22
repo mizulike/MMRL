@@ -18,7 +18,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -73,10 +72,6 @@ import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
-import coil.compose.rememberAsyncImagePainter
-import coil.request.CachePolicy
-import coil.request.ImageRequest
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.local.BulkModule
 import com.dergoogler.mmrl.model.local.State
@@ -88,14 +83,12 @@ import com.dergoogler.mmrl.model.online.hasValidMessage
 import com.dergoogler.mmrl.model.online.isBlacklisted
 import com.dergoogler.mmrl.ui.activity.ScreenshotsPreviewActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
-import com.dergoogler.mmrl.ui.component.APatchLabel
 import com.dergoogler.mmrl.ui.component.Alert
 import com.dergoogler.mmrl.ui.component.AntiFeaturesItem
 import com.dergoogler.mmrl.ui.component.Cover
-import com.dergoogler.mmrl.ui.component.KernelSuLabel
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.Logo
-import com.dergoogler.mmrl.ui.component.MMRLLabel
+import com.dergoogler.mmrl.ui.component.PermissionItem
 import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
@@ -859,98 +852,38 @@ fun NewViewScreen(
                     }
                 }
 
-                module.features?.let {
-                    if (it.isNotEmpty()) {
-                        ListCollapseItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            iconToRight = true,
-                            title = stringResource(R.string.view_module_features),
-                            base = {
-                                labels = listOf {
-                                    LabelItem(
-                                        text = stringResource(
-                                            R.string.view_module_section_count,
-                                            it.size
-                                        )
-                                    )
-                                }
-                            }
-                        ) {
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.service,
-                                key = R.string.view_module_features_service,
-                                value = R.string.view_module_features_service_sub
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.postFsData,
-                                key = R.string.view_module_features_post_fs_data,
-                                value = R.string.view_module_features_post_fs_data_sub
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.resetprop,
-                                key = R.string.view_module_features_system_properties,
-                                value = R.string.view_module_features_resetprop_sub
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.sepolicy,
-                                key = R.string.view_module_features_selinux_policy,
-                                value = R.string.view_module_features_sepolicy_sub
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.zygisk,
-                                key = R.string.view_module_features_zygisk,
-                                value = R.string.view_module_features_zygisk_sub
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.apks,
-                                key = R.string.view_module_features_apks,
-                                value = R.string.view_module_features_apks_sub
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.webroot,
-                                key = R.string.view_module_features_webui,
-                                value = R.string.view_module_features_webui_sub,
-                                rootSolutions = listOf { KernelSuLabel(); APatchLabel(); MMRLLabel() }
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.action,
-                                key = R.string.view_module_features_action,
-                                value = R.string.view_module_features_action_sub,
-                                rootSolutions = listOf { KernelSuLabel(); APatchLabel(); MMRLLabel() }
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.postMount,
-                                key = R.string.view_module_features_post_mount,
-                                value = R.string.view_module_features_postmount_sub,
-                                rootSolutions = listOf { KernelSuLabel(); APatchLabel() }
-                            )
-                            FeatureListItem(
-                                itemTextStyle = subListItemStyle,
-                                feature = it.bootCompleted,
-                                key = R.string.view_module_features_boot_completed,
-                                value = R.string.view_module_features_bootcompleted_sub,
-                                rootSolutions = listOf { KernelSuLabel(); APatchLabel() }
-                            )
-                        }
-                    }
-                }
-
-                module.track.antifeatures?.ifNotEmpty {
+                module.permissions.ifNotEmpty {
                     ListCollapseItem(
                         contentPaddingValues = listItemContentPaddingValues,
                         iconToRight = true,
+                        title = stringResource(R.string.view_module_features),
+                        base = {
+                            labels = listOf {
+                                LabelItem(
+                                    text = stringResource(
+                                        R.string.view_module_section_count,
+                                        it.size
+                                    )
+                                )
+                            }
+                        }
+                    ) {
+                        PermissionItem(
+                            itemTextStyle = subListItemStyle,
+                            contentPaddingValues = PaddingValues(
+                                vertical = 8.dp,
+                                horizontal = 16.dp
+                            ),
+                            permissions =  it
+                        )
+                    }
+                }
+
+                module.track.antifeatures.ifNotEmpty {
+                    ListCollapseItem(
+                        iconToRight = true,
                         title = stringResource(R.string.view_module_antifeatures),
                         base = {
-
                             labels = listOf {
                                 LabelItem(
                                     text = stringResource(
