@@ -4,11 +4,11 @@ import android.content.Context
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.core.MMRLWebUIInterface
 import java.io.FileInputStream
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
-import java.util.Base64
 
 
 class FileInterface(
@@ -18,22 +18,27 @@ class FileInterface(
     private val file = Compat.fileManager
 
     @JavascriptInterface
-    fun read(path: String): String? = read(path, false)
-
-    @JavascriptInterface
-    fun read(path: String, bytes: Boolean): String? =
-        runTryJsWith(file, "Error while reading from \\'$path\\'. BYTES: $bytes") {
-            if (!bytes) return@runTryJsWith readText(path)
-
-            return@runTryJsWith Base64.getEncoder().encodeToString(readBytes(path))
-        }
-
-    @JavascriptInterface
-    fun write(path: String, data: String) {
-        runTryJsWith(file, "Error while writing to \\'$path\\'") {
-            writeText(path, data)
-        }
+    fun read(path: String): String? = runTryJsWith(file, "Error while reading from \\'$path\\'.") {
+        return@runTryJsWith SuFile(path).readText()
     }
+
+    @JavascriptInterface
+    fun read(path: String, bytes: Boolean): Array<Int>? =
+        runTryJsWith(file, "Error while reading from \\'$path\\'. BYTES: $bytes") {
+            return@runTryJsWith SuFile(path).readBytes().map { it.toInt() }.toTypedArray()
+        }
+
+    @JavascriptInterface
+    fun write(path: String, data: String) =
+        runTryJsWith(file, "Error while writing to \\'$path\\'") {
+            SuFile(path).writeText(data)
+        }
+
+    @JavascriptInterface
+    fun write(path: String, data: Array<Int>) =
+        runTryJsWith(file, "Error while writing to \\'$path\\'") {
+            SuFile(path).writeBytes(ByteArray(data.size) { data[it].toByte() })
+        }
 
     @JavascriptInterface
     fun readByParcel(path: String): String? =

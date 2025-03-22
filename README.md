@@ -51,3 +51,4 @@ Get involved with MMRL by translating it into your language!
 
 - [tabler/tabler-icons](https://github.com/tabler/tabler-icons.git)
 - [MRepoApp/MRepo](https://github.com/MRepoApp/MRepo)
+- [topjohnwu/libsu](https://github.com/topjohnwu/libsu)

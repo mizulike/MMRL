@@ -1,13 +1,17 @@
 package com.dergoogler.mmrl.utils.file
 
+import android.os.ParcelFileDescriptor
+import android.os.RemoteException
 import com.dergoogler.mmrl.Compat
 import dev.dergoogler.mmrl.compat.core.BrickException
 import java.io.File
 import java.io.FileFilter
 import java.io.FileInputStream
-import java.io.RandomAccessFile
+import java.io.IOException
+import java.io.InputStream
+import java.io.OutputStream
 import java.nio.ByteBuffer
-import java.nio.channels.FileChannel
+import java.nio.charset.StandardCharsets
 
 private val fs = Compat.fileManager
 
@@ -15,6 +19,10 @@ class SuFile(path: String) : File(path) {
 
     constructor(path: String, parent: File) : this(File(parent, path).path)
     constructor(vararg paths: String) : this(fs.resolve(paths))
+
+    companion object {
+        const val PIPE_CAPACITY = 16 * 4096
+    }
 
     constructor(vararg paths: Any) : this(
         fs.resolve(paths.map {
@@ -27,45 +35,27 @@ class SuFile(path: String) : File(path) {
     )
 
     fun readText(): String {
-        return fs.readText(this.path)
+        val bytes = newInputStream().use { it.readBytes() }
+        val data = ByteBuffer.wrap(bytes)
+        val content = StandardCharsets.UTF_8.decode(data).toString()
+
+        return content
     }
 
     fun parcelStream(): FileInputStream {
         val fd = fs.parcelFile(this.path)
         return FileInputStream(fd.fileDescriptor)
     }
-
-    fun parcelByteBuffer(): ByteBuffer {
-        return if (length() <= 1024 * 1024) { // Use heap/direct buffer for files ≤ 1MB
-            parcelStream().channel.use { channel ->
-                val size = channel.size().toInt()
-                ByteBuffer.allocateDirect(size).apply {
-                    while (channel.read(this) > 0);
-                    flip()
-                }
-            }
-        } else { // Use memory-mapped buffer for larger files
-            RandomAccessFile(this, "r").channel.use { channel ->
-                channel.map(FileChannel.MapMode.READ_ONLY, 0, channel.size())
-            }
-        }
-    }
-
-    fun readBytes(): ByteArray {
-        return fs.readBytes(this.path)
-    }
+    
+    fun readBytes(): ByteArray = newInputStream().use { it.readBytes() }
 
     fun readAsBase64(): String {
         return fs.readAsBase64(this.path)
     }
 
-    fun writeText(data: String): Boolean {
-        return fs.writeText(this.path, data)
-    }
+    fun writeText(data: String) = newOutputStream(false).use { it.write(data.toByteArray()) }
 
-    fun writeBytes(data: ByteArray): Boolean {
-        return fs.writeBytes(this.path, data)
-    }
+    fun writeBytes(data: ByteArray) = newOutputStream(false).use { it.write(data) }
 
     override fun list(): Array<String> {
         return fs.list(this.path)
@@ -185,5 +175,34 @@ class SuFile(path: String) : File(path) {
             if ((filter == null) || filter.accept(f)) files.add(f)
         }
         return files.toArray(arrayOfNulls<SuFile>(files.size))
+    }
+
+
+    @Throws(IOException::class)
+    fun newInputStream(): InputStream {
+        val pipe = ParcelFileDescriptor.createPipe()
+        try {
+            fs.openReadStream(this.path, pipe[1]).checkException()
+        } catch (e: RemoteException) {
+            pipe[0].close()
+            throw IOException(e)
+        } finally {
+            pipe[1].close()
+        }
+        return ParcelFileDescriptor.AutoCloseInputStream(pipe[0])
+    }
+
+    @Throws(IOException::class)
+    fun newOutputStream(append: Boolean): OutputStream {
+        val pipe = ParcelFileDescriptor.createPipe()
+        try {
+            fs.openWriteStream(this.path, pipe[0], append).checkException()
+        } catch (e: RemoteException) {
+            pipe[1].close()
+            throw IOException(e)
+        } finally {
+            pipe[0].close()
+        }
+        return ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])
     }
 }

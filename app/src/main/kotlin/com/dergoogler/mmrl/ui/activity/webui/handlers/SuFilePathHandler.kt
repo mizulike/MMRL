@@ -96,7 +96,7 @@ class SuFilePathHandler(
             return null
         }
 
-        return handleSvgzStream(file.path, file.parcelStream())
+        return handleSvgzStream(file.path, file.newInputStream())
     }
 
     private fun guessMimeType(filePath: String): String {

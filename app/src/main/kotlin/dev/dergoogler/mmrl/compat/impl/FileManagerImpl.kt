@@ -1,9 +1,23 @@
 package dev.dergoogler.mmrl.compat.impl
 
+import android.os.Parcel
 import android.os.ParcelFileDescriptor
+import android.os.RemoteException
+import android.system.ErrnoException
+import android.system.Os
+import android.system.OsConstants.O_APPEND
+import android.system.OsConstants.O_CREAT
+import android.system.OsConstants.O_RDONLY
+import android.system.OsConstants.O_TRUNC
+import android.system.OsConstants.O_WRONLY
 import android.util.Base64
 import android.util.Base64OutputStream
+import com.dergoogler.mmrl.utils.file.SuFile
+import dev.dergoogler.mmrl.compat.content.ParcelResult
 import dev.dergoogler.mmrl.compat.stub.IFileManager
+import com.dergoogler.mmrl.utils.file.FileUtils
+import com.dergoogler.mmrl.utils.file.OpenFile
+import org.apache.commons.io.FilenameUtils.getPath
 import timber.log.Timber
 import java.io.ByteArrayOutputStream
 import java.io.Closeable
@@ -12,8 +26,11 @@ import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.io.InputStream
+import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 
 class FileManagerImpl : IFileManager.Stub() {
@@ -230,5 +247,51 @@ class FileManagerImpl : IFileManager.Stub() {
 
     override fun parcelFile(filePath: String): ParcelFileDescriptor {
         return ParcelFileDescriptor.open(File(filePath), ParcelFileDescriptor.MODE_READ_ONLY)
+    }
+
+    private val streamPool: ExecutorService = Executors.newCachedThreadPool()
+
+
+    override fun openReadStream(path: String, fd: ParcelFileDescriptor): ParcelResult {
+        val f = OpenFile()
+        try {
+            f.fd = Os.open(path, O_RDONLY, 0)
+            streamPool.execute {
+                try {
+                    f.use { of ->
+                        of.write = FileUtils.createFileDescriptor(fd.detachFd())
+                        while (of.pread(SuFile.PIPE_CAPACITY, -1) > 0);
+                    }
+                } catch (ignored: ErrnoException) {
+                } catch (ignored: IOException) {
+                }
+            }
+            return ParcelResult()
+        } catch (e: ErrnoException) {
+            f.close()
+            return ParcelResult(e)
+        }
+    }
+
+    override fun openWriteStream(path: String, fd: ParcelFileDescriptor, append: Boolean): ParcelResult {
+        val f = OpenFile()
+        try {
+            val mode = O_CREAT or O_WRONLY or (if (append) O_APPEND else O_TRUNC)
+            f.fd = Os.open(path, mode, 438)
+            streamPool.execute {
+                try {
+                    f.use { of ->
+                        of.read = FileUtils.createFileDescriptor(fd.detachFd())
+                        while (of.pwrite(SuFile.PIPE_CAPACITY.toLong(), -1, false) > 0);
+                    }
+                } catch (ignored: ErrnoException) {
+                } catch (ignored: IOException) {
+                }
+            }
+            return ParcelResult()
+        } catch (e: ErrnoException) {
+            f.close()
+            return ParcelResult(e)
+        }
     }
 }

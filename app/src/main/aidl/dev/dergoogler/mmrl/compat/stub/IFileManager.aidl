@@ -1,6 +1,7 @@
 package dev.dergoogler.mmrl.compat.stub;
 
 import android.os.ParcelFileDescriptor;
+import dev.dergoogler.mmrl.compat.content.ParcelResult;
 
 interface IFileManager {
     boolean deleteOnExit(String path);
@@ -31,4 +32,6 @@ interface IFileManager {
     String resolve(in String[] paths);
     String normalizeStringPosix(String path, boolean allowAboveRoot);
     ParcelFileDescriptor parcelFile(String path);
+    ParcelResult openReadStream(String path, in ParcelFileDescriptor fd);
+    ParcelResult openWriteStream(String path, in ParcelFileDescriptor fd, boolean append);
 }
