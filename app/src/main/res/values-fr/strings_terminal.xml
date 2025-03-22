@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="cannot_install_blacklisted_modules_settings_security_blacklist_alerts">Impossible d\'installer les modules sur liste noire. Paramètres → Sécurité → Alertes liste noire</string>
+</resources>
