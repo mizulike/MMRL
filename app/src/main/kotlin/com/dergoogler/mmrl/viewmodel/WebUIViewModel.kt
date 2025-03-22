@@ -98,9 +98,21 @@ class WebUIViewModel @AssistedInject constructor(
         }
     }
 
+    private val indexFile
+        get() = webRoot.list()
+            .filter { !SuFile(it).isFile }
+            .sortedWith(compareByDescending {
+                when {
+                    it.matches(Regex(".*\\.mmrl\\.(html|htm)\$")) -> 2
+                    it.matches(Regex("index\\.(html|htm)\$")) -> 1
+                    else -> 0
+                }
+            })
+            .firstOrNull()
+
     val domainUrl
         get(): String {
-            val default = "https://mui.kernelsu.org/index.html"
+            val default = "https://mui.kernelsu.org/$indexFile"
             return userPrefs.developerMode({ useWebUiDevUrl }, default) {
                 webUiDevUrl
             }
@@ -163,7 +175,8 @@ class WebUIViewModel @AssistedInject constructor(
 
             try {
                 val dexFileParcel = it.readBytes()
-                val loader = InMemoryDexClassLoader(ByteBuffer.wrap(dexFileParcel), context.classLoader)
+                val loader =
+                    InMemoryDexClassLoader(ByteBuffer.wrap(dexFileParcel), context.classLoader)
 
                 pluginsList.forEach { className ->
                     try {
@@ -194,7 +207,13 @@ class WebUIViewModel @AssistedInject constructor(
                         val instanceObject = instance.instance
 
                         if (modId in targetModules) {
-                            Timber.d("Skipping plugin $className with reserved for ${targetModules.joinToString(",")}. Not for $modId")
+                            Timber.d(
+                                "Skipping plugin $className with reserved for ${
+                                    targetModules.joinToString(
+                                        ","
+                                    )
+                                }. Not for $modId"
+                            )
                             return
                         }
 
