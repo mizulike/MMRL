@@ -62,7 +62,6 @@
     <string name="view_module_source">Code source</string>
     <string name="view_module_support">Support</string>
     <string name="view_module_added">Ajouté à : %s</string>
-    <string name="working_mode_shizuku_title"></string>
     <string name="settings_doh_desc">Solution de contournement de la censure DNS dans certains pays</string>
     <string name="menu_export_modules_as_text">Exporter les modules sous forme de texte</string>
     <string name="repo_update_service_failed_desc">Il n\'y a pas de mises à jour pour les dépôts</string>
@@ -150,10 +149,6 @@
     <string name="repo_update_service">Les dépôts ont été mis à jour avec succès</string>
     <string name="repo_update_service_failed">Aucune mise à jour trouvée pour les dépôts</string>
     <string name="reboot_recovery">Redémarrer vers la récupération</string>
-    <string name="working_mode_magisk_title"></string>
-    <string name="working_mode_apatch_title"></string>
-    <string name="working_mode_kernelsu_next_title"></string>
-    <string name="working_mode_kernelsu_title"></string>
     <string name="working_mode_apatch_desc">Correction du kernel et du système Android. Une nouvelle solution root basée sur le kernel. Prend en charge des modules similaires à Magisk et l\'injection de fonctions kernel (nécessite un hook inline et un hook syscall-table). Dérivée et modifiée de KernelSU.</string>
     <string name="install_screen_reboot_text">Êtes-vous sûr de vouloir redémarrer votre appareil?</string>
     <string name="install_screen_reboot_dismiss">Rejeter</string>
