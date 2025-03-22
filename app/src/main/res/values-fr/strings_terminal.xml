@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="cannot_install_blacklisted_modules_settings_security_blacklist_alerts">Impossible d\'installer les modules sur liste noire. Paramètres → Sécurité → Alertes liste noire</string>
+    <string name="removed_updated_folder">- Dossier mis à jour supprimé</string>
+    <string name="service_is_not_available">Le service n\'est pas disponible !</string>
+    <string name="copying_zip_to_temp_directory">- Copie du zip dans le répertoire temporaire</string>
+    <string name="install_view_installing">- Installation de %1$s</string>
+    <string name="execution_failed_try_to_use_shell_for_the_action_execution_settings_module_use_shell_for_module_action">- Échec de l\'exécution. Essayez d\'utiliser Shell pour exécuter l\'action : Paramètres → Module → Utiliser Shell pour l\'action du module.</string>
 </resources>
