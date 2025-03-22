@@ -40,6 +40,7 @@ fun ModulePermissionsScreen(mViewModel: ModulePermissionsViewModel) {
     val config = webUiConfig(module.id)
     val canUseFileSystemApi =
         config.hasFileSystemPermission && module.features.webui
+    val canUseErudaApi = config.hasErudaPermission && module.features.webui
 
     SettingsScaffold(
         modifier = ScaffoldDefaults.settingsScaffoldModifier,
@@ -48,7 +49,7 @@ fun ModulePermissionsScreen(mViewModel: ModulePermissionsViewModel) {
         ListHeader(title = R.string.debugging)
 
         ListSwitchItem(
-            enabled = module.features.webui,
+            enabled = canUseErudaApi,
             title = stringResource(R.string.settings_security_inject_eruda),
             desc = stringResource(id = R.string.settings_security_inject_eruda_desc),
             base = {

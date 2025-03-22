@@ -147,8 +147,10 @@ fun WebUIScreen(
                             WindowInsetsCompat.CONSUMED
                         }
 
-                        viewModel.loadDexPluginsFromMemory(context, this)
-
+                        if (viewModel.config.hasPluginDexLoaderPermission) {
+                            viewModel.loadDexPluginsFromMemory(context, this)
+                        }
+                        
                         webViewClient = MMRLWebClient(
                             context = context,
                             browser = browser,
@@ -198,7 +200,7 @@ fun WebUIScreen(
                             }, "ksu"
                         )
 
-                        if (allowedFsApi) {
+                        if (viewModel.config.hasFileSystemPermission && allowedFsApi) {
                             addJavascriptInterface(
                                 FileInterface(this, context),
                                 viewModel.sanitizedModIdWithFile

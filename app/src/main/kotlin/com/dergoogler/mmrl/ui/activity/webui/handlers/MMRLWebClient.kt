@@ -53,7 +53,7 @@ class MMRLWebClient(
     }
 
     override fun onPageFinished(view: WebView, url: String?) {
-        val allowInjectEruda = viewModel.modId in userPrefs.injectEruda
+        val allowInjectEruda = viewModel.config.hasErudaPermission && viewModel.modId in userPrefs.injectEruda
 
         if (allowInjectEruda) {
             view.loadUrl(
