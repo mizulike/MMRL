@@ -7,7 +7,6 @@
     <string name="install_failure">Échec</string>
     <string name="license_title">Afficher la Licence</string>
     <string name="license_osi_approved">OSI Approuvé</string>
-    <string name="license_fsf_libre"></string>
     <string name="page_modules">Modules</string>
     <string name="page_settings">Réglages</string>
     <string name="settings_root_access">Accès Administrateur : %s</string>
@@ -41,7 +40,6 @@
     <string name="repo_delete_dialog_desc">Êtes-vous sûr de supprimer %s \?</string>
     <string name="repo_add_dialog_title">Ajout dépôt</string>
     <string name="repo_add_dialog_add">Ajouter</string>
-    <string name="dialog_attention"></string>
     <string name="dialog_cancel">Annuler</string>
     <string name="dialog_ok">OK</string>
     <string name="message_download_success">Téléchargement réussi</string>
@@ -232,7 +230,6 @@
     <string name="install_screen_cancel_text">Êtes-vous sûr de vouloir annuler l\'installation ?</string>
     <string name="action_screen_cancel_title">Annuler l\'action ?</string>
     <string name="settings_use_generic_action_desc">La plupart des fournisseurs root ne prennent pas en charge les commandes d\'action en ligne de commande. Vous pouvez utiliser un script générique à la place</string>
-    <string name="working_mode_shizuku_title"></string>
     <string name="module_service_started">Service du module démarré</string>
     <string name="have_been_total_sponsored">%1$s ont été sponsorisés au total</string>
     <string name="allow_advanced_kernelsu_api_desc">Autoriser ce module à accéder à l\'API KernelSU avancée ? Si vous ne vous sentez pas en sécurité avec ce module, ne l\'autorisez pas !</string>
@@ -258,10 +255,6 @@
     <string name="settings_provider_service">Service du fournisseur</string>
     <string name="notification_name_provider">Service du fournisseur</string>
     <string name="notification_name_module">Service Module</string>
-    <string name="working_mode_magisk_title"></string>
-    <string name="working_mode_kernelsu_title"></string>
-    <string name="working_mode_kernelsu_next_title"></string>
-    <string name="working_mode_apatch_title"></string>
     <string name="provider_service_stopped">Service du fournisseur arrêté</string>
     <string name="module_service_stopped">Service du module arrêté</string>
     <string name="working_mode_change_dialog_title">Changer le mode de fonctionnement ?</string>
