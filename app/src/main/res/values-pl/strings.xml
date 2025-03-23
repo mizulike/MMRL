@@ -107,7 +107,7 @@
     <string name="view_module_features_boot_completed">Ukończono rozruch</string>
     <string name="view_module_features_service_sub">Uruchamia kod później podczas rozruchu (po zainicjowaniu systemu).</string>
     <string name="view_module_features_post_fs_data">Dane Post FS</string>
-    <string name="view_module_features_webui">Interfejs sieciowy</string>
+    <string name="view_module_features_webui">WebUI</string>
     <string name="view_module_features_post_mount">Post Mount</string>
     <string name="settings_reboot_protection_desc">Jeśli jest włączona, musisz potwierdzać przy każdym ponownym uruchomieniu</string>
     <string name="repo_options_support">Wsparcie</string>
@@ -137,7 +137,7 @@
     <string name="settings_reboot_protection">Ochrona przed ponownym uruchomieniem</string>
     <string name="view_module_features_resetprop_sub">Ustawia właściwości systemu załadowane przez resetprop Magiska.</string>
     <string name="view_module_features_sepolicy_sub">Dodaje niestandardowe zasady bezpieczeństwa (reguły SEPolicy).</string>
-    <string name="view_module_features_webui_sub">Interfejs sieciowy do zarządzania modułami. Użytkownik musi potwierdzić użycie różnych interfejsów API JavaScript.</string>
+    <string name="view_module_features_webui_sub">Interfejs webowy do zarządzania modułami. Wymagane potwierdzenie różnych API JavaScript.</string>
     <string name="settings_appearance_desc">Dostosuj aplikację do swoich potrzeb</string>
     <string name="settings_blacklist">Czarna lista</string>
     <string name="settings_blacklist_desc">Wymienione moduły mogą być zamknięte lub niebezpieczne</string>
@@ -337,5 +337,14 @@
     <string name="failed_to_close_the_action_execution">Nie udało się zamknąć wykonania akcji</string>
     <string name="allow_cancel_action">Zezwól na anulowanie akcji</string>
     <string name="failed_to_close_the_installer">Nie udało się zamknąć instalatora</string>
-    <string name="view_module_features_mmrl_webui">Interfejs sieciowy MMRL</string>
+    <string name="view_module_features_mmrl_webui">WebUI MMRL</string>
+    <string name="view_module_features_mmrl_webui_config">Konfiguracja WebUI MMRL</string>
+    <string name="view_module_features_filesystem">API FileSystem</string>
+    <string name="view_module_features_filesystem_sub">Ten moduł może wykorzystywać API FileSystem udostępniane przez MMRL.</string>
+    <string name="view_module_features_eruda">Konsola Eruda</string>
+    <string name="view_module_features_eruda_sub">Ten moduł ma przełączalną konsolę programisty.</string>
+    <string name="view_module_features_mmrl_webui_config_sub">Ten moduł używa pliku konfiguracyjnego dla WebUI w MMRL</string>
+    <string name="view_module_features_dex_loader">Wtyczki WebUI</string>
+    <string name="view_module_features_mmrl_webui_sub">Ten moduł zawiera wyłącznie WebUI MMRL.</string>
+    <string name="view_module_features_dex_loader_sub">Ten moduł obsługuje wtyczki WebUI umożliwiające dodawanie nowych API JavaScript.</string>
 </resources>
