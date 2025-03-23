@@ -129,6 +129,7 @@ fun WebUIScreen(
                 .addPathHandler(
                     "/",
                     SuFilePathHandler(
+                        config = viewModel.config,
                         directory = viewModel.webRoot,
                     )
                 )

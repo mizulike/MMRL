@@ -33,6 +33,8 @@ data class WebUIConfig(
     val plugins: List<String> = emptyList(),
     val require: WebUIConfigRequire = WebUIConfigRequire(),
     val permissions: List<String> = emptyList(),
+    val historyFallback: Boolean = false,
+    val historyFallbackFile: String = "index.html",
 ) {
     val hasFileSystemPermission = permissions.contains(WebUIPermissions.FILESYSTEM)
     val hasErudaPermission = permissions.contains(WebUIPermissions.ERUDA)

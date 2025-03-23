@@ -5,6 +5,7 @@ import androidx.annotation.WorkerThread
 import androidx.webkit.WebViewAssetLoader.PathHandler
 import com.dergoogler.mmrl.ui.activity.webui.MimeUtil.getMimeFromFileName
 import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.webui.model.WebUIConfig
 import dev.dergoogler.mmrl.compat.core.BrickException
 import timber.log.Timber
 import java.io.IOException
@@ -12,6 +13,7 @@ import java.io.InputStream
 import java.util.zip.GZIPInputStream
 
 class SuFilePathHandler(
+    private val config: WebUIConfig,
     directory: SuFile,
 ) : PathHandler {
     private var mDirectory: SuFile
@@ -91,6 +93,14 @@ class SuFilePathHandler(
     }
 
     private fun openFile(file: SuFile): InputStream? {
+        if (!file.exists() && config.historyFallback) {
+            val historyFallbackFile = SuFile(mDirectory, config.historyFallbackFile)
+            return handleSvgzStream(
+                historyFallbackFile.path,
+                historyFallbackFile.newInputStream()
+            )
+        }
+
         if (!file.exists()) {
             Timber.e("File not found: %s", file.absolutePath)
             return null
