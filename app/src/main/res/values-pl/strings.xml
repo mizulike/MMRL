@@ -276,13 +276,13 @@
     <string name="install_screen_cancel_text">Czy na pewno chcesz przerwać instalację?</string>
     <string name="action_screen_cancel_text">Czy na pewno chcesz przerwać tę akcję?</string>
     <string name="install_screen_cancel_title">Przerwać instalację?</string>
-    <string name="menu_pin_webui">Przypnij WebUI</string>
+    <string name="menu_pin_webui">Przypnij z WebUI</string>
     <string name="home_storage_usage">Użycie pamięci</string>
     <string name="settings_use_generic_action">Użyj ogólnej akcji</string>
     <string name="settings_use_generic_action_desc">Większość dostawców roota nie wspiera komendy CLI akcji. Możesz uzyć ogólnego skryptu</string>
     <string name="sponsors">Sponsorzy</string>
     <string name="learn_more">Dowiedz się więcej</string>
-    <string name="menu_pin_action">Przypnij akcję</string>
+    <string name="menu_pin_action">Przypnij z akcją</string>
     <string name="settings_blacklist_alerts_desc">Wyświetlaj alerty dotyczące modułów lokalnych i dostępnych online oraz dodatkowo blokuj instalację modułów znajdujących się na czarnej liście</string>
     <string name="settings_blacklist_alerts">Alerty czarnej listy</string>
     <string name="blacklisted">Na czarnej liście</string>
