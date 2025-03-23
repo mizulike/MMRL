@@ -361,4 +361,14 @@
     <string name="failed_to_close_the_action_execution">无法停止 Action 执行</string>
     <string name="file_already_exists">文件已存在</string>
     <string name="settings_strict_mode">严格模式</string>
+    <string name="view_module_features_mmrl_webui_config">MMRL WebUI 设置</string>
+    <string name="view_module_features_filesystem">文件系统 API</string>
+    <string name="view_module_features_filesystem_sub">此模块可能需要使用由 MMRL 提供的文件系统 API</string>
+    <string name="view_module_features_eruda_sub">此模块含有可开关的开发者控制台</string>
+    <string name="view_module_features_dex_loader">WebUI 插件</string>
+    <string name="view_module_features_eruda">Eruda 控制台</string>
+    <string name="view_module_features_dex_loader_sub">此模块支持通过 WebUI 插件来添加新的 JavaScript API</string>
+    <string name="view_module_features_mmrl_webui">MMRL WebUI</string>
+    <string name="view_module_features_mmrl_webui_sub">此模块包含 MMRL WebUI</string>
+    <string name="view_module_features_mmrl_webui_config_sub">此模块使用一个 config 文件来管理 MMRL WebUI</string>
 </resources>
