@@ -5,11 +5,6 @@ import dev.dergoogler.mmrl.compat.content.ParcelResult;
 
 interface IFileManager {
     boolean deleteOnExit(String path);
-    boolean writeText(String path, String data);
-    boolean writeBytes(String path, in byte[] data);
-    String readText(String path);
-    byte[] readBytes(String path);
-    String readAsBase64(String path);
     String[] list(String path);
     long stat(String path);
     long size(String path);
@@ -22,7 +17,7 @@ interface IFileManager {
     boolean mkdirs(String path);
     boolean createNewFile(String path);
     boolean renameTo(String target, String dest);
-    boolean copyTo(String target, String dest, boolean overwrite);
+    void copyTo(String path, String target, boolean overwrite);
     boolean canExecute(String path);
     boolean canWrite(String path);
     boolean canRead(String path);

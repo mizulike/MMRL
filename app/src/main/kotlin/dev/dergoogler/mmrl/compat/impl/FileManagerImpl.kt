@@ -1,8 +1,6 @@
 package dev.dergoogler.mmrl.compat.impl
 
-import android.os.Parcel
 import android.os.ParcelFileDescriptor
-import android.os.RemoteException
 import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants.O_APPEND
@@ -10,25 +8,14 @@ import android.system.OsConstants.O_CREAT
 import android.system.OsConstants.O_RDONLY
 import android.system.OsConstants.O_TRUNC
 import android.system.OsConstants.O_WRONLY
-import android.util.Base64
-import android.util.Base64OutputStream
+import android.util.LruCache
+import com.dergoogler.mmrl.utils.file.FileUtils
+import com.dergoogler.mmrl.utils.file.OpenFile
 import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.content.ParcelResult
 import dev.dergoogler.mmrl.compat.stub.IFileManager
-import com.dergoogler.mmrl.utils.file.FileUtils
-import com.dergoogler.mmrl.utils.file.OpenFile
-import org.apache.commons.io.FilenameUtils.getPath
-import timber.log.Timber
-import java.io.ByteArrayOutputStream
-import java.io.Closeable
 import java.io.File
-import java.io.FileInputStream
-import java.io.FileNotFoundException
 import java.io.IOException
-import java.io.InputStream
-import java.io.OutputStream
-import java.nio.ByteBuffer
-import java.nio.charset.StandardCharsets
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -39,32 +26,14 @@ class FileManagerImpl : IFileManager.Stub() {
         System.loadLibrary("file-manager")
     }
 
-    private external fun nativeList(path: String): Array<String>?
-    private external fun nativeStat(path: String): Long
-    private external fun nativeSize(path: String): Long
-    private external fun nativeSizeRecursive(path: String): Long
-    private external fun nativeExists(path: String): Boolean
-    private external fun nativeIsDirectory(path: String): Boolean
-    private external fun nativeIsFile(path: String): Boolean
-    private external fun nativeMkdir(path: String): Boolean
-    private external fun nativeMkdirs(path: String): Boolean
-    private external fun nativeDelete(path: String): Boolean
-    private external fun nativeWriteBytes(path: String, data: ByteArray): Boolean
-    private external fun nativeReadByteBuffer(path: String): ByteBuffer?
-    private external fun nativeRenameTo(srcPath: String, destPath: String): Boolean
-    private external fun nativeCopyTo(
-        srcPath: String,
-        destPath: String,
-        overwrite: Boolean,
-    ): Boolean
+    private val mCache: LruCache<String, File> = object : LruCache<String, File>(100) {
+        override fun create(key: String): File {
+            return File(key)
+        }
+    }
 
     private external fun nativeSetOwner(path: String, owner: Int, group: Int): Boolean
     private external fun nativeSetPermissions(path: String, mode: Int): Boolean
-    private external fun nativeCanExecute(path: String): Boolean
-    private external fun nativeCanWrite(path: String): Boolean
-    private external fun nativeCanRead(path: String): Boolean
-    private external fun nativeIsHidden(path: String): Boolean
-    private external fun nativeCreateNewFile(path: String): Boolean
 
     override fun deleteOnExit(path: String) = with(File(path)) {
         when {
@@ -75,80 +44,53 @@ class FileManagerImpl : IFileManager.Stub() {
         }
     }
 
-    override fun writeBytes(path: String, data: ByteArray): Boolean {
-        return nativeWriteBytes(path, data)
-    }
-
-    override fun writeText(path: String, data: String): Boolean =
-        nativeWriteBytes(path, data.toByteArray())
-
-    override fun readText(path: String): String {
-        val buffer = nativeReadByteBuffer(path)
-        return StandardCharsets.UTF_8.decode(buffer).toString();
-    }
-
-    override fun readBytes(path: String): ByteArray? {
-        val buffer: ByteBuffer = nativeReadByteBuffer(path) ?: return null
-        return ByteArray(buffer.remaining()).apply { buffer.get(this) }
-    }
-
-    override fun readAsBase64(path: String): String? = with(File(path)) {
-        if (!exists()) return null
-
-        try {
-            val `is`: InputStream = FileInputStream(this)
-            val baos = ByteArrayOutputStream()
-            val b64os = Base64OutputStream(baos, Base64.DEFAULT)
-            val buffer = ByteArray(8192)
-            var bytesRead: Int
-            try {
-                while ((`is`.read(buffer).also { bytesRead = it }) > -1) {
-                    b64os.write(buffer, 0, bytesRead)
-                }
-                return baos.toString()
-            } catch (e: IOException) {
-                Timber.e("FileManagerImpl>readAsBase64: $e")
-                return null
-            } finally {
-                closeQuietly(`is`)
-                closeQuietly(b64os)
+    override fun list(path: String): Array<String>? = mCache.get(path).list()
+    override fun size(path: String): Long = mCache.get(path).length()
+    override fun sizeRecursive(path: String): Long {
+        val items = list(path) ?: return 0
+        return items.sumOf { item ->
+            val fullPath = "$path/$item"
+            if (isDirectory(fullPath)) {
+                sizeRecursive(fullPath)
+            } else {
+                size(fullPath)
             }
-        } catch (e: FileNotFoundException) {
-            Timber.e("FileManagerImpl>readAsBase64: $e")
-            return null
         }
     }
 
-    private fun closeQuietly(closeable: Closeable) {
-        try {
-            closeable.close()
-        } catch (e: IOException) {
-            Timber.e("FileManagerImpl>closeQuietly: $e")
+    override fun stat(path: String): Long = mCache.get(path).lastModified()
+    override fun delete(path: String): Boolean {
+        val f = mCache.get(path)
+
+        return when {
+            !f.exists() -> false
+            f.isFile -> f.delete()
+            f.isDirectory -> f.deleteRecursively()
+            else -> false
         }
     }
 
-    override fun list(path: String): Array<String>? = nativeList(path)
-    override fun size(path: String): Long = nativeSize(path)
-    override fun sizeRecursive(path: String): Long = nativeSizeRecursive(path)
-    override fun stat(path: String): Long = nativeStat(path)
-    override fun delete(path: String): Boolean = nativeDelete(path)
-    override fun exists(path: String): Boolean = nativeExists(path)
-    override fun isDirectory(path: String): Boolean = nativeIsDirectory(path)
-    override fun isFile(path: String): Boolean = nativeIsFile(path)
-    override fun mkdir(path: String): Boolean = nativeMkdir(path)
-    override fun mkdirs(path: String): Boolean = nativeMkdirs(path)
-    override fun createNewFile(path: String): Boolean = nativeCreateNewFile(path)
-    override fun renameTo(target: String, dest: String): Boolean = nativeRenameTo(target, dest)
+    override fun exists(path: String): Boolean = mCache.get(path).exists()
+    override fun isDirectory(path: String): Boolean = mCache.get(path).isDirectory
+    override fun isFile(path: String): Boolean = mCache.get(path).isFile
+    override fun mkdir(path: String): Boolean = mCache.get(path).mkdir()
+    override fun mkdirs(path: String): Boolean = mCache.get(path).mkdirs()
+    override fun createNewFile(path: String): Boolean = mCache.get(path).createNewFile()
+    override fun renameTo(target: String, dest: String): Boolean =
+        mCache.get(target).renameTo(mCache.get(dest))
+
     override fun copyTo(
+        path: String,
         target: String,
-        dest: String,
         overwrite: Boolean,
-    ): Boolean = nativeCopyTo(target, dest, overwrite)
+    ) {
+        mCache.get(path).copyTo(mCache.get(target), overwrite)
+    }
 
-    override fun canExecute(path: String): Boolean = nativeCanExecute(path)
-    override fun canWrite(path: String): Boolean = nativeCanWrite(path)
-    override fun canRead(path: String): Boolean = nativeCanRead(path)
-    override fun isHidden(path: String): Boolean = nativeIsHidden(path)
+    override fun canExecute(path: String): Boolean = mCache.get(path).canExecute()
+    override fun canWrite(path: String): Boolean = mCache.get(path).canWrite()
+    override fun canRead(path: String): Boolean = mCache.get(path).canRead()
+    override fun isHidden(path: String): Boolean = mCache.get(path).isHidden
     override fun setPermissions(path: String, mode: Int): Boolean =
         nativeSetPermissions(path, mode)
 
@@ -251,7 +193,6 @@ class FileManagerImpl : IFileManager.Stub() {
 
     private val streamPool: ExecutorService = Executors.newCachedThreadPool()
 
-
     override fun openReadStream(path: String, fd: ParcelFileDescriptor): ParcelResult {
         val f = OpenFile()
         try {
@@ -273,7 +214,11 @@ class FileManagerImpl : IFileManager.Stub() {
         }
     }
 
-    override fun openWriteStream(path: String, fd: ParcelFileDescriptor, append: Boolean): ParcelResult {
+    override fun openWriteStream(
+        path: String,
+        fd: ParcelFileDescriptor,
+        append: Boolean,
+    ): ParcelResult {
         val f = OpenFile()
         try {
             val mode = O_CREAT or O_WRONLY or (if (append) O_APPEND else O_TRUNC)

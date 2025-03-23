@@ -142,9 +142,9 @@ class FileInterface(
         }
 
     @JavascriptInterface
-    fun copyTo(target: String, dest: String, overwrite: Boolean): Boolean =
-        runTryJsWith(file, "Error while copying \\'$target\\' to \\'$dest\\'", false) {
-            return@runTryJsWith copyTo(target, dest, overwrite)
+    fun copyTo(path: String, target: String, overwrite: Boolean) =
+        runTryJsWith(file, "Error while copying \\'$path\\' to \\'$target\\'", false) {
+            return@runTryJsWith copyTo(path, target, overwrite)
         }
 
     @JavascriptInterface
