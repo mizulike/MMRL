@@ -881,6 +881,7 @@ fun NewViewScreen(
 
                 module.track.antifeatures.ifNotEmpty {
                     ListCollapseItem(
+                        contentPaddingValues = listItemContentPaddingValues,
                         iconToRight = true,
                         title = stringResource(R.string.view_module_antifeatures),
                         base = {
