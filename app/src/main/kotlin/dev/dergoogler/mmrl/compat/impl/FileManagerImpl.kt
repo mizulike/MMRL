@@ -15,7 +15,6 @@ import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.content.ParcelResult
 import dev.dergoogler.mmrl.compat.stub.IFileManager
 import java.io.File
-import java.io.IOException
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -198,13 +197,11 @@ class FileManagerImpl : IFileManager.Stub() {
         try {
             f.fd = Os.open(path, O_RDONLY, 0)
             streamPool.execute {
-                try {
+                runCatching {
                     f.use { of ->
                         of.write = FileUtils.createFileDescriptor(fd.detachFd())
                         while (of.pread(SuFile.PIPE_CAPACITY, -1) > 0);
                     }
-                } catch (ignored: ErrnoException) {
-                } catch (ignored: IOException) {
                 }
             }
             return ParcelResult()
@@ -224,13 +221,11 @@ class FileManagerImpl : IFileManager.Stub() {
             val mode = O_CREAT or O_WRONLY or (if (append) O_APPEND else O_TRUNC)
             f.fd = Os.open(path, mode, 438)
             streamPool.execute {
-                try {
+                runCatching {
                     f.use { of ->
                         of.read = FileUtils.createFileDescriptor(fd.detachFd())
                         while (of.pwrite(SuFile.PIPE_CAPACITY.toLong(), -1, false) > 0);
                     }
-                } catch (ignored: ErrnoException) {
-                } catch (ignored: IOException) {
                 }
             }
             return ParcelResult()
