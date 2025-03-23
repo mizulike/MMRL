@@ -361,4 +361,14 @@
     <string name="failed_to_close_the_installer">インストーラーを終了できませんでした</string>
     <string name="file_already_exists">ファイルは既に存在します</string>
     <string name="settings_strict_mode">厳格モード</string>
+    <string name="view_module_features_mmrl_webui_config">MMRL WebUI 設定</string>
+    <string name="view_module_features_eruda">Eruda コンソール</string>
+    <string name="view_module_features_dex_loader">WebUI プラグイン</string>
+    <string name="view_module_features_mmrl_webui_sub">このモジュールには MMRL 専用の WebUI が含まれています。</string>
+    <string name="view_module_features_mmrl_webui">MMRL WebUI</string>
+    <string name="view_module_features_mmrl_webui_config_sub">このモジュールは MMRL の WebUI 用の設定ファイルを使用します。</string>
+    <string name="view_module_features_dex_loader_sub">このモジュールは新しい JavaScript API を追加するための WebUI プラグインをサポートしています。</string>
+    <string name="view_module_features_filesystem">ファイルシステム API</string>
+    <string name="view_module_features_filesystem_sub">このモジュールは MMRL によって提供されるファイルシステム API を使用します。</string>
+    <string name="view_module_features_eruda_sub">このモジュールには切り替え可能な開発者コンソールがあります。</string>
 </resources>
