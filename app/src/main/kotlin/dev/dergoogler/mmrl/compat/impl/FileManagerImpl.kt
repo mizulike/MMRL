@@ -57,7 +57,7 @@ class FileManagerImpl : IFileManager.Stub() {
             if (isSymlink) return@sumOf 0
             
             if (isDirectory(fullPath)) {
-                sizeRecursive(fullPath) {
+                sizeRecursive(fullPath)
             } else {
                 size(fullPath)
             }
