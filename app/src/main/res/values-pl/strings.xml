@@ -337,4 +337,5 @@
     <string name="failed_to_close_the_action_execution">Nie udało się zamknąć wykonania akcji</string>
     <string name="allow_cancel_action">Zezwól na anulowanie akcji</string>
     <string name="failed_to_close_the_installer">Nie udało się zamknąć instalatora</string>
+    <string name="view_module_features_mmrl_webui">Interfejs sieciowy MMRL</string>
 </resources>
