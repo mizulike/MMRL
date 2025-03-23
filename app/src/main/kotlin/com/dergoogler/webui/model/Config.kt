@@ -6,11 +6,12 @@ object WebUIPermissions {
     const val FILESYSTEM = "webui.permission.FILESYSTEM"
     const val ERUDA = "webui.permission.ERUDA"
     const val PLUGIN_DEX_LOADER = "webui.permission.PLUGIN_DEX_LOADER"
+    const val DSL_DEX_LOADING = "webui.permission.DSL_DEX_LOADING"
 }
 
 @JsonClass(generateAdapter = true)
 data class WebUIConfigRequireVersion(
-    val required: Int = 0,
+    val required: Int = 1,
     val supportText: String? = null,
     val supportLink: String? = null,
 )
@@ -21,7 +22,14 @@ data class WebUIConfigRequire(
 )
 
 @JsonClass(generateAdapter = true)
+data class WebUIConfigDsl(
+    val path: String? = null,
+    val className: String? = null,
+)
+
+@JsonClass(generateAdapter = true)
 data class WebUIConfig(
+    val dsl: WebUIConfigDsl = WebUIConfigDsl(),
     val plugins: List<String> = emptyList(),
     val require: WebUIConfigRequire = WebUIConfigRequire(),
     val permissions: List<String> = emptyList(),
@@ -29,4 +37,5 @@ data class WebUIConfig(
     val hasFileSystemPermission = permissions.contains(WebUIPermissions.FILESYSTEM)
     val hasErudaPermission = permissions.contains(WebUIPermissions.ERUDA)
     val hasPluginDexLoaderPermission = permissions.contains(WebUIPermissions.PLUGIN_DEX_LOADER)
+    val hasDslDexLoadingPermission = permissions.contains(WebUIPermissions.DSL_DEX_LOADING)
 }

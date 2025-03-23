@@ -114,10 +114,12 @@ class WebUIViewModel @AssistedInject constructor(
             })
             .firstOrNull()
 
+    val requireNewAppVersion = BuildConfig.VERSION_CODE < config.require.version.required
+
     val domainUrl
         get(): String {
             val default = when {
-                BuildConfig.VERSION_CODE < config.require.version.required -> "https://mui.kernelsu.org/mmrl/assets/webui/requireNewVersion.html?versionCode=${config.require.version.required}&supportText=${config.require.version.supportText}&supportLink=${config.require.version.supportLink}"
+                requireNewAppVersion -> "https://mui.kernelsu.org/mmrl/assets/webui/requireNewVersion.html"
                 else -> "https://mui.kernelsu.org/$indexFile"
             }
 
@@ -144,6 +146,40 @@ class WebUIViewModel @AssistedInject constructor(
         bottomInset = (insets.getBottom(density) / density.density).toInt()
         leftInset = (insets.getLeft(density, layoutDirection) / density.density).toInt()
         rightInset = (insets.getRight(density, layoutDirection) / density.density).toInt()
+    }
+
+    fun loadDslDex(context: Context, webView: WebView): String? {
+        if (!config.hasDslDexLoadingPermission) return null
+
+        val path = config.dsl.path ?: return null
+        val className = config.dsl.className ?: return null
+
+        val dexFile = SuFile(path)
+
+        if (!dexFile.exists()) return null
+
+        val loader =
+            InMemoryDexClassLoader(ByteBuffer.wrap(dexFile.readBytes()), context.classLoader)
+
+        val clazz = loader.loadClass(className)
+
+
+        val dsl = clazz.getPluginMethod<String>(
+            name = "dsl",
+            listOf(Plugin::class.java) to listOf(
+                Plugin(
+                    modId,
+                    context,
+                    webView,
+                    Compat.fileManager,
+                    platform,
+                    isProviderAlive
+                )
+            ),
+            emptyList<Class<*>>() to emptyList()
+        )
+
+        return dsl
     }
 
     @SuppressLint("JavascriptInterface")

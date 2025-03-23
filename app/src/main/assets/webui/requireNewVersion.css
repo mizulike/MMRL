@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  user-select: none;
+  background-color: var(--background);
+}
+
+.container {
+  --top-padding: var(--window-inset-top, 0px);
+  --bottom-padding: var(--window-inset-bottom, 0px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - var(--top-padding) - var(--bottom-padding));
+  font-family: "Segoe UI", Tahoma, sans-serif;
+  color: var(--onBackground);
+  font-size: 15px;
+  margin: 0 32px;
+  padding-top: var(--top-padding);
+  padding-bottom: var(--bottom-padding);
+
+  .error-icon {
+    user-select: none;
+    margin-bottom: 24px;
+  }
+
+  .content {
+    max-width: 600px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .title {
+    color: var(--onSecondaryContainer);
+    font-weight: 500;
+    font-size: 1.6em;
+    margin-bottom: 16px;
+  }
+
+  .list {
+    margin-top: 15px;
+    line-height: 24px;
+
+    ul {
+      margin-top: 0;
+    }
+  }
+
+  a {
+    text-decoration: none;
+    color: var(--primary);
+  }
+
+  .code {
+    color: var(--outline);
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-top: 12px;
+  }
+
+  .buttons {
+    margin-top: 100%;
+    display: flex;
+
+    button {
+      display: block;
+      padding: 16px 32px;
+      border: 0;
+      border-radius: 10rem;
+      cursor: pointer;
+      font-size: 0.875em;
+      margin: 0;
+      user-select: none;
+    }
+
+    button.refresh {
+      background: var(--primary);
+      color: var(--onPrimary);
+    }
+
+    button.more {
+      border: 1px solid var(--outline);
+      margin-left: auto;
+      background: transparent;
+      color: var(--primary);
+    }
+  }
+}

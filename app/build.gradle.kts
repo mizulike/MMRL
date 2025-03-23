@@ -262,6 +262,7 @@ dependencies {
     // implementation(libs.androidx.adaptive.android)
     // implementation(libs.androidx.adaptive.layout)
     // implementation(libs.androidx.adaptive.navigation)
+    implementation(libs.kotlinx.html.jvm)
 
     implementation(libs.square.retrofit)
     implementation(libs.square.retrofit.moshi)

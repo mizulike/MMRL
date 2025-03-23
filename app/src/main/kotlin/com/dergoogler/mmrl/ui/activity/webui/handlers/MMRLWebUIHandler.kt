@@ -6,11 +6,11 @@ import androidx.compose.material3.CardColors
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Typography
 import androidx.compose.material3.surfaceColorAtElevation
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.webkit.WebViewAssetLoader.PathHandler
+import com.dergoogler.mmrl.ui.theme.toCssValue
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import timber.log.Timber
 import java.io.ByteArrayInputStream
@@ -136,14 +136,6 @@ class MMRLWebUIHandler(
             "UTF-8",
             inputStream
         )
-    }
-
-    private fun Color.toCssValue(): String {
-        return "#${red.toHex()}${green.toHex()}${blue.toHex()}${alpha.toHex()}"
-    }
-
-    private fun Float.toHex(): String {
-        return (this * 255).toInt().coerceIn(0, 255).toString(16).padStart(2, '0')
     }
 
     private fun TextUnit.toCssValue(): String {

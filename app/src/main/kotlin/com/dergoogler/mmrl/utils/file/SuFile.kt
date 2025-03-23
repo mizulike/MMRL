@@ -49,10 +49,6 @@ class SuFile(path: String) : File(path) {
     
     fun readBytes(): ByteArray = newInputStream().use { it.readBytes() }
 
-    fun readAsBase64(): String {
-        return fs.readAsBase64(this.path)
-    }
-
     fun writeText(data: String) = newOutputStream(false).use { it.write(data.toByteArray()) }
 
     fun writeBytes(data: ByteArray) = newOutputStream(false).use { it.write(data) }
@@ -109,7 +105,7 @@ class SuFile(path: String) : File(path) {
         return fs.renameTo(this.path, dest.path)
     }
 
-    fun copyTo(dest: File, overwrite: Boolean = false): Boolean {
+    fun copyTo(dest: File, overwrite: Boolean = false) {
         return fs.copyTo(this.path, dest.path, overwrite)
     }
 

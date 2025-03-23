@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.ui.activity.webui
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.webkit.WebView
@@ -39,6 +40,22 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.SettingsViewModel
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import dev.dergoogler.mmrl.compat.core.MMRLUriHandlerImpl
+import kotlinx.html.b
+import kotlinx.html.body
+import kotlinx.html.button
+import kotlinx.html.div
+import kotlinx.html.head
+import kotlinx.html.html
+import kotlinx.html.i
+import kotlinx.html.lang
+import kotlinx.html.li
+import kotlinx.html.link
+import kotlinx.html.meta
+import kotlinx.html.onClick
+import kotlinx.html.span
+import kotlinx.html.stream.appendHTML
+import kotlinx.html.title
+import kotlinx.html.ul
 import timber.log.Timber
 
 
@@ -150,7 +167,7 @@ fun WebUIScreen(
                         if (viewModel.config.hasPluginDexLoaderPermission) {
                             viewModel.loadDexPluginsFromMemory(context, this)
                         }
-                        
+
                         webViewClient = MMRLWebClient(
                             context = context,
                             browser = browser,
@@ -207,6 +224,19 @@ fun WebUIScreen(
                             )
                         }
 
+                        if (viewModel.requireNewAppVersion) {
+                            loadData(getRequireNewVersion(context, viewModel), "text/html", "UTF-8")
+
+                            return@apply
+                        }
+
+                        val dsl = viewModel.loadDslDex(context, webView)
+
+                        if (dsl != null) {
+                            loadData(dsl, "text/html", "UTF-8")
+                            return@apply
+                        }
+
                         loadUrl(viewModel.domainUrl)
                     }
                 }
@@ -214,5 +244,73 @@ fun WebUIScreen(
         }
     } else {
         Loading()
+    }
+}
+
+fun getRequireNewVersion(
+    context: Context,
+    viewModel: WebUIViewModel,
+) = buildString {
+    appendHTML().html {
+        lang = "en"
+        head {
+            meta {
+                name = "viewport"
+                content =
+                    "width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0"
+            }
+            link {
+                rel = "stylesheet"
+                href = "https://mui.kernelsu.org/mmrl/insets.css"
+            }
+            link {
+                rel = "stylesheet"
+                href = "https://mui.kernelsu.org/mmrl/colors.css"
+            }
+            link {
+                rel = "stylesheet"
+                href =
+                    "https://mui.kernelsu.org/mmrl/assets/webui/requireNewVersion.css"
+            }
+            title { +"New App Version Required" }
+        }
+        body {
+            div(classes = "container") {
+                div(classes = "content") {
+                    div(classes = "title") { +context.getString(R.string.requireNewVersion_cannot_load_webui) }
+                    div {
+                        b { +viewModel.modId }
+                        +" "
+                        +context.getString(R.string.requireNewVersion_require_text)
+                        +" "
+                        i { +viewModel.config.require.version.required.toString() }
+                    }
+                    div(classes = "list") {
+                        span { +context.getString(R.string.requireNewVersion_try_the_following)}
+                        ul {
+                            li { +context.getString(R.string.requireNewVersion_try_the_following_one) }
+                            li { +context.getString(R.string.requireNewVersion_try_the_following_two) }
+                        }
+                    }
+                    div(classes = "code") { +"ERR_NEW_MMRL_REQUIRED" }
+                    div(classes = "buttons") {
+                        button(classes = "refresh") {
+                            onClick = "location.reload();"
+                            +context.getString(R.string.requireNewVersion_refresh)
+                        }
+
+                        val supportLink = viewModel.config.require.version.supportLink
+                        val supportText = viewModel.config.require.version.supportText
+
+                        if (supportLink != null && supportText != null) {
+                            button(classes = "more") {
+                                attributes["onclick"] = "window.open('$supportLink');"
+                                +supportText
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
