@@ -332,7 +332,7 @@
     <string name="install_screen_confirm_text">このモジュールをインストールしますか？</string>
     <string name="settings_log_viewer">ログビューワー</string>
     <string name="settings_terms_of_service">利用規約</string>
-    <string name="get_the_most_out_of_mmrl">MMRL を最大限に活用！</string>
+    <string name="get_the_most_out_of_mmrl">MMRL を最大限に活用しよう！</string>
     <string name="allow_advanced_kernelsu_api">高度な KernelSU API を許可しますか？</string>
     <string name="allow_filesystem_api">ファイルシステム API を許可しますか？</string>
     <string name="allow_filesystem_api_desc">このモジュールでファイルシステム API にアクセスすることを許可しますか？このモジュールが安全でないと思われる場合は、許可しないでください！</string>
