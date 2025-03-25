@@ -11,6 +11,11 @@ on:
               required: false
               default: 'No message.'
               description: 'Message'
+            send_telegram:
+              description: 'Send to Telegram'
+              required: true
+              default: true
+              type: boolean
             buildType:
               description: "Build Type"
               type: choice
@@ -87,6 +92,7 @@ jobs:
             echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
 
       - name: Upload files to Telegram
+        if: github.event.inputs.send_telegram == 'true'
         uses: xz-dev/TelegramFileUploader@v1.1.1
         with:
             to-who: '@MMRLCI'

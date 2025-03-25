@@ -15,6 +15,8 @@ import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.content.ParcelResult
 import dev.dergoogler.mmrl.compat.stub.IFileManager
 import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -49,6 +51,11 @@ class FileManagerImpl : IFileManager.Stub() {
         val items = list(path) ?: return 0
         return items.sumOf { item ->
             val fullPath = "$path/$item"
+            val path = Path.of(fullPath)
+            val isSymlink = Files.isSymbolicLink(path)
+            
+            if (isSymlink) return@sumOf 0
+            
             if (isDirectory(fullPath)) {
                 sizeRecursive(fullPath)
             } else {
