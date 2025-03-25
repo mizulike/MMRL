@@ -98,7 +98,7 @@ class SuFilePathHandler(
     }
 
     private val allowInjectEruda =
-        viewModel.config.hasErudaPermission && viewModel.modId in viewModel.userPrefs.injectEruda
+        viewModel.modId in viewModel.userPrefs.injectEruda
 
     private val customCssFile = SuFile(viewModel.webRoot, "custom.mmrl.css")
 

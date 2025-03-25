@@ -132,11 +132,11 @@ class MMRLInterface(
     @JavascriptInterface
     fun requestAdvancedKernelSUAPI() {
         if (viewModel.hasRequestedAdvancedKernelSUAPI) {
-            console.error("WebUI has already requested to access the Advanced KernelSU API and it was rejected")
+            console.warn("WebUI has already requested to access the Advanced KernelSU API and it was rejected")
             return
         }
         if (allowedFsApi) {
-            console.error("WebUI was already allowed to access the FileSystem API")
+            console.warn("WebUI was already allowed to access the FileSystem API")
             return
         }
 
@@ -151,11 +151,11 @@ class MMRLInterface(
         }
 
         if (viewModel.hasRequestFileSystemAPI) {
-            console.error("WebUI has already requested to access the FileSystem API and it was rejected")
+            console.warn("WebUI has already requested to access the FileSystem API and it was rejected")
             return
         }
         if (allowedFsApi) {
-            console.error("WebUI was already allowed to access the FileSystem API")
+            console.warn("WebUI was already allowed to access the FileSystem API")
             return
         }
 

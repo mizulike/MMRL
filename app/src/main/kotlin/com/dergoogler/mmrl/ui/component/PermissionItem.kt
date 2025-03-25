@@ -99,11 +99,6 @@ private fun getPermissionDetails(id: String): Permission? {
             R.string.view_module_features_filesystem_sub,
             listOf { MMRLLabel() }
         ),
-        WebUIPermissions.ERUDA to Permission(
-            R.string.view_module_features_eruda,
-            R.string.view_module_features_eruda_sub,
-            listOf { MMRLLabel() }
-        ),
         WebUIPermissions.PLUGIN_DEX_LOADER to Permission(
             R.string.view_module_features_dex_loader,
             R.string.view_module_features_dex_loader_sub,
