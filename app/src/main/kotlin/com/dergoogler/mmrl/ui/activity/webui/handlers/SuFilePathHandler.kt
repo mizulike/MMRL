@@ -100,6 +100,8 @@ class SuFilePathHandler(
     private val allowInjectEruda =
         viewModel.config.hasErudaPermission && viewModel.modId in viewModel.userPrefs.injectEruda
 
+    private val customCssFile = SuFile(viewModel.webRoot, "custom.mmrl.css")
+
     private fun openFile(file: SuFile): InputStream? {
         if (!file.exists() && viewModel.config.historyFallback) {
             val historyFallbackFile = SuFile(mDirectory, viewModel.config.historyFallbackFile)
@@ -132,6 +134,11 @@ class SuFilePathHandler(
 <!-- End MMRL Inject -->
         """.trimIndent()
 
+            html = injectCode(code, html)
+        }
+
+        if (customCssFile.exists()) {
+            val code = "<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/custom.mmrl.css\" type=\"text/css\">"
             html = injectCode(code, html)
         }
 
