@@ -129,8 +129,7 @@ fun WebUIScreen(
                 .addPathHandler(
                     "/",
                     SuFilePathHandler(
-                        config = viewModel.config,
-                        directory = viewModel.webRoot,
+                        viewModel = viewModel,
                     )
                 )
                 .addPathHandler(
@@ -287,7 +286,7 @@ fun getRequireNewVersion(
                         i { +viewModel.config.require.version.required.toString() }
                     }
                     div(classes = "list") {
-                        span { +context.getString(R.string.requireNewVersion_try_the_following)}
+                        span { +context.getString(R.string.requireNewVersion_try_the_following) }
                         ul {
                             li { +context.getString(R.string.requireNewVersion_try_the_following_one) }
                             li { +context.getString(R.string.requireNewVersion_try_the_following_two) }

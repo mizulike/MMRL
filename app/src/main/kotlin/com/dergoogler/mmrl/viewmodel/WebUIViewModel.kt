@@ -49,7 +49,7 @@ class WebUIViewModel @AssistedInject constructor(
     modulesRepository,
     userPreferencesRepository
 ) {
-    private val userPrefs = runBlocking { userPreferencesRepository.data.first() }
+    val userPrefs = runBlocking { userPreferencesRepository.data.first() }
 
     val isProviderAlive get() = Compat.isAlive
 
