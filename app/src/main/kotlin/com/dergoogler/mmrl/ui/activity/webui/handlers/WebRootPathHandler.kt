@@ -58,7 +58,7 @@ class WebRootPathHandler(
 
         if (customCssFile.exists()) {
             val code =
-                "<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/custom.mmrl.css\" type=\"text/css\">"
+                "<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.css\" type=\"text/css\">"
             html = injectCode(code, html)
         }
 

@@ -4,6 +4,7 @@ import android.content.Context
 import android.webkit.WebView
 import com.dergoogler.mmrl.Platform
 import dev.dergoogler.mmrl.compat.stub.IFileManager
+import kotlinx.coroutines.CoroutineScope
 
 data class Plugin(
     val modId: String,
@@ -11,7 +12,8 @@ data class Plugin(
     val webView: WebView,
     val fileManager: IFileManager,
     val platform: Platform,
-    val isProviderAlive: Boolean
+    val isProviderAlive: Boolean,
+    val viewModelScope: CoroutineScope
 ) {
     val sanitizedModId: String
         get() {

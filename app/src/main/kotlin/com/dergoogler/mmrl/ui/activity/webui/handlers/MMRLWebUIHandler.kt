@@ -10,6 +10,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.webkit.WebViewAssetLoader.PathHandler
+import com.dergoogler.mmrl.ui.activity.webui.WebRootUtil
 import com.dergoogler.mmrl.ui.theme.toCssValue
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import timber.log.Timber
@@ -37,21 +38,14 @@ class MMRLWebUIHandler(
         }
     }
 
-    private fun windowInsetsStyle(): WebResourceResponse {
-        val content = """
-            :root {
-                --window-inset-top: ${viewModel?.topInset ?: 0}px;
-                --window-inset-bottom: ${viewModel?.bottomInset ?: 0}px;
-                --window-inset-left: ${viewModel?.leftInset ?: 0}px;
-                --window-inset-right: ${viewModel?.rightInset ?: 0}px;
-                --window-inset-horizontal: calc(var(--window-inset-left) + var(--window-inset-right));
-                --window-inset-vertical: calc(var(--window-inset-top) + var(--window-inset-bottom));
-                --window-inset-all: calc(var(--window-inset-horizontal) + var(--window-inset-vertical));
-            }
-        """.trimIndent()
-
-        return style(content)
-    }
+    private fun windowInsetsStyle(): WebResourceResponse = style(
+        WebRootUtil.cssInsetsTagLess(
+            viewModel?.topInset,
+            viewModel?.bottomInset,
+            viewModel?.leftInset,
+            viewModel?.rightInset
+        )
+    )
 
     private fun appColors(): WebResourceResponse {
         val cssContent = buildString {
@@ -73,7 +67,11 @@ class MMRLWebUIHandler(
             append("    --background: ${colorScheme.background.toCssValue()};\n")
             append("    --onBackground: ${colorScheme.onBackground.toCssValue()};\n")
             append("    --surface: ${colorScheme.surface.toCssValue()};\n")
-            append("    --tonalSurface: ${colorScheme.surfaceColorAtElevation(1.dp).toCssValue()};\n")
+            append(
+                "    --tonalSurface: ${
+                    colorScheme.surfaceColorAtElevation(1.dp).toCssValue()
+                };\n"
+            )
             append("    --onSurface: ${colorScheme.onSurface.toCssValue()};\n")
             append("    --surfaceVariant: ${colorScheme.surfaceVariant.toCssValue()};\n")
             append("    --onSurfaceVariant: ${colorScheme.onSurfaceVariant.toCssValue()};\n")

@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.Platform
@@ -173,7 +174,8 @@ class WebUIViewModel @AssistedInject constructor(
                     webView,
                     Compat.fileManager,
                     platform,
-                    isProviderAlive
+                    isProviderAlive,
+                    viewModelScope
                 )
             ),
             emptyList<Class<*>>() to emptyList()
@@ -225,7 +227,8 @@ class WebUIViewModel @AssistedInject constructor(
                                     webView,
                                     Compat.fileManager,
                                     platform,
-                                    isProviderAlive
+                                    isProviderAlive,
+                                    viewModelScope
                                 )
                             ),
                             emptyList<Class<*>>() to emptyList()
@@ -240,9 +243,9 @@ class WebUIViewModel @AssistedInject constructor(
                         val instanceName = instance.name
                         val instanceObject = instance.instance
 
-                        if (modId in targetModules) {
+                        if (targetModules.isNotEmpty() && !targetModules.contains(modId)) {
                             Timber.d(
-                                "Skipping plugin $className with reserved for ${
+                                "Skipping plugin $className which is reserved for ${
                                     targetModules.joinToString(
                                         ","
                                     )
@@ -339,6 +342,7 @@ class WebUIViewModel @AssistedInject constructor(
                 }
             } catch (e: Exception) {
                 Timber.i("Skipping $name with parameters ${params.joinToString()}: ${e.message}")
+                continue
             }
         }
         return null
