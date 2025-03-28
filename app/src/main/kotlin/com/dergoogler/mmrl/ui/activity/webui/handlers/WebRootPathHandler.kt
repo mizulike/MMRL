@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.ui.activity.webui.handlers
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.dergoogler.mmrl.ui.activity.webui.WebRootUtil
 import com.dergoogler.mmrl.utils.file.SuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import dev.dergoogler.mmrl.compat.core.MMRLPathHandler
@@ -56,9 +57,19 @@ class WebRootPathHandler(
         }
 
         if (customCssFile.exists()) {
-            val code = "<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/custom.mmrl.css\" type=\"text/css\">"
+            val code =
+                "<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/custom.mmrl.css\" type=\"text/css\">"
             html = injectCode(code, html)
         }
+
+        val insets = WebRootUtil.cssInsets(
+            viewModel.topInset,
+            viewModel.bottomInset,
+            viewModel.leftInset,
+            viewModel.rightInset
+        )
+
+        html = injectCode(insets, html)
 
         return handleSvgzStream(file.path, html)
     }
