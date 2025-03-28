@@ -25,7 +25,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.ui.component.TextFieldDialog
+import com.dergoogler.mmrl.ui.component.dialog.TextFieldDialog
 import dev.dergoogler.mmrl.compat.ext.nullable
 
 data class DialogParameters(

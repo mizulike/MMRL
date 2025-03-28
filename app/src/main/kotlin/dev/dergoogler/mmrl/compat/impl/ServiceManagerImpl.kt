@@ -32,8 +32,8 @@ internal class ServiceManagerImpl(
             WorkingMode.MODE_APATCH -> Platform.APatch
             WorkingMode.MODE_NON_ROOT -> Platform.NonRoot
             else -> throw BrickException(
-                "unsupported platform: $seLinuxContext",
-                HELP_MESSAGE.trimIndent()
+                message = "unsupported platform: $seLinuxContext",
+                helpMessage = HELP_MESSAGE.trimIndent()
             )
         }
     }
@@ -70,8 +70,8 @@ internal class ServiceManagerImpl(
             )
 
             else -> throw BrickException(
-                "unsupported platform: $seLinuxContext",
-                HELP_MESSAGE.trimIndent()
+                message = "unsupported platform: $seLinuxContext",
+                helpMessage = HELP_MESSAGE.trimIndent()
             )
         }
     }

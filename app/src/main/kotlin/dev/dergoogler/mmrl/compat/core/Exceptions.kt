@@ -1,7 +1,8 @@
 package dev.dergoogler.mmrl.compat.core
 
 open class BrickException(
-    msg: String? = null,
+    message: String? = null,
+    cause: Throwable? = null,
     val helpMessage: String? = null,
     val helpLink: String? = null,
-) : RuntimeException(msg)
+) : RuntimeException(message, cause)

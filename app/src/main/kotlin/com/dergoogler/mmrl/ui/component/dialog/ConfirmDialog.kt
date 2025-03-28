@@ -1,4 +1,4 @@
-package com.dergoogler.mmrl.ui.component
+package com.dergoogler.mmrl.ui.component.dialog
 
 import androidx.annotation.StringRes
 import androidx.compose.material3.AlertDialog

@@ -1,4 +1,4 @@
-package com.dergoogler.mmrl.ui.component
+package com.dergoogler.mmrl.ui.component.dialog
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box

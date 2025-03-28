@@ -22,6 +22,10 @@ class SuFile(path: String) : File(path) {
 
     companion object {
         const val PIPE_CAPACITY = 16 * 4096
+
+        fun String.toSuFile(): SuFile {
+            return SuFile(this)
+        }
     }
 
     constructor(vararg paths: Any) : this(
@@ -46,7 +50,7 @@ class SuFile(path: String) : File(path) {
         val fd = fs.parcelFile(this.path)
         return FileInputStream(fd.fileDescriptor)
     }
-    
+
     fun readBytes(): ByteArray = newInputStream().use { it.readBytes() }
 
     fun writeText(data: String) = newOutputStream(false).use { it.write(data.toByteArray()) }

@@ -1,15 +1,10 @@
-package com.dergoogler.mmrl.ui.activity.webui.handlers
+package dev.dergoogler.mmrl.compat.core
 
 import android.webkit.WebResourceResponse
 import androidx.annotation.WorkerThread
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.webkit.WebViewAssetLoader.PathHandler
 import com.dergoogler.mmrl.ui.activity.webui.MimeUtil.getMimeFromFileName
 import com.dergoogler.mmrl.utils.file.SuFile
-import com.dergoogler.mmrl.viewmodel.WebUIViewModel
-import dev.dergoogler.mmrl.compat.core.BrickException
 import timber.log.Timber
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -17,32 +12,32 @@ import java.io.IOException
 import java.io.InputStream
 import java.util.zip.GZIPInputStream
 
-class SuFilePathHandler(
-    private val viewModel: WebUIViewModel,
-    directory: SuFile = viewModel.webRoot,
+open class MMRLPathHandler(
+    internal var directory: SuFile,
+    private val ignorePaths: List<String> = listOf("mmrl/"),
 ) : PathHandler {
-    private var mDirectory: SuFile
 
     init {
         try {
-            mDirectory = SuFile(getCanonicalDirPath(directory))
+            directory = SuFile(getCanonicalDirPath(directory))
             if (!isAllowedInternalStorageDir()) {
                 throw BrickException(
-                    msg = "The given directory \"$directory\" doesn't exist under an allowed app internal storage directory",
+                    message = "The given directory \"$directory\" doesn't exist under an allowed app internal storage directory",
                     helpMessage = "Some directories are not allowed like **/data/data** and **/data/system**."
                 )
             }
         } catch (e: IOException) {
-            throw IllegalArgumentException(
-                ("Failed to resolve the canonical path for the given directory: "
-                        + directory.path), e
+            throw BrickException(
+                message = "Failed to resolve the canonical path for the given directory: ${directory.path}",
+                helpMessage = "Did you checked that the given directory exists?",
+                cause = e
             )
         }
     }
 
     @Throws(IOException::class)
-    private fun isAllowedInternalStorageDir(): Boolean {
-        val dir = getCanonicalDirPath(mDirectory)
+    internal fun isAllowedInternalStorageDir(): Boolean {
+        val dir = getCanonicalDirPath(directory)
 
         for (forbiddenPath: String in FORBIDDEN_DATA_DIRS) {
             if (dir.startsWith(forbiddenPath)) {
@@ -54,13 +49,17 @@ class SuFilePathHandler(
 
     @WorkerThread
     override fun handle(path: String): WebResourceResponse? {
-        if (path.startsWith("mmrl/") || path.startsWith("favicon.ico")) return null
+        for (ignoredPath: String in ignorePaths) {
+            if (path.startsWith(ignoredPath)) {
+                return null
+            }
+        }
 
         return try {
-            val file = getCanonicalFileIfChild(mDirectory, path) ?: run {
+            val file = getCanonicalFileIfChild(directory, path) ?: run {
                 Timber.e(
                     "The requested file: %s is outside the mounted directory: %s",
-                    path, mDirectory
+                    path, directory
                 )
                 return null
             }
@@ -90,67 +89,29 @@ class SuFilePathHandler(
     }
 
     @Throws(IOException::class)
-    private fun handleSvgzStream(
+    internal fun handleSvgzStream(
         path: String,
         stream: InputStream,
     ): InputStream {
         return if (path.endsWith(".svgz")) GZIPInputStream(stream) else stream
     }
 
-    private val allowInjectEruda =
-        viewModel.modId in viewModel.userPrefs.injectEruda
-
-    private val customCssFile = SuFile(viewModel.webRoot, "custom.mmrl.css")
-
-    private fun openFile(file: SuFile): InputStream? {
-        if (!file.exists() && viewModel.config.historyFallback) {
-            val historyFallbackFile = SuFile(mDirectory, viewModel.config.historyFallbackFile)
-            return handleSvgzStream(
-                historyFallbackFile.path,
-                historyFallbackFile.newInputStream()
-            )
-        }
+    @Throws(IOException::class)
+    internal open fun openFile(file: SuFile): InputStream? {
         if (!file.exists()) {
             Timber.e("File not found: %s", file.absolutePath)
             return null
         }
 
-        if (guessMimeType(file.path) != "text/html") {
-            return handleSvgzStream(file.path, file.newInputStream())
-        }
-
-        var html by mutableStateOf(file.newInputStream())
-
-        if (allowInjectEruda) {
-            val code = """
-<!-- Start MMRL Inject -->
-<script type="module">
-    import eruda from "https://mui.kernelsu.org/mmrl/assets/eruda.mjs"; 
-    eruda.init();
-    const sheet = new CSSStyleSheet();
-    sheet.replaceSync('.eruda-dev-tools { padding-bottom: ${viewModel.bottomInset}px }');
-    window.eruda.shadowRoot.adoptedStyleSheets.push(sheet)
-</script>
-<!-- End MMRL Inject -->
-        """.trimIndent()
-
-            html = injectCode(code, html)
-        }
-
-        if (customCssFile.exists()) {
-            val code = "<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/custom.mmrl.css\" type=\"text/css\">"
-            html = injectCode(code, html)
-        }
-
-        return handleSvgzStream(file.path, html)
+        return handleSvgzStream(file.path, file.newInputStream())
     }
 
-    private fun guessMimeType(filePath: String): String {
+    internal fun guessMimeType(filePath: String): String {
         val mimeType = getMimeFromFileName(filePath)
         return mimeType ?: DEFAULT_MIME_TYPE
     }
 
-    private fun injectCode(code: String, inputStream: InputStream): InputStream {
+    internal fun injectCode(code: String, inputStream: InputStream): InputStream {
         val cssBytes = code.toByteArray()
 
         val outputStream = ByteArrayOutputStream()
@@ -186,10 +147,7 @@ class SuFilePathHandler(
     }
 
     companion object {
-        private const val TAG = "SuFilePathHandler"
-
-        private const val DEFAULT_MIME_TYPE: String = "text/plain"
-
-        private val FORBIDDEN_DATA_DIRS = arrayOf("/data/data", "/data/system")
+        const val DEFAULT_MIME_TYPE: String = "text/plain"
+        val FORBIDDEN_DATA_DIRS = arrayOf("/data/data", "/data/system")
     }
 }

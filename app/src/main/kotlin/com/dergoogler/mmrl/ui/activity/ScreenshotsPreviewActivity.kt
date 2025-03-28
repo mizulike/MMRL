@@ -2,18 +2,11 @@ package com.dergoogler.mmrl.ui.activity
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
-import androidx.lifecycle.lifecycleScope
-import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.ui.activity.terminal.install.InstallScreen
-import com.dergoogler.mmrl.ui.component.ConfirmDialog
-import dev.dergoogler.mmrl.compat.BuildCompat
 import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import dev.dergoogler.mmrl.compat.activity.setBaseContent
 import dev.dergoogler.mmrl.compat.ext.tmpDir
-import kotlinx.coroutines.launch
 import timber.log.Timber
 
 class ScreenshotsPreviewActivity : MMRLComponentActivity() {

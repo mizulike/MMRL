@@ -4,6 +4,7 @@ import com.squareup.moshi.JsonClass
 
 object WebUIPermissions {
     const val FILESYSTEM = "webui.permission.FILESYSTEM"
+    const val KERNELSU_WEBUI_API = "kernelsu.permission.WEBUI_API"
     const val PLUGIN_DEX_LOADER = "webui.permission.PLUGIN_DEX_LOADER"
     const val DSL_DEX_LOADING = "webui.permission.DSL_DEX_LOADING"
 }
@@ -38,4 +39,5 @@ data class WebUIConfig(
     val hasFileSystemPermission = permissions.contains(WebUIPermissions.FILESYSTEM)
     val hasPluginDexLoaderPermission = permissions.contains(WebUIPermissions.PLUGIN_DEX_LOADER)
     val hasDslDexLoadingPermission = permissions.contains(WebUIPermissions.DSL_DEX_LOADING)
+    val hasKernelSuWebUiApiPermission = permissions.contains(WebUIPermissions.KERNELSU_WEBUI_API)
 }

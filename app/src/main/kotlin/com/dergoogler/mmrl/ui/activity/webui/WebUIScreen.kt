@@ -28,17 +28,19 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebClient
 import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebUIHandler
-import com.dergoogler.mmrl.ui.activity.webui.handlers.SuFilePathHandler
+import com.dergoogler.mmrl.ui.activity.webui.handlers.WebRootPathHandler
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.ksu.AdvancedKernelSUAPI
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.ksu.BaseKernelSUAPI
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.FileInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.MMRLInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.VersionInterface
-import com.dergoogler.mmrl.ui.component.ConfirmDialog
 import com.dergoogler.mmrl.ui.component.Loading
+import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
+import com.dergoogler.mmrl.utils.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.viewmodel.SettingsViewModel
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
+import dev.dergoogler.mmrl.compat.core.MMRLPathHandler
 import dev.dergoogler.mmrl.compat.core.MMRLUriHandlerImpl
 import kotlinx.html.b
 import kotlinx.html.body
@@ -128,13 +130,19 @@ fun WebUIScreen(
                 .setDomain("mui.kernelsu.org")
                 .addPathHandler(
                     "/",
-                    SuFilePathHandler(
+                    WebRootPathHandler(
                         viewModel = viewModel,
                     )
                 )
                 .addPathHandler(
                     "/mmrl/assets/",
                     WebViewAssetLoader.AssetsPathHandler(context)
+                )
+                .addPathHandler(
+                    "/.adb/",
+                    MMRLPathHandler(
+                        directory = "/data/adb".toSuFile()
+                    )
                 )
                 .addPathHandler(
                     "/mmrl/",
@@ -198,16 +206,20 @@ fun WebUIScreen(
                             userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
                         }
 
-                        addJavascriptInterface(
-                            MMRLInterface(
-                                viewModel = viewModel,
-                                context = context,
-                                isDark = isDarkMode,
-                                webView = this,
-                                allowedFsApi = allowedFsApi,
-                                allowedKsuApi = allowedKsuApi
-                            ), "$${viewModel.sanitizedModId}"
+                        val mmrlInterface = MMRLInterface(
+                            viewModel = viewModel,
+                            context = context,
+                            isDark = isDarkMode,
+                            webView = this,
+                            allowedFsApi = allowedFsApi,
+                            allowedKsuApi = allowedKsuApi
                         )
+
+                        addJavascriptInterface(
+                            mmrlInterface, "$${viewModel.sanitizedModId}"
+                        )
+
+
 
                         addJavascriptInterface(
                             if (allowedKsuApi) {
