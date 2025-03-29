@@ -5,42 +5,33 @@ import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.webkit.WebView
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.systemBars
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.webkit.WebViewAssetLoader
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebClient
-import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebUIHandler
-import com.dergoogler.mmrl.ui.activity.webui.handlers.WebRootPathHandler
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.ksu.AdvancedKernelSUAPI
-import com.dergoogler.mmrl.ui.activity.webui.interfaces.ksu.BaseKernelSUAPI
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.FileInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.MMRLInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.VersionInterface
 import com.dergoogler.mmrl.ui.component.Loading
-import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.utils.file.SuFile.Companion.toSuFile
-import com.dergoogler.mmrl.viewmodel.SettingsViewModel
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
-import dev.dergoogler.mmrl.compat.core.MMRLPathHandler
+import com.dergoogler.webui.core.LocalInsets
+import com.dergoogler.webui.core.rememberInsets
+import com.dergoogler.webui.core.rememberWebUIAssetLoader
+import com.dergoogler.webui.handlers.mmrlPathHandler
+import com.dergoogler.webui.handlers.suPathHandler
+import com.dergoogler.webui.handlers.webrootPathHandler
 import dev.dergoogler.mmrl.compat.core.MMRLUriHandlerImpl
 import kotlinx.html.b
 import kotlinx.html.body
@@ -58,201 +49,127 @@ import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.title
 import kotlinx.html.ul
-import timber.log.Timber
 
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebUIScreen(
     viewModel: WebUIViewModel,
-    settingsViewModel: SettingsViewModel,
 ) {
     val context = LocalContext.current
     val userPrefs = LocalUserPreferences.current
-    val density = LocalDensity.current
     val browser = LocalUriHandler.current as MMRLUriHandlerImpl
     val colorScheme = MaterialTheme.colorScheme
-    val typography = MaterialTheme.typography
-    val filledTonalButtonColors = ButtonDefaults.filledTonalButtonColors()
-    val cardColors = CardDefaults.cardColors()
     val isDarkMode = userPrefs.isDarkMode()
-    val layoutDirection = LocalLayoutDirection.current
 
     val webView = WebView(context)
     WebView.setWebContentsDebuggingEnabled(userPrefs.developerMode)
 
-    val insets = WindowInsets.systemBars
-    LaunchedEffect(density, layoutDirection, insets) {
-        viewModel.initInsets(density, layoutDirection, insets)
-        Timber.d("Insets calculated: top = ${viewModel.topInset}, bottom = ${viewModel.bottomInset}, left = ${viewModel.leftInset}, right = ${viewModel.rightInset}")
-    }
+    val insets = rememberInsets()
 
-    val allowedFsApi = viewModel.modId in userPrefs.allowedFsModules
-    val allowedKsuApi = viewModel.modId in userPrefs.allowedKsuModules
-
-    if (!allowedKsuApi && !viewModel.hasRequestedAdvancedKernelSUAPI && viewModel.dialogRequestAdvancedKernelSUAPI) {
-        ConfirmDialog(
-            title = stringResource(R.string.allow_advanced_kernelsu_api),
-            description = stringResource(R.string.allow_advanced_kernelsu_api_desc),
-            onClose = {
-                viewModel.hasRequestedAdvancedKernelSUAPI = true
-                viewModel.dialogRequestAdvancedKernelSUAPI = false
-            },
-            onConfirm = {
-                viewModel.dialogRequestAdvancedKernelSUAPI = false
-                val newModules = userPrefs.allowedKsuModules + viewModel.modId
-                settingsViewModel.setAllowedKsuModules(newModules)
-                viewModel.recomposeCount++
-            }
-        )
-    }
-
-    if (viewModel.config.hasFileSystemPermission && !allowedFsApi && !viewModel.hasRequestFileSystemAPI && viewModel.dialogRequestFileSystemAPI) {
-        ConfirmDialog(
-            title = stringResource(R.string.allow_filesystem_api),
-            description = stringResource(R.string.allow_filesystem_api_desc),
-            onClose = {
-                viewModel.hasRequestFileSystemAPI = true
-                viewModel.dialogRequestFileSystemAPI = false
-            },
-            onConfirm = {
-                viewModel.dialogRequestFileSystemAPI = false
-                val newModules = userPrefs.allowedFsModules + viewModel.modId
-                settingsViewModel.setAllowedFsModules(newModules)
-                viewModel.recomposeCount++
-            }
-        )
-    }
-
-    if (viewModel.topInset != null && viewModel.bottomInset != null) {
-        val webViewAssetLoader = remember(viewModel.topInset, viewModel.bottomInset) {
-            WebViewAssetLoader.Builder()
-                .setDomain("mui.kernelsu.org")
-                .addPathHandler(
-                    "/",
-                    WebRootPathHandler(
-                        viewModel = viewModel,
-                    )
+    if (insets != null) {
+        CompositionLocalProvider(
+            LocalInsets provides insets
+        ) {
+            val webuiAssetsLoader = rememberWebUIAssetLoader(
+                handlers = listOf(
+                    "/mmrl/" to mmrlPathHandler(),
+                    ".${viewModel.modId}/" to suPathHandler("/data/adb/modules/${viewModel.modId}".toSuFile()),
+                    "/.adb/" to suPathHandler("/data/adb".toSuFile()),
+                    "/" to webrootPathHandler(viewModel),
                 )
-                .addPathHandler(
-                    "/mmrl/assets/",
-                    WebViewAssetLoader.AssetsPathHandler(context)
-                )
-                .addPathHandler(
-                    "/.adb/",
-                    MMRLPathHandler(
-                        directory = "/data/adb".toSuFile()
-                    )
-                )
-                .addPathHandler(
-                    "/mmrl/",
-                    MMRLWebUIHandler(
-                        viewModel = viewModel,
-                        colorScheme = colorScheme,
-                        typography = typography,
-                        filledTonalButtonColors = filledTonalButtonColors,
-                        cardColors = cardColors
-                    )
-                )
-                .build()
-        }
+            )
 
-        key(viewModel.recomposeCount) {
-            AndroidView(
-                factory = {
-                    webView.apply {
-                        setBackgroundColor(colorScheme.background.toArgb())
-                        background = ColorDrawable(colorScheme.background.toArgb())
-                        layoutParams = ViewGroup.LayoutParams(
-                            ViewGroup.LayoutParams.MATCH_PARENT,
-                            ViewGroup.LayoutParams.MATCH_PARENT
-                        )
+            key(viewModel.recomposeCount) {
+                AndroidView(
+                    factory = {
+                        webView.apply {
+                            setBackgroundColor(colorScheme.background.toArgb())
+                            background = ColorDrawable(colorScheme.background.toArgb())
+                            layoutParams = ViewGroup.LayoutParams(
+                                ViewGroup.LayoutParams.MATCH_PARENT,
+                                ViewGroup.LayoutParams.MATCH_PARENT
+                            )
 
-                        ViewCompat.setOnApplyWindowInsetsListener(this) { _, _ ->
-                            WindowInsetsCompat.CONSUMED
-                        }
-
-                        if (viewModel.config.hasPluginDexLoaderPermission) {
-                            viewModel.loadDexPluginsFromMemory(context, this)
-                        }
-
-                        webViewClient = MMRLWebClient(
-                            context = context,
-                            browser = browser,
-                            webViewAssetLoader = webViewAssetLoader,
-                            userPrefs = userPrefs,
-                            viewModel = viewModel,
-                        )
-
-                        addJavascriptInterface(
-                            VersionInterface(
-                                context = context,
-                                webView = this,
-                                viewModel = viewModel,
-                            ), "mmrl"
-                        )
-                    }
-                },
-                update = {
-                    it.apply {
-                        settings.apply {
-                            javaScriptEnabled = true
-                            domStorageEnabled = true
-                            allowFileAccess = false
-                            userPrefs.developerMode({ useWebUiDevUrl }) {
-                                mixedContentMode =
-                                    android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                            ViewCompat.setOnApplyWindowInsetsListener(this) { _, _ ->
+                                WindowInsetsCompat.CONSUMED
                             }
-                            userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
+
+                            if (viewModel.config.hasPluginDexLoaderPermission) {
+                                viewModel.loadDexPluginsFromMemory(context, this)
+                            }
+
+                            webViewClient = MMRLWebClient(
+                                context = context,
+                                browser = browser,
+                                webuiAssetsLoader = webuiAssetsLoader,
+                                userPrefs = userPrefs,
+                                viewModel = viewModel,
+                            )
+
+                            addJavascriptInterface(
+                                VersionInterface(
+                                    context = context,
+                                    webView = this,
+                                    viewModel = viewModel,
+                                ), "mmrl"
+                            )
                         }
+                    },
+                    update = {
+                        it.apply {
+                            settings.apply {
+                                javaScriptEnabled = true
+                                domStorageEnabled = true
+                                allowFileAccess = false
+                                userPrefs.developerMode({ useWebUiDevUrl }) {
+                                    mixedContentMode =
+                                        android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                                }
+                                userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
+                            }
 
-                        val mmrlInterface = MMRLInterface(
-                            viewModel = viewModel,
-                            context = context,
-                            isDark = isDarkMode,
-                            webView = this,
-                            allowedFsApi = allowedFsApi,
-                            allowedKsuApi = allowedKsuApi
-                        )
 
-                        addJavascriptInterface(
-                            mmrlInterface, "$${viewModel.sanitizedModId}"
-                        )
+                            if (viewModel.requireNewAppVersion) {
+                                loadData(
+                                    getRequireNewVersion(context, viewModel),
+                                    "text/html",
+                                    "UTF-8"
+                                )
 
+                                return@apply
+                            }
 
+                            addJavascriptInterface(
+                                MMRLInterface(
+                                    viewModel = viewModel,
+                                    context = context,
+                                    isDark = isDarkMode,
+                                    webView = this,
+                                ), "$${viewModel.sanitizedModId}"
+                            )
 
-                        addJavascriptInterface(
-                            if (allowedKsuApi) {
-                                AdvancedKernelSUAPI(context, this, userPrefs)
-                            } else {
-                                BaseKernelSUAPI(context, this)
-                            }, "ksu"
-                        )
+                            addJavascriptInterface(
+                                AdvancedKernelSUAPI(context, this, userPrefs), "ksu"
+                            )
 
-                        if (viewModel.config.hasFileSystemPermission && allowedFsApi) {
                             addJavascriptInterface(
                                 FileInterface(this, context),
                                 viewModel.sanitizedModIdWithFile
                             )
+
+                            val dsl = viewModel.loadDslDex(context, webView)
+
+                            if (dsl != null) {
+                                loadData(dsl, "text/html", "UTF-8")
+                                return@apply
+                            }
+
+                            loadUrl(viewModel.domainUrl)
                         }
-
-                        if (viewModel.requireNewAppVersion) {
-                            loadData(getRequireNewVersion(context, viewModel), "text/html", "UTF-8")
-
-                            return@apply
-                        }
-
-                        val dsl = viewModel.loadDslDex(context, webView)
-
-                        if (dsl != null) {
-                            loadData(dsl, "text/html", "UTF-8")
-                            return@apply
-                        }
-
-                        loadUrl(viewModel.domainUrl)
                     }
-                }
-            )
+                )
+            }
         }
     } else {
         Loading()

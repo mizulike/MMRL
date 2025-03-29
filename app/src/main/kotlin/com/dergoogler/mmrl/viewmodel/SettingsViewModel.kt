@@ -235,9 +235,9 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
-    fun setUseProviderAsBackgroundService(value: Boolean) {
+    fun setEnableEruda(value: Boolean) {
         viewModelScope.launch {
-            userPreferencesRepository.setUseProviderAsBackgroundService(value)
+            userPreferencesRepository.setEnableEruda(value)
         }
     }
 }

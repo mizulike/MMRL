@@ -102,16 +102,6 @@ fun SettingsScreen() {
             )
 
             ListButtonItem(
-                icon = R.drawable.hexagons,
-                enabled = viewModel.isProviderAlive,
-                title = stringResource(id = R.string.settings_modules_permissions),
-                desc = stringResource(id = R.string.settings_modules_permissions_desc),
-                onClick = {
-                    navController.navigateSingleTopTo(SettingsScreen.ModulesPermissions.route)
-                }
-            )
-
-            ListButtonItem(
                 icon = R.drawable.tool,
                 title = stringResource(id = R.string.settings_other),
                 desc = stringResource(id = R.string.settings_other_desc),

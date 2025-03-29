@@ -94,11 +94,6 @@ private fun getPermissionDetails(id: String): Permission? {
             R.string.view_module_features_apks,
             R.string.view_module_features_apks_sub
         ),
-        WebUIPermissions.FILESYSTEM to Permission(
-            R.string.view_module_features_filesystem,
-            R.string.view_module_features_filesystem_sub,
-            listOf { MMRLLabel() }
-        ),
         WebUIPermissions.PLUGIN_DEX_LOADER to Permission(
             R.string.view_module_features_dex_loader,
             R.string.view_module_features_dex_loader_sub,

@@ -87,5 +87,12 @@ fun DeveloperScreen() {
                 }
             },
         )
+
+        ListSwitchItem(
+            title = stringResource(R.string.settings_security_inject_eruda),
+            desc = stringResource(id = R.string.settings_security_inject_eruda_desc),
+            checked = userPreferences.enableErudaConsole,
+            onChange = viewModel::setEnableEruda
+        )
     }
 }

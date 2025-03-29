@@ -3,7 +3,6 @@ package com.dergoogler.mmrl.ui.navigation.graphs
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
@@ -16,13 +15,9 @@ import com.dergoogler.mmrl.ui.screens.settings.changelogs.ChangelogScreen
 import com.dergoogler.mmrl.ui.screens.settings.developer.DeveloperScreen
 import com.dergoogler.mmrl.ui.screens.settings.logviewer.LogScreen
 import com.dergoogler.mmrl.ui.screens.settings.modules.ModulesScreen
-import com.dergoogler.mmrl.ui.screens.settings.modulesPermissions.ModulesPermissionsScreen
-import com.dergoogler.mmrl.ui.screens.settings.modulesPermissions.screens.ModulePermissionsScreen
 import com.dergoogler.mmrl.ui.screens.settings.other.OtherScreen
 import com.dergoogler.mmrl.ui.screens.settings.security.SecurityScreen
 import com.dergoogler.mmrl.ui.screens.settings.updates.UpdatesScreen
-import com.dergoogler.mmrl.ui.utils.panicArguments
-import com.dergoogler.mmrl.viewmodel.ModulePermissionsViewModel
 
 enum class SettingsScreen(val route: String) {
     Home("Settings"),
@@ -30,8 +25,6 @@ enum class SettingsScreen(val route: String) {
     Updates("Updates"),
     Security("Security"),
     Modules("Modules"),
-    ModulesPermissions("ModulesPermissions"),
-    ModulePermissions("ModulePermissions/{moduleId}"),
     Other("Other"),
     Blacklist("Blacklist"),
     Changelog("Changelog"),
@@ -114,37 +107,6 @@ fun NavGraphBuilder.settingsScreen() = navigation(
         exitTransition = { fadeOut() }
     ) {
         DeveloperScreen()
-    }
-
-    composable(
-        route = SettingsScreen.ModulesPermissions.route,
-        enterTransition = { scaleIn() + fadeIn() },
-        exitTransition = { fadeOut() }
-    ) {
-        val arguments = it.panicArguments
-
-        val viewModel =
-            hiltViewModel<ModulePermissionsViewModel, ModulePermissionsViewModel.Factory> { factory ->
-                factory.create(arguments)
-            }
-
-        ModulesPermissionsScreen(viewModel)
-    }
-
-    composable(
-        route = SettingsScreen.ModulePermissions.route,
-        enterTransition = { scaleIn() + fadeIn() },
-        exitTransition = { fadeOut() }
-    ) {
-        val arguments = it.panicArguments
-
-        val viewModel =
-            hiltViewModel<ModulePermissionsViewModel, ModulePermissionsViewModel.Factory> { factory ->
-                factory.create(arguments)
-            }
-
-
-        ModulePermissionsScreen(viewModel)
     }
 
     composable(

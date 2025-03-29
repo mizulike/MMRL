@@ -205,4 +205,21 @@ class SuFile(path: String) : File(path) {
         }
         return ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])
     }
+
+    @Throws(IOException::class)
+    fun getCanonicalDirPath(): String {
+        var canonicalPath = this.canonicalPath
+        if (!canonicalPath.endsWith("/")) canonicalPath += "/"
+        return canonicalPath
+    }
+
+    @Throws(IOException::class)
+    fun getCanonicalFileIfChild(child: String): SuFile? {
+        val parentCanonicalPath = getCanonicalDirPath()
+        val childCanonicalPath = SuFile(this, child).canonicalPath
+        if (childCanonicalPath.startsWith(parentCanonicalPath)) {
+            return SuFile(childCanonicalPath)
+        }
+        return null
+    }
 }

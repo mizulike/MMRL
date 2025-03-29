@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,19 +39,21 @@ import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
-import androidx.webkit.WebViewAssetLoader
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event.Companion.isFailed
 import com.dergoogler.mmrl.app.Event.Companion.isLoading
 import com.dergoogler.mmrl.app.Event.Companion.isSucceeded
 import com.dergoogler.mmrl.network.compose.requestString
-import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebUIHandler
 import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.utils.none
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
+import com.dergoogler.webui.core.Insets
+import com.dergoogler.webui.core.LocalInsets
+import com.dergoogler.webui.core.rememberWebUIAssetLoader
+import com.dergoogler.webui.handlers.mmrlPathHandler
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 
 const val launchUrl = "https://mui.kernelsu.org/mmrl/assets/markdown.html"
@@ -66,11 +67,7 @@ fun ViewDescriptionScreen(
     val browser = LocalUriHandler.current
     val navController = LocalNavController.current
     val context = LocalContext.current
-
     val colorScheme = MaterialTheme.colorScheme
-    val typography = MaterialTheme.typography
-    val filledTonalButtonColors = ButtonDefaults.filledTonalButtonColors()
-    val cardColors = CardDefaults.cardColors()
 
     var readme by remember { mutableStateOf("") }
     val event = requestString(
@@ -78,127 +75,118 @@ fun ViewDescriptionScreen(
         onSuccess = { readme = it }
     )
 
-    val webViewAssetLoader = remember {
-        WebViewAssetLoader.Builder()
-            .setDomain("mui.kernelsu.org")
-            .addPathHandler(
-                "/mmrl/assets/",
-                WebViewAssetLoader.AssetsPathHandler(context)
+    CompositionLocalProvider(
+        LocalInsets provides Insets.None
+    ) {
+        val webUiAssetLoader = rememberWebUIAssetLoader(
+            handlers = listOf(
+                "/mmrl/" to mmrlPathHandler(),
             )
-            .addPathHandler(
-                "/mmrl/",
-                MMRLWebUIHandler(
-                    colorScheme = colorScheme,
-                    typography = typography,
-                    filledTonalButtonColors = filledTonalButtonColors,
-                    cardColors = cardColors
+        )
+
+        Scaffold(
+            modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+            topBar = {
+                TopBar(
+                    scrollBehavior = scrollBehavior,
+                    navController = navController
                 )
-            )
-            .build()
-    }
-
-    Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopBar(
-                scrollBehavior = scrollBehavior,
-                navController = navController
-            )
-        },
-        contentWindowInsets = WindowInsets.none
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxSize()
-        ) {
-            AnimatedVisibility(
-                modifier = Modifier.fillMaxSize(),
-                visible = event.isLoading,
-                enter = fadeIn(),
-                exit = fadeOut()
+            },
+            contentWindowInsets = WindowInsets.none
+        ) { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxSize()
             ) {
-                Loading()
-            }
+                AnimatedVisibility(
+                    modifier = Modifier.fillMaxSize(),
+                    visible = event.isLoading,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Loading()
+                }
 
-            AnimatedVisibility(
-                visible = event.isFailed,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                Failed()
-            }
+                AnimatedVisibility(
+                    visible = event.isFailed,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    Failed()
+                }
 
-            AnimatedVisibility(
-                visible = event.isSucceeded,
-                enter = fadeIn(),
-                exit = fadeOut()
-            ) {
-                AndroidView(
-                    factory = {
-                        WebView(it).apply {
-                            setBackgroundColor(colorScheme.background.toArgb())
-                            background = ColorDrawable(colorScheme.background.toArgb())
-                            layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            )
+                AnimatedVisibility(
+                    visible = event.isSucceeded,
+                    enter = fadeIn(),
+                    exit = fadeOut()
+                ) {
+                    AndroidView(
+                        factory = {
+                            WebView(it).apply {
+                                setBackgroundColor(colorScheme.background.toArgb())
+                                background = ColorDrawable(colorScheme.background.toArgb())
+                                layoutParams = ViewGroup.LayoutParams(
+                                    ViewGroup.LayoutParams.MATCH_PARENT,
+                                    ViewGroup.LayoutParams.MATCH_PARENT
+                                )
 
-                            ViewCompat.setOnApplyWindowInsetsListener(this) { _, _ ->
-                                WindowInsetsCompat.CONSUMED
-                            }
+                                ViewCompat.setOnApplyWindowInsetsListener(this) { _, _ ->
+                                    WindowInsetsCompat.CONSUMED
+                                }
 
-                            webViewClient = object : WebViewClient() {
-                                override fun shouldOverrideUrlLoading(
-                                    view: WebView,
-                                    request: WebResourceRequest?,
-                                ): Boolean {
-                                    val mUrl = request?.url?.toString() ?: return false
+                                webViewClient = object : WebViewClient() {
+                                    override fun shouldOverrideUrlLoading(
+                                        view: WebView,
+                                        request: WebResourceRequest?,
+                                    ): Boolean {
+                                        val mUrl = request?.url?.toString() ?: return false
 
-                                    return if (launchUrl != mUrl) {
-                                        browser.openUri(
-                                            uri = mUrl,
-                                            onSuccess = { intent, uri ->
-                                                intent.launchUrl(context, uri.toUri())
-                                            }
-                                        )
-                                        true
-                                    } else {
-                                        view.loadUrl(mUrl)
-                                        false
+                                        return if (launchUrl != mUrl) {
+                                            browser.openUri(
+                                                uri = mUrl,
+                                                onSuccess = { intent, uri ->
+                                                    intent.launchUrl(context, uri.toUri())
+                                                }
+                                            )
+                                            true
+                                        } else {
+                                            view.loadUrl(mUrl)
+                                            false
+                                        }
+                                    }
+
+                                    override fun shouldInterceptRequest(
+                                        view: WebView,
+                                        request: WebResourceRequest,
+                                    ): WebResourceResponse? {
+                                        return webUiAssetLoader(request.url)
                                     }
                                 }
 
-                                override fun shouldInterceptRequest(
-                                    view: WebView,
-                                    request: WebResourceRequest,
-                                ): WebResourceResponse? {
-                                    return webViewAssetLoader.shouldInterceptRequest(request.url)
+                                addJavascriptInterface(
+                                    object {
+                                        @JavascriptInterface
+                                        fun get() = readme
+                                    },
+                                    "markdown"
+                                )
+                            }
+                        },
+                        update = {
+                            it.apply {
+                                settings.apply {
+                                    javaScriptEnabled = true
+                                    domStorageEnabled = true
+                                    allowFileAccess = false
+                                    userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
                                 }
-                            }
 
-                            addJavascriptInterface(
-                                object {
-                                    @JavascriptInterface
-                                    fun get() = readme
-                                },
-                                "markdown"
-                            )
-                        }
-                    },
-                    update = {
-                        it.apply {
-                            settings.apply {
-                                javaScriptEnabled = true
-                                domStorageEnabled = true
-                                allowFileAccess = false
-                                userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
+                                loadUrl(launchUrl)
                             }
-
-                            loadUrl(launchUrl)
                         }
-                    }
-                )
+                    )
+                }
             }
         }
     }

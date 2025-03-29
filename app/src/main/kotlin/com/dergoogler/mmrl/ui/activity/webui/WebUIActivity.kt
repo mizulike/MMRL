@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.viewmodel.SettingsViewModel
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import dev.dergoogler.mmrl.compat.activity.setBaseContent
@@ -32,9 +31,8 @@ class WebUIActivity : MMRLComponentActivity() {
                     hiltViewModel<WebUIViewModel, WebUIViewModel.Factory> { factory ->
                         factory.create(modId)
                     }
-                val settingsViewModel = hiltViewModel<SettingsViewModel>()
 
-                WebUIScreen(viewModel, settingsViewModel)
+                WebUIScreen(viewModel)
             }
         } else {
             setBaseContent {

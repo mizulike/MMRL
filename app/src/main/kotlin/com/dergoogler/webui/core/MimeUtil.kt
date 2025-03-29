@@ -1,4 +1,4 @@
-package com.dergoogler.mmrl.ui.activity.webui
+package com.dergoogler.webui.core
 
 import java.net.URLConnection
 import java.util.Locale

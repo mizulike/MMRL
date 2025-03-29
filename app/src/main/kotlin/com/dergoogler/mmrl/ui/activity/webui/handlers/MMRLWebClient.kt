@@ -2,6 +2,7 @@ package com.dergoogler.mmrl.ui.activity.webui.handlers
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.net.Uri
 import android.net.http.SslError
 import android.webkit.SslErrorHandler
 import android.webkit.WebResourceRequest
@@ -10,7 +11,6 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.Toast
 import androidx.core.net.toUri
-import androidx.webkit.WebViewAssetLoader
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.UserPreferences
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
@@ -22,7 +22,7 @@ class MMRLWebClient(
     private val viewModel: WebUIViewModel,
     private val browser: MMRLUriHandlerImpl,
     private val userPrefs: UserPreferences,
-    private val webViewAssetLoader: WebViewAssetLoader,
+    private val webuiAssetsLoader: (Uri) -> WebResourceResponse?,
 ) : WebViewClient() {
     override fun shouldOverrideUrlLoading(
         view: WebView,
@@ -69,6 +69,6 @@ class MMRLWebClient(
         view: WebView,
         request: WebResourceRequest,
     ): WebResourceResponse? {
-        return webViewAssetLoader.shouldInterceptRequest(request.url)
+        return webuiAssetsLoader(request.url)
     }
 }

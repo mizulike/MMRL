@@ -56,6 +56,7 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     @Deprecated("Replaced by ProviderService.isActive")
     @ProtoNumber(33) val useProviderAsBackgroundService: Boolean = false,
     @ProtoNumber(34) val strictMode: Boolean = true,
+    @ProtoNumber(35) val enableErudaConsole: Boolean = false,
 ) {
     @Composable
     fun isDarkMode() = when (darkMode) {

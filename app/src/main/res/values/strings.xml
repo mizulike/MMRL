@@ -338,10 +338,10 @@
     <string name="settings_terms_of_service">Terms of Service</string>
     <string name="explore_more_repositories">Explore more Repositories</string>
     <string name="get_the_most_out_of_mmrl">Get the most out of MMRL!</string>
-    <string name="allow_advanced_kernelsu_api">Allow Advanced KernelSU API?</string>
-    <string name="allow_advanced_kernelsu_api_desc">Allow this module to access the Advanced KernelSU API? If you don\'t feel secure with this module, don\'t allow it!</string>
-    <string name="allow_filesystem_api">Allow FileSystem API?</string>
-    <string name="allow_filesystem_api_desc">Allow this module to access the FileSystem API? If you don\'t feel secure with this module, don\'t allow it!</string>
+    <string name="allow_advanced_kernelsu_api">Allow access to the Advanced KernelSU API?</string>
+    <string name="allow_advanced_kernelsu_api_desc">Do you want to allow this module to use the Advanced KernelSU API? If you don’t trust it, you can deny access</string>
+    <string name="allow_filesystem_api">Allow access to the FileSystem API?</string>
+    <string name="allow_filesystem_api_desc">Do you want to allow this module to use the FileSystem API? If you don’t trust it, you can deny access</string>
     <string name="settings_provider_service">Provider Service</string>
     <string name="settings_provider_service_desc">Keep the provider running in the background to significantly reduce startup times and improve overall responsiveness</string>
     <string name="notification_name_repository">Repository Service</string>

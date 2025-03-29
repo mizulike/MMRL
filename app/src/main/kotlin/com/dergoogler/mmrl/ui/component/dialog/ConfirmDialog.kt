@@ -20,27 +20,22 @@ fun ConfirmDialog(
     },
     onClose: () -> Unit,
     onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit = onClose,
 ) {
     AlertDialog(
         title = title,
         text = description,
-        onDismissRequest = {
-            onClose()
-        },
+        onDismissRequest = onDismissRequest,
         confirmButton = {
             TextButton(
-                onClick = {
-                    onConfirm()
-                }
+                onClick = onConfirm
             ) {
                 confirmText.invoke()
             }
         },
         dismissButton = {
             TextButton(
-                onClick = {
-                    onClose()
-                }
+                onClick = onClose
             ) {
                 closeText.invoke()
             }
@@ -56,7 +51,9 @@ fun ConfirmDialog(
     closeText: String = stringResource(id = R.string.dialog_cancel),
     onClose: () -> Unit,
     onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit = onClose,
 ) = ConfirmDialog(
+    onDismissRequest = onDismissRequest,
     title = {
         Text(text = title)
     },
@@ -81,7 +78,9 @@ fun ConfirmDialog(
     @StringRes closeText: Int = R.string.dialog_cancel,
     onClose: () -> Unit,
     onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit = onClose,
 ) = ConfirmDialog(
+    onDismissRequest = onDismissRequest,
     title = {
         Text(text = stringResource(title))
     },

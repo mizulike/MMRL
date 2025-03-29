@@ -386,6 +386,18 @@ class ModulesViewModel @Inject constructor(
         return progress
     }
 
+    fun setAllowedFsModules(value: List<String>) {
+        viewModelScope.launch {
+            userPreferencesRepository.setAllowedFsModules(value)
+        }
+    }
+
+    fun setAllowedKsuModules(value: List<String>) {
+        viewModelScope.launch {
+            userPreferencesRepository.setAllowedKsuModules(value)
+        }
+    }
+
     data class ModuleOps(
         val isOpsRunning: Boolean,
         val toggle: (Boolean) -> Unit,
