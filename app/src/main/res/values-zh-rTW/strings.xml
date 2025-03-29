@@ -361,4 +361,14 @@
     <string name="provider_service_started">背景執行服務已開始運作</string>
     <string name="file_already_exists">檔案已存在</string>
     <string name="settings_strict_mode">嚴守模式</string>
+    <string name="view_module_features_mmrl_webui">MMRL WebUI</string>
+    <string name="view_module_features_mmrl_webui_sub">此模組含有 MMRL WebUI。</string>
+    <string name="view_module_features_mmrl_webui_config_sub">此模組含有 MMRL WebUI 設定檔</string>
+    <string name="view_module_features_mmrl_webui_config">MMRL WebUI 設定檔</string>
+    <string name="view_module_features_filesystem">檔案系統</string>
+    <string name="view_module_features_eruda">Eruda 主控臺</string>
+    <string name="view_module_features_filesystem_sub">此模組可能需要使用《MMRL》的檔案系統介面。</string>
+    <string name="view_module_features_eruda_sub">此模組含有開關型開發人員主控臺。</string>
+    <string name="view_module_features_dex_loader">WebUI 外掛程式</string>
+    <string name="view_module_features_dex_loader_sub">此模組支援以 WebUI 外掛程式來掛載 JavaScript 介面。</string>
 </resources>
