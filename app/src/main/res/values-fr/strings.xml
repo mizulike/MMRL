@@ -232,7 +232,7 @@
     <string name="settings_use_generic_action_desc">La plupart des fournisseurs root ne prennent pas en charge les commandes d\'action en ligne de commande. Vous pouvez utiliser un script générique à la place</string>
     <string name="module_service_started">Service du module démarré</string>
     <string name="have_been_total_sponsored">%1$s ont été sponsorisés au total</string>
-    <string name="allow_advanced_kernelsu_api_desc">Autoriser ce module à accéder à l\'API KernelSU avancée ? Si vous ne vous sentez pas en sécurité avec ce module, ne l\'autorisez pas !</string>
+    <string name="allow_advanced_kernelsu_api_desc">Autoriser ce module à accéder à l\'API KernelSU avancée ? Si vous ne vous sentez pas en sécurité avec ce module, ne l\'autorisez pas !</string>
     <string name="allow_cancel_action">Autoriser l\'action d\'annulation</string>
     <string name="allow_cancel_installation">Autoriser Annuler l\'installation</string>
     <string name="failed_to_close_the_installer">Échec de la fermeture du programme d\'installation</string>
@@ -263,10 +263,10 @@
     <string name="repository_service_started">Service de Référentiel démarré</string>
     <string name="provider_service_started">Service du fournisseur démarré</string>
     <string name="get_the_most_out_of_mmrl">Tirez le meilleur parti de MMRL !</string>
-    <string name="allow_advanced_kernelsu_api">Autoriser l\'API avancée KernelSU ?</string>
+    <string name="allow_advanced_kernelsu_api">Autoriser l\'API avancée KernelSU ?</string>
     <string name="explore_more_repositories">Explorez plus de Référentiels</string>
-    <string name="allow_filesystem_api_desc">Autoriser ce module à accéder à l\'API FileSystem ? Si vous ne vous sentez pas en sécurité avec ce module, ne l\'autorisez pas !</string>
-    <string name="allow_filesystem_api">Autoriser l\'API FileSystem ?</string>
+    <string name="allow_filesystem_api_desc">Autoriser ce module à accéder à l\'API FileSystem ? Si vous ne vous sentez pas en sécurité avec ce module, ne l\'autorisez pas !</string>
+    <string name="allow_filesystem_api">Autoriser l\'API FileSystem ?</string>
     <string name="learn_more">En savoir plus</string>
     <string name="settings_clear_install_terminal">Effacer le terminal d\'installation</string>
     <string name="settings_strict_mode">Mode Strict</string>
