@@ -22,8 +22,10 @@ class WebUIActivity : MMRLComponentActivity() {
         Timber.d("WebUIActivity onCreate")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+        
+        val isShortcut = intent.getStringExtra("IS_SHORTCUT", false)
 
-        if (!ProviderService.isActive) {
+        if (isShortcut && !ProviderService.isActive) {
             setBaseContent {
                 Failed(
                     message = stringResource(id = R.string.provider_service_not_active),
