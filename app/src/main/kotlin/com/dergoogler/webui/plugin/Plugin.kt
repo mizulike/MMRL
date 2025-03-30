@@ -2,10 +2,12 @@ package com.dergoogler.webui.plugin
 
 import android.content.Context
 import android.webkit.WebView
+import androidx.annotation.Keep
 import com.dergoogler.mmrl.Platform
 import dev.dergoogler.mmrl.compat.stub.IFileManager
 import kotlinx.coroutines.CoroutineScope
 
+@Keep
 data class Plugin(
     val modId: String,
     val context: Context,

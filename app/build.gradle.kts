@@ -87,12 +87,12 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
-            isShrinkResources = true
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isMinifyEnabled = false
+            isShrinkResources = false
+//            proguardFiles(
+//                getDefaultProguardFile("proguard-android-optimize.txt"),
+//                "proguard-rules.pro"
+//            )
             resValue("string", "app_name", baseAppName)
             resValue("string", "modconf_activity", baseModConfName)
             buildConfigField("Boolean", "IS_DEV_VERSION", "false")
