@@ -128,7 +128,7 @@
 
         <activity
             android:name=".ui.activity.webui.WebUIActivity"
-            android:autoRemoveFromRecents="false"
+            android:autoRemoveFromRecents="true"
             android:documentLaunchMode="always"
             android:exported="false"
             android:taskAffinity="${applicationId}.WEBUI" />
