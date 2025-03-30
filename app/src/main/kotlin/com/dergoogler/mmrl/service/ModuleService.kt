@@ -78,7 +78,7 @@ class ModuleService : MMRLLifecycleService() {
         localModules.forEach { localModule ->
             onlineModulesOrderedByNewestMap[localModule.id]?.getOrNull(0)?.let { newestOnlineModule ->
                 if (isNewerVersion(newestOnlineModule, localModule)) {
-                    sendUpdateNotification(localModule, newestOnlineModule)
+                    sendUpdateNotification(localModule, newestOnlineModule)
                 }
             }
         }
