@@ -451,7 +451,7 @@ class ModulesViewModel @Inject constructor(
             val shortcut = ShortcutInfo.Builder(context, shortcutId)
                 .setShortLabel(config.title)
                 .setLongLabel(config.title)
-                .setIcon(Icon.createWithBitmap(bitmap))
+                .setIcon(Icon.createWithAdaptiveBitmap(bitmap))
                 .setIntent(shortcutIntent)
                 .build()
 
