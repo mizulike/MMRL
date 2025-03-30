@@ -107,7 +107,7 @@
     <string name="view_module_features_boot_completed">Ukończono rozruch</string>
     <string name="view_module_features_service_sub">Uruchamia kod później podczas rozruchu (po zainicjowaniu systemu).</string>
     <string name="view_module_features_post_fs_data">Dane Post FS</string>
-    <string name="view_module_features_webui">Interfejs sieciowy</string>
+    <string name="view_module_features_webui">WebUI</string>
     <string name="view_module_features_post_mount">Post Mount</string>
     <string name="settings_reboot_protection_desc">Jeśli jest włączona, musisz potwierdzać przy każdym ponownym uruchomieniu</string>
     <string name="repo_options_support">Wsparcie</string>
@@ -137,7 +137,7 @@
     <string name="settings_reboot_protection">Ochrona przed ponownym uruchomieniem</string>
     <string name="view_module_features_resetprop_sub">Ustawia właściwości systemu załadowane przez resetprop Magiska.</string>
     <string name="view_module_features_sepolicy_sub">Dodaje niestandardowe zasady bezpieczeństwa (reguły SEPolicy).</string>
-    <string name="view_module_features_webui_sub">Interfejs sieciowy do zarządzania modułami. Użytkownik musi potwierdzić użycie różnych interfejsów API JavaScript.</string>
+    <string name="view_module_features_webui_sub">Interfejs webowy do zarządzania modułami. Wymagane potwierdzenie różnych API JavaScript.</string>
     <string name="settings_appearance_desc">Dostosuj aplikację do swoich potrzeb</string>
     <string name="settings_blacklist">Czarna lista</string>
     <string name="settings_blacklist_desc">Wymienione moduły mogą być zamknięte lub niebezpieczne</string>
@@ -223,7 +223,7 @@
     <string name="manager_version">Wersja menedżera</string>
     <string name="fingerprint">Odcisk palca</string>
     <string name="new_version_available">Nowa wersja %s jest dostępna, kliknij aby zaktualizować.</string>
-    <string name="hidden">Ukryte</string>
+    <string name="hidden">Ukryty</string>
     <string name="pre_release">Wersja wstępna</string>
     <string name="view_module_install_confirm_title">Zainstalować ten moduł?</string>
     <string name="settings_shell_module_state_change">Użyj powłoki dla stanów</string>
@@ -251,7 +251,7 @@
     <string name="action_executing">Wykonywanie…</string>
     <string name="view_module_features_action_sub">Umożliwia wykonanie skryptu poprzez kliknięcie przycisku</string>
     <string name="settings_security_allow_advanced_kernelsu_api">Zezwól na zaawansowane API KernelSU</string>
-    <string name="settings_security_allow_filesystem_api">Zezwalaj na API systemu plików</string>
+    <string name="settings_security_allow_filesystem_api">Zezwól na API FileSystem</string>
     <string name="menu_export_modules_as_text">Eksportuj moduły jako tekst</string>
     <string name="copy_logs">Kopiuj logi</string>
     <string name="working_mode_kernelsu_next_title">KernelSU Next</string>
@@ -276,13 +276,13 @@
     <string name="install_screen_cancel_text">Czy na pewno chcesz przerwać instalację?</string>
     <string name="action_screen_cancel_text">Czy na pewno chcesz przerwać tę akcję?</string>
     <string name="install_screen_cancel_title">Przerwać instalację?</string>
-    <string name="menu_pin_webui">Przypnij WebUI</string>
+    <string name="menu_pin_webui">Przypnij z WebUI</string>
     <string name="home_storage_usage">Użycie pamięci</string>
     <string name="settings_use_generic_action">Użyj ogólnej akcji</string>
     <string name="settings_use_generic_action_desc">Większość dostawców roota nie wspiera komendy CLI akcji. Możesz uzyć ogólnego skryptu</string>
     <string name="sponsors">Sponsorzy</string>
     <string name="learn_more">Dowiedz się więcej</string>
-    <string name="menu_pin_action">Przypnij akcję</string>
+    <string name="menu_pin_action">Przypnij z akcją</string>
     <string name="settings_blacklist_alerts_desc">Wyświetlaj alerty dotyczące modułów lokalnych i dostępnych online oraz dodatkowo blokuj instalację modułów znajdujących się na czarnej liście</string>
     <string name="settings_blacklist_alerts">Alerty czarnej listy</string>
     <string name="blacklisted">Na czarnej liście</string>
@@ -310,10 +310,10 @@
     <string name="settings_log_viewer">Przeglądarka logów</string>
     <string name="explore_more_repositories">Odkryj więcej repozytoriów</string>
     <string name="get_the_most_out_of_mmrl">Wykorzystaj w pełni MMRL!</string>
-    <string name="allow_advanced_kernelsu_api">Zezwolić na zaawansowane API KernelSU?</string>
-    <string name="allow_filesystem_api">Zezwolić na API systemu plików?</string>
-    <string name="allow_filesystem_api_desc">Zezwolić temu modułowi na dostęp do API systemu plików? Jeśli nie czujesz się bezpiecznie z tym modułem, nie pozwalaj na to!</string>
-    <string name="allow_advanced_kernelsu_api_desc">Zezwolić temu modułowi na dostęp do zaawansowanego API KernelSU? Jeśli nie czujesz się bezpiecznie z tym modułem, nie pozwalaj na to!</string>
+    <string name="allow_advanced_kernelsu_api">Zezwolić na dostęp do zaawansowanego API KernelSU?</string>
+    <string name="allow_filesystem_api">Zezwolić na dostęp do API FileSystem?</string>
+    <string name="allow_filesystem_api_desc">Czy chcesz zezwolić temu modułowi na korzystanie z API FileSystem? Jeśli mu nie ufasz, możesz odmówić dostępu</string>
+    <string name="allow_advanced_kernelsu_api_desc">Czy chcesz zezwolić temu modułowi na korzystanie z zaawansowanego API KernelSU? Jeśli mu nie ufasz, możesz odmówić dostępu</string>
     <string name="working_mode_shizuku_title">Shizuku</string>
     <string name="working_mode_shizuku_desc">Rozwiązanie oparte na uprawnieniach, które pozwala aplikacjom wykonywać polecenia na poziomie systemu bez pełnego dostępu root. Wymaga autoryzacji od Sui lub Shizuku, umożliwiając podwyższone uprawnienia dla określonych operacji przy jednoczesnym zachowaniu integralności systemu.</string>
     <string name="notification_name_repository">Usługa repozytorium</string>
@@ -331,4 +331,20 @@
     <string name="provider_service_started">Uruchomiono usługę dostawcy</string>
     <string name="module_service_started">Uruchomiono usługę modułu</string>
     <string name="repository_service_started">Uruchomiono usługę repozytorium</string>
+    <string name="settings_strict_mode">Tryb ścisły</string>
+    <string name="file_already_exists">Plik już istnieje</string>
+    <string name="allow_cancel_installation">Zezwól na anulowanie instalacji</string>
+    <string name="failed_to_close_the_action_execution">Nie udało się zamknąć wykonania akcji</string>
+    <string name="allow_cancel_action">Zezwól na anulowanie akcji</string>
+    <string name="failed_to_close_the_installer">Nie udało się zamknąć instalatora</string>
+    <string name="view_module_features_mmrl_webui">WebUI MMRL</string>
+    <string name="view_module_features_mmrl_webui_config">Konfiguracja WebUI MMRL</string>
+    <string name="view_module_features_filesystem">API FileSystem</string>
+    <string name="view_module_features_filesystem_sub">Ten moduł może wykorzystywać API FileSystem udostępniane przez MMRL.</string>
+    <string name="view_module_features_eruda">Konsola Eruda</string>
+    <string name="view_module_features_eruda_sub">Ten moduł ma przełączalną konsolę programisty.</string>
+    <string name="view_module_features_mmrl_webui_config_sub">Ten moduł używa pliku konfiguracyjnego dla WebUI w MMRL</string>
+    <string name="view_module_features_dex_loader">Wtyczki WebUI</string>
+    <string name="view_module_features_mmrl_webui_sub">Ten moduł zawiera wyłącznie WebUI MMRL.</string>
+    <string name="view_module_features_dex_loader_sub">Ten moduł obsługuje wtyczki WebUI umożliwiające dodawanie nowych API JavaScript.</string>
 </resources>

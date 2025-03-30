@@ -123,7 +123,7 @@
     <string name="settings_non_root_desc">部分功能將無法使用</string>
     <!-- 設定：應用程式 -->
     <string name="settings_app_theme">應用程式主題</string>
-    <string name="settings_app_theme_desc">更改主題的配色與模式</string>
+    <string name="settings_app_theme_desc">變更主題的配色與模式</string>
     <string name="settings_download_path">下載路徑</string>
     <string name="settings_delete_zip">刪除 Zip 壓縮檔</string>
     <string name="settings_delete_zip_desc">待模組安裝完畢，遂以 Root 存取權刪除模組原有的 Zip 壓縮檔</string>
@@ -266,7 +266,7 @@
     <string name="view_module_required_root_version">所需授權版本</string>
     <string name="view_module_features_action">腳本執行</string>
     <string name="view_module_features_action_sub">准許使用者按下按鈕後執行指令碼</string>
-    <string name="settings_modules_desc">更改大量模組所遭遇的處置行為</string>
+    <string name="settings_modules_desc">變更大量模組所遭遇的處置行為</string>
     <string name="settings_modules_handlers">處置程序</string>
     <string name="settings_modules">程序處置</string>
     <string name="action_failure">無法執行腳本</string>
@@ -338,4 +338,37 @@
     <string name="get_the_most_out_of_mmrl">發掘《MMRL》的無限可能！</string>
     <string name="explore_more_repositories">探索更多模組倉庫</string>
     <string name="allow_advanced_kernelsu_api_desc">你是否要授予此模組進階 KernelSU 介面存取權？若是不信任此模組的話，請拒絕授予！</string>
+    <string name="allow_cancel_action">准許取消腳本執行</string>
+    <string name="allow_cancel_installation">准許取消安裝程序</string>
+    <string name="failed_to_close_the_installer">無法終止安裝程序</string>
+    <string name="failed_to_close_the_action_execution">無法終止腳本執行程序</string>
+    <string name="notification_name_module">模組服務</string>
+    <string name="notification_name_provider">背景執行服務</string>
+    <string name="provider_service_stopped">背景執行服務已停止運作</string>
+    <string name="working_mode_shizuku_title">Shizuku</string>
+    <string name="working_mode_shizuku_desc">一套基於權限的解決方案：准許應用程式未經完整 Root 授權，便能執行系統層級指令。為維護系統完整性，特定作業所需的權限須經 Sui 或 Shizuku 授予。</string>
+    <string name="settings_provider_service">背景執行服務</string>
+    <string name="notification_name_repository">模組倉庫更新服務</string>
+    <string name="repository_service_stopped">模組倉庫更新服務已停止運作</string>
+    <string name="settings_provider_service_desc">在背景執行應用程式服務，從而縮短啟動時間與提高回應速度</string>
+    <string name="module_service_stopped">模組更新服務已停止運作</string>
+    <string name="working_mode_change_dialog_title">是否變更運作模式？</string>
+    <string name="apply">套用</string>
+    <string name="keep">取消</string>
+    <string name="working_mode_change_dialog_desc">為套用新變更的運作模式，你必須重新啟動本應用程式與其所屬服務。請注意：為確保所作變更生效，在你按下「套用」後，用於重新啟動應用程式與其所屬服務的處理程序將被初始化。</string>
+    <string name="repository_service_started">模組倉庫更新服務已開始運作</string>
+    <string name="module_service_started">模組更新服務已開始運作</string>
+    <string name="provider_service_started">背景執行服務已開始運作</string>
+    <string name="file_already_exists">檔案已存在</string>
+    <string name="settings_strict_mode">嚴守模式</string>
+    <string name="view_module_features_mmrl_webui">MMRL WebUI</string>
+    <string name="view_module_features_mmrl_webui_sub">此模組含有 MMRL WebUI。</string>
+    <string name="view_module_features_mmrl_webui_config_sub">此模組含有 MMRL WebUI 設定檔</string>
+    <string name="view_module_features_mmrl_webui_config">MMRL WebUI 設定檔</string>
+    <string name="view_module_features_filesystem">檔案系統</string>
+    <string name="view_module_features_eruda">Eruda 主控臺</string>
+    <string name="view_module_features_filesystem_sub">此模組可能需要使用《MMRL》的檔案系統介面。</string>
+    <string name="view_module_features_eruda_sub">此模組含有開關型開發人員主控臺。</string>
+    <string name="view_module_features_dex_loader">WebUI 外掛程式</string>
+    <string name="view_module_features_dex_loader_sub">此模組支援以 WebUI 外掛程式來掛載 JavaScript 介面。</string>
 </resources>

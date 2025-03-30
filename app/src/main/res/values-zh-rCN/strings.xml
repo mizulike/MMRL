@@ -298,11 +298,11 @@
     <string name="settings_webui_remote_url_desc">启动一个 localhost 页面以便于调试。参见上方的注意事项了解更多信息。</string>
     <string name="install_screen_cancel_title">取消安装？</string>
     <string name="install_screen_cancel_text">你确定要取消安装吗？</string>
-    <string name="action_screen_cancel_title">取消 action 执行？</string>
-    <string name="action_screen_cancel_text">你确定要取消当前 action 执行？</string>
+    <string name="action_screen_cancel_title">取消 Action 执行？</string>
+    <string name="action_screen_cancel_text">你确定要取消当前 Action 执行？</string>
     <string name="home_storage_usage">占用空间</string>
-    <string name="menu_pin_action">固定操作</string>
-    <string name="menu_pin_webui">固定 WebUI</string>
+    <string name="menu_pin_action">可执行优先</string>
+    <string name="menu_pin_webui">WebUI 优先</string>
     <string name="learn_more">了解更多</string>
     <string name="settings_use_generic_action">­使用通用 Action</string>
     <string name="settings_use_generic_action_desc">大部分 Root 权限提供方不支持以脚本形式执行 CLI 命令动作，你可以通过通用脚本来解决兼容性问题</string>
@@ -355,4 +355,20 @@
     <string name="working_mode_change_dialog_title">切换工作模式？</string>
     <string name="provider_service_started">提供方服务已启动</string>
     <string name="working_mode_change_dialog_desc">通过更改工作模式，您需要重新启动应用程序和所有相关服务，以便正确应用新模式。请注意，当点击\"应用\"按钮，你将启动一个进程，通过重新启动应用程序和所有服务来确保更改按预期生效。</string>
+    <string name="allow_cancel_action">允许取消 Action</string>
+    <string name="allow_cancel_installation">允许取消安装</string>
+    <string name="failed_to_close_the_installer">安装器无法关闭</string>
+    <string name="failed_to_close_the_action_execution">无法停止 Action 执行</string>
+    <string name="file_already_exists">文件已存在</string>
+    <string name="settings_strict_mode">严格模式</string>
+    <string name="view_module_features_mmrl_webui_config">MMRL WebUI 设置</string>
+    <string name="view_module_features_filesystem">文件系统 API</string>
+    <string name="view_module_features_filesystem_sub">此模块可能需要使用由 MMRL 提供的文件系统 API</string>
+    <string name="view_module_features_eruda_sub">此模块含有可开关的开发者控制台</string>
+    <string name="view_module_features_dex_loader">WebUI 插件</string>
+    <string name="view_module_features_eruda">Eruda 控制台</string>
+    <string name="view_module_features_dex_loader_sub">此模块支持通过 WebUI 插件来添加新的 JavaScript API</string>
+    <string name="view_module_features_mmrl_webui">MMRL WebUI</string>
+    <string name="view_module_features_mmrl_webui_sub">此模块包含 MMRL WebUI。</string>
+    <string name="view_module_features_mmrl_webui_config_sub">此模块使用一个 config 文件来管理 MMRL WebUI</string>
 </resources>

@@ -332,7 +332,7 @@
     <string name="install_screen_confirm_text">このモジュールをインストールしますか？</string>
     <string name="settings_log_viewer">ログビューワー</string>
     <string name="settings_terms_of_service">利用規約</string>
-    <string name="get_the_most_out_of_mmrl">MMRL を最大限に活用！</string>
+    <string name="get_the_most_out_of_mmrl">MMRL を最大限に活用しよう！</string>
     <string name="allow_advanced_kernelsu_api">高度な KernelSU API を許可しますか？</string>
     <string name="allow_filesystem_api">ファイルシステム API を許可しますか？</string>
     <string name="allow_filesystem_api_desc">このモジュールでファイルシステム API にアクセスすることを許可しますか？このモジュールが安全でないと思われる場合は、許可しないでください！</string>
@@ -355,4 +355,20 @@
     <string name="provider_service_started">プロバイダーサービスを開始しました</string>
     <string name="module_service_started">モジュールサービスを開始しました</string>
     <string name="working_mode_change_dialog_desc">動作モードを変更すると、新しく設定した動作モードを適切に適用するためにアプリと関連するすべてのサービスを再起動する必要があります。「適用」を押すとアプリとサービスを再起動するプロセスが開始されることに注意してください。</string>
+    <string name="allow_cancel_installation">インストールのキャンセルを許可</string>
+    <string name="allow_cancel_action">キャンセルのアクションを許可</string>
+    <string name="failed_to_close_the_action_execution">アクションの実行を終了できませんでした</string>
+    <string name="failed_to_close_the_installer">インストーラーを終了できませんでした</string>
+    <string name="file_already_exists">ファイルは既に存在します</string>
+    <string name="settings_strict_mode">厳格モード</string>
+    <string name="view_module_features_mmrl_webui_config">MMRL WebUI 設定</string>
+    <string name="view_module_features_eruda">Eruda コンソール</string>
+    <string name="view_module_features_dex_loader">WebUI プラグイン</string>
+    <string name="view_module_features_mmrl_webui_sub">このモジュールには MMRL 専用の WebUI が含まれています。</string>
+    <string name="view_module_features_mmrl_webui">MMRL WebUI</string>
+    <string name="view_module_features_mmrl_webui_config_sub">このモジュールは MMRL の WebUI 用の設定ファイルを使用します。</string>
+    <string name="view_module_features_dex_loader_sub">このモジュールは新しい JavaScript API を追加するための WebUI プラグインをサポートしています。</string>
+    <string name="view_module_features_filesystem">ファイルシステム API</string>
+    <string name="view_module_features_filesystem_sub">このモジュールは MMRL によって提供されるファイルシステム API を使用します。</string>
+    <string name="view_module_features_eruda_sub">このモジュールには切り替え可能な開発者コンソールがあります。</string>
 </resources>
