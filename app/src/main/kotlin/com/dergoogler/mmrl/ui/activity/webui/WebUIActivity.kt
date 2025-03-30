@@ -5,15 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.service.ProviderService
+import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import com.dergoogler.webui.webUiConfig
 import dev.dergoogler.mmrl.compat.BuildCompat
@@ -27,20 +23,23 @@ class WebUIActivity : MMRLComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        if (!ProviderService.isActive) {
+            setBaseContent {
+                Failed(
+                    message = stringResource(id = R.string.provider_service_not_active),
+                )
+            }
+
+            return
+        }
+
         val modId = intent.getStringExtra("MOD_ID")
 
         if (modId.isNullOrEmpty()) {
             setBaseContent {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.unknown_error),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
+                Failed(
+                    message = stringResource(id = R.string.missing_mod_id),
+                )
             }
 
             return

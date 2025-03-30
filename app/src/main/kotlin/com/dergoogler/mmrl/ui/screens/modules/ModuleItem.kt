@@ -57,6 +57,7 @@ fun ModuleItem(
     trailingButton: @Composable() (RowScope.() -> Unit),
     isBlacklisted: Boolean = false,
     isProviderAlive: Boolean,
+    createWebUIShortcut: (String) -> Unit,
 ) {
     val userPreferences = LocalUserPreferences.current
     val menu = userPreferences.modulesMenu
@@ -89,6 +90,9 @@ fun ModuleItem(
         ),
         absolute = {
             indicator?.invoke(this)
+        },
+        onLongClick = {
+            createWebUIShortcut(module.id)
         },
         onClick = clicker
     ) {

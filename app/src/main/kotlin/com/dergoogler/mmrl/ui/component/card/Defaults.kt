@@ -36,6 +36,7 @@ import dev.dergoogler.mmrl.compat.ext.composeApply
 import dev.dergoogler.mmrl.compat.ext.isNotNull
 import dev.dergoogler.mmrl.compat.ext.nullable
 import dev.dergoogler.mmrl.compat.ext.systemBarsPaddingEnd
+import timber.log.Timber
 
 @Composable
 internal fun BaseCard(
@@ -70,31 +71,19 @@ internal fun BaseCard(
         Modifier
     }
 
-    val boxModifier = when {
-        onClick.isNotNull() -> {
-            modifierParameters.box.clickable(
+    val boxModifier = if (onClick.isNotNull()) {
+        modifierParameters.box
+            .combinedClickable(
                 enabled = enabled,
                 onClick = onClick,
+                onLongClick = onLongClick,
                 interactionSource = interactionSource,
                 indication = ripple()
             )
-        }
-
-        onClick.isNotNull() && onLongClick.isNotNull() -> {
-            modifierParameters.box
-                .combinedClickable(
-                    enabled = enabled,
-                    onClick = onClick,
-                    onLongClick = onLongClick,
-                    interactionSource = interactionSource,
-                    indication = ripple()
-                )
-        }
-
-        else -> {
-            modifierParameters.box
-        }
+    } else {
+        modifierParameters.box
     }
+
 
     Surface(
         modifier = surfaceModifier

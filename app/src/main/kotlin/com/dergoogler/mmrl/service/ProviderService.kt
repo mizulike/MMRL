@@ -79,6 +79,10 @@ class ProviderService : LifecycleService() {
         private const val GROUP_KEY = "PROVIDER_SERVICE_GROUP_KEY"
         private const val WORKING_MODE_KEY = "WORKING_MODE"
 
+        suspend fun init(context: Context, workingMode: WorkingMode) = if (!isActive) {
+            Compat.init(context, workingMode)
+        } else isActive
+
         fun start(
             context: Context,
             mode: WorkingMode,

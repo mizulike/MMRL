@@ -15,7 +15,6 @@ import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
-import com.dergoogler.mmrl.Compat
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.database.entity.Repo.Companion.toRepo
 import com.dergoogler.mmrl.datastore.model.WorkingMode
@@ -67,9 +66,7 @@ class MainActivity : MMRLComponentActivity() {
 
                 modulesRepository.getBlacklist()
 
-                if (!ProviderService.isActive) {
-                    Compat.init(baseContext, preferences.workingMode)
-                }
+                ProviderService.init(baseContext, preferences.workingMode)
 
                 NetworkUtils.setEnableDoh(preferences.useDoh)
 

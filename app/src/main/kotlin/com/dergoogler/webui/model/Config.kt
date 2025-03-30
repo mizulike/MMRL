@@ -1,5 +1,6 @@
 package com.dergoogler.webui.model
 
+import com.dergoogler.webui.webUiConfig
 import com.squareup.moshi.JsonClass
 
 object WebUIPermissions {
@@ -33,8 +34,14 @@ data class WebUIConfig(
     val permissions: List<String> = emptyList(),
     val historyFallback: Boolean = false,
     val title: String? = null,
+    val icon: String? = null,
     val historyFallbackFile: String = "index.html",
 ) {
     val hasPluginDexLoaderPermission = permissions.contains(WebUIPermissions.PLUGIN_DEX_LOADER)
     val hasDslDexLoadingPermission = permissions.contains(WebUIPermissions.DSL_DEX_LOADING)
+
+
+    companion object {
+        fun String.toWebUiConfig() = webUiConfig(this)
+    }
 }

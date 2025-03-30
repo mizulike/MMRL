@@ -2,6 +2,11 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Icon
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +31,11 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.service.DownloadService
+import com.dergoogler.mmrl.service.ProviderService
+import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.utils.Utils
+import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.webui.model.WebUIConfig.Companion.toWebUiConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
 import dev.dergoogler.mmrl.compat.stub.IModuleOpsCallback
@@ -45,6 +54,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
+import java.io.BufferedInputStream
 import java.io.File
 import javax.inject.Inject
 
@@ -358,9 +368,12 @@ class ModulesViewModel @Inject constructor(
             val listener = object : DownloadService.IDownloadListener {
                 override fun getProgress(value: Float) {}
                 override fun onFileExists() {
-                    Toast.makeText(context,
-                        context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT
+                    ).show()
                 }
+
                 override fun onSuccess() {
                     onSuccess(File(downloadPath).resolve(filename))
                 }
@@ -386,15 +399,63 @@ class ModulesViewModel @Inject constructor(
         return progress
     }
 
-    fun setAllowedFsModules(value: List<String>) {
-        viewModelScope.launch {
-            userPreferencesRepository.setAllowedFsModules(value)
+    fun createShortcut(id: String) {
+        if (!ProviderService.isActive) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.provider_service_not_active),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
         }
-    }
 
-    fun setAllowedKsuModules(value: List<String>) {
-        viewModelScope.launch {
-            userPreferencesRepository.setAllowedKsuModules(value)
+        val shortcutId = "shortcut_$id"
+        val config = id.toWebUiConfig()
+        if (config.title == null || config.icon == null) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.title_or_icon_not_found), Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val webRoot = SuFile("/data/adb/modules/$id/webroot")
+        val iconFile = SuFile(webRoot, config.icon)
+        if (!iconFile.exists()) {
+            Timber.d("Icon not found: $iconFile")
+            Toast.makeText(context, context.getString(R.string.icon_not_found), Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+
+        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+
+        if (shortcutManager.isRequestPinShortcutSupported) {
+            if (shortcutManager.pinnedShortcuts.any { it.id == shortcutId }) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.shortcut_already_exists),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return
+            }
+
+            val shortcutIntent = Intent(context, WebUIActivity::class.java).apply {
+                putExtra("MOD_ID", id)
+            }
+            shortcutIntent.action = Intent.ACTION_VIEW
+
+            val bis = BufferedInputStream(iconFile.newInputStream())
+            val bitmap = BitmapFactory.decodeStream(bis)
+
+            val shortcut = ShortcutInfo.Builder(context, shortcutId)
+                .setShortLabel(config.title)
+                .setLongLabel(config.title)
+                .setIcon(Icon.createWithBitmap(bitmap))
+                .setIntent(shortcutIntent)
+                .build()
+
+            shortcutManager.requestPinShortcut(shortcut, null)
         }
     }
 

@@ -373,4 +373,9 @@
     <string name="view_module_features_eruda_sub">This module has a toggable developer console.</string>
     <string name="view_module_features_dex_loader">WebUI Plugins</string>
     <string name="view_module_features_dex_loader_sub">This module supports WebUI Plugins to add new JavaScript APIs.</string>
+    <string name="provider_service_not_active">Provider service is not active</string>
+    <string name="title_or_icon_not_found">Title or icon not found</string>
+    <string name="icon_not_found">Icon not found</string>
+    <string name="shortcut_already_exists">Shortcut already exists</string>
+    <string name="missing_mod_id">A Module ID was not defined</string>
 </resources>

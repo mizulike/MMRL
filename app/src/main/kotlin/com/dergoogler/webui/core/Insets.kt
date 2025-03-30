@@ -26,6 +26,10 @@ data class Insets(
             appendLine("\t--window-inset-bottom: var(--safe-area-inset-bottom, 0px);")
             appendLine("\t--window-inset-left: var(--safe-area-inset-left, 0px);")
             appendLine("\t--window-inset-right: var(--safe-area-inset-right, 0px);")
+            appendLine("\t--f7-safe-area-top: var(--window-inset-top, 0px) !important;")
+            appendLine("\t--f7-safe-area-bottom: var(--window-inset-bottom, 0px) !important;")
+            appendLine("\t--f7-safe-area-left: var(--window-inset-left, 0px) !important;")
+            appendLine("\t--f7-safe-area-right: var(--window-inset-right, 0px) !important;")
             append("}")
         }
 

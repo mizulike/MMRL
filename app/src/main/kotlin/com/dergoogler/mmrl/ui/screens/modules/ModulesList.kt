@@ -117,6 +117,7 @@ fun ModuleItem(
         module = module,
         progress = progress,
         indeterminate = ops.isOpsRunning,
+        createWebUIShortcut = viewModel::createShortcut,
         alpha = when (module.state) {
             State.DISABLE, State.REMOVE -> 0.5f
             else -> 1f
