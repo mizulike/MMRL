@@ -441,6 +441,7 @@ class ModulesViewModel @Inject constructor(
             }
 
             val shortcutIntent = Intent(context, WebUIActivity::class.java).apply {
+                putExtra("IS_SHORTCUT", true)
                 putExtra("MOD_ID", id)
             }
             shortcutIntent.action = Intent.ACTION_VIEW
