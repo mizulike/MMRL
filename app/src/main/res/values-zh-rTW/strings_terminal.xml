@@ -15,4 +15,7 @@
     <string name="unable_to_gather_module_info_of_file">! 無法自檔案取得模組資訊：%1$s</string>
     <string name="cannot_install_blacklisted_modules_settings_security_blacklist_alerts">! 無法安裝已受封鎖的模組。設定 → 安全措施 → 模組封鎖</string>
     <string name="unable_to_find_path_for_uri">! 查無統一資源識別碼（URI）路徑：%1$s</string>
+    <string name="removed_updated_folder">- 已移除更新的資料夾</string>
+    <string name="failed_to_remove_updated_folder">! 無法移除更新的資料夾</string>
+    <string name="is_not_a_module_file_magisk_modules_must_be_zip_files_skipping">! %1$s 非屬模組檔案。Magisk 模組檔必為以 .zip 作結。將跳過安裝……</string>
 </resources>

@@ -15,4 +15,7 @@
     <string name="execution_failed_try_to_use_shell_for_the_action_execution_settings_module_use_shell_for_module_action">- 実行に失敗しました。アクションの実行にシェルを使用するには、設定 → モジュールとインストーラー → 状態にシェルを使用を有効化してください。</string>
     <string name="unable_to_gather_module_info">! モジュール情報を収集できません</string>
     <string name="unable_to_find_path_for_uri">! URI のパスが見つかりません: %1$s</string>
+    <string name="failed_to_remove_updated_folder">! 更新されたフォルダを削除できませんでした</string>
+    <string name="removed_updated_folder">- 更新されたフォルダを削除しました</string>
+    <string name="is_not_a_module_file_magisk_modules_must_be_zip_files_skipping">! %1$s はモジュールファイルではありません。Magisk モジュールは .zip ファイルである必要があります。スキップします...</string>
 </resources>
