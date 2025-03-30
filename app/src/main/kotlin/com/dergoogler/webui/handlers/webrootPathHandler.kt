@@ -71,38 +71,34 @@ fun webrootPathHandler(
             var html by mutableStateOf(file.newInputStream())
 
             if (prefs.enableErudaConsole) {
-                val code = """
-<!-- MMRL Eruda Inject -->
-<script type="module">
-    import eruda from "https://mui.kernelsu.org/mmrl/assets/eruda.mjs"; 
-    eruda.init();
-    const sheet = new CSSStyleSheet();
-    sheet.replaceSync('.eruda-dev-tools { padding-bottom: ${insets.bottom}px }');
-    window.eruda.shadowRoot.adoptedStyleSheets.push(sheet)
-</script>
-""".trimIndent()
-
-                html = html.headInject(code)
+                html = html.headInject(buildString {
+                    appendLine("<!-- MMRL Eruda Inject -->")
+                    appendLine("<script type=\"module\">")
+                    appendLine("\timport eruda from \"https://mui.kernelsu.org/mmrl/assets/eruda.mjs\";")
+                    appendLine("\teruda.init();")
+                    appendLine("\tconst sheet = new CSSStyleSheet();")
+                    appendLine("\tsheet.replaceSync(\".eruda-dev-tools { padding-bottom: ${insets.bottom}px }\");")
+                    appendLine("\twindow.eruda.shadowRoot.adoptedStyleSheets.push(sheet)")
+                    appendLine("</script>")
+                })
             }
 
             if (customCssFile.exists()) {
-                val code = """
-<!-- MMRL Custom Stylesheet Inject -->
-<link rel="stylesheet" href="https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.css" type="text/css" />
-""".trimIndent()
-                html = html.headInject(code)
+                html = html.headInject(buildString {
+                    appendLine("<!-- MMRL Custom Stylesheet Inject -->")
+                    appendLine("<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.css\" type=\"text/css\" />")
+                })
             }
 
             if (customJsFile.exists()) {
-                val code = """
-<!-- MMRL Custom JavaScript Inject -->
-<script src="https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.js" type="module"></script>
-""".trimIndent()
-                html = html.bodyInject(code)
+                html = html.bodyInject(buildString {
+                    appendLine("<!-- MMRL Custom JavaScript Inject -->")
+                    appendLine("<script src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.js\" type=\"module\"></script>")
+                })
             }
 
 
-            html = html.headInject(insets.cssInject.trimIndent())
+            html = html.headInject(insets.cssInject)
 
 
             WebResourceResponse(mimeType, null, html)

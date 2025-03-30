@@ -15,24 +15,33 @@ data class Insets(
     val left: Int,
     val right: Int,
 ) {
-    private val css = """
-:root {
-    --safe-area-inset-top: ${top}px;
-    --safe-area-inset-right: ${right}px;
-    --safe-area-inset-bottom: ${bottom}px;
-    --safe-area-inset-left: ${left}px;
-    --window-inset-top: var(--safe-area-inset-top, 0px);
-    --window-inset-bottom: var(--safe-area-inset-bottom, 0px);
-    --window-inset-left: var(--safe-area-inset-left, 0px);
-    --window-inset-right: var(--safe-area-inset-right, 0px);
-}
-    """.trimIndent()
+    private val css
+        get() = buildString {
+            appendLine(":root {")
+            appendLine("\t--safe-area-inset-top: ${top}px;")
+            appendLine("\t--safe-area-inset-right: ${right}px;")
+            appendLine("\t--safe-area-inset-bottom: ${bottom}px;")
+            appendLine("\t--safe-area-inset-left: ${left}px;")
+            appendLine("\t--window-inset-top: var(--safe-area-inset-top, 0px);")
+            appendLine("\t--window-inset-bottom: var(--safe-area-inset-bottom, 0px);")
+            appendLine("\t--window-inset-left: var(--safe-area-inset-left, 0px);")
+            appendLine("\t--window-inset-right: var(--safe-area-inset-right, 0px);")
+            append("}")
+        }
 
-    val cssResponse = css.style
-    val cssInject = """
-<!-- MMRL Inset Inject -->
-<style>${css.replace(Regex("[\n\t\r\\s]"), "")}</style>
-    """.trimIndent()
+    val cssInject
+        get() = buildString {
+            val sdg = css
+                .replace(Regex("\t"), "\t\t")
+                .replace(Regex("\n}"), "\n\t}")
+
+            appendLine("<!-- MMRL Insets Inject -->")
+            appendLine("<style>")
+            appendLine("\t$sdg")
+            appendLine("</style>")
+        }
+
+    val cssResponse get() = css.asStyleResponse()
 
     companion object {
         val None = Insets(0, 0, 0, 0)

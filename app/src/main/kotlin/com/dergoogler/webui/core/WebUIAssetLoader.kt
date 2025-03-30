@@ -172,16 +172,15 @@ fun SuFile.handleSvgzStream(
     return if (extension === "svgz") GZIPInputStream(stream) else stream
 }
 
-val String.style
-    get(): WebResourceResponse {
-        val inputStream: InputStream =
-            ByteArrayInputStream(this.toByteArray(StandardCharsets.UTF_8))
+fun String.asStyleResponse(): WebResourceResponse {
+    val inputStream: InputStream =
+        ByteArrayInputStream(this.toByteArray(StandardCharsets.UTF_8))
 
-        return WebResourceResponse(
-            "text/css",
-            "UTF-8",
-            inputStream
-        )
-    }
+    return WebResourceResponse(
+        "text/css",
+        "UTF-8",
+        inputStream
+    )
+}
 
 val noResponse get() = WebResourceResponse(null, null, null)
