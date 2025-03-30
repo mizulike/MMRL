@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ui.theme.toCssValue
 import com.dergoogler.webui.core.LocalInsets
 import com.dergoogler.webui.core.asStyleResponse
-import com.dergoogler.webui.core.noResponse
+import com.dergoogler.webui.core.notFoundResponse
 import timber.log.Timber
 import java.io.IOException
 
@@ -90,10 +90,10 @@ fun mmrlPathHandler(): (String) -> WebResourceResponse {
                 return@handler appColors.asStyleResponse()
             }
 
-            return@handler noResponse
+            return@handler notFoundResponse
         } catch (e: IOException) {
             Timber.e(e, "Error opening mmrl asset path: $path")
-            return@handler noResponse
+            return@handler notFoundResponse
         }
     }
 }

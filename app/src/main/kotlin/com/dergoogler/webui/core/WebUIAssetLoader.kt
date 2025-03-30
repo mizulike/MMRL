@@ -102,7 +102,7 @@ fun rememberWebUIAssetLoader(
             }
 
             // Return no response if no handler matched
-            return@HOLY_FUCK_MAN noResponse
+            return@HOLY_FUCK_MAN notFoundResponse
         }
     }
 }
@@ -156,16 +156,6 @@ private fun findBodyTag(htmlBytes: ByteArray): Int {
 }
 
 @Throws(IOException::class)
-fun SuFile.asResponse(inject: (InputStream.() -> InputStream)? = null): WebResourceResponse {
-    val mimeType = MimeUtil.getMimeFromFileName(path)
-
-    val stream = if (inject != null) inject(newInputStream()) else newInputStream()
-    val `is` = handleSvgzStream(stream)
-
-    return WebResourceResponse(mimeType, null, `is`)
-}
-
-@Throws(IOException::class)
 fun SuFile.handleSvgzStream(
     stream: InputStream,
 ): InputStream {
@@ -182,5 +172,3 @@ fun String.asStyleResponse(): WebResourceResponse {
         inputStream
     )
 }
-
-val noResponse get() = WebResourceResponse(null, null, null)

@@ -5,17 +5,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.utils.file.SuFile
 import com.dergoogler.mmrl.utils.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
+import com.dergoogler.webui.core.InjectionType
 import com.dergoogler.webui.core.LocalInsets
-import com.dergoogler.webui.core.MimeUtil
+import com.dergoogler.webui.core.addInjection
 import com.dergoogler.webui.core.asResponse
-import com.dergoogler.webui.core.bodyInject
-import com.dergoogler.webui.core.headInject
-import com.dergoogler.webui.core.noResponse
+import com.dergoogler.webui.core.notFoundResponse
 import timber.log.Timber
 import java.io.IOException
 
@@ -37,10 +35,10 @@ fun webrootPathHandler(
     }
 
     return handler@{ path ->
-        if (path.startsWith("mmrl/")) return@handler noResponse
-        if (path.startsWith(".adb/")) return@handler noResponse
-        if (path.startsWith(".${viewModel.modId}/")) return@handler noResponse
-        if (path.endsWith("favicon.ico") || path.startsWith("favicon.ico")) return@handler noResponse
+        if (path.startsWith("mmrl/")) return@handler notFoundResponse
+        if (path.startsWith(".adb/")) return@handler notFoundResponse
+        if (path.startsWith(".${viewModel.modId}/")) return@handler notFoundResponse
+        if (path.endsWith("favicon.ico") || path.startsWith("favicon.ico")) return@handler notFoundResponse
 
         try {
             val file = directory.getCanonicalFileIfChild(path) ?: run {
@@ -48,7 +46,7 @@ fun webrootPathHandler(
                     "The requested file: %s is outside the mounted directory: %s",
                     path, viewModel.webRoot
                 )
-                return@handler noResponse
+                return@handler notFoundResponse
             }
 
             Timber.d("file: ${file.absolutePath}")
@@ -60,51 +58,41 @@ fun webrootPathHandler(
                 return@handler historyFallbackFile.asResponse()
             }
 
-            if (!file.exists()) {
-                Timber.e("File not found: %s", file.absolutePath)
-                return@handler noResponse
+            val injections = buildList {
+                if (prefs.enableErudaConsole) {
+                    addInjection({
+                        appendLine("<!-- MMRL Eruda Inject -->")
+                        appendLine("<script type=\"module\">")
+                        appendLine("\timport eruda from \"https://mui.kernelsu.org/mmrl/assets/eruda.mjs\";")
+                        appendLine("\teruda.init();")
+                        appendLine("\tconst sheet = new CSSStyleSheet();")
+                        appendLine("\tsheet.replaceSync(\".eruda-dev-tools { padding-bottom: ${insets.bottom}px }\");")
+                        appendLine("\twindow.eruda.shadowRoot.adoptedStyleSheets.push(sheet)")
+                        appendLine("</script>")
+                    })
+                }
+
+                if (customCssFile.exists()) {
+                    addInjection({
+                        appendLine("<!-- MMRL Custom Stylesheet Inject -->")
+                        appendLine("<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.css\" type=\"text/css\" />")
+                    })
+                }
+
+                if (customJsFile.exists()) {
+                    addInjection({
+                        appendLine("<!-- MMRL Custom JavaScript Inject -->")
+                        appendLine("<script src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.js\" type=\"module\"></script>")
+                    }, InjectionType.BODY)
+                }
+
+                addInjection(insets.cssInject)
             }
 
-
-            val mimeType = MimeUtil.getMimeFromFileName(path)
-
-            var html by mutableStateOf(file.newInputStream())
-
-            if (prefs.enableErudaConsole) {
-                html = html.headInject(buildString {
-                    appendLine("<!-- MMRL Eruda Inject -->")
-                    appendLine("<script type=\"module\">")
-                    appendLine("\timport eruda from \"https://mui.kernelsu.org/mmrl/assets/eruda.mjs\";")
-                    appendLine("\teruda.init();")
-                    appendLine("\tconst sheet = new CSSStyleSheet();")
-                    appendLine("\tsheet.replaceSync(\".eruda-dev-tools { padding-bottom: ${insets.bottom}px }\");")
-                    appendLine("\twindow.eruda.shadowRoot.adoptedStyleSheets.push(sheet)")
-                    appendLine("</script>")
-                })
-            }
-
-            if (customCssFile.exists()) {
-                html = html.headInject(buildString {
-                    appendLine("<!-- MMRL Custom Stylesheet Inject -->")
-                    appendLine("<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.css\" type=\"text/css\" />")
-                })
-            }
-
-            if (customJsFile.exists()) {
-                html = html.bodyInject(buildString {
-                    appendLine("<!-- MMRL Custom JavaScript Inject -->")
-                    appendLine("<script src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.js\" type=\"module\"></script>")
-                })
-            }
-
-
-            html = html.headInject(insets.cssInject)
-
-
-            WebResourceResponse(mimeType, null, html)
+            return@handler file.asResponse(injections)
         } catch (e: IOException) {
             Timber.e(e, "Error opening webroot path: $path")
-            return@handler noResponse
+            return@handler notFoundResponse
         }
     }
 }

@@ -33,10 +33,10 @@ data class Insets(
         get() = buildString {
             val sdg = css
                 .replace(Regex("\t"), "\t\t")
-                .replace(Regex("\n}"), "\n\t}")
+                .replace(Regex("\n\\}"), "\n\t}")
 
             appendLine("<!-- MMRL Insets Inject -->")
-            appendLine("<style>")
+            appendLine("<style type=\"text/css\">")
             appendLine("\t$sdg")
             appendLine("</style>")
         }

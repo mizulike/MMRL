@@ -32,6 +32,7 @@ data class WebUIConfig(
     val require: WebUIConfigRequire = WebUIConfigRequire(),
     val permissions: List<String> = emptyList(),
     val historyFallback: Boolean = false,
+    val title: String? = null,
     val historyFallbackFile: String = "index.html",
 ) {
     val hasPluginDexLoaderPermission = permissions.contains(WebUIPermissions.PLUGIN_DEX_LOADER)

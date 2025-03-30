@@ -33,12 +33,12 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.local.versionDisplay
+import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.card.CardDefaults.cardStyle
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import dev.dergoogler.mmrl.compat.ext.nullable
 import dev.dergoogler.mmrl.compat.ext.takeTrue
 import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
@@ -64,7 +64,7 @@ fun ModuleItem(
 
     val canWenUIAccessed = isProviderAlive && module.features.webui && module.state != State.REMOVE
     val clicker: (() -> Unit)? = canWenUIAccessed nullable {
-        MMRLComponentActivity.startWebUIActivity(
+        WebUIActivity.start(
             context = context,
             modId = module.id
         )

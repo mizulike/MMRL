@@ -30,7 +30,6 @@ import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.ui.activity.CrashHandlerActivity
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
-import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.providable.LocalLifecycle
 import com.dergoogler.mmrl.ui.providable.LocalLifecycleScope
 import com.dergoogler.mmrl.ui.providable.LocalNavController
@@ -156,15 +155,6 @@ open class MMRLComponentActivity : ComponentActivity() {
     }
 
     companion object {
-        fun startWebUIActivity(context: Context, modId: String) {
-            val intent = Intent(context, WebUIActivity::class.java)
-                .apply {
-                    putExtra("MOD_ID", modId)
-                }
-
-            context.startActivity(intent)
-        }
-
         fun startActionActivity(context: Context, module: LocalModule) {
             val intent = Intent(context, ActionActivity::class.java)
                 .apply {
