@@ -23,7 +23,7 @@ class WebUIActivity : MMRLComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         
-        val isShortcut = intent.getStringExtra("IS_SHORTCUT", false)
+        val isShortcut = intent.getBooleanExtra("IS_SHORTCUT", false)
 
         if (isShortcut && !ProviderService.isActive) {
             setBaseContent {
