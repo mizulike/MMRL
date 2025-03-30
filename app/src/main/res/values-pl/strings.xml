@@ -310,10 +310,10 @@
     <string name="settings_log_viewer">Przeglądarka logów</string>
     <string name="explore_more_repositories">Odkryj więcej repozytoriów</string>
     <string name="get_the_most_out_of_mmrl">Wykorzystaj w pełni MMRL!</string>
-    <string name="allow_advanced_kernelsu_api">Zezwolić na zaawansowane API KernelSU?</string>
-    <string name="allow_filesystem_api">Zezwolić na API FileSystem?</string>
-    <string name="allow_filesystem_api_desc">Zezwolić temu modułowi na dostęp do API FileSystem? Jeśli nie czujesz się bezpiecznie z tym modułem, nie pozwalaj na to!</string>
-    <string name="allow_advanced_kernelsu_api_desc">Zezwolić temu modułowi na dostęp do zaawansowanego API KernelSU? Jeśli nie czujesz się bezpiecznie z tym modułem, nie pozwalaj na to!</string>
+    <string name="allow_advanced_kernelsu_api">Zezwolić na dostęp do zaawansowanego API KernelSU?</string>
+    <string name="allow_filesystem_api">Zezwolić na dostęp do API FileSystem?</string>
+    <string name="allow_filesystem_api_desc">Czy chcesz zezwolić temu modułowi na korzystanie z API FileSystem? Jeśli mu nie ufasz, możesz odmówić dostępu</string>
+    <string name="allow_advanced_kernelsu_api_desc">Czy chcesz zezwolić temu modułowi na korzystanie z zaawansowanego API KernelSU? Jeśli mu nie ufasz, możesz odmówić dostępu</string>
     <string name="working_mode_shizuku_title">Shizuku</string>
     <string name="working_mode_shizuku_desc">Rozwiązanie oparte na uprawnieniach, które pozwala aplikacjom wykonywać polecenia na poziomie systemu bez pełnego dostępu root. Wymaga autoryzacji od Sui lub Shizuku, umożliwiając podwyższone uprawnienia dla określonych operacji przy jednoczesnym zachowaniu integralności systemu.</string>
     <string name="notification_name_repository">Usługa repozytorium</string>
