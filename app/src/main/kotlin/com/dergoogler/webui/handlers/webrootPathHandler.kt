@@ -49,8 +49,6 @@ fun webrootPathHandler(
                 return@handler notFoundResponse
             }
 
-            Timber.d("file: ${file.absolutePath}")
-
             if (!file.exists() && viewModel.config.historyFallback) {
                 val historyFallbackFile =
                     SuFile(viewModel.webRoot, viewModel.config.historyFallbackFile)

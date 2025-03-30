@@ -79,29 +79,24 @@ fun rememberWebUIAssetLoader(
         HOLY_FUCK_MAN@{ uri: Uri ->
             var response: WebResourceResponse?
 
-            // Loop through matchers, return first match found.
             for (matcher in matchers) {
-                // Skip the "/" handler for now
                 if (matcher.path == "/") continue
 
                 val handler = matcher.match(uri) ?: continue
                 val suffixPath = matcher.getSuffixPath(uri)
                 response = handler(suffixPath)
 
-                // If a match is found, return the response
                 if (response != null) {
                     return@HOLY_FUCK_MAN response
                 }
             }
 
-            // Now check the "/" handler (only if no specific handler matched)
             val fallbackHandler = matchers.find { it.path == "/" }?.handle
             fallbackHandler?.let {
                 val suffixPath = matchers.find { it.path == "/" }?.getSuffixPath(uri) ?: ""
                 return@HOLY_FUCK_MAN it(suffixPath)
             }
 
-            // Return no response if no handler matched
             return@HOLY_FUCK_MAN notFoundResponse
         }
     }
