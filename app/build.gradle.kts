@@ -13,7 +13,7 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-val baseVersionName = "5.32.43"
+val baseVersionName = "5.32.44"
 val baseAppName = "MMRL"
 val baseModConfName = "ModConf"
 
