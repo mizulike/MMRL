@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebClient
@@ -91,8 +90,8 @@ fun WebUIScreen(
                                 ViewGroup.LayoutParams.MATCH_PARENT
                             )
 
-                            ViewCompat.setOnApplyWindowInsetsListener(this) { _, _ ->
-                                WindowInsetsCompat.CONSUMED
+                            ViewCompat.setOnApplyWindowInsetsListener(this) { _, o ->
+                                o.inset(insets.top, insets.bottom, insets.left, insets.right)
                             }
 
                             if (viewModel.config.hasPluginDexLoaderPermission) {

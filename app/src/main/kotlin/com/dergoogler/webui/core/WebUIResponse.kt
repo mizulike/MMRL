@@ -35,6 +35,7 @@ val headers
         "Client-Via" to "MMRL WebUI",
         "MMRL-Version-Code" to BuildConfig.VERSION_CODE.toString(),
         "MMRL-Version-Name" to BuildConfig.VERSION_NAME,
+        "Access-Control-Allow-Origin" to "*",
     )
 
 enum class InjectionType {
