@@ -7,12 +7,16 @@ interface IFileManager {
     boolean deleteOnExit(String path);
     String[] list(String path);
     long stat(String path);
-    long size(String path);
-    long sizeRecursive(String path);
+    long size(String path, boolean recursive);
     boolean delete(String path);
     boolean exists(String path);
     boolean isDirectory(String path);
     boolean isFile(String path);
+    boolean isBlock(String path);
+    boolean isCharacter(String path);
+    boolean isSymlink(String path);
+    boolean isNamedPipe(String path);
+    boolean isSocket(String path);
     boolean mkdir(String path);
     boolean mkdirs(String path);
     boolean createNewFile(String path);
@@ -24,9 +28,8 @@ interface IFileManager {
     boolean isHidden(String path);
     boolean setPermissions(String path, int mode);
     boolean setOwner(String path, int owner, int group);
-    String resolve(in String[] paths);
-    String normalizeStringPosix(String path, boolean allowAboveRoot);
     ParcelFileDescriptor parcelFile(String path);
     ParcelResult openReadStream(String path, in ParcelFileDescriptor fd);
     ParcelResult openWriteStream(String path, in ParcelFileDescriptor fd, boolean append);
+    int getMode(String path);
 }

@@ -146,7 +146,7 @@ abstract class BaseModuleManagerImpl(
                 zygisk = false,
                 apks = false
             ),
-            size = fileManager.sizeRecursive(dir.path),
+            size = fileManager.size(dir.path, true),
             lastUpdated = readLastUpdated(dir)
         )
     }

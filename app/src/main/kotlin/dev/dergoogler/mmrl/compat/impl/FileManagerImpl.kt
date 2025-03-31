@@ -1,8 +1,10 @@
 package dev.dergoogler.mmrl.compat.impl
 
 import android.os.ParcelFileDescriptor
+import android.os.RemoteException
 import android.system.ErrnoException
 import android.system.Os
+import android.system.OsConstants
 import android.system.OsConstants.O_APPEND
 import android.system.OsConstants.O_CREAT
 import android.system.OsConstants.O_RDONLY
@@ -15,8 +17,6 @@ import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.content.ParcelResult
 import dev.dergoogler.mmrl.compat.stub.IFileManager
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -46,21 +46,19 @@ class FileManagerImpl : IFileManager.Stub() {
     }
 
     override fun list(path: String): Array<String>? = mCache.get(path).list()
-    override fun size(path: String): Long = mCache.get(path).length()
-    override fun sizeRecursive(path: String): Long {
+    override fun size(path: String, recursive: Boolean): Long {
+        return if (recursive) sizeRecursive(path) else mCache.get(path).length()
+    }
+
+    private fun sizeRecursive(path: String): Long {
         val items = list(path) ?: return 0
+
         return items.sumOf { item ->
-            val fullPath = "$path/$item"
-            val path = Path.of(fullPath)
-            val isSymlink = Files.isSymbolicLink(path)
-            
-            if (isSymlink) return@sumOf 0
-            
-            if (isDirectory(fullPath)) {
-                sizeRecursive(fullPath)
-            } else {
-                size(fullPath)
-            }
+            val file = "$path/$item"
+
+            if (isSymlink(file)) 0L
+            else if (isDirectory(file)) sizeRecursive(file)
+            else mCache.get(file).length()
         }
     }
 
@@ -79,6 +77,47 @@ class FileManagerImpl : IFileManager.Stub() {
     override fun exists(path: String): Boolean = mCache.get(path).exists()
     override fun isDirectory(path: String): Boolean = mCache.get(path).isDirectory
     override fun isFile(path: String): Boolean = mCache.get(path).isFile
+
+    override fun isBlock(path: String): Boolean {
+        return try {
+            OsConstants.S_ISBLK(getMode(path))
+        } catch (e: RemoteException) {
+            false
+        }
+    }
+
+    override fun isCharacter(path: String): Boolean {
+        return try {
+            OsConstants.S_ISCHR(getMode(path))
+        } catch (e: RemoteException) {
+            false
+        }
+    }
+
+    override fun isSymlink(path: String): Boolean {
+        return try {
+            OsConstants.S_ISLNK(getMode(path))
+        } catch (e: RemoteException) {
+            false
+        }
+    }
+
+    override fun isNamedPipe(path: String): Boolean {
+        return try {
+            OsConstants.S_ISFIFO(getMode(path))
+        } catch (e: RemoteException) {
+            false
+        }
+    }
+
+    override fun isSocket(path: String): Boolean {
+        return try {
+            OsConstants.S_ISSOCK(getMode(path))
+        } catch (e: RemoteException) {
+            false
+        }
+    }
+
     override fun mkdir(path: String): Boolean = mCache.get(path).mkdir()
     override fun mkdirs(path: String): Boolean = mCache.get(path).mkdirs()
     override fun createNewFile(path: String): Boolean = mCache.get(path).createNewFile()
@@ -102,96 +141,6 @@ class FileManagerImpl : IFileManager.Stub() {
 
     override fun setOwner(path: String, owner: Int, group: Int): Boolean =
         nativeSetOwner(path, owner, group)
-
-    private fun assertPath(path: String?) {
-        if (path == null) {
-            throw IllegalArgumentException("Path must be a string. Received null")
-        }
-    }
-
-    override fun resolve(vararg paths: String): String {
-        var resolvedPath = ""
-        var resolvedAbsolute = false
-
-        for (i in paths.indices.reversed()) {
-            val path = paths[i]
-            assertPath(path)
-
-            if (path.isEmpty()) continue
-
-            resolvedPath = "$path/$resolvedPath"
-            resolvedAbsolute = path[0] == '/'
-
-            if (resolvedAbsolute) break
-        }
-
-        resolvedPath = normalizeStringPosix(resolvedPath, !resolvedAbsolute)
-
-        return when {
-            resolvedAbsolute -> if (resolvedPath.isNotEmpty()) "/$resolvedPath" else "/"
-            resolvedPath.isNotEmpty() -> resolvedPath
-            else -> "."
-        }
-    }
-
-    override fun normalizeStringPosix(path: String, allowAboveRoot: Boolean): String {
-        var res = ""
-        var lastSegmentLength = 0
-        var lastSlash = -1
-        var dots = 0
-        var code: Char
-
-        for (i in 0..path.length) {
-            code = if (i < path.length) path[i] else '/'
-
-            if (code == '/') {
-                if (lastSlash == i - 1 || dots == 1) {
-                    // NOOP
-                } else if (lastSlash != i - 1 && dots == 2) {
-                    if (res.length < 2 || lastSegmentLength != 2 || res.takeLast(2) != "..") {
-                        if (res.length > 2) {
-                            val lastSlashIndex = res.lastIndexOf('/')
-                            if (lastSlashIndex != res.length - 1) {
-                                res = if (lastSlashIndex == -1) "" else res.substring(
-                                    0,
-                                    lastSlashIndex
-                                )
-                                lastSegmentLength = res.length - 1 - res.lastIndexOf('/')
-                                lastSlash = i
-                                dots = 0
-                                continue
-                            }
-                        } else if (res.length in 1..2) {
-                            res = ""
-                            lastSegmentLength = 0
-                            lastSlash = i
-                            dots = 0
-                            continue
-                        }
-                    }
-                    if (allowAboveRoot) {
-                        res = if (res.isNotEmpty()) "$res/.." else ".."
-                        lastSegmentLength = 2
-                    }
-                } else {
-                    res = if (res.isNotEmpty()) "$res/${
-                        path.substring(
-                            lastSlash + 1,
-                            i
-                        )
-                    }" else path.substring(lastSlash + 1, i)
-                    lastSegmentLength = i - lastSlash - 1
-                }
-                lastSlash = i
-                dots = 0
-            } else if (code == '.' && dots != -1) {
-                dots++
-            } else {
-                dots = -1
-            }
-        }
-        return res
-    }
 
     override fun parcelFile(filePath: String): ParcelFileDescriptor {
         return ParcelFileDescriptor.open(File(filePath), ParcelFileDescriptor.MODE_READ_ONLY)
@@ -239,6 +188,14 @@ class FileManagerImpl : IFileManager.Stub() {
         } catch (e: ErrnoException) {
             f.close()
             return ParcelResult(e)
+        }
+    }
+
+    override fun getMode(path: String?): Int {
+        return try {
+            Os.lstat(path).st_mode
+        } catch (e: ErrnoException) {
+            0
         }
     }
 }
