@@ -174,11 +174,10 @@ jobs:
           packageName: com.dergoogler.mmrl
           releaseFiles: ${{ env.AAB_PATH }}
           track: beta
-          status: draft
+          status: production
           inAppUpdatePriority: 3
           userFraction: 0.1
   
-
       - name: Upload built apk
         if: success() && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
