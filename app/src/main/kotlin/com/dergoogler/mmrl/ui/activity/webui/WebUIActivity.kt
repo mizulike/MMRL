@@ -3,7 +3,11 @@ package com.dergoogler.mmrl.ui.activity.webui
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.graphics.Rect
 import android.os.Bundle
+import android.view.View
+import android.webkit.WebView
+import android.widget.LinearLayout
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,15 +32,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
+
 class WebUIActivity : MMRLComponentActivity() {
 
-    val userPrefs get() = runBlocking { userPreferencesRepository.data.first() }
-
+    private val userPrefs get() = runBlocking { userPreferencesRepository.data.first() }
+    private lateinit var webView: WebView
+    private var isKeyboardShowing by mutableStateOf(false)
+    private lateinit var rootView: View
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.d("WebUIActivity onCreate")
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        webView = WebView(this)
+        rootView = findViewById(android.R.id.content)
 
         lifecycleScope.launch {
             Compat.init(this@WebUIActivity, userPrefs.workingMode)
@@ -88,13 +98,45 @@ class WebUIActivity : MMRLComponentActivity() {
                 setTaskDescription(taskDescription)
             }
 
+            if (config.windowResize) {
+                rootView.getViewTreeObserver().addOnGlobalLayoutListener {
+                    val r: Rect = Rect()
+                    rootView.getWindowVisibleDisplayFrame(r)
+                    val screenHeight: Int = rootView.getRootView().height
+                    val keypadHeight: Int = screenHeight - r.bottom
+                    if (keypadHeight > screenHeight * 0.15) {
+                        if (!isKeyboardShowing) {
+                            isKeyboardShowing = true
+                            adjustWebViewHeight(keypadHeight)
+                        }
+                    } else {
+                        if (isKeyboardShowing) {
+                            isKeyboardShowing = false
+                            resetWebViewHeight()
+                        }
+                    }
+                }
+            }
+
             val viewModel =
                 hiltViewModel<WebUIViewModel, WebUIViewModel.Factory> { factory ->
                     factory.create(modId)
                 }
 
-            WebUIScreen(viewModel)
+            WebUIScreen(webView, viewModel)
         }
+    }
+
+    private fun adjustWebViewHeight(keypadHeight: Int) {
+        val params = webView.layoutParams
+        params.height = rootView.height - keypadHeight
+        webView.layoutParams = params
+    }
+
+    private fun resetWebViewHeight() {
+        val params = webView.layoutParams
+        params.height = LinearLayout.LayoutParams.MATCH_PARENT
+        webView.layoutParams = params
     }
 
     override fun onDestroy() {

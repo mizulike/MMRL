@@ -53,6 +53,7 @@ import kotlinx.html.ul
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun WebUIScreen(
+    webView: WebView,
     viewModel: WebUIViewModel,
 ) {
     val context = LocalContext.current
@@ -61,7 +62,6 @@ fun WebUIScreen(
     val colorScheme = MaterialTheme.colorScheme
     val isDarkMode = userPrefs.isDarkMode()
 
-    val webView = WebView(context)
     WebView.setWebContentsDebuggingEnabled(userPrefs.developerMode)
 
     val insets = rememberInsets()
