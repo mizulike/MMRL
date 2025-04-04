@@ -13,9 +13,10 @@ plugins {
     alias(libs.plugins.kotlin.serialization)
 }
 
-val baseVersionName = "5.32.44"
 val baseAppName = "MMRL"
 val baseModConfName = "ModConf"
+
+val version = commitCount + 31320
 
 android {
     compileSdk = 35
@@ -23,8 +24,8 @@ android {
 
     defaultConfig {
         applicationId = namespace
-        versionName = baseVersionName
-        versionCode = commitCount + 31320
+        versionName = "v$version"
+        versionCode = version
 
         resourceConfigurations += arrayOf(
             "en",
@@ -87,12 +88,12 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
-            isShrinkResources = false
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"),
-//                "proguard-rules.pro"
-//            )
+            isMinifyEnabled = true
+            isShrinkResources = true
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             resValue("string", "app_name", baseAppName)
             resValue("string", "modconf_activity", baseModConfName)
             buildConfigField("Boolean", "IS_DEV_VERSION", "false")
@@ -184,7 +185,7 @@ android {
     applicationVariants.configureEach {
         outputs.configureEach {
             (this as? ApkVariantOutputImpl)?.outputFileName =
-                "MMRL-${versionName.replace("-$name", "")}-${versionCode}-${name}.apk"
+                "MMRL-${versionName.replace("-$name", "")}-${name}.apk"
         }
     }
 }
