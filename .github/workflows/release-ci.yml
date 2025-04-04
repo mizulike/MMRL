@@ -1,4 +1,4 @@
-name: Telegram CI
+name: Release CI
 
 on:
     workflow_dispatch:
@@ -14,7 +14,12 @@ on:
             send_telegram:
               description: 'Send to Telegram'
               required: true
-              default: true
+              default: false
+              type: boolean
+            send_github:
+              description: 'Release on GitHub'
+              required: true
+              default: false
               type: boolean
             buildType:
               description: "Build Type"
@@ -71,6 +76,10 @@ jobs:
       - name: Build with Gradle
         run: chmod 755 ./gradlew && ./gradlew assemble${{ inputs.buildType }}
 
+      - name: Bundle with Gradle (only PlayStore builds)
+        if: github.event.inputs.buildType == 'Playstore'
+        run: chmod 755 ./gradlew && ./gradlew bundle${{ inputs.buildType }}
+
       - name: Get release name
         if: success() && github.ref == 'refs/heads/master'
         id: release-name
@@ -87,7 +96,8 @@ jobs:
         id: meta
         run: |
             BUILD_DATE=$(date +"%Y-%m-%d %H:%M:%S")
-            VERSION=$(git rev-list --count HEAD)
+            COMMIT_COUNT=$(git rev-list --count HEAD)
+            VERSION=$((31320 + VERSION))
             echo "VERSION=$VERSION" >> $GITHUB_ENV
             echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
 
@@ -102,6 +112,8 @@ jobs:
 
                 Build on ${{ env.BUILD_DATE }}.
 
+                **What's new?**
+
                 ${{ inputs.message }}
 
                 Type: ${{ env.BUILD_TYPE_CASED }}
@@ -112,6 +124,73 @@ jobs:
             API_HASH: ${{ secrets.API_HASH }}
             BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
+
+      - name: Check if release exists
+        id: check_release
+        run: |
+          if gh release view v${{ env.VERSION }} --repo ${{ github.repository }} > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+      - name: Create GitHub Release
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true' && github.ref == 'refs/heads/master'
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          release_name: v${{ env.VERSION }}
+          body: |
+              ${{ inputs.title }}
+              #ci_${{ env.VERSION }}
+
+              Build on ${{ env.BUILD_DATE }}.
+
+              ## What's new?
+
+              ${{ inputs.message }}
+
+              Type: ${{ env.BUILD_TYPE_CASED }}
+              [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+      - name: Upload Release Asset (APK)
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true' && github.ref == 'refs/heads/master'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.APK_PATH }}
+          asset_name: ${{ steps.release-name.outputs.name }}.apk
+          asset_content_type: application/vnd.android.package-archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Find AAB
+        if: github.event.inputs.buildType == 'Playstore'
+        id: find_aab
+        run: |
+          AAB_PATH=$(find app/build/outputs/bundle/playstore -name "*.aab" | head -n 1)
+          echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
+
+      - name: Upload to Google Play
+        if: github.ref == 'refs/heads/master' && github.event.inputs.buildType == 'Playstore'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.dergoogler.mmrl
+          releaseFiles: ${{ env.AAB_PATH }}
+          track: production
+          status: completed
+          inAppUpdatePriority: 5
+          # userFraction: 0.1
+  
       - name: Upload built apk
         if: success() && github.ref == 'refs/heads/master'
         uses: actions/upload-artifact@v4
