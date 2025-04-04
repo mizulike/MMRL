@@ -189,7 +189,7 @@ jobs:
           track: production
           status: completed
           inAppUpdatePriority: 5
-          userFraction: 0.1
+          # userFraction: 0.1
   
       - name: Upload built apk
         if: success() && github.ref == 'refs/heads/master'
