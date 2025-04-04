@@ -76,6 +76,10 @@ jobs:
       - name: Build with Gradle
         run: chmod 755 ./gradlew && ./gradlew assemble${{ inputs.buildType }}
 
+      - name: Bundle with Gradle (only PlayStore builds)
+        if: github.event.inputs.buildType == 'Playstore'
+        run: chmod 755 ./gradlew && ./gradlew bundle${{ inputs.buildType }}
+
       - name: Get release name
         if: success() && github.ref == 'refs/heads/master'
         id: release-name
@@ -155,6 +159,25 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Find AAB
+        if: github.event.inputs.buildType == 'Playstore'
+        id: find_aab
+        run: |
+          AAB_PATH=$(find app/build/outputs/bundle/playstore -name "*.aab" | head -n 1)
+          echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
+
+      - name: Upload to Google Play
+        if: github.ref == 'refs/heads/master' && github.event.inputs.buildType == 'Playstore'
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: com.dergoogler.mmrl
+          releaseFiles: ${{ env.AAB_PATH }}
+          track: beta
+          status: draft
+          inAppUpdatePriority: 3
+          userFraction: 0.1
+  
 
       - name: Upload built apk
         if: success() && github.ref == 'refs/heads/master'
