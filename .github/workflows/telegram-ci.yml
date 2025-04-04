@@ -16,6 +16,11 @@ on:
               required: true
               default: true
               type: boolean
+            send_github:
+              description: 'Release on GitHub'
+              required: true
+              default: false
+              type: boolean
             buildType:
               description: "Build Type"
               type: choice
@@ -87,7 +92,8 @@ jobs:
         id: meta
         run: |
             BUILD_DATE=$(date +"%Y-%m-%d %H:%M:%S")
-            VERSION=$(git rev-list --count HEAD)
+            COMMIT_COUNT=$(git rev-list --count HEAD)
+            VERSION=$((31320 + VERSION))
             echo "VERSION=$VERSION" >> $GITHUB_ENV
             echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
 
@@ -102,6 +108,8 @@ jobs:
 
                 Build on ${{ env.BUILD_DATE }}.
 
+                **What's new?**
+
                 ${{ inputs.message }}
 
                 Type: ${{ env.BUILD_TYPE_CASED }}
@@ -111,6 +119,42 @@ jobs:
             API_ID: ${{ secrets.API_ID }}
             API_HASH: ${{ secrets.API_HASH }}
             BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+
+      - name: Create GitHub Release
+        if: github.event.inputs.send_github == 'true' && github.ref == 'refs/heads/master'
+        id: create_release
+        uses: actions/create-release@v1
+        with:
+          tag_name: v${{ env.VERSION }}
+          release_name: v${{ env.VERSION }}
+          body: |
+              ${{ inputs.title }}
+              #ci_${{ env.VERSION }}
+
+              Build on ${{ env.BUILD_DATE }}.
+
+              ## What's new?
+
+              ${{ inputs.message }}
+
+              Type: ${{ env.BUILD_TYPE_CASED }}
+              [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    
+      - name: Upload Release Asset (APK)
+        if: github.event.inputs.send_github == 'true' && github.ref == 'refs/heads/master'
+        uses: actions/upload-release-asset@v1
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ env.APK_PATH }}
+          asset_name: ${{ steps.release-name.outputs.name }}.apk
+          asset_content_type: application/vnd.android.package-archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
 
       - name: Upload built apk
         if: success() && github.ref == 'refs/heads/master'
