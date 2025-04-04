@@ -31,7 +31,6 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.service.DownloadService
-import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.utils.Utils
 import com.dergoogler.mmrl.utils.file.SuFile
@@ -400,15 +399,6 @@ class ModulesViewModel @Inject constructor(
     }
 
     fun createShortcut(id: String) {
-        if (!ProviderService.isActive) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.provider_service_not_active),
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
         val shortcutId = "shortcut_$id"
         val config = id.toWebUiConfig()
         if (config.title == null || config.icon == null) {
@@ -441,7 +431,6 @@ class ModulesViewModel @Inject constructor(
             }
 
             val shortcutIntent = Intent(context, WebUIActivity::class.java).apply {
-                putExtra("IS_SHORTCUT", true)
                 putExtra("MOD_ID", id)
             }
             shortcutIntent.action = Intent.ACTION_VIEW
