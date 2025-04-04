@@ -1,6 +1,5 @@
 package com.dergoogler.webui.handlers
 
-import android.webkit.WebResourceResponse
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,6 +10,7 @@ import com.dergoogler.mmrl.utils.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import com.dergoogler.webui.core.InjectionType
 import com.dergoogler.webui.core.LocalInsets
+import com.dergoogler.webui.core.PathHandler
 import com.dergoogler.webui.core.addInjection
 import com.dergoogler.webui.core.asResponse
 import com.dergoogler.webui.core.notFoundResponse
@@ -20,7 +20,7 @@ import java.io.IOException
 @Composable
 fun webrootPathHandler(
     viewModel: WebUIViewModel,
-): (String) -> WebResourceResponse {
+): PathHandler {
     val prefs = LocalUserPreferences.current
     val insets = LocalInsets.current
 
@@ -35,9 +35,9 @@ fun webrootPathHandler(
     }
 
     return handler@{ path ->
-        if (path.startsWith("mmrl/")) return@handler notFoundResponse
-        if (path.startsWith(".adb/")) return@handler notFoundResponse
-        if (path.startsWith(".${viewModel.modId}/")) return@handler notFoundResponse
+        if (path.startsWith("mmrl/")) return@handler null
+        if (path.startsWith(".adb/")) return@handler null
+        if (path.startsWith(".${viewModel.modId}/")) return@handler null
         if (path.endsWith("favicon.ico") || path.startsWith("favicon.ico")) return@handler notFoundResponse
 
         try {
@@ -90,7 +90,7 @@ fun webrootPathHandler(
             return@handler file.asResponse(injections)
         } catch (e: IOException) {
             Timber.e(e, "Error opening webroot path: $path")
-            return@handler notFoundResponse
+            return@handler null
         }
     }
 }

@@ -7,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.webkit.WebViewAssetLoader
 import com.dergoogler.mmrl.utils.file.SuFile
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -50,17 +51,15 @@ data class PathHandleData(
     }
 
     @WorkerThread
-    fun getSuffixPath(uri: Uri): String {
-        val path = uri.path ?: ""
-        return path.replaceFirst(this.path, "")
-    }
+    fun getSuffixPath(url: String) = url.replaceFirst(this.path, "")
 }
 
+@WorkerThread
 @Composable
 fun rememberWebUIAssetLoader(
     domain: String = "mui.kernelsu.org",
     httpEnabled: Boolean = false,
-    handlers: List<Pair<String, (String) -> WebResourceResponse>> = emptyList(),
+    handlers: List<Pair<String, PathHandler>> = emptyList(),
 ): (Uri) -> WebResourceResponse? {
     val matchers by remember {
         derivedStateOf {
@@ -75,29 +74,20 @@ fun rememberWebUIAssetLoader(
         }
     }
 
+
     return remember {
-        HOLY_FUCK_MAN@{ uri: Uri ->
-            var response: WebResourceResponse?
-
+        @WorkerThread HOLY_FUCK_MAN@{ uri: Uri ->
             for (matcher in matchers) {
-                if (matcher.path == "/") continue
-
                 val handler = matcher.match(uri) ?: continue
-                val suffixPath = matcher.getSuffixPath(uri)
-                response = handler(suffixPath)
+                // The requested URL doesn't match the URL where this handler has been registered.
+                val suffixPath = matcher.getSuffixPath(uri.path!!)
+                val response = handler(suffixPath) ?: continue
+                // Handler doesn't want to intercept this request, try next handler.
 
-                if (response != null) {
-                    return@HOLY_FUCK_MAN response
-                }
+                return@HOLY_FUCK_MAN response
             }
 
-            val fallbackHandler = matchers.find { it.path == "/" }?.handle
-            fallbackHandler?.let {
-                val suffixPath = matchers.find { it.path == "/" }?.getSuffixPath(uri) ?: ""
-                return@HOLY_FUCK_MAN it(suffixPath)
-            }
-
-            return@HOLY_FUCK_MAN notFoundResponse
+            return@HOLY_FUCK_MAN null
         }
     }
 }
