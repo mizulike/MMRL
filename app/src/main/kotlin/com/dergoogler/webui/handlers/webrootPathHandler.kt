@@ -56,13 +56,36 @@ fun webrootPathHandler(
                 return@handler historyFallbackFile.asResponse()
             }
 
+            data class Editor(
+                val mode: String,
+                val name: String,
+                val file: SuFile,
+            )
+
             val injections = buildList {
                 if (prefs.developerMode && prefs.enableErudaConsole) {
                     addInjection({
-                        appendLine("<!-- MMRL Eruda Inject -->")
-                        appendLine("<script type=\"module\">")
-                        appendLine("\timport eruda from \"https://mui.kernelsu.org/mmrl/assets/eruda.mjs\";")
+                        appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/mmrl/assets/eruda/eruda-editor.js\"></script>")
+                        appendLine("<script data-mmrl type=\"module\">")
+                        appendLine("\timport eruda from \"https://mui.kernelsu.org/mmrl/assets/eruda/eruda.mjs\";")
                         appendLine("\teruda.init();")
+
+                        val editors = listOf(
+                            Editor("css", "style", customCssFile),
+                            Editor("javascript", "script", customJsFile),
+                        )
+
+                        for (editor in editors) {
+                            appendLine("\tconst ${editor.name} = erudaEditor({")
+                            appendLine("\t\t\tmodId: \"${viewModel.modId}\",")
+                            appendLine("\t\t\tfile: ${viewModel.sanitizedModIdWithFile},")
+                            appendLine("\t\t\tfileToEdit: \"${editor.file.path}\",")
+                            appendLine("\t\t\tlang: \"${editor.mode}\",")
+                            appendLine("\t\t\tname: \"${editor.name}\",")
+                            appendLine("\t})")
+                            appendLine("eruda.add(${editor.name})")
+                        }
+
                         appendLine("\tconst sheet = new CSSStyleSheet();")
                         appendLine("\tsheet.replaceSync(\".eruda-dev-tools { padding-bottom: ${insets.bottom}px }\");")
                         appendLine("\twindow.eruda.shadowRoot.adoptedStyleSheets.push(sheet)")
@@ -72,15 +95,13 @@ fun webrootPathHandler(
 
                 if (customCssFile.exists()) {
                     addInjection({
-                        appendLine("<!-- MMRL Custom Stylesheet Inject -->")
-                        appendLine("<link rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.css\" type=\"text/css\" />")
+                        appendLine("<link data-mmrl rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.css\" type=\"text/css\" />")
                     })
                 }
 
                 if (customJsFile.exists()) {
                     addInjection({
-                        appendLine("<!-- MMRL Custom JavaScript Inject -->")
-                        appendLine("<script src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.js\" type=\"module\"></script>")
+                        appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.js\" type=\"module\"></script>")
                     }, InjectionType.BODY)
                 }
 
