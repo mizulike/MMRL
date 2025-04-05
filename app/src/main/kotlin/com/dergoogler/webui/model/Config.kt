@@ -36,6 +36,8 @@ data class WebUIConfig(
     val title: String? = null,
     val icon: String? = null,
     val windowResize: Boolean = true,
+    val backHandler: Boolean = true,
+    val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
 ) {
     val hasPluginDexLoaderPermission = permissions.contains(WebUIPermissions.PLUGIN_DEX_LOADER)

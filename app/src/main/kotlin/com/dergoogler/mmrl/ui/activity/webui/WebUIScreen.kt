@@ -1,10 +1,12 @@
 package com.dergoogler.mmrl.ui.activity.webui
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.webkit.WebView
+import androidx.activity.compose.BackHandler
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -22,6 +24,8 @@ import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.FileInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.MMRLInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.VersionInterface
 import com.dergoogler.mmrl.ui.component.Loading
+import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
+import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.utils.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
@@ -58,11 +62,31 @@ fun WebUIScreen(
 ) {
     val context = LocalContext.current
     val userPrefs = LocalUserPreferences.current
+    val showConfirm = rememberConfirm()
     val browser = LocalUriHandler.current as MMRLUriHandlerImpl
     val colorScheme = MaterialTheme.colorScheme
     val isDarkMode = userPrefs.isDarkMode()
 
     WebView.setWebContentsDebuggingEnabled(userPrefs.developerMode)
+
+    BackHandler {
+        if (webView.canGoBack()) {
+            webView.goBack()
+            return@BackHandler
+        }
+
+        if (viewModel.config.exitConfirm) {
+            showConfirm(ConfirmData(
+                title = R.string.exit,
+                description = R.string.are_you_sure_you_want_to_exit,
+                onConfirm = { (context as Activity).finish() },
+                onClose = {}
+            ))
+            return@BackHandler
+        }
+
+        (context as Activity).finish()
+    }
 
     val insets = rememberInsets()
 
@@ -80,94 +104,88 @@ fun WebUIScreen(
             )
 
             key(viewModel.recomposeCount) {
-                AndroidView(
-                    factory = {
-                        webView.apply {
-                            setBackgroundColor(colorScheme.background.toArgb())
-                            background = ColorDrawable(colorScheme.background.toArgb())
-                            layoutParams = ViewGroup.LayoutParams(
-                                ViewGroup.LayoutParams.MATCH_PARENT,
-                                ViewGroup.LayoutParams.MATCH_PARENT
-                            )
+                AndroidView(factory = {
+                    webView.apply {
+                        setBackgroundColor(colorScheme.background.toArgb())
+                        background = ColorDrawable(colorScheme.background.toArgb())
+                        layoutParams = ViewGroup.LayoutParams(
+                            ViewGroup.LayoutParams.MATCH_PARENT,
+                            ViewGroup.LayoutParams.MATCH_PARENT
+                        )
 
-                            ViewCompat.setOnApplyWindowInsetsListener(this) { _, o ->
-                                o.inset(insets.top, insets.bottom, insets.left, insets.right)
-                            }
+                        ViewCompat.setOnApplyWindowInsetsListener(this) { _, o ->
+                            o.inset(insets.top, insets.bottom, insets.left, insets.right)
+                        }
 
-                            if (viewModel.config.hasPluginDexLoaderPermission) {
-                                viewModel.loadDexPluginsFromMemory(context, this)
-                            }
+                        if (viewModel.config.hasPluginDexLoaderPermission) {
+                            viewModel.loadDexPluginsFromMemory(context, this)
+                        }
 
-                            webViewClient = MMRLWebClient(
+                        webViewClient = MMRLWebClient(
+                            context = context,
+                            browser = browser,
+                            webuiAssetsLoader = webuiAssetsLoader,
+                            userPrefs = userPrefs,
+                            viewModel = viewModel,
+                        )
+
+                        addJavascriptInterface(
+                            VersionInterface(
                                 context = context,
-                                browser = browser,
-                                webuiAssetsLoader = webuiAssetsLoader,
-                                userPrefs = userPrefs,
+                                webView = this,
                                 viewModel = viewModel,
-                            )
-
-                            addJavascriptInterface(
-                                VersionInterface(
-                                    context = context,
-                                    webView = this,
-                                    viewModel = viewModel,
-                                ), "mmrl"
-                            )
-                        }
-                    },
-                    update = {
-                        it.apply {
-                            settings.apply {
-                                javaScriptEnabled = true
-                                domStorageEnabled = true
-                                allowFileAccess = false
-                                userPrefs.developerMode({ useWebUiDevUrl }) {
-                                    mixedContentMode =
-                                        android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-                                }
-                                userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
-                            }
-
-
-                            if (viewModel.requireNewAppVersion) {
-                                loadData(
-                                    getRequireNewVersion(context, viewModel),
-                                    "text/html",
-                                    "UTF-8"
-                                )
-
-                                return@apply
-                            }
-
-                            addJavascriptInterface(
-                                MMRLInterface(
-                                    viewModel = viewModel,
-                                    context = context,
-                                    isDark = isDarkMode,
-                                    webView = this,
-                                ), "$${viewModel.sanitizedModId}"
-                            )
-
-                            addJavascriptInterface(
-                                AdvancedKernelSUAPI(context, this, userPrefs), "ksu"
-                            )
-
-                            addJavascriptInterface(
-                                FileInterface(this, context),
-                                viewModel.sanitizedModIdWithFile
-                            )
-
-                            val dsl = viewModel.loadDslDex(context, webView)
-
-                            if (dsl != null) {
-                                loadData(dsl, "text/html", "UTF-8")
-                                return@apply
-                            }
-
-                            loadUrl(viewModel.domainUrl)
-                        }
+                            ), "mmrl"
+                        )
                     }
-                )
+                }, update = {
+                    it.apply {
+                        settings.apply {
+                            javaScriptEnabled = true
+                            domStorageEnabled = true
+                            allowFileAccess = false
+                            userPrefs.developerMode({ useWebUiDevUrl }) {
+                                mixedContentMode =
+                                    android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
+                            }
+                            userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
+                        }
+
+
+                        if (viewModel.requireNewAppVersion) {
+                            loadData(
+                                getRequireNewVersion(context, viewModel), "text/html", "UTF-8"
+                            )
+
+                            return@apply
+                        }
+
+                        addJavascriptInterface(
+                            MMRLInterface(
+                                viewModel = viewModel,
+                                context = context,
+                                isDark = isDarkMode,
+                                webView = this,
+                            ), "$${viewModel.sanitizedModId}"
+                        )
+
+                        addJavascriptInterface(
+                            AdvancedKernelSUAPI(context, this, userPrefs), "ksu"
+                        )
+
+                        addJavascriptInterface(
+                            FileInterface(this, context), viewModel.sanitizedModIdWithFile
+                        )
+
+                        val dsl = viewModel.loadDslDex(context, webView)
+
+                        if (dsl != null) {
+                            loadData(dsl, "text/html", "UTF-8")
+                            return@apply
+                        }
+
+                        loadUrl(viewModel.domainUrl)
+                    }
+                })
             }
         }
     } else {
@@ -197,8 +215,7 @@ fun getRequireNewVersion(
             }
             link {
                 rel = "stylesheet"
-                href =
-                    "https://mui.kernelsu.org/mmrl/assets/webui/requireNewVersion.css"
+                href = "https://mui.kernelsu.org/mmrl/assets/webui/requireNewVersion.css"
             }
             title { +"New App Version Required" }
         }
