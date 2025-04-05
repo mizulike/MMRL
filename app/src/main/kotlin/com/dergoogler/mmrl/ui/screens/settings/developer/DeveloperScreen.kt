@@ -89,6 +89,7 @@ fun DeveloperScreen() {
         )
 
         ListSwitchItem(
+            enabled = userPreferences.developerMode,
             title = stringResource(R.string.settings_security_inject_eruda),
             desc = stringResource(id = R.string.settings_security_inject_eruda_desc),
             checked = userPreferences.enableErudaConsole,

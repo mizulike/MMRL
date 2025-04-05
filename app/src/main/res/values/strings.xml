@@ -380,4 +380,5 @@
     <string name="missing_mod_id">A Module ID was not defined</string>
     <string name="are_you_sure_you_want_to_exit">Are you sure you want to exit?</string>
     <string name="exit">Exit</string>
+    <string name="says">%1$s says</string>
 </resources>

@@ -57,7 +57,7 @@ fun webrootPathHandler(
             }
 
             val injections = buildList {
-                if (prefs.enableErudaConsole) {
+                if (prefs.developerMode && prefs.enableErudaConsole) {
                     addInjection({
                         appendLine("<!-- MMRL Eruda Inject -->")
                         appendLine("<script type=\"module\">")

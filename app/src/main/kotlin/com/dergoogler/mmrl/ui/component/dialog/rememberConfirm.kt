@@ -1,8 +1,8 @@
 package com.dergoogler.mmrl.ui.component.dialog
 
 import android.app.Activity
+import android.content.Context
 import android.view.ViewGroup
-import androidx.annotation.StringRes
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,15 +13,16 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 
 data class ConfirmData(
-    @StringRes val title: Int,
-    @StringRes val description: Int,
+    val title: String,
+    val description: String,
     val onConfirm: () -> Unit,
     val onClose: () -> Unit,
 )
 
 @Composable
-fun rememberConfirm(): (ConfirmData) -> Unit {
-    val context = LocalContext.current
+fun rememberConfirm(
+    context: Context = LocalContext.current,
+): (ConfirmData) -> Unit {
     val theme = MaterialTheme.colorScheme
 
     val confirm: (ConfirmData) -> Unit = remember {

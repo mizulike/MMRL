@@ -26,6 +26,7 @@ import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.VersionInterface
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
+import com.dergoogler.mmrl.ui.component.dialog.rememberPrompt
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.utils.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
@@ -62,7 +63,8 @@ fun WebUIScreen(
 ) {
     val context = LocalContext.current
     val userPrefs = LocalUserPreferences.current
-    val showConfirm = rememberConfirm()
+    val showConfirm = rememberConfirm(context)
+    val showPrompt = rememberPrompt(context)
     val browser = LocalUriHandler.current as MMRLUriHandlerImpl
     val colorScheme = MaterialTheme.colorScheme
     val isDarkMode = userPrefs.isDarkMode()
@@ -70,15 +72,15 @@ fun WebUIScreen(
     WebView.setWebContentsDebuggingEnabled(userPrefs.developerMode)
 
     BackHandler {
-        if (webView.canGoBack()) {
+        if (viewModel.config.backHandler && webView.canGoBack()) {
             webView.goBack()
             return@BackHandler
         }
 
         if (viewModel.config.exitConfirm) {
             showConfirm(ConfirmData(
-                title = R.string.exit,
-                description = R.string.are_you_sure_you_want_to_exit,
+                title = context.getString(R.string.exit),
+                description = context.getString(R.string.are_you_sure_you_want_to_exit),
                 onConfirm = { (context as Activity).finish() },
                 onClose = {}
             ))
@@ -127,6 +129,13 @@ fun WebUIScreen(
                             webuiAssetsLoader = webuiAssetsLoader,
                             userPrefs = userPrefs,
                             viewModel = viewModel,
+                        )
+
+                        webChromeClient = MMRLWebClient.MMRLChromeClient(
+                            context = context,
+                            viewModel = viewModel,
+                            showPrompt = showPrompt,
+                            showConfirm = showConfirm
                         )
 
                         addJavascriptInterface(
