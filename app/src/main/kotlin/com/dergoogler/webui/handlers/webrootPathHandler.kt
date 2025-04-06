@@ -100,6 +100,10 @@ fun webrootPathHandler(
                 }
 
                 addInjection({
+                    appendLine("<script data-mmrl-internal data-mmrl-dont-use src=\"https://mui.kernelsu.org/mmrl/scripts/require.js\" type=\"module\"></script>")
+                }, InjectionType.BODY)
+
+                addInjection({
                     appendLine("<script data-mmrl-internal data-mmrl-dont-use src=\"https://mui.kernelsu.org/mmrl/scripts/sufile-fetch-ext.js\" type=\"module\"></script>")
                 }, InjectionType.BODY)
 
