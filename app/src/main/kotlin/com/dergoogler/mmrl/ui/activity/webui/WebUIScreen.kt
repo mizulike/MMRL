@@ -4,19 +4,13 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.view.ViewGroup
-import android.webkit.ValueCallback
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.key
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -76,15 +70,6 @@ fun WebUIScreen(
     val isDarkMode = userPrefs.isDarkMode()
 
     WebView.setWebContentsDebuggingEnabled(userPrefs.developerMode)
-
-    val filePathCallback = remember { mutableStateOf<ValueCallback<Array<Uri>>?>(null) }
-
-    val filePickerLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.OpenMultipleDocuments()
-    ) { uris ->
-        filePathCallback.value?.onReceiveValue(uris.toTypedArray())
-        filePathCallback.value = null
-    }
 
     BackHandler {
         if (viewModel.config.backHandler && webView.canGoBack()) {
@@ -151,7 +136,6 @@ fun WebUIScreen(
                             viewModel = viewModel,
                             showPrompt = showPrompt,
                             showConfirm = showConfirm,
-                            filePickerLauncher = filePickerLauncher
                         )
 
                         addJavascriptInterface(
