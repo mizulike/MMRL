@@ -2,7 +2,7 @@ import com.android.build.gradle.internal.api.ApkVariantOutputImpl
 import org.gradle.internal.extensions.stdlib.capitalized
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "com.dergoogler.mmrl"
+group = "com.github.MMRLApp"
 
 plugins {
     alias(libs.plugins.self.application)
