@@ -29,7 +29,7 @@ class MMRLWebClient(
     private val userPrefs: UserPreferences,
     private val webuiAssetsLoader: (Uri) -> WebResourceResponse?,
 ) : WebViewClient() {
-    class MMRLChromeClient(
+    class ChromeClient(
         private val context: Context,
         private val showConfirm: (ConfirmData) -> Unit,
         private val showPrompt: (PromptData) -> Unit,
