@@ -4,6 +4,7 @@ import android.content.Context
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.app.moshi
 import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.core.MMRLWebUIInterface
 
@@ -33,6 +34,10 @@ class FileInterface(
             runJs("(function() { try { $callbackFunc(null); } catch(e) { console.error(e); } })();")
         }
     }
+
+    @JavascriptInterface
+    fun readBytes(path: String): String =
+        moshi.adapter(ByteArray::class.java).toJson(SuFile(path).readBytes()).toString()
 
     @JavascriptInterface
     fun write(path: String, data: String) =
