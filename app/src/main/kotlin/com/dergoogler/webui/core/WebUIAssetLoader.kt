@@ -7,7 +7,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.webkit.WebViewAssetLoader
 import com.dergoogler.mmrl.utils.file.SuFile
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
@@ -153,6 +152,17 @@ fun String.asStyleResponse(): WebResourceResponse {
 
     return WebResourceResponse(
         "text/css",
+        "UTF-8",
+        inputStream
+    )
+}
+
+fun String.asScriptResponse(): WebResourceResponse {
+    val inputStream: InputStream =
+        ByteArrayInputStream(this.toByteArray(StandardCharsets.UTF_8))
+
+    return WebResourceResponse(
+        "text/javascript",
         "UTF-8",
         inputStream
     )

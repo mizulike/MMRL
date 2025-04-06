@@ -91,6 +91,8 @@ class WebUIViewModel @AssistedInject constructor(
             }File"
         }
 
+    val sanitizedModIdWithFileInputStream = "${sanitizedModIdWithFile}InputStream"
+
     var dialogRequestAdvancedKernelSUAPI by mutableStateOf(false)
     var dialogRequestFileSystemAPI by mutableStateOf(false)
 

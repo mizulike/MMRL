@@ -8,14 +8,16 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ui.theme.toCssValue
+import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import com.dergoogler.webui.core.LocalInsets
+import com.dergoogler.webui.core.asScriptResponse
 import com.dergoogler.webui.core.asStyleResponse
 import com.dergoogler.webui.core.notFoundResponse
 import timber.log.Timber
 import java.io.IOException
 
 @Composable
-fun mmrlPathHandler(): (String) -> WebResourceResponse {
+fun mmrlPathHandler(viewModel: WebUIViewModel? = null): (String) -> WebResourceResponse {
     val colorScheme = MaterialTheme.colorScheme
     val filledTonalButtonColors = ButtonDefaults.filledTonalButtonColors()
     val cardColors = CardDefaults.cardColors()
@@ -80,6 +82,105 @@ fun mmrlPathHandler(): (String) -> WebResourceResponse {
         try {
             if (path.matches(Regex("^assets(/.*)?$"))) {
                 return@handler assetsHandler(path.removePrefix("assets/"))
+            }
+
+            if (viewModel != null && path.matches(Regex("scripts/sufile-fetch-ext\\.js"))) {
+                val file = viewModel.sanitizedModIdWithFile
+                val inputStream = viewModel.sanitizedModIdWithFileInputStream
+
+                return@handler """window.$file = window.$file || {};
+
+const defaultFetchStreamOptions = {
+  chunkSize: 1024 * 1024,
+  signal: null,
+};
+
+window.$file.fetch = function (path, options = {}) {
+  // Validate required dependencies
+  if (typeof $inputStream === "undefined") {
+    return Promise.reject(new Error("$inputStream is not available"));
+  }
+
+  const mergedOptions = { ...defaultFetchStreamOptions, ...options };
+
+  return new Promise((resolve, reject) => {
+    let input;
+    try {
+      input = $inputStream.open(path);
+      if (!input) {
+        throw new Error("Failed to open file input stream");
+      }
+    } catch (error) {
+      reject(
+        new Error("Failed to open file at path '" + path + "': error.message")
+      );
+      return;
+    }
+
+    const abortHandler = () => {
+      try {
+        input?.close();
+      } catch (error) {
+        console.error("Error during abort cleanup:", error);
+      }
+      reject(new DOMException("The operation was aborted.", "AbortError"));
+    };
+
+    if (mergedOptions.signal) {
+      if (mergedOptions.signal.aborted) {
+        abortHandler();
+        return;
+      }
+      mergedOptions.signal.addEventListener("abort", abortHandler);
+    }
+
+    const stream = new ReadableStream({
+      async pull(controller) {
+        try {
+          const chunkData = input.readChunk(mergedOptions.chunkSize);
+          if (!chunkData) {
+            controller.close();
+            cleanup();
+            return;
+          }
+
+          const chunk = JSON.parse(chunkData);
+          if (chunk && chunk.length > 0) {
+            controller.enqueue(new Uint8Array(chunk));
+          } else {
+            controller.close();
+            cleanup();
+          }
+        } catch (error) {
+          cleanup();
+          controller.error(error);
+          reject(new Error("Error reading file chunk: " + error.message));
+        }
+      },
+      cancel() {
+        cleanup();
+      },
+    });
+
+    function cleanup() {
+      try {
+        if (mergedOptions.signal) {
+          mergedOptions.signal.removeEventListener("abort", abortHandler);
+        }
+        input?.close();
+      } catch (error) {
+        console.error("Error during cleanup:", error);
+      }
+    }
+
+    resolve(
+      new Response(stream, {
+        headers: { "Content-Type": "application/octet-stream" },
+      })
+    );
+  });
+};
+""".trimIndent().asScriptResponse()
             }
 
             if (path.matches(Regex("insets\\.css"))) {

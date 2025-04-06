@@ -99,6 +99,10 @@ fun webrootPathHandler(
                     })
                 }
 
+                addInjection({
+                    appendLine("<script data-mmrl-internal data-mmrl-dont-use src=\"https://mui.kernelsu.org/mmrl/scripts/sufile-fetch-ext.js\" type=\"module\"></script>")
+                }, InjectionType.BODY)
+
                 if (customJsFile.exists()) {
                     addInjection({
                         appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.js\" type=\"module\"></script>")

@@ -99,7 +99,7 @@ fun WebUIScreen(
         ) {
             val webuiAssetsLoader = rememberWebUIAssetLoader(
                 handlers = listOf(
-                    "/mmrl/" to mmrlPathHandler(),
+                    "/mmrl/" to mmrlPathHandler(viewModel),
                     ".${viewModel.modId}/" to suPathHandler("/data/adb/modules/${viewModel.modId}".toSuFile()),
                     "/.adb/" to suPathHandler("/data/adb".toSuFile()),
                     "/" to webrootPathHandler(viewModel),
@@ -151,7 +151,7 @@ fun WebUIScreen(
                             FileInputInterface(
                                 context = context,
                                 webView = this,
-                            ), "${viewModel.sanitizedModIdWithFile}InputStream"
+                            ), viewModel.sanitizedModIdWithFileInputStream
                         )
                     }
                 }, update = {
