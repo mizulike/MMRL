@@ -5,8 +5,6 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.webkit.WebView
-import com.dergoogler.mmrl.ui.activity.webui.interfaces.ksu.hideSystemUI
-import com.dergoogler.mmrl.ui.activity.webui.interfaces.ksu.showSystemUI
 
 interface WebUIConsole {
     fun error(message: String)
@@ -46,6 +44,22 @@ open class MMRLWebUIInterface(
         override fun log(message: String) = runJs("console.log('$message')")
         override fun warn(message: String) = runJs("console.warn('$message')")
     }
+
+    internal fun <R> runTry(
+        message: String = "Unknown Error",
+        default: R,
+        block: () -> R,
+    ): R = try {
+        block()
+    } catch (e: Throwable) {
+        runJs("new Error('$message', { cause: \"${e.message}\" })")
+        default
+    }
+
+    internal fun <R> runTry(
+        message: String = "Unknown Error",
+        block: () -> R,
+    ): R? = runTry(message, null, block)
 
     internal fun <R, T> runTryJsWith(
         with: T,

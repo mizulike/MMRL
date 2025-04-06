@@ -4,7 +4,6 @@ import android.content.Context
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.dergoogler.mmrl.Compat
-import com.dergoogler.mmrl.app.moshi
 import com.dergoogler.mmrl.utils.file.SuFile
 import dev.dergoogler.mmrl.compat.core.MMRLWebUIInterface
 
@@ -20,24 +19,6 @@ class FileInterface(
         runTryJsWith(SuFile(path), "Error while reading from \\'$path\\'.") {
             return@runTryJsWith readText()
         }
-
-    @JavascriptInterface
-    fun readBytes(path: String, callbackFunc: String) = runPost {
-        SuFile(path).newInputStream().use { input ->
-            while (true) {
-                val byte = input.read()
-                if (byte == -1) break
-                val unsignedByte = byte and 0xFF
-                runJs("(function() { try { ${callbackFunc}($unsignedByte); } catch(e) { console.error(e); } })();")
-            }
-
-            runJs("(function() { try { $callbackFunc(null); } catch(e) { console.error(e); } })();")
-        }
-    }
-
-    @JavascriptInterface
-    fun readBytes(path: String): String =
-        moshi.adapter(ByteArray::class.java).toJson(SuFile(path).readBytes()).toString()
 
     @JavascriptInterface
     fun write(path: String, data: String) =

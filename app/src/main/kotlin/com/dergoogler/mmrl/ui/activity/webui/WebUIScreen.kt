@@ -20,6 +20,7 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.ui.activity.webui.handlers.MMRLWebClient
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.ksu.AdvancedKernelSUAPI
+import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.FileInputInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.FileInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.MMRLInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl.VersionInterface
@@ -144,6 +145,13 @@ fun WebUIScreen(
                                 webView = this,
                                 viewModel = viewModel,
                             ), "mmrl"
+                        )
+
+                        addJavascriptInterface(
+                            FileInputInterface(
+                                context = context,
+                                webView = this,
+                            ), "${viewModel.sanitizedModIdWithFile}InputStream"
                         )
                     }
                 }, update = {
