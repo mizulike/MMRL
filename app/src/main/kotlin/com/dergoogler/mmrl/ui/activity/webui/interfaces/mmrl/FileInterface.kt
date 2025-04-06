@@ -21,6 +21,20 @@ class FileInterface(
         }
 
     @JavascriptInterface
+    fun readBytes(path: String, callbackFunc: String) = runPost {
+        SuFile(path).newInputStream().use { input ->
+            while (true) {
+                val byte = input.read()
+                if (byte == -1) break
+                val unsignedByte = byte and 0xFF
+                runJs("(function() { try { ${callbackFunc}($unsignedByte); } catch(e) { console.error(e); } })();")
+            }
+
+            runJs("(function() { try { $callbackFunc(null); } catch(e) { console.error(e); } })();")
+        }
+    }
+
+    @JavascriptInterface
     fun write(path: String, data: String) =
         runTryJsWith(SuFile(path), "Error while writing to \\'$path\\'") {
             writeText(data)
