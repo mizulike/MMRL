@@ -2,8 +2,6 @@ import com.android.build.gradle.internal.api.ApkVariantOutputImpl
 import org.gradle.internal.extensions.stdlib.capitalized
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "com.github.MMRLApp"
-
 plugins {
     alias(libs.plugins.self.application)
     alias(libs.plugins.self.compose)
@@ -13,7 +11,6 @@ plugins {
     alias(libs.plugins.ksp)
     alias(libs.plugins.protobuf)
     alias(libs.plugins.kotlin.serialization)
-    id("maven-publish")
 }
 
 val baseAppName = "MMRL"
@@ -191,13 +188,6 @@ android {
                 "MMRL-$versionName.apk"
         }
     }
-
-    publishing {
-        singleVariant("release") {
-            withSourcesJar()
-            withJavadocJar()
-        }
-    }
 }
 
 androidComponents {
@@ -283,18 +273,4 @@ dependencies {
     implementation(libs.square.logging.interceptor)
     implementation(libs.square.moshi)
     ksp(libs.square.moshi.kotlin)
-}
-
-afterEvaluate {
-    publishing {
-        publications {
-            register<MavenPublication>("release") {
-                groupId = "com.github.MMRLApp"
-                artifactId = "app"
-                version = version
-
-                from(components["release"])
-            }
-        }
-    }
 }
