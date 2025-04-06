@@ -40,7 +40,7 @@ data class Insets(
                 .replace(Regex("\n\\}"), "\n\t}")
 
             appendLine("<!-- MMRL Insets Inject -->")
-            appendLine("<style type=\"text/css\">")
+            appendLine("<style data-mmrl type=\"text/css\">")
             appendLine("\t$sdg")
             appendLine("</style>")
         }
