@@ -12,7 +12,12 @@ on:
               default: 'No message.'
               description: 'Message'
             send_telegram:
-              description: 'Send to Telegram'
+              description: 'Release to Telegram'
+              required: true
+              default: false
+              type: boolean 
+            send_playstore:
+              description: 'Release on Play Store'
               required: true
               default: false
               type: boolean
@@ -75,7 +80,7 @@ jobs:
 
       - name: Build with Gradle
         run: chmod 755 ./gradlew && ./gradlew assemble${{ inputs.buildType }}
-
+ 
       - name: Bundle with Gradle (only PlayStore builds)
         if: github.event.inputs.buildType == 'Playstore'
         run: chmod 755 ./gradlew && ./gradlew bundle${{ inputs.buildType }}
@@ -173,14 +178,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Find AAB
-        if: github.event.inputs.buildType == 'Playstore'
+        if: github.event.inputs.send_playstore == 'true'
         id: find_aab
         run: |
           AAB_PATH=$(find app/build/outputs/bundle/playstore -name "*.aab" | head -n 1)
           echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
 
       - name: Upload to Google Play
-        if: github.ref == 'refs/heads/master' && github.event.inputs.buildType == 'Playstore'
+        if: github.event.inputs.send_playstore == 'true'
         uses: r0adkll/upload-google-play@v1
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
