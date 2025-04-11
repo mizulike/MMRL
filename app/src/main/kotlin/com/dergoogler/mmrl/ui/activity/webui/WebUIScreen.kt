@@ -102,6 +102,8 @@ fun WebUIScreen(
                     "/mmrl/" to mmrlPathHandler(viewModel),
                     ".${viewModel.modId}/" to suPathHandler("/data/adb/modules/${viewModel.modId}".toSuFile()),
                     "/.adb/" to suPathHandler("/data/adb".toSuFile()),
+                    "/.config/" to suPathHandler("/data/adb/.config".toSuFile()),
+                    "/.local/" to suPathHandler("/data/adb/.local".toSuFile()),
                     "/" to webrootPathHandler(viewModel),
                 )
             )

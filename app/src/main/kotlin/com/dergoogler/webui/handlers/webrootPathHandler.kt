@@ -1,6 +1,7 @@
 package com.dergoogler.webui.handlers
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,8 +26,14 @@ fun webrootPathHandler(
     val insets = LocalInsets.current
 
     val configBase = SuFile("/data/adb/.config/${viewModel.modId}")
-    val customCssFile = SuFile(configBase, "custom.css")
-    val customJsFile = SuFile(configBase, "custom.js")
+    val configStyleBase = SuFile(configBase, "style")
+    val configJsBase = SuFile(configBase, "js")
+
+    val customCssFile = SuFile(configStyleBase, "custom.css")
+
+    val customJsHead = SuFile(configJsBase, "head")
+    val customJsBody = SuFile(configJsBase, "body")
+    val customJsFile = SuFile(customJsBody, "custom.js")
 
     val directory by remember {
         mutableStateOf(
@@ -34,10 +41,17 @@ fun webrootPathHandler(
         )
     }
 
+    LaunchedEffect(Unit) {
+        SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
+    }
+
+    val reversedPaths = listOf("mmrl/", ".adb/", ".local/", ".config/", ".${viewModel.modId}/")
+
     return handler@{ path ->
-        if (path.startsWith("mmrl/")) return@handler null
-        if (path.startsWith(".adb/")) return@handler null
-        if (path.startsWith(".${viewModel.modId}/")) return@handler null
+        reversedPaths.forEach {
+            if (path.endsWith(it)) return@handler null
+        }
+
         if (path.endsWith("favicon.ico") || path.startsWith("favicon.ico")) return@handler notFoundResponse
 
         try {
@@ -93,10 +107,12 @@ fun webrootPathHandler(
                     })
                 }
 
-                if (customCssFile.exists()) {
-                    addInjection({
-                        appendLine("<link data-mmrl rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.css\" type=\"text/css\" />")
-                    })
+                configStyleBase.exists {
+                    it.listFiles { f -> f.exists() && f.extension == "css" }.forEach {
+                        addInjection({
+                            appendLine("<link data-mmrl rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/style/${it.name}\" type=\"text/css\" />")
+                        })
+                    }
                 }
 
                 addInjection({
@@ -107,10 +123,20 @@ fun webrootPathHandler(
                     appendLine("<script data-mmrl-internal data-mmrl-dont-use src=\"https://mui.kernelsu.org/mmrl/scripts/sufile-fetch-ext.js\" type=\"module\"></script>")
                 }, InjectionType.BODY)
 
-                if (customJsFile.exists()) {
-                    addInjection({
-                        appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/custom.js\" type=\"module\"></script>")
-                    }, InjectionType.BODY)
+                customJsHead.exists {
+                    it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
+                        addInjection({
+                            appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/js/head/${it.name}\" type=\"module\"></script>")
+                        }, InjectionType.HEAD)
+                    }
+                }
+
+                customJsBody.exists {
+                    it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
+                        addInjection({
+                            appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/js/body/${it.name}\" type=\"module\"></script>")
+                        }, InjectionType.BODY)
+                    }
                 }
 
                 addInjection(insets.cssInject)

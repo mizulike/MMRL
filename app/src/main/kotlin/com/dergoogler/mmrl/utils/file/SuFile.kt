@@ -78,6 +78,10 @@ class SuFile(
         return fileManager.exists(this.path)
     }
 
+    fun exists(block: (SuFile) -> Unit) {
+        if (exists()) block(this)
+    }
+
     override fun isDirectory(): Boolean {
         return fileManager.isDirectory(this.path)
     }
@@ -234,6 +238,12 @@ class SuFile(
             return SuFile(this)
         }
 
+        fun createDirectories(vararg file: SuFile): Boolean {
+            for (f in file) {
+                if (!f.mkdirs()) return false
+            }
+            return true
+        }
 
         private fun assertPath(path: String?) {
             if (path == null) {
