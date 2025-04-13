@@ -26,7 +26,11 @@ object Compat {
     private val _isAliveFlow = MutableStateFlow(false)
     val isAliveFlow get() = _isAliveFlow.asStateFlow()
 
-    suspend fun init(context: Context, platform: Platform): Boolean {
+    suspend fun init(
+        context: Context,
+        platform: Platform,
+        enableShellInitializer: Boolean = true,
+    ): Boolean {
         val serviceManager = ServiceManagerCompat(context)
 
         return when {
@@ -37,7 +41,7 @@ object Compat {
                     Platform.KsuNext,
                     Platform.KernelSU,
                     Platform.APatch,
-                    -> serviceManager.fromLibSu(platform)
+                    -> serviceManager.fromLibSu(platform, enableShellInitializer)
 
                     else -> null
                 }

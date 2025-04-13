@@ -85,16 +85,19 @@ class ServiceManagerCompat(
     private class LibSuProvider(
         private val context: Context,
         private val platform: Platform,
+        enableShellInitializer: Boolean,
     ) : IProvider {
         override val name = "LibSu"
 
         init {
             Shell.enableVerboseLogging = true
-            Shell.setDefaultBuilder(
-                Shell.Builder.create()
-                    .setInitializers(SuShellInitializer::class.java)
-                    .setTimeout(10)
-            )
+            if (enableShellInitializer) {
+                Shell.setDefaultBuilder(
+                    Shell.Builder.create()
+                        .setInitializers(SuShellInitializer::class.java)
+                        .setTimeout(10)
+                )
+            }
         }
 
         override fun isAvailable() = true
@@ -124,7 +127,11 @@ class ServiceManagerCompat(
         }
     }
 
-    suspend fun fromLibSu(platform: Platform) = from(LibSuProvider(context, platform))
+    suspend fun fromLibSu(
+        platform: Platform,
+        enableShellInitializer: Boolean,
+    ) =
+        from(LibSuProvider(context, platform, enableShellInitializer))
 
     companion object {
         internal const val VERSION_CODE = 1
