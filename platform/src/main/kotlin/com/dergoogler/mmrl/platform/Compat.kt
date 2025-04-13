@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.platform
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -44,6 +45,7 @@ object Compat {
                 state()
             } catch (e: Exception) {
                 mServiceOrNull = null
+                Log.e("Compat", "Failed to init service manager", e)
                 state()
             }
         }
