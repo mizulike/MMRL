@@ -4,6 +4,8 @@ plugins {
     alias(libs.plugins.kotlin.parcelize)
 }
 
+group = "com.dergoogler.mmrl.platform"
+
 android {
     namespace = "com.dergoogler.mmrl.platform"
     compileSdk = 34
