@@ -125,7 +125,6 @@ fun SettingsScreen() {
                 WorkingMode.MODE_KERNEL_SU_NEXT -> R.drawable.kernelsu_next_logo
                 WorkingMode.MODE_APATCH -> R.drawable.brand_android
                 WorkingMode.MODE_NON_ROOT -> R.drawable.shield_lock
-                WorkingMode.MODE_SHIZUKU -> R.drawable.shizuku
                 else -> R.drawable.components
             }
 
@@ -135,7 +134,6 @@ fun SettingsScreen() {
                 WorkingMode.MODE_KERNEL_SU_NEXT -> R.string.working_mode_kernelsu_next_title
                 WorkingMode.MODE_APATCH -> R.string.working_mode_apatch_title
                 WorkingMode.MODE_NON_ROOT -> R.string.setup_non_root_title
-                WorkingMode.MODE_SHIZUKU -> R.string.working_mode_shizuku_title
                 else -> R.string.settings_root_none
             }
 

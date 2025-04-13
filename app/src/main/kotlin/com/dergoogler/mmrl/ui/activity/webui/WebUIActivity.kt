@@ -17,7 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
-import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.ui.component.Loading
@@ -49,7 +49,7 @@ class WebUIActivity : MMRLComponentActivity() {
         rootView = findViewById(android.R.id.content)
 
         lifecycleScope.launch {
-            Compat.init(this@WebUIActivity, userPrefs.workingMode)
+            Compat.init(this@WebUIActivity, userPrefs.workingMode.toPlatform())
         }
 
         val modId = intent.getStringExtra("MOD_ID")

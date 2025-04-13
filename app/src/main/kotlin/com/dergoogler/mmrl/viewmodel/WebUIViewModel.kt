@@ -13,14 +13,13 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.BuildConfig
-import com.dergoogler.mmrl.Compat
-import com.dergoogler.mmrl.Platform
+import com.dergoogler.mmrl.platform.Compat
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.datastore.model.developerMode
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
-import com.dergoogler.mmrl.utils.file.SuFile
 import com.dergoogler.webui.plugin.Instance
 import com.dergoogler.webui.plugin.Plugin
 import com.dergoogler.webui.webUiConfig
@@ -65,15 +64,15 @@ class WebUIViewModel @AssistedInject constructor(
         }
 
     val platform: Platform
-        get() = Compat.get(Platform.EMPTY) {
+        get() = Compat.get(Platform.NonRoot) {
             platform
         }
 
-    private val moduleDir = SuFile("/data/adb/modules", modId)
-    val webRoot = SuFile(moduleDir, "webroot")
+    private val moduleDir = com.dergoogler.mmrl.platform.file.SuFile("/data/adb/modules", modId)
+    val webRoot = com.dergoogler.mmrl.platform.file.SuFile(moduleDir, "webroot")
 
-    private val configFile = SuFile(webRoot, "config.mmrl.json")
-    private val pluginDir = SuFile(webRoot, "plugins")
+    private val configFile = com.dergoogler.mmrl.platform.file.SuFile(webRoot, "config.mmrl.json")
+    private val pluginDir = com.dergoogler.mmrl.platform.file.SuFile(webRoot, "plugins")
 
     val sanitizedModId: String
         get() {
@@ -107,7 +106,7 @@ class WebUIViewModel @AssistedInject constructor(
 
     private val indexFile
         get() = webRoot.list()
-            .filter { !SuFile(it).isFile }
+            .filter { !com.dergoogler.mmrl.platform.file.SuFile(it).isFile }
             .sortedWith(compareByDescending {
                 when {
                     it.matches(Regex(".*\\.mmrl\\.(html|htm)\$")) -> 2
@@ -157,7 +156,7 @@ class WebUIViewModel @AssistedInject constructor(
         val path = config.dsl.path ?: return null
         val className = config.dsl.className ?: return null
 
-        val dexFile = SuFile(path)
+        val dexFile = com.dergoogler.mmrl.platform.file.SuFile(path)
 
         if (!dexFile.exists()) return null
 

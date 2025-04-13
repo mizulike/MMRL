@@ -1,6 +1,6 @@
 package com.dergoogler.mmrl.repository
 
-import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.database.entity.Repo
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.stub.IMMRLApiManager

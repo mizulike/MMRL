@@ -6,8 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.utils.file.SuFile
-import com.dergoogler.mmrl.utils.file.SuFile.Companion.toSuFile
+import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import com.dergoogler.webui.core.InjectionType
 import com.dergoogler.webui.core.LocalInsets
@@ -25,24 +25,25 @@ fun webrootPathHandler(
     val prefs = LocalUserPreferences.current
     val insets = LocalInsets.current
 
-    val configBase = SuFile("/data/adb/.config/${viewModel.modId}")
-    val configStyleBase = SuFile(configBase, "style")
-    val configJsBase = SuFile(configBase, "js")
+    val configBase =
+        com.dergoogler.mmrl.platform.file.SuFile("/data/adb/.config/${viewModel.modId}")
+    val configStyleBase = com.dergoogler.mmrl.platform.file.SuFile(configBase, "style")
+    val configJsBase = com.dergoogler.mmrl.platform.file.SuFile(configBase, "js")
 
-    val customCssFile = SuFile(configStyleBase, "custom.css")
+    val customCssFile = com.dergoogler.mmrl.platform.file.SuFile(configStyleBase, "custom.css")
 
-    val customJsHead = SuFile(configJsBase, "head")
-    val customJsBody = SuFile(configJsBase, "body")
-    val customJsFile = SuFile(customJsBody, "custom.js")
+    val customJsHead = com.dergoogler.mmrl.platform.file.SuFile(configJsBase, "head")
+    val customJsBody = com.dergoogler.mmrl.platform.file.SuFile(configJsBase, "body")
+    val customJsFile = com.dergoogler.mmrl.platform.file.SuFile(customJsBody, "custom.js")
 
     val directory by remember {
         mutableStateOf(
-            SuFile(viewModel.webRoot).getCanonicalDirPath().toSuFile()
+            com.dergoogler.mmrl.platform.file.SuFile(viewModel.webRoot).getCanonicalDirPath().toSuFile()
         )
     }
 
     LaunchedEffect(Unit) {
-        SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
+        com.dergoogler.mmrl.platform.file.SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
     }
 
     val reversedPaths = listOf("mmrl/", ".adb/", ".local/", ".config/", ".${viewModel.modId}/")
@@ -65,7 +66,10 @@ fun webrootPathHandler(
 
             if (!file.exists() && viewModel.config.historyFallback) {
                 val historyFallbackFile =
-                    SuFile(viewModel.webRoot, viewModel.config.historyFallbackFile)
+                    com.dergoogler.mmrl.platform.file.SuFile(
+                        viewModel.webRoot,
+                        viewModel.config.historyFallbackFile
+                    )
 
                 return@handler historyFallbackFile.asResponse()
             }
@@ -73,7 +77,7 @@ fun webrootPathHandler(
             data class Editor(
                 val mode: String,
                 val name: String,
-                val file: SuFile,
+                val file: com.dergoogler.mmrl.platform.file.SuFile,
             )
 
             val injections = buildList {

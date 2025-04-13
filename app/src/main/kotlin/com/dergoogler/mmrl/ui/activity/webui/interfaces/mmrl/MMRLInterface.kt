@@ -16,7 +16,7 @@ import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.moshi
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
-import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import com.dergoogler.webui.model.WebUIConfig.Companion.toWebUiConfig
 import com.squareup.moshi.JsonAdapter
@@ -181,8 +181,8 @@ class MMRLInterface(
     private fun createShortcutInternal(title: String, icon: String) {
         val id = viewModel.modId
         val shortcutId = "shortcut_$id"
-        val webRoot = SuFile("/data/adb/modules/$id/webroot")
-        val iconFile = SuFile(webRoot, icon)
+        val webRoot = com.dergoogler.mmrl.platform.file.SuFile("/data/adb/modules/$id/webroot")
+        val iconFile = com.dergoogler.mmrl.platform.file.SuFile(webRoot, icon)
 
         if (!iconFile.exists()) {
             Timber.d("Icon not found: $iconFile")

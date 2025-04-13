@@ -6,7 +6,7 @@ import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
-import dev.dergoogler.mmrl.compat.content.LocalModuleFeatures
+import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 
 
 @Entity(tableName = "localModules")
@@ -20,7 +20,7 @@ data class LocalModuleEntity(
     val description: String,
     val state: String,
     val size: Long,
-    @Embedded val features: LocalModuleFeatures,
+    @Embedded val features: com.dergoogler.mmrl.platform.content.LocalModuleFeatures,
     val updateJson: String,
     val lastUpdated: Long,
 ) {

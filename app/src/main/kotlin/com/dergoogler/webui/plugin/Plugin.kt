@@ -3,8 +3,8 @@ package com.dergoogler.webui.plugin
 import android.content.Context
 import android.webkit.WebView
 import androidx.annotation.Keep
-import com.dergoogler.mmrl.Platform
-import dev.dergoogler.mmrl.compat.stub.IFileManager
+import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.stub.IFileManager
 import kotlinx.coroutines.CoroutineScope
 
 @Keep

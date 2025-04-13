@@ -1,6 +1,6 @@
 package dev.dergoogler.mmrl.compat.ext
 
-import com.dergoogler.mmrl.utils.file.SuFileSizeRepresentation
+import com.dergoogler.mmrl.platform.file.SuFileSizeRepresentation
 import java.util.Locale
 
 fun Int.toFormattedFileSize(): String = toDouble().toFormattedFileSize()
@@ -14,7 +14,7 @@ fun Double.toFormattedFileSize(): String {
 
     val units = arrayOf("B", "KB", "MB", "GB", "TB", "PB")
     var size = this
-    val sizeRepresentation = SuFileSizeRepresentation.getRepresentation(size)
+    val sizeRepresentation = com.dergoogler.mmrl.platform.file.SuFileSizeRepresentation.getRepresentation(size)
     val base = sizeRepresentation.base.toDouble()
     var unitIndex = 0
 

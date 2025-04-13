@@ -1,15 +1,15 @@
 package com.dergoogler.mmrl.model.local
 
 import com.dergoogler.mmrl.utils.Utils
-import dev.dergoogler.mmrl.compat.content.LocalModule
-import dev.dergoogler.mmrl.compat.content.LocalModuleFeatures
+import com.dergoogler.mmrl.platform.content.LocalModule
+import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 
-typealias LocalModule = LocalModule
-typealias LocalModuleFeatures = LocalModuleFeatures
+typealias LocalModule = com.dergoogler.mmrl.platform.content.LocalModule
+typealias LocalModuleFeatures = com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 
-val LocalModule.versionDisplay get() = Utils.getVersionDisplay(version, versionCode)
+val com.dergoogler.mmrl.platform.content.LocalModule.versionDisplay get() = Utils.getVersionDisplay(version, versionCode)
 
-val LocalModuleFeatures.hasFeatures
+val com.dergoogler.mmrl.platform.content.LocalModuleFeatures.hasFeatures
     get() = webui ||
             action ||
             service ||
@@ -22,8 +22,8 @@ val LocalModuleFeatures.hasFeatures
             bootCompleted
 
 
-fun LocalModule.Companion.example() =
-    LocalModule(
+fun com.dergoogler.mmrl.platform.content.LocalModule.Companion.example() =
+    com.dergoogler.mmrl.platform.content.LocalModule(
         id = "local_example",
         name = "Example",
         version = "2022.08.16",
@@ -32,7 +32,7 @@ fun LocalModule.Companion.example() =
         description = "This is an example!",
         updateJson = "",
         state = State.ENABLE,
-        features = LocalModuleFeatures.EMPTY,
+        features = com.dergoogler.mmrl.platform.content.LocalModuleFeatures.EMPTY,
         size = 0,
         lastUpdated = 0L,
     )

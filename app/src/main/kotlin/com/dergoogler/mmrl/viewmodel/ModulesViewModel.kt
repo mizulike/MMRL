@@ -19,7 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.ModulesMenu
 import com.dergoogler.mmrl.datastore.model.Option
@@ -27,17 +27,16 @@ import com.dergoogler.mmrl.model.json.UpdateJson
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.VersionItem
+import com.dergoogler.mmrl.platform.content.ModuleCompatibility
+import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.service.DownloadService
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.utils.Utils
-import com.dergoogler.mmrl.utils.file.SuFile
 import com.dergoogler.webui.model.WebUIConfig.Companion.toWebUiConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.dergoogler.mmrl.compat.content.ModuleCompatibility
-import dev.dergoogler.mmrl.compat.stub.IModuleOpsCallback
 import dev.dergoogler.mmrl.compat.viewmodel.MMRLViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -409,8 +408,8 @@ class ModulesViewModel @Inject constructor(
             return
         }
 
-        val webRoot = SuFile("/data/adb/modules/$id/webroot")
-        val iconFile = SuFile(webRoot, config.icon)
+        val webRoot = com.dergoogler.mmrl.platform.file.SuFile("/data/adb/modules/$id/webroot")
+        val iconFile = com.dergoogler.mmrl.platform.file.SuFile(webRoot, config.icon)
         if (!iconFile.exists()) {
             Timber.d("Icon not found: $iconFile")
             Toast.makeText(context, context.getString(R.string.icon_not_found), Toast.LENGTH_SHORT)

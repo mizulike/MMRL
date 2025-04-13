@@ -4,7 +4,7 @@ import android.content.Context
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.dergoogler.mmrl.app.moshi
-import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.mmrl.platform.file.SuFile
 import dev.dergoogler.mmrl.compat.core.MMRLWebUIInterface
 import java.io.BufferedInputStream
 import java.io.InputStream
@@ -16,7 +16,7 @@ class FileInputInterface(
     @JavascriptInterface
     fun open(path: String): FileInputInterfaceStream? =
         try {
-            val file = SuFile(path)
+            val file = com.dergoogler.mmrl.platform.file.SuFile(path)
             val inputStream = file.newInputStream()
 
             FileInputInterfaceStream(inputStream, webView, context)

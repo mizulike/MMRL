@@ -29,7 +29,7 @@ import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.ui.component.dialog.rememberPrompt
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.utils.file.SuFile.Companion.toSuFile
+import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
 import com.dergoogler.webui.core.LocalInsets
 import com.dergoogler.webui.core.rememberInsets

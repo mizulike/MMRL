@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.mmrl.platform.file.SuFile
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -140,7 +140,7 @@ private fun findBodyTag(htmlBytes: ByteArray): Int {
 }
 
 @Throws(IOException::class)
-fun SuFile.handleSvgzStream(
+fun com.dergoogler.mmrl.platform.file.SuFile.handleSvgzStream(
     stream: InputStream,
 ): InputStream {
     return if (extension === "svgz") GZIPInputStream(stream) else stream

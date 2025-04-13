@@ -6,7 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.datastore.model.Option
 import com.dergoogler.mmrl.datastore.model.RepositoryMenu
 import com.dergoogler.mmrl.model.online.OnlineModule

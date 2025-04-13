@@ -94,15 +94,6 @@ fun WorkingModeItems(
         setMode = setMode,
         mode = WorkingMode.MODE_NON_ROOT
     )
-
-    WorkingModeItem(
-        icon = R.drawable.shizuku,
-        title = stringResource(id = R.string.working_mode_shizuku_title),
-        desc = stringResource(id = R.string.working_mode_shizuku_desc),
-        selected = !isSetup && (userPreferences.workingMode == WorkingMode.MODE_SHIZUKU),
-        setMode = setMode,
-        mode = WorkingMode.MODE_SHIZUKU
-    )
 }
 
 @Composable

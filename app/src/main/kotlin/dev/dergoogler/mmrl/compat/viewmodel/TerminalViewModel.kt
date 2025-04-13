@@ -21,7 +21,7 @@ import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.ui.activity.terminal.Actions
 import com.dergoogler.mmrl.ui.activity.terminal.ShellBroadcastReceiver
 import dev.dergoogler.mmrl.compat.BuildCompat
-import dev.dergoogler.mmrl.compat.stub.IShell
+import com.dergoogler.mmrl.platform.stub.IShell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

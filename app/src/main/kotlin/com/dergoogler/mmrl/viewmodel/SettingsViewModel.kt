@@ -2,7 +2,7 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.datastore.model.DarkMode
 import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.datastore.model.WorkingMode

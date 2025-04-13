@@ -16,15 +16,14 @@ import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
-import dev.dergoogler.mmrl.compat.impl.ksu.KsuNative
+import com.dergoogler.mmrl.platform.ksu.KsuNative
 import timber.log.Timber
 
 @Composable
 fun SecurityScreen() {
     val viewModel = LocalSettings.current
     val userPreferences = LocalUserPreferences.current
-val browser = LocalUriHandler.current
-    val navController = LocalNavController.current
+    val browser = LocalUriHandler.current
 
     SettingsScaffold(
         title = R.string.settings_security,

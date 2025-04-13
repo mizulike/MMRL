@@ -5,7 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.dergoogler.mmrl.BuildConfig
-import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.mmrl.platform.file.SuFile
 import java.io.IOException
 
 enum class ResponseStatus(val code: Int, val reasonPhrase: String) {
@@ -14,7 +14,7 @@ enum class ResponseStatus(val code: Int, val reasonPhrase: String) {
     FORBIDDEN(403, "Forbidden"),
 }
 
-private fun SuFile.checkStatus(): ResponseStatus {
+private fun com.dergoogler.mmrl.platform.file.SuFile.checkStatus(): ResponseStatus {
     val dir = getCanonicalDirPath()
 
     for (forbiddenPath in listOf("/data/data", "/data/system")) {
@@ -58,7 +58,7 @@ data class Injection(
 )
 
 @Throws(IOException::class)
-fun SuFile.asResponse(injects: List<Injection>? = null): WebResourceResponse {
+fun com.dergoogler.mmrl.platform.file.SuFile.asResponse(injects: List<Injection>? = null): WebResourceResponse {
     val mimeType = MimeUtil.getMimeFromFileName(path)
     val status = checkStatus()
 

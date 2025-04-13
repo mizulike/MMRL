@@ -3,7 +3,7 @@ package com.dergoogler.mmrl.viewmodel
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.compat.MediaStoreCompat.copyToDir
@@ -14,11 +14,9 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.dergoogler.mmrl.compat.content.BulkModule
-import dev.dergoogler.mmrl.compat.content.State
 import dev.dergoogler.mmrl.compat.ext.isNotNull
 import dev.dergoogler.mmrl.compat.ext.tmpDir
-import dev.dergoogler.mmrl.compat.stub.IShellCallback
+import com.dergoogler.mmrl.platform.stub.IShellCallback
 import dev.dergoogler.mmrl.compat.viewmodel.TerminalViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -52,7 +50,7 @@ class InstallViewModel @Inject constructor(
         event = Event.LOADING
         var allSucceeded = true
 
-        if (!Compat.init(context, userPreferences.workingMode)) {
+        if (!Compat.init(context, userPreferences.workingMode.toPlatform())) {
             event = Event.FAILED
             log(R.string.service_is_not_available)
             return@launch
@@ -90,7 +88,7 @@ class InstallViewModel @Inject constructor(
                 return@launch
             }
 
-            BulkModule(
+            com.dergoogler.mmrl.platform.content.BulkModule(
                 id = info.id,
                 name = info.name
             )
@@ -118,7 +116,7 @@ class InstallViewModel @Inject constructor(
 
     private suspend fun loadAndInstallModule(
         uri: Uri,
-        bulkModules: List<BulkModule>,
+        bulkModules: List<com.dergoogler.mmrl.platform.content.BulkModule>,
     ): Boolean =
         withContext(Dispatchers.IO) {
             val path = context.getPathForUri(uri)
@@ -169,7 +167,7 @@ class InstallViewModel @Inject constructor(
             return@withContext install(tmpFile.path, bulkModules)
         }
 
-    private suspend fun install(zipPath: String, bulkModules: List<BulkModule>): Boolean =
+    private suspend fun install(zipPath: String, bulkModules: List<com.dergoogler.mmrl.platform.content.BulkModule>): Boolean =
         withContext(Dispatchers.IO) {
             val zipFile = File(zipPath)
             val userPreferences = userPreferencesRepository.data.first()
@@ -225,7 +223,7 @@ class InstallViewModel @Inject constructor(
 
     private fun insertLocal(module: LocalModule) {
         viewModelScope.launch {
-            localRepository.insertLocal(module.copy(state = State.UPDATE))
+            localRepository.insertLocal(module.copy(state = com.dergoogler.mmrl.platform.content.State.UPDATE))
         }
     }
 

@@ -1,5 +1,5 @@
 package com.dergoogler.mmrl.model.local
 
-import dev.dergoogler.mmrl.compat.content.State
+import com.dergoogler.mmrl.platform.content.State
 
-typealias State = State
+typealias State = com.dergoogler.mmrl.platform.content.State

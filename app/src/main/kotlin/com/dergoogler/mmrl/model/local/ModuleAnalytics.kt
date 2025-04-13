@@ -4,7 +4,7 @@ import android.app.usage.StorageStatsManager
 import android.content.Context
 import android.os.Environment
 import android.os.storage.StorageManager
-import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.mmrl.platform.file.SuFile
 import timber.log.Timber
 import java.io.IOException
 
@@ -20,7 +20,7 @@ data class ModuleAnalytics(
     val totalDisabled = getTotalByState(State.DISABLE)
     val totalUpdated = getTotalByState(State.UPDATE)
 
-    val totalModulesUsageBytes = SuFile("/data/adb/modules").size(true)
+    val totalModulesUsageBytes = com.dergoogler.mmrl.platform.file.SuFile("/data/adb/modules").size(true)
     val totalDeviceStorageBytes: Long
         get() {
             val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager

@@ -1,7 +1,7 @@
 package com.dergoogler.mmrl.model.online
 
 import androidx.compose.runtime.Composable
-import com.dergoogler.mmrl.Platform
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.utils.Utils
 import com.squareup.moshi.JsonClass

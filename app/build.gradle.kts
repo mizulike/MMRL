@@ -49,30 +49,6 @@ android {
             "zh-rCN",
             "zh-rTW"
         )
-
-        ndk {
-            abiFilters += arrayOf("arm64-v8a", "armeabi-v7a", "x86", "x86_64")
-        }
-
-        externalNativeBuild {
-            cmake {
-                arguments += "-DANDROID_STL=c++_static"
-            }
-        }
-    }
-
-    externalNativeBuild {
-        cmake {
-            path = file("src/main/jni/CMakeLists.txt")
-            version = "3.22.1"
-        }
-    }
-
-    splits {
-        abi {
-            isEnable = false
-            isUniversalApk = false
-        }
     }
 
     val releaseSigning = if (project.hasReleaseKeyStore) {
@@ -163,7 +139,6 @@ android {
     }
 
     buildFeatures {
-        aidl = true
         buildConfig = true
     }
 
@@ -206,6 +181,7 @@ androidComponents {
 dependencies {
     implementation(libs.androidx.lifecycle.process)
     compileOnly(projects.hiddenApi)
+    implementation(projects.platform)
 
     implementation(libs.hiddenApiBypass)
     // implementation(libs.timber)

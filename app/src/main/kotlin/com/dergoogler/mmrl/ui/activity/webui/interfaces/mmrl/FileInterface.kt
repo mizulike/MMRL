@@ -3,8 +3,8 @@ package com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl
 import android.content.Context
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import com.dergoogler.mmrl.Compat
-import com.dergoogler.mmrl.utils.file.SuFile
+import com.dergoogler.mmrl.platform.Compat
+import com.dergoogler.mmrl.platform.file.SuFile
 import dev.dergoogler.mmrl.compat.core.MMRLWebUIInterface
 
 

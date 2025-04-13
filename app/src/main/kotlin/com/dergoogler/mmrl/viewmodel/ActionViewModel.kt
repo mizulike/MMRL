@@ -2,7 +2,7 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.model.local.LocalModule
@@ -10,8 +10,8 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.dergoogler.mmrl.compat.content.State
-import dev.dergoogler.mmrl.compat.stub.IShellCallback
+import com.dergoogler.mmrl.platform.content.State
+import com.dergoogler.mmrl.platform.stub.IShellCallback
 import dev.dergoogler.mmrl.compat.viewmodel.TerminalViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -42,7 +42,7 @@ class ActionViewModel @Inject constructor(
         viewModelScope.launch {
             event = Event.LOADING
 
-            if (!Compat.init(context, userPreferences.workingMode)) {
+            if (!Compat.init(context, userPreferences.workingMode.toPlatform())) {
                 event = Event.FAILED
                 log(R.string.service_is_not_available)
                 return@launch

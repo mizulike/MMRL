@@ -4,7 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import com.dergoogler.mmrl.Compat
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.datastore.model.UserPreferences
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
@@ -23,7 +23,7 @@ class AdvancedKernelSUAPI(
     fun exec(cmd: String): String {
         return Compat.withNewRootShell(
             globalMnt = true,
-            devMode = userPrefs.developerMode
+            debug = userPrefs.developerMode
         ) { ShellUtils.fastCmd(this, cmd) }
     }
 
@@ -61,7 +61,7 @@ class AdvancedKernelSUAPI(
 
         val result = Compat.withNewRootShell(
             globalMnt = true,
-            devMode = userPrefs.developerMode
+            debug = userPrefs.developerMode
         ) {
             newJob().add(finalCommand.toString()).to(ArrayList(), ArrayList()).exec()
         }
@@ -98,7 +98,7 @@ class AdvancedKernelSUAPI(
 
         val shell = Compat.createRootShell(
             globalMnt = true,
-            devMode = userPrefs.developerMode
+            debug = userPrefs.developerMode
         )
 
         val emitData = fun(name: String, data: String) {
