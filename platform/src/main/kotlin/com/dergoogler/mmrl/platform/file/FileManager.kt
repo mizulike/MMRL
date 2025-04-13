@@ -21,7 +21,7 @@ import java.util.concurrent.Executors
 class FileManager : IFileManager.Stub() {
 
     init {
-        System.loadLibrary("file-manager")
+        System.loadLibrary("mmrl-file-manager")
     }
 
     private val mCache: LruCache<String, File> = object : LruCache<String, File>(100) {

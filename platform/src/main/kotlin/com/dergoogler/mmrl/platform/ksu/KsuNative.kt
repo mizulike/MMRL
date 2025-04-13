@@ -23,7 +23,7 @@ object KsuNative {
     const val ROOT_GID = 0
 
     init {
-        System.loadLibrary("kernelsu")
+        System.loadLibrary("mmrl-kernelsu")
     }
 
     external fun grantRoot(): Boolean

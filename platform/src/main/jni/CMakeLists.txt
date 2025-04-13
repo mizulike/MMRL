@@ -13,16 +13,16 @@ include_directories(include)
 
 find_library(log-lib log)
 
-add_library(file-manager SHARED
+add_library(mmrl-file-manager SHARED
         file-manager.cpp
         include/logging.hpp
 )
-target_link_libraries(file-manager ${log-lib})
+target_link_libraries(mmrl-file-manager ${log-lib})
 
-add_library(kernelsu SHARED
+add_library(mmrl-kernelsu SHARED
         kernelsu/ksu.cpp
         kernelsu/jni.cpp
         include/kernelsu/ksu.hpp
         include/logging.hpp
 )
-target_link_libraries(kernelsu ${log-lib})
+target_link_libraries(mmrl-kernelsu ${log-lib})
