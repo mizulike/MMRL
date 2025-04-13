@@ -10,7 +10,7 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListItemTextStyle
-import com.dergoogler.webui.model.WebUIPermissions
+import com.dergoogler.mmrl.webui.model.WebUIPermissions
 import dev.dergoogler.mmrl.compat.ext.nullable
 
 @Composable

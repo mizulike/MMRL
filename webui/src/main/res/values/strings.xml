@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+    <string name="says">%1$s says</string>
+    <string name="title_or_icon_not_found">Title or icon not found</string>
+    <string name="icon_not_found">Icon not found</string>
+    <string name="shortcut_not_supported">Shortcuts are not supported on your device or launcher</string>
+    <string name="shortcut_already_exists">Shortcut already exists</string>
+    <string name="exit">Exit</string>
+    <string name="exit_desc">Are you sure that you want to exit this WebUI?</string>
+    <string name="loading">Loading…</string>
+    <string name="unknown_error">Unknown Error</string>
+    <string name="missing_mod_id">Missing Module ID</string>
+    <string name="class_not_found">Cannot find defined activity class</string>
+</resources>

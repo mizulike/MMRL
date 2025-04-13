@@ -167,21 +167,22 @@ android {
     }
 }
 
-androidComponents {
-    onVariants(selector().all()) { variant ->
-        afterEvaluate {
-            val capName = variant.name.capitalized()
-            tasks.getByName<KotlinCompile>("ksp${capName}Kotlin") {
-                setSource(tasks.getByName("generate${capName}Proto").outputs)
-            }
-        }
-    }
-}
+//androidComponents {
+//    onVariants(selector().all()) { variant ->
+//        afterEvaluate {
+//            val capName = variant.name.capitalized()
+//            tasks.getByName<KotlinCompile>("ksp${capName}Kotlin") {
+//                setSource(tasks.getByName("generate${capName}Proto").outputs)
+//            }
+//        }
+//    }
+//}
 
 dependencies {
     implementation(libs.androidx.lifecycle.process)
     compileOnly(projects.hiddenApi)
     implementation(projects.platform)
+    implementation(projects.webui)
 
     implementation(libs.hiddenApiBypass)
     // implementation(libs.timber)

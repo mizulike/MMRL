@@ -50,10 +50,10 @@ import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.utils.none
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
-import com.dergoogler.webui.core.Insets
-import com.dergoogler.webui.core.LocalInsets
-import com.dergoogler.webui.core.rememberWebUIAssetLoader
-import com.dergoogler.webui.handlers.mmrlPathHandler
+import com.dergoogler.mmrl.webui.Insets
+import com.dergoogler.mmrl.webui.LocalInsets
+import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
+import com.dergoogler.mmrl.webui.handler.mmrlPathHandler
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 
 const val launchUrl = "https://mui.kernelsu.org/mmrl/assets/markdown.html"

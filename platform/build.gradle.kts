@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.compose.compiler)
     alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.kotlin.serialization)
 }
-
-group = "com.dergoogler.mmrl.platform"
 
 android {
     namespace = "com.dergoogler.mmrl.platform"
@@ -52,8 +53,8 @@ android {
     }
 
     buildFeatures {
+        compose = true
         aidl = true
-        buildConfig = true
     }
 
     compileOptions {
@@ -74,4 +75,5 @@ dependencies {
     implementation(libs.libsu.core)
     implementation(libs.libsu.service)
     implementation(libs.libsu.io)
+    ksp(libs.square.moshi.kotlin)
 }

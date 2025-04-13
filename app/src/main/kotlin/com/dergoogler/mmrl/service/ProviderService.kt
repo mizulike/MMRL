@@ -14,6 +14,7 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.utils.NotificationUtils
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.platform.Compat
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.service.ServiceManagerCompat
 import com.dergoogler.mmrl.platform.service.ServiceManagerCompat.Companion.getPlatform
 import kotlinx.coroutines.launch
@@ -73,8 +74,8 @@ class ProviderService : LifecycleService() {
             private set
         private const val GROUP_KEY = "PROVIDER_SERVICE_GROUP_KEY"
 
-        suspend fun init(context: Context, mode: WorkingMode) = if (!isActive) {
-            Compat.init(context, mode.toPlatform())
+        suspend fun init(context: Context, platform: Platform) = if (!isActive) {
+            Compat.init(context, platform)
         } else isActive
 
         fun start(
@@ -86,7 +87,7 @@ class ProviderService : LifecycleService() {
                     context.packageName,
                     ProviderService::class.java.name
                 )
-                putExtra(ServiceManagerCompat.PLATFORM_KEY, mode)
+                putExtra(ServiceManagerCompat.PLATFORM_KEY, mode.toPlatform())
             }
             context.startService(intent)
         }

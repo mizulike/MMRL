@@ -20,6 +20,9 @@ pluginManagement {
 }
 
 rootProject.name = "MMRL"
-include(":app")
-include(":hidden-api")
-include(":platform")
+include(
+    ":app",
+    ":hidden-api",
+    ":platform",
+    ":webui"
+)

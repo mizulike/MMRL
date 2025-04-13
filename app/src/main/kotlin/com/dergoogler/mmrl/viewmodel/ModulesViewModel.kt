@@ -28,6 +28,7 @@ import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.VersionItem
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
+import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
@@ -35,7 +36,7 @@ import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.service.DownloadService
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.utils.Utils
-import com.dergoogler.webui.model.WebUIConfig.Companion.toWebUiConfig
+import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUiConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.dergoogler.mmrl.compat.viewmodel.MMRLViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -400,7 +401,7 @@ class ModulesViewModel @Inject constructor(
     fun createShortcut(id: String) {
         val shortcutId = "shortcut_$id"
         val config = id.toWebUiConfig()
-        if (config.title == null || config.icon == null) {
+        if (config.title == null && config.icon == null) {
             Toast.makeText(
                 context,
                 context.getString(R.string.title_or_icon_not_found), Toast.LENGTH_SHORT
@@ -408,8 +409,8 @@ class ModulesViewModel @Inject constructor(
             return
         }
 
-        val webRoot = com.dergoogler.mmrl.platform.file.SuFile("/data/adb/modules/$id/webroot")
-        val iconFile = com.dergoogler.mmrl.platform.file.SuFile(webRoot, config.icon)
+        val webRoot = SuFile("/data/adb/modules/$id/webroot")
+        val iconFile = SuFile(webRoot, config.icon!!)
         if (!iconFile.exists()) {
             Timber.d("Icon not found: $iconFile")
             Toast.makeText(context, context.getString(R.string.icon_not_found), Toast.LENGTH_SHORT)
@@ -438,8 +439,8 @@ class ModulesViewModel @Inject constructor(
             val bitmap = BitmapFactory.decodeStream(bis)
 
             val shortcut = ShortcutInfo.Builder(context, shortcutId)
-                .setShortLabel(config.title)
-                .setLongLabel(config.title)
+                .setShortLabel(config.title!!)
+                .setLongLabel(config.title!!)
                 .setIcon(Icon.createWithAdaptiveBitmap(bitmap))
                 .setIntent(shortcutIntent)
                 .build()

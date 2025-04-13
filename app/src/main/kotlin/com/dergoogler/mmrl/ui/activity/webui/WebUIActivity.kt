@@ -1,6 +1,5 @@
 package com.dergoogler.mmrl.ui.activity.webui
 
-import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
@@ -15,15 +14,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.lifecycleScope
+import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
+import com.dergoogler.mmrl.ui.activity.webui.interfaces.VersionInterface
 import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.ui.component.Loading
-import com.dergoogler.mmrl.viewmodel.WebUIViewModel
-import com.dergoogler.webui.webUiConfig
-import dev.dergoogler.mmrl.compat.BuildCompat
+import com.dergoogler.mmrl.webui.model.JavaScriptInterface
+import com.dergoogler.mmrl.webui.screen.WebUIScreen
+import com.dergoogler.mmrl.webui.viewModel.WebUIViewModel
+import com.dergoogler.mmrl.webui.webUiConfig
 import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import dev.dergoogler.mmrl.compat.activity.setBaseContent
 import kotlinx.coroutines.delay
@@ -34,7 +36,6 @@ import timber.log.Timber
 
 
 class WebUIActivity : MMRLComponentActivity() {
-
     private val userPrefs get() = runBlocking { userPreferencesRepository.data.first() }
     private lateinit var webView: WebView
     private var isKeyboardShowing by mutableStateOf(false)
@@ -65,7 +66,6 @@ class WebUIActivity : MMRLComponentActivity() {
         }
 
         setBaseContent {
-
             var isLoading by remember { mutableStateOf(true) }
 
             LaunchedEffect(Compat.isAlive) {
@@ -84,23 +84,9 @@ class WebUIActivity : MMRLComponentActivity() {
 
             val config = webUiConfig(modId)
 
-            if (config.title != null) {
-                val taskDescription = if (BuildCompat.atLeastT) {
-                    ActivityManager.TaskDescription.Builder()
-                        .setLabel(config.title)
-                        .build()
-                } else {
-                    ActivityManager.TaskDescription(
-                        config.title
-                    )
-                }
-
-                setTaskDescription(taskDescription)
-            }
-
             if (config.windowResize) {
                 rootView.getViewTreeObserver().addOnGlobalLayoutListener {
-                    val r: Rect = Rect()
+                    val r = Rect()
                     rootView.getWindowVisibleDisplayFrame(r)
                     val screenHeight: Int = rootView.getRootView().height
                     val keypadHeight: Int = screenHeight - r.bottom
@@ -117,13 +103,41 @@ class WebUIActivity : MMRLComponentActivity() {
                     }
                 }
             }
+            val isDarkMode = userPrefs.isDarkMode()
 
-            val viewModel =
-                hiltViewModel<WebUIViewModel, WebUIViewModel.Factory> { factory ->
-                    factory.create(modId)
-                }
+            val viewModel = WebUIViewModel.factory(
+                modId = modId,
+                debug = userPrefs.developerMode,
+                appVersionCode = BuildConfig.VERSION_CODE,
+                remoteDebug = userPrefs.useWebUiDevUrl,
+                enableEruda = userPrefs.enableErudaConsole,
+                debugDomain = userPrefs.webUiDevUrl,
+                isDarkMode = isDarkMode,
+                cls = WebUIViewModel::class.java,
+            )
 
-            WebUIScreen(webView, viewModel)
+            WebUIScreen(
+                webView = webView,
+                viewModel = viewModel,
+                interfaces = listOf(
+                    JavaScriptInterface(
+                        name = "ksu",
+                        instance = KernelSUInterface(
+                            context = this@WebUIActivity,
+                            webView = webView,
+                            debug = userPrefs.developerMode
+                        )
+                    ),
+                    JavaScriptInterface(
+                        name = "mmrl",
+                        instance = VersionInterface(
+                            context = this@WebUIActivity,
+                            webView = webView,
+                            viewModel = viewModel,
+                        )
+                    )
+                )
+            )
         }
     }
 

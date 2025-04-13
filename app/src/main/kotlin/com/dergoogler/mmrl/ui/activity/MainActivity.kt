@@ -21,6 +21,7 @@ import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isSetup
 import com.dergoogler.mmrl.network.NetworkUtils
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
@@ -66,7 +67,7 @@ class MainActivity : MMRLComponentActivity() {
 
                 modulesRepository.getBlacklist()
 
-                ProviderService.init(baseContext, preferences.workingMode)
+                ProviderService.init(baseContext, preferences.workingMode.toPlatform())
 
                 NetworkUtils.setEnableDoh(preferences.useDoh)
 
