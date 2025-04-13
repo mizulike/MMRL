@@ -87,7 +87,7 @@ subprojects {
             defaultConfig {
                 if (minSdkVersion == null)
                     minSdk = 26
-                targetSdk = 35
+                targetSdk = 34
             }
 
             compileOptions {
