@@ -24,7 +24,7 @@ import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.screen.WebUIScreen
-import com.dergoogler.mmrl.webui.viewModel.WebUIViewModel
+import com.dergoogler.mmrl.webui.util.rememberWebUIOptions
 import com.dergoogler.mmrl.webui.webUiConfig
 import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import dev.dergoogler.mmrl.compat.activity.setBaseContent
@@ -105,7 +105,8 @@ class WebUIActivity : MMRLComponentActivity() {
             }
             val isDarkMode = userPrefs.isDarkMode()
 
-            val viewModel = WebUIViewModel.factory(
+
+            val options = rememberWebUIOptions(
                 modId = modId,
                 debug = userPrefs.developerMode,
                 appVersionCode = BuildConfig.VERSION_CODE,
@@ -113,12 +114,12 @@ class WebUIActivity : MMRLComponentActivity() {
                 enableEruda = userPrefs.enableErudaConsole,
                 debugDomain = userPrefs.webUiDevUrl,
                 isDarkMode = isDarkMode,
-                cls = WebUIViewModel::class.java,
+                cls = WebUIActivity::class.java
             )
 
             WebUIScreen(
                 webView = webView,
-                viewModel = viewModel,
+                options = options,
                 interfaces = listOf(
                     JavaScriptInterface(
                         name = "ksu",
@@ -133,7 +134,7 @@ class WebUIActivity : MMRLComponentActivity() {
                         instance = VersionInterface(
                             context = this@WebUIActivity,
                             webView = webView,
-                            viewModel = viewModel,
+                            options = options,
                         )
                     )
                 )

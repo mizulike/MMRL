@@ -18,7 +18,7 @@ import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.webui.Insets
 import com.dergoogler.mmrl.webui.R
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUiConfig
-import com.dergoogler.mmrl.webui.viewModel.WebUIViewModel
+import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.squareup.moshi.JsonClass
 import java.io.BufferedInputStream
 
@@ -33,7 +33,7 @@ class ModuleInterface(
     context: Context,
     webView: WebView,
     private val insets: Insets,
-    private val viewModel: WebUIViewModel,
+    private val options: WebUIOptions,
 ) : WebUIInterface(webView, context) {
     private var windowInsetsController: WindowInsetsControllerCompat =
         WindowCompat.getInsetsController(
@@ -77,7 +77,7 @@ class ModuleInterface(
 
     @get:JavascriptInterface
     val isDarkMode: Boolean
-        get() = viewModel.isDarkMode
+        get() = options.isDarkMode
 
     @JavascriptInterface
     fun setLightNavigationBars(isLight: Boolean) = runOnUiThread {
@@ -113,10 +113,10 @@ class ModuleInterface(
     }
 
     @get:JavascriptInterface
-    val recomposeCount get() = viewModel.recomposeCount
+    val recomposeCount get() = options.recomposeCount
 
     @JavascriptInterface
-    fun recompose() = viewModel.recomposeCount++
+    fun recompose() = options.recomposeCount++
 
     @JavascriptInterface
     fun requestAdvancedKernelSUAPI() {
@@ -143,7 +143,7 @@ class ModuleInterface(
 
     @JavascriptInterface
     fun createShortcut() {
-        val config = viewModel.modId.toWebUiConfig()
+        val config = options.modId.toWebUiConfig()
         val title = config.title
         val icon = config.icon
 
@@ -160,7 +160,7 @@ class ModuleInterface(
 
     private fun createShortcutInternal(title: String, icon: String) {
 
-        if (viewModel.cls == null) {
+        if (options.cls == null) {
             Toast.makeText(
                 context,
                 context.getString(R.string.class_not_found),
@@ -168,7 +168,7 @@ class ModuleInterface(
             ).show()
         }
 
-        val id = viewModel.modId
+        val id = options.modId
         val shortcutId = "shortcut_$id"
         val webRoot = SuFile("/data/adb/modules/$id/webroot")
         val iconFile = SuFile(webRoot, icon)
@@ -199,7 +199,7 @@ class ModuleInterface(
             return
         }
 
-        val shortcutIntent = Intent(context, viewModel.cls).apply {
+        val shortcutIntent = Intent(context, options.cls).apply {
             action = Intent.ACTION_VIEW
             putExtra("MOD_ID", id)
         }

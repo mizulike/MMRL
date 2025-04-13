@@ -5,13 +5,13 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
 import com.dergoogler.mmrl.BuildConfig
-import com.dergoogler.mmrl.webui.viewModel.WebUIViewModel
+import com.dergoogler.mmrl.webui.util.WebUIOptions
 import dev.dergoogler.mmrl.compat.ext.managerVersion
 
 class VersionInterface(
     private val context: Context,
     private val webView: WebView,
-    private val viewModel: WebUIViewModel,
+    private val options: WebUIOptions,
 ) {
     inner class BuildConfigDetails {
         @get:JavascriptInterface
@@ -35,13 +35,13 @@ class VersionInterface(
 
     inner class RootConfigDetails {
         @get:JavascriptInterface
-        val platform = viewModel.platform.current
+        val platform = options.platform.current
 
         @get:JavascriptInterface
-        val versionName = viewModel.versionName
+        val versionName = options.versionName
 
         @get:JavascriptInterface
-        val versionCode = viewModel.versionCode
+        val versionCode = options.versionCode
     }
 
     @get:JavascriptInterface

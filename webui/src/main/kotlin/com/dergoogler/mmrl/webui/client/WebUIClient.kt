@@ -16,12 +16,11 @@ import androidx.compose.ui.platform.UriHandler
 import com.dergoogler.mmrl.webui.R
 import com.dergoogler.mmrl.webui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.webui.component.dialog.PromptData
-import com.dergoogler.mmrl.webui.viewModel.WebUIViewModel
-
+import com.dergoogler.mmrl.webui.util.WebUIOptions
 
 internal class WebUIClient(
     private val context: Context,
-    private val viewModel: WebUIViewModel,
+    private val options: WebUIOptions,
     private val uriHandler: UriHandler,
     private val debug: Boolean,
     private val webuiAssetsLoader: (Uri) -> WebResourceResponse?,
@@ -30,7 +29,7 @@ internal class WebUIClient(
         private val context: Context,
         private val showConfirm: (ConfirmData) -> Unit,
         private val showPrompt: (PromptData) -> Unit,
-        private val viewModel: WebUIViewModel,
+        private val options: WebUIOptions,
     ) : WebChromeClient() {
         override fun onJsAlert(
             view: WebView?,
@@ -39,7 +38,7 @@ internal class WebUIClient(
             result: JsResult,
         ): Boolean {
             showConfirm(
-                ConfirmData(title = context.getString(R.string.says, viewModel.modId),
+                ConfirmData(title = context.getString(R.string.says, options.modId),
                     description = message,
                     onConfirm = { result.confirm() },
                     onClose = { result.cancel() })
@@ -55,7 +54,7 @@ internal class WebUIClient(
             result: JsResult,
         ): Boolean {
             showConfirm(
-                ConfirmData(title = context.getString(R.string.says, viewModel.modId),
+                ConfirmData(title = context.getString(R.string.says, options.modId),
                     description = message,
                     onConfirm = {
                         result.confirm()
@@ -79,7 +78,7 @@ internal class WebUIClient(
                 PromptData(
                     title = message ?: context.getString(
                         R.string.says,
-                        viewModel.modId
+                        options.modId
                     ),
                     value = defaultValue ?: "",
                     onConfirm = {
@@ -101,7 +100,7 @@ internal class WebUIClient(
     ): Boolean {
         val mUrl = request?.url?.toString() ?: return false
 
-        return if (!viewModel.isDomainSafe(mUrl)) {
+        return if (!options.isDomainSafe(mUrl)) {
             uriHandler.openUri(uri = mUrl)
             true
         } else {

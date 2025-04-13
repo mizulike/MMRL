@@ -32,7 +32,7 @@ import com.dergoogler.mmrl.webui.interfaces.ModuleInterface
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.rememberInsets
 import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
-import com.dergoogler.mmrl.webui.viewModel.WebUIViewModel
+import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.webui.handlers.webrootPathHandler
 import kotlinx.html.b
 import kotlinx.html.body
@@ -56,7 +56,7 @@ import kotlinx.html.ul
 @Composable
 fun WebUIScreen(
     webView: WebView,
-    viewModel: WebUIViewModel,
+    options: WebUIOptions,
     interfaces: List<JavaScriptInterface> = listOf(),
 ) {
     val context = LocalContext.current
@@ -65,15 +65,15 @@ fun WebUIScreen(
     val uriHandler = LocalUriHandler.current
     val colorScheme = MaterialTheme.colorScheme
 
-    WebView.setWebContentsDebuggingEnabled(viewModel.debug)
+    WebView.setWebContentsDebuggingEnabled(options.debug)
 
     BackHandler {
-        if (viewModel.config.backHandler && webView.canGoBack()) {
+        if (options.config.backHandler && webView.canGoBack()) {
             webView.goBack()
             return@BackHandler
         }
 
-        if (viewModel.config.exitConfirm) {
+        if (options.config.exitConfirm) {
             showConfirm(ConfirmData(
                 title = context.getString(R.string.exit),
                 description = context.getString(R.string.exit_desc),
@@ -94,16 +94,16 @@ fun WebUIScreen(
         ) {
             val webuiAssetsLoader = rememberWebUIAssetLoader(
                 handlers = listOf(
-                    "/mmrl/" to mmrlPathHandler(viewModel),
-                    ".${viewModel.modId}/" to suPathHandler("/data/adb/modules/${viewModel.modId}".toSuFile()),
+                    "/mmrl/" to mmrlPathHandler(options),
+                    ".${options.modId}/" to suPathHandler("/data/adb/modules/${options.modId}".toSuFile()),
                     "/.adb/" to suPathHandler("/data/adb".toSuFile()),
                     "/.config/" to suPathHandler("/data/adb/.config".toSuFile()),
                     "/.local/" to suPathHandler("/data/adb/.local".toSuFile()),
-                    "/" to webrootPathHandler(viewModel),
+                    "/" to webrootPathHandler(options),
                 )
             )
 
-            key(viewModel.recomposeCount) {
+            key(options.recomposeCount) {
                 AndroidView(factory = {
                     webView.apply {
                         setBackgroundColor(colorScheme.background.toArgb())
@@ -121,13 +121,13 @@ fun WebUIScreen(
                             context = context,
                             uriHandler = uriHandler,
                             webuiAssetsLoader = webuiAssetsLoader,
-                            debug = viewModel.debug,
-                            viewModel = viewModel,
+                            debug = options.debug,
+                            options = options,
                         )
 
                         webChromeClient = WebUIClient.ChromeClient(
                             context = context,
-                            viewModel = viewModel,
+                            options = options,
                             showPrompt = showPrompt,
                             showConfirm = showConfirm,
                         )
@@ -142,20 +142,20 @@ fun WebUIScreen(
                             FileInputInterface(
                                 context = context,
                                 webView = this,
-                            ), viewModel.sanitizedModIdWithFileInputStream
+                            ), options.sanitizedModIdWithFileInputStream
                         )
 
                         addJavascriptInterface(
                             ModuleInterface(
-                                viewModel = viewModel,
+                                options = options,
                                 context = context,
                                 webView = this,
                                 insets = insets
-                            ), "$${viewModel.sanitizedModId}"
+                            ), "$${options.sanitizedModId}"
                         )
 
                         addJavascriptInterface(
-                            FileInterface(this, context), viewModel.sanitizedModIdWithFile
+                            FileInterface(this, context), options.sanitizedModIdWithFile
                         )
                     }
                 }, update = {
@@ -164,7 +164,7 @@ fun WebUIScreen(
                             javaScriptEnabled = true
                             domStorageEnabled = true
                             allowFileAccess = false
-                            if (viewModel.debug && viewModel.remoteDebug) {
+                            if (options.debug && options.remoteDebug) {
                                 mixedContentMode =
                                     android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
@@ -173,15 +173,15 @@ fun WebUIScreen(
                         }
 
 
-                        if (viewModel.requireNewAppVersion) {
+                        if (options.requireNewAppVersion) {
                             loadData(
-                                getRequireNewVersion(context, viewModel), "text/html", "UTF-8"
+                                getRequireNewVersion(context, options), "text/html", "UTF-8"
                             )
 
                             return@apply
                         }
 
-                        loadUrl(viewModel.domainUrl)
+                        loadUrl(options.domainUrl)
                     }
                 })
             }
@@ -193,7 +193,7 @@ fun WebUIScreen(
 
 fun getRequireNewVersion(
     context: Context,
-    viewModel: WebUIViewModel,
+    options: WebUIOptions,
 ) = buildString {
     appendHTML().html {
         lang = "en"
@@ -205,15 +205,15 @@ fun getRequireNewVersion(
             }
             link {
                 rel = "stylesheet"
-                href = "${viewModel.domain}/mmrl/insets.css"
+                href = "${options.domain}/mmrl/insets.css"
             }
             link {
                 rel = "stylesheet"
-                href = "${viewModel.domain}/mmrl/colors.css"
+                href = "${options.domain}/mmrl/colors.css"
             }
             link {
                 rel = "stylesheet"
-                href = "${viewModel.domain}/mmrl/assets/webui/requireNewVersion.css"
+                href = "${options.domain}/mmrl/assets/webui/requireNewVersion.css"
             }
             title { +"New App Version Required" }
         }
@@ -222,11 +222,11 @@ fun getRequireNewVersion(
                 div(classes = "content") {
                     div(classes = "title") { +context.getString(R.string.requireNewVersion_cannot_load_webui) }
                     div {
-                        b { +viewModel.modId }
+                        b { +options.modId }
                         +" "
                         +context.getString(R.string.requireNewVersion_require_text)
                         +" "
-                        i { +viewModel.config.require.version.required.toString() }
+                        i { +options.config.require.version.required.toString() }
                     }
                     div(classes = "list") {
                         span { +context.getString(R.string.requireNewVersion_try_the_following) }
@@ -242,8 +242,8 @@ fun getRequireNewVersion(
                             +context.getString(R.string.requireNewVersion_refresh)
                         }
 
-                        val supportLink = viewModel.config.require.version.supportLink
-                        val supportText = viewModel.config.require.version.supportText
+                        val supportLink = options.config.require.version.supportLink
+                        val supportText = options.config.require.version.supportText
 
                         if (supportLink != null && supportText != null) {
                             button(classes = "more") {

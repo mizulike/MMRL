@@ -8,23 +8,23 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
-import com.dergoogler.mmrl.webui.viewModel.WebUIViewModel
 import com.dergoogler.mmrl.webui.InjectionType
 import com.dergoogler.mmrl.webui.LocalInsets
 import com.dergoogler.mmrl.webui.PathHandler
 import com.dergoogler.mmrl.webui.addInjection
 import com.dergoogler.mmrl.webui.asResponse
 import com.dergoogler.mmrl.webui.notFoundResponse
+import com.dergoogler.mmrl.webui.util.WebUIOptions
 import java.io.IOException
 
 @Composable
 fun webrootPathHandler(
-    viewModel: WebUIViewModel,
+    options: WebUIOptions,
 ): PathHandler {
     val insets = LocalInsets.current
 
     val configBase =
-        SuFile("/data/adb/.config/${viewModel.modId}")
+        SuFile("/data/adb/.config/${options.modId}")
     val configStyleBase = SuFile(configBase, "style")
     val configJsBase = SuFile(configBase, "js")
 
@@ -36,7 +36,7 @@ fun webrootPathHandler(
 
     val directory by remember {
         mutableStateOf(
-            SuFile(viewModel.webRoot).getCanonicalDirPath().toSuFile()
+            SuFile(options.webRoot).getCanonicalDirPath().toSuFile()
         )
     }
 
@@ -44,7 +44,7 @@ fun webrootPathHandler(
         SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
     }
 
-    val reversedPaths = listOf("mmrl/", ".adb/", ".local/", ".config/", ".${viewModel.modId}/")
+    val reversedPaths = listOf("mmrl/", ".adb/", ".local/", ".config/", ".${options.modId}/")
 
     return handler@{ path ->
         reversedPaths.forEach {
@@ -59,17 +59,17 @@ fun webrootPathHandler(
                     "webrootPathHandler",
                     "The requested file: %s is outside the mounted directory: %s".format(
                         path,
-                        viewModel.webRoot
+                        options.webRoot
                     ),
                 )
                 return@handler notFoundResponse
             }
 
-            if (!file.exists() && viewModel.config.historyFallback) {
+            if (!file.exists() && options.config.historyFallback) {
                 val historyFallbackFile =
                     SuFile(
-                        viewModel.webRoot,
-                        viewModel.config.historyFallbackFile
+                        options.webRoot,
+                        options.config.historyFallbackFile
                     )
 
                 return@handler historyFallbackFile.asResponse()
@@ -82,7 +82,7 @@ fun webrootPathHandler(
             )
 
             val injections = buildList {
-                if (viewModel.isErudaEnabled) {
+                if (options.isErudaEnabled) {
                     addInjection({
                         appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/mmrl/assets/eruda/eruda-editor.js\"></script>")
                         appendLine("<script data-mmrl type=\"module\">")
@@ -96,8 +96,8 @@ fun webrootPathHandler(
 
                         for (editor in editors) {
                             appendLine("\tconst ${editor.name} = erudaEditor({")
-                            appendLine("\t\t\tmodId: \"${viewModel.modId}\",")
-                            appendLine("\t\t\tfile: ${viewModel.sanitizedModIdWithFile},")
+                            appendLine("\t\t\tmodId: \"${options.modId}\",")
+                            appendLine("\t\t\tfile: ${options.sanitizedModIdWithFile},")
                             appendLine("\t\t\tfileToEdit: \"${editor.file.path}\",")
                             appendLine("\t\t\tlang: \"${editor.mode}\",")
                             appendLine("\t\t\tname: \"${editor.name}\",")
@@ -115,7 +115,7 @@ fun webrootPathHandler(
                 configStyleBase.exists {
                     it.listFiles { f -> f.exists() && f.extension == "css" }.forEach {
                         addInjection({
-                            appendLine("<link data-mmrl rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/style/${it.name}\" type=\"text/css\" />")
+                            appendLine("<link data-mmrl rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${options.modId}/style/${it.name}\" type=\"text/css\" />")
                         })
                     }
                 }
@@ -131,7 +131,7 @@ fun webrootPathHandler(
                 customJsHead.exists {
                     it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
                         addInjection({
-                            appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/js/head/${it.name}\" type=\"module\"></script>")
+                            appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${options.modId}/js/head/${it.name}\" type=\"module\"></script>")
                         }, InjectionType.HEAD)
                     }
                 }
@@ -139,7 +139,7 @@ fun webrootPathHandler(
                 customJsBody.exists {
                     it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
                         addInjection({
-                            appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${viewModel.modId}/js/body/${it.name}\" type=\"module\"></script>")
+                            appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${options.modId}/js/body/${it.name}\" type=\"module\"></script>")
                         }, InjectionType.BODY)
                     }
                 }

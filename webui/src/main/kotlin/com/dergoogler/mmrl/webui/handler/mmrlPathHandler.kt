@@ -8,17 +8,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
-import com.dergoogler.mmrl.webui.viewModel.WebUIViewModel
 import com.dergoogler.mmrl.webui.LocalInsets
 import com.dergoogler.mmrl.webui.asScriptResponse
 import com.dergoogler.mmrl.webui.asStyleResponse
 import com.dergoogler.mmrl.webui.notFoundResponse
+import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.util.toCssValue
 import com.dergoogler.webui.handlers.assetsPathHandler
 import java.io.IOException
 
 @Composable
-fun mmrlPathHandler(viewModel: WebUIViewModel? = null): (String) -> WebResourceResponse {
+fun mmrlPathHandler(options: WebUIOptions? = null): (String) -> WebResourceResponse {
     val colorScheme = MaterialTheme.colorScheme
     val filledTonalButtonColors = ButtonDefaults.filledTonalButtonColors()
     val cardColors = CardDefaults.cardColors()
@@ -85,10 +85,10 @@ fun mmrlPathHandler(viewModel: WebUIViewModel? = null): (String) -> WebResourceR
                 return@handler assetsHandler(path.removePrefix("assets/"))
             }
 
-            val file = viewModel?.sanitizedModIdWithFile ?: "undefined"
-            val inputStream = viewModel?.sanitizedModIdWithFileInputStream ?: "undefined"
+            val file = options?.sanitizedModIdWithFile ?: "undefined"
+            val inputStream = options?.sanitizedModIdWithFileInputStream ?: "undefined"
 
-            if (viewModel != null && path.matches(Regex("scripts/sufile-fetch-ext\\.js"))) {
+            if (options != null && path.matches(Regex("scripts/sufile-fetch-ext\\.js"))) {
                 return@handler """window.$file = window.$file || {};
 
 const defaultFetchStreamOptions = {
@@ -184,11 +184,11 @@ window.$file.fetch = function (path, options = {}) {
 """.trimIndent().asScriptResponse()
             }
 
-            if (viewModel != null && path.matches(Regex("scripts/require\\.js"))) {
+            if (options != null && path.matches(Regex("scripts/require\\.js"))) {
                 return@handler """(function() {
     // Configuration
     var BASE_MODULE_PATH = '/data/adb/modules';
-    var CURRENT_MODULE_ID = '${viewModel.modId}';
+    var CURRENT_MODULE_ID = '${options.modId}';
     
     // Module cache
     var moduleCache = {};
