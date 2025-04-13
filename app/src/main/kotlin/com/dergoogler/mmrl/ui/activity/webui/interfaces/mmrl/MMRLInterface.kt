@@ -1,18 +1,30 @@
 package com.dergoogler.mmrl.ui.activity.webui.interfaces.mmrl
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
+import android.widget.Toast
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.BuildConfig
+import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.moshi
+import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
+import com.dergoogler.mmrl.utils.file.SuFile
 import com.dergoogler.mmrl.viewmodel.WebUIViewModel
+import com.dergoogler.webui.model.WebUIConfig.Companion.toWebUiConfig
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import dev.dergoogler.mmrl.compat.core.MMRLWebUIInterface
 import dev.dergoogler.mmrl.compat.ext.shareText
+import timber.log.Timber
+import java.io.BufferedInputStream
 
 @JsonClass(generateAdapter = true)
 internal data class Manager(
@@ -134,5 +146,85 @@ class MMRLInterface(
     @JavascriptInterface
     fun requestFileSystemAPI() {
         console.info("requestFileSystemAPI() is deprecated")
+    }
+
+    @JavascriptInterface
+    fun createShortcut(title: String?, icon: String?) {
+        if (title == null || icon == null) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.title_or_icon_not_found),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        createShortcutInternal(title, icon)
+    }
+
+    @JavascriptInterface
+    fun createShortcut() {
+        val config = viewModel.modId.toWebUiConfig()
+        val title = config.title
+        val icon = config.icon
+
+        if (title == null || icon == null) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.title_or_icon_not_found),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+        createShortcutInternal(title, icon)
+    }
+
+    private fun createShortcutInternal(title: String, icon: String) {
+        val id = viewModel.modId
+        val shortcutId = "shortcut_$id"
+        val webRoot = SuFile("/data/adb/modules/$id/webroot")
+        val iconFile = SuFile(webRoot, icon)
+
+        if (!iconFile.exists()) {
+            Timber.d("Icon not found: $iconFile")
+            Toast.makeText(context, context.getString(R.string.icon_not_found), Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+
+        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+
+        if (!shortcutManager.isRequestPinShortcutSupported) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.shortcut_not_supported),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        if (shortcutManager.pinnedShortcuts.any { it.id == shortcutId }) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.shortcut_already_exists),
+                Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        val shortcutIntent = Intent(context, WebUIActivity::class.java).apply {
+            action = Intent.ACTION_VIEW
+            putExtra("MOD_ID", id)
+        }
+
+        val bis = BufferedInputStream(iconFile.newInputStream())
+        val bitmap = BitmapFactory.decodeStream(bis)
+
+        val shortcut = ShortcutInfo.Builder(context, shortcutId)
+            .setShortLabel(title)
+            .setLongLabel(title)
+            .setIcon(Icon.createWithAdaptiveBitmap(bitmap))
+            .setIntent(shortcutIntent)
+            .build()
+
+        shortcutManager.requestPinShortcut(shortcut, null)
     }
 }
