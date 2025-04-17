@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.repository
 import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.database.entity.Repo
 import com.dergoogler.mmrl.network.runRequest
+import com.dergoogler.mmrl.platform.moduleManager
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.stub.IRepoManager
 import kotlinx.coroutines.Dispatchers

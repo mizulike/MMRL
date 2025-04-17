@@ -16,11 +16,7 @@ import com.dergoogler.mmrl.platform.stub.IShellCallback
 import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
 
-abstract class BaseModuleManager(
-    private val shell: Shell,
-    private val seLinuxContext: String,
-    private val fileManager: IFileManager,
-) : IModuleManager.Stub() {
+abstract class BaseModuleManager : IModuleManager.Stub() {
     internal val modulesDir = File(MODULES_PATH)
 
     internal val mVersion by lazy {
@@ -145,7 +141,7 @@ abstract class BaseModuleManager(
                 zygisk = false,
                 apks = false
             ),
-            size = fileManager.size(dir.path, true),
+            size = 0,
             lastUpdated = readLastUpdated(dir)
         )
     }
@@ -175,8 +171,7 @@ abstract class BaseModuleManager(
             toInt()
         }.getOrDefault(defaultValue)
 
-    private fun String.exec() = ShellUtils.fastCmd(shell, this)
-
+    private fun String.exec() = ShellUtils.fastCmd(Shell.getShell(), this)
 
     internal fun install(
         cmd: String,
@@ -226,7 +221,7 @@ abstract class BaseModuleManager(
         callback: IShellCallback,
     ): IShell =
         object : IShell.Stub() {
-            val main = Compat.createRootShell()
+            val main = Shell.getShell()
 
             override fun isAlive(): Boolean = main.isAlive
 
@@ -254,7 +249,7 @@ abstract class BaseModuleManager(
             override fun close() = main.close()
         }
 
-    internal fun String.submit(cb: Shell.ResultCallback) = shell
+    internal fun String.submit(cb: Shell.ResultCallback) = Shell.getShell()
         .newJob().add(this).to(ArrayList(), null)
         .submit(cb)
 

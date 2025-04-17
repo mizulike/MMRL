@@ -3,13 +3,13 @@ package com.dergoogler.mmrl.viewmodel
 import android.app.Application
 import android.content.Context
 import com.dergoogler.mmrl.platform.Compat
-import com.dergoogler.mmrl.platform.Compat.moduleManager
 import com.dergoogler.mmrl.model.local.ModuleAnalytics
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dergoogler.mmrl.platform.content.NullableBoolean
+import com.dergoogler.mmrl.platform.moduleManager
 import dev.dergoogler.mmrl.compat.viewmodel.MMRLViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -70,8 +70,10 @@ class HomeViewModel @Inject constructor(
     }
 
     fun reboot(reason: String = "") {
-        with(moduleManager) {
-            reboot(reason)
+        Compat.get(Unit) {
+            with(moduleManager) {
+                reboot(reason)
+            }
         }
     }
 }

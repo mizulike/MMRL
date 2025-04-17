@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.platform.moduleManager
 import com.dergoogler.mmrl.webui.webUiConfig
 import java.net.URI
 

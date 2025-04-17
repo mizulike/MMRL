@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.platform.file
 
+import android.os.IBinder
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
 import android.system.ErrnoException
@@ -11,14 +12,22 @@ import android.system.OsConstants.O_RDONLY
 import android.system.OsConstants.O_TRUNC
 import android.system.OsConstants.O_WRONLY
 import android.util.LruCache
+import com.dergoogler.mmrl.platform.content.IService
 import com.dergoogler.mmrl.platform.content.ParcelResult
+import com.dergoogler.mmrl.platform.content.ServiceBinder
 import com.dergoogler.mmrl.platform.stub.IFileManager
+import com.dergoogler.mmrl.platform.stub.IModuleManager.Stub
+import com.dergoogler.mmrl.platform.stub.IServiceManager
 import java.io.File
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class FileManager : IFileManager.Stub() {
+class FileManager : IFileManager.Stub(), IService {
+    override val name: String
+        get() = "File"
+
+    override fun create(service: IServiceManager): IBinder = Stub.asInterface(this).asBinder()
 
     init {
         System.loadLibrary("mmrl-file-manager")

@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.ui.activity
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.Crossfade
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi
@@ -21,7 +22,11 @@ import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isSetup
 import com.dergoogler.mmrl.network.NetworkUtils
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.file.FileManager
+import com.dergoogler.mmrl.platform.manager.KernelSUModuleManager
+import com.dergoogler.mmrl.platform.moduleManager
 import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
@@ -68,6 +73,8 @@ class MainActivity : MMRLComponentActivity() {
                 modulesRepository.getBlacklist()
 
                 ProviderService.init(baseContext, preferences.workingMode.toPlatform())
+
+                Log.d("MainActivity", Compat.moduleManager.version)
 
                 NetworkUtils.setEnableDoh(preferences.useDoh)
 

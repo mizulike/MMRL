@@ -1,23 +1,13 @@
 package com.dergoogler.mmrl.platform.manager
 
-import com.topjohnwu.superuser.Shell
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.content.NullableBoolean
-import com.dergoogler.mmrl.platform.file.FileManager
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
 
-internal class MagiskModuleManager(
-    shell: Shell,
-    seLinuxContext: String,
-    fileManager: FileManager,
-) : BaseModuleManager(
-    shell = shell,
-    seLinuxContext = seLinuxContext,
-    fileManager = fileManager
-) {
+class MagiskModuleManager : BaseModuleManager() {
     override fun getManagerName(): String = "Magisk"
 
     override fun getModuleCompatibility() = ModuleCompatibility(

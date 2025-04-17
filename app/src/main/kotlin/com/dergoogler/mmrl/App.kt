@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.dergoogler.mmrl.app.utils.NotificationUtils
 import com.dergoogler.mmrl.network.NetworkUtils
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.service.ServiceManagerCompat
 import com.toxicbakery.logging.Arbor
 import com.toxicbakery.logging.LogCatSeedling
@@ -19,7 +20,7 @@ class App : Application() {
         super.onCreate()
         app = this
 
-        ServiceManagerCompat.setHiddenApiExemptions()
+        Compat.setHiddenApiExemptions()
         NotificationUtils.init(this)
         NetworkUtils.setCacheDir(cacheDir)
     }

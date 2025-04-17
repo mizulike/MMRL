@@ -5,6 +5,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.platform.fileManager
 
 
 class FileInterface(
