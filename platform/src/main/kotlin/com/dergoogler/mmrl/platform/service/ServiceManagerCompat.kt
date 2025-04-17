@@ -91,6 +91,11 @@ class ServiceManagerCompat(
 
         init {
             Shell.enableVerboseLogging = debug
+            Shell.setDefaultBuilder(
+                Shell.Builder.create()
+                    .setInitializers(SuShellInitializer::class.java)
+                    .setTimeout(10)
+            )
         }
 
         override fun isAvailable() = true
@@ -113,6 +118,10 @@ class ServiceManagerCompat(
 
         override fun unbind(connection: ServiceConnection) {
             RootService.stop(getWorkingModeIntent(context, platform))
+        }
+        
+        private class SuShellInitializer : Shell.Initializer() {
+            override fun onInit(context: Context, shell: Shell) = shell.isRoot
         }
     }
 
@@ -145,8 +154,4 @@ class ServiceManagerCompat(
             putExtra(PLATFORM_KEY, platform)
         }
     }
-}
-
-class SuShellInitializer : Shell.Initializer() {
-    override fun onInit(context: Context, shell: Shell) = shell.isRoot
 }

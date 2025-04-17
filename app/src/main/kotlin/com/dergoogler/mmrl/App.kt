@@ -21,12 +21,6 @@ class App : Application() {
         super.onCreate()
         app = this
 
-        Shell.setDefaultBuilder(
-            Shell.Builder.create()
-                .setInitializers(SuShellInitializer::class.java)
-                .setTimeout(10)
-        )
-
         Compat.setHiddenApiExemptions()
         NotificationUtils.init(this)
         NetworkUtils.setCacheDir(cacheDir)
