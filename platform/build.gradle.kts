@@ -26,6 +26,11 @@ android {
                 arguments += "-DANDROID_STL=c++_static"
             }
         }
+        val aidlDir = file("src/main/aidl")
+        aidlPackagedList += aidlDir.walkTopDown()
+            .filter { it.isFile && it.extension == "aidl" }
+            .map { it.relativeTo(aidlDir).path }
+            .toList()
     }
 
     externalNativeBuild {
