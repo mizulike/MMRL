@@ -3,7 +3,6 @@ package com.dergoogler.mmrl.platform.file
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
 import com.dergoogler.mmrl.platform.Compat
-import com.dergoogler.mmrl.platform.fileManager
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import java.io.File
 import java.io.FileFilter

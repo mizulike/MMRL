@@ -1,13 +1,9 @@
 package com.dergoogler.mmrl.platform.service
 
-import android.os.Binder
-import android.os.IBinder
-import android.os.Parcel
 import android.os.SELinux
 import android.system.Os
-import android.util.Log
+import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.Platform
-import com.dergoogler.mmrl.platform.content.Service
 import com.dergoogler.mmrl.platform.file.FileManager
 import com.dergoogler.mmrl.platform.manager.APatchModuleManager
 import com.dergoogler.mmrl.platform.manager.KernelSUModuleManager
@@ -16,13 +12,13 @@ import com.dergoogler.mmrl.platform.manager.MagiskModuleManager
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
+import com.topjohnwu.superuser.Shell
 import kotlin.system.exitProcess
 
 internal class ServiceManager(
     private val platform: Platform,
 ) : IServiceManager.Stub() {
-    private val services = hashMapOf<String, IBinder>()
-
+    private val main by lazy { Shell.getShell() }
 
     private val fileManager by lazy {
         FileManager()
@@ -30,10 +26,30 @@ internal class ServiceManager(
 
     private val moduleManager by lazy {
         when (platform) {
-            Platform.Magisk -> MagiskModuleManager()
-            Platform.KernelSU -> KernelSUModuleManager()
-            Platform.KsuNext -> KsuNextModuleManager()
-            Platform.APatch -> APatchModuleManager()
+            Platform.Magisk -> MagiskModuleManager(
+                shell = main,
+                seLinuxContext = seLinuxContext,
+                fileManager = fileManager
+            )
+
+            Platform.KernelSU -> KernelSUModuleManager(
+                shell = main,
+                seLinuxContext = seLinuxContext,
+                fileManager = fileManager
+            )
+
+            Platform.KsuNext -> KsuNextModuleManager(
+                shell = main,
+                seLinuxContext = seLinuxContext,
+                fileManager = fileManager
+            )
+
+            Platform.APatch -> APatchModuleManager(
+                shell = main,
+                seLinuxContext = seLinuxContext,
+                fileManager = fileManager
+            )
+
             else -> throw IllegalStateException("Unsupported platform: $seLinuxContext")
         }
     }
@@ -61,42 +77,4 @@ internal class ServiceManager(
     override fun getFileManager(): IFileManager {
         return fileManager
     }
-
-    override fun addService(service: Service<*>): IBinder? =
-        runCatching {
-            service.create(this).apply {
-                services[service.name] = this
-            }
-        }.onFailure {
-            Log.e("ServiceManager", Log.getStackTraceString(it))
-
-        }.getOrNull()
-
-    override fun getService(name: String): IBinder? = services[name]
-
-    override fun onTransact(code: Int, data: Parcel, reply: Parcel?, flags: Int) =
-        if (code == ServiceManagerCompat.BINDER_TRANSACTION) {
-            data.enforceInterface(DESCRIPTOR)
-            val targetBinder = data.readStrongBinder()
-            val targetCode = data.readInt()
-            val targetFlags = data.readInt()
-
-            val newData = Parcel.obtain().apply {
-                runCatching {
-                    appendFrom(data, data.dataPosition(), data.dataAvail())
-                }
-            }
-
-            try {
-                val id = Binder.clearCallingIdentity()
-                targetBinder.transact(targetCode, newData, reply, targetFlags)
-                Binder.restoreCallingIdentity(id)
-            } finally {
-                newData.recycle()
-            }
-
-            true
-        } else {
-            super.onTransact(code, data, reply, flags)
-        }
 }

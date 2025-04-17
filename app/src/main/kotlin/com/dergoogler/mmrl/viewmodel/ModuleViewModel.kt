@@ -23,7 +23,6 @@ import com.dergoogler.mmrl.model.online.TrackJson
 import com.dergoogler.mmrl.model.online.VersionItem
 import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.Platform
-import com.dergoogler.mmrl.platform.moduleManager
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository

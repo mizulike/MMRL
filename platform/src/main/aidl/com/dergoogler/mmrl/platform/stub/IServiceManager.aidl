@@ -11,6 +11,4 @@ interface IServiceManager {
     String currentPlatform() = 3;
     IModuleManager getModuleManager() = 4;
     IFileManager getFileManager() = 5;
-    IBinder addService(in Service service) = 6;
-    IBinder getService(String name) = 7;
 }

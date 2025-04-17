@@ -10,8 +10,6 @@ import com.dergoogler.mmrl.compat.MediaStoreCompat.copyToDir
 import com.dergoogler.mmrl.compat.MediaStoreCompat.getPathForUri
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
-import com.dergoogler.mmrl.platform.fileManager
-import com.dergoogler.mmrl.platform.moduleManager
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository

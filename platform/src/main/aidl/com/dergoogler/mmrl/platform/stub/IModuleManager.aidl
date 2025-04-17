@@ -14,7 +14,6 @@ interface IModuleManager {
     int getVersionCode();
     List<LocalModule> getModules();
     ModuleCompatibility getModuleCompatibility();
-    String getSeLinuxContext();
     LocalModule getModuleById(String id);
     LocalModule getModuleInfo(String zipPath);
     IShell getShell(in List<String> command, in LocalModule module, IShellCallback callback);

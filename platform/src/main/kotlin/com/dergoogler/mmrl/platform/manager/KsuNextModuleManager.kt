@@ -1,11 +1,21 @@
 package com.dergoogler.mmrl.platform.manager
 
+import com.topjohnwu.superuser.Shell
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
+import com.dergoogler.mmrl.platform.file.FileManager
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
 
-class KsuNextModuleManager : KernelSUModuleManager() {
+internal class KsuNextModuleManager(
+    shell: Shell,
+    seLinuxContext: String,
+    fileManager: FileManager,
+) : KernelSUModuleManager(
+    shell=  shell,
+    seLinuxContext = seLinuxContext,
+    fileManager = fileManager
+) {
     override fun getModuleCompatibility() = ModuleCompatibility(
         hasMagicMount = false,
         canRestoreModules = true

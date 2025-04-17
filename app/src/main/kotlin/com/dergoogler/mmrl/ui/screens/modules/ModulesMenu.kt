@@ -28,7 +28,6 @@ import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.ModulesMenu
 import com.dergoogler.mmrl.datastore.model.Option
-import com.dergoogler.mmrl.platform.moduleManager
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.MenuChip
 import com.dergoogler.mmrl.ui.component.Segment

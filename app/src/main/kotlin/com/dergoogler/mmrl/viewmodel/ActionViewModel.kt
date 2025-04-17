@@ -11,7 +11,6 @@ import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dergoogler.mmrl.platform.content.State
-import com.dergoogler.mmrl.platform.moduleManager
 import com.dergoogler.mmrl.platform.stub.IShellCallback
 import dev.dergoogler.mmrl.compat.viewmodel.TerminalViewModel
 import kotlinx.coroutines.CompletableDeferred

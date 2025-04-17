@@ -1,14 +1,23 @@
 package com.dergoogler.mmrl.platform.manager
 
+import com.topjohnwu.superuser.Shell
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.content.NullableBoolean
+import com.dergoogler.mmrl.platform.file.FileManager
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
-import java.io.File
 
-class APatchModuleManager : BaseModuleManager() {
+internal class APatchModuleManager(
+    shell: Shell,
+    seLinuxContext: String,
+    val fileManager: FileManager,
+) : BaseModuleManager(
+    shell = shell,
+    seLinuxContext = seLinuxContext,
+    fileManager = fileManager
+) {
     override fun getManagerName(): String = "APatch"
 
     override fun getVersion(): String = mVersion
@@ -26,9 +35,9 @@ class APatchModuleManager : BaseModuleManager() {
     override fun uidShouldUmount(uid: Int): Boolean = false
 
     override fun getModuleCompatibility() = ModuleCompatibility(
-        hasMagicMount = File("/data/adb/.bind_mount_enable").exists() && (versionCode >= 11011 && !File(
+        hasMagicMount = fileManager.exists("/data/adb/.bind_mount_enable") && (versionCode >= 11011 && !fileManager.exists(
             "/data/adb/.overlay_enable"
-        ).exists()),
+        )),
         canRestoreModules = false
     )
 

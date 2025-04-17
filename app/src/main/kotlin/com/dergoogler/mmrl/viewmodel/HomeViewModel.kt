@@ -9,7 +9,6 @@ import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dergoogler.mmrl.platform.content.NullableBoolean
-import com.dergoogler.mmrl.platform.moduleManager
 import dev.dergoogler.mmrl.compat.viewmodel.MMRLViewModel
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
