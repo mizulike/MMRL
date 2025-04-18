@@ -51,8 +51,8 @@ enum class Platform(val id: String) {
          *               various configuration options.
          * @return `true` if the initialization was successful, `false` otherwise.
          */
-        suspend fun init(config: PlatformConfig.() -> Unit): Boolean {
-            val conf = PlatformConfigImpl().apply(config)
+        suspend fun init(config: suspend PlatformConfig.() -> Unit): Boolean {
+            val conf = PlatformConfigImpl().applyConfig(config)
 
             if (conf.context == null) {
                 Log.e(TAG, "Cannot initialize Platform without defining 'android.content.Context'")
@@ -92,6 +92,11 @@ enum class Platform(val id: String) {
                     state()
                 }
             }
+        }
+
+        suspend fun PlatformConfigImpl.applyConfig(block: suspend PlatformConfig.() -> Unit): PlatformConfigImpl {
+            block()
+            return this
         }
 
         val moduleManager: IModuleManager get() = mService.moduleManager
@@ -164,7 +169,6 @@ enum class Platform(val id: String) {
 
     val current get() = id
 }
-
 
 interface PlatformConfig {
     var context: Context?
