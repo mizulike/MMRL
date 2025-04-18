@@ -27,13 +27,13 @@ import com.dergoogler.mmrl.webui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.webui.component.dialog.rememberPrompt
 import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.handler.suPathHandler
+import com.dergoogler.mmrl.webui.handler.webrootPathHandler
 import com.dergoogler.mmrl.webui.interfaces.FileInputInterface
 import com.dergoogler.mmrl.webui.interfaces.ModuleInterface
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.rememberInsets
 import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
 import com.dergoogler.mmrl.webui.util.WebUIOptions
-import com.dergoogler.webui.handlers.webrootPathHandler
 import kotlinx.html.b
 import kotlinx.html.body
 import kotlinx.html.button

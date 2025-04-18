@@ -14,7 +14,6 @@ import com.dergoogler.mmrl.webui.asStyleResponse
 import com.dergoogler.mmrl.webui.notFoundResponse
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.util.toCssValue
-import com.dergoogler.webui.handlers.assetsPathHandler
 import java.io.IOException
 
 @Composable

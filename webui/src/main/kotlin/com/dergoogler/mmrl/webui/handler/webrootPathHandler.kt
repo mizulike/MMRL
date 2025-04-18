@@ -1,4 +1,4 @@
-package com.dergoogler.webui.handlers
+package com.dergoogler.mmrl.webui.handler
 
 import android.util.Log
 import androidx.compose.runtime.Composable
