@@ -51,15 +51,33 @@ import kotlinx.html.stream.appendHTML
 import kotlinx.html.title
 import kotlinx.html.ul
 
+/**
+ * A Composable function that displays a WebView for a web-based UI.
+ *
+ * This function sets up and manages a WebView instance to load and display a web UI. It handles
+ * various configurations, including JavaScript interfaces, debugging options, file access, and
+ * back button behavior. It also manages loading assets from different sources.
+ *
+ * @param webView The WebView instance to be used for displaying the web UI.
+ * @param options The configuration options for the web UI, including debug settings, URLs, and mod-specific details.
+ * @param interfaces A list of JavaScriptInterface objects that provide a bridge between JavaScript and Kotlin code.
+ *
+ * @see WebUIOptions
+ * @see JavaScriptInterface
+ * @see WebView
+ * @see BackHandler
+ * @see AndroidView
+ * @see LocalContext
+ * @see LocalUriHandler
+ * @see MaterialTheme
+ * @see CompositionLocalProvider
+ * @see LocalInsets
+ * @see ViewCompat
+ * @see WebUIClient
+ *
+ */
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
-/**
- * Represents a screen for displaying web content within the application.
- *
- * @param webView The required WebView instance used to render web content.
- * @param options The required configuration options for the WebView.
- * @param interfaces Optional additional JavaScript interfaces that can be added to the WebView.
- */
 fun WebUIScreen(
     webView: WebView,
     options: WebUIOptions,

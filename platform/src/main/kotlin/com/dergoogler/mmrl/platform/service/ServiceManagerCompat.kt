@@ -15,6 +15,7 @@ import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
 import org.lsposed.hiddenapibypass.HiddenApiBypass
+import java.util.concurrent.ExecutorService
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
@@ -62,16 +63,16 @@ object ServiceManagerCompat {
     }
 
     /**
-     * Retrieves a service instance from a given source asynchronously.
+     * Creates an [IServiceManager] instance from the given [IProvider].
      *
-     * This function is a suspend function, meaning it must be called from a coroutine
-     * or another suspend function. The exact behavior and parameters required for this
-     * function depend on its implementation.
+     * This function checks if the provided [IProvider] is available and authorized before attempting
+     * to retrieve the service manager. If either of these conditions are not met, it throws an
+     * [IllegalStateException]. The function is also executed in the [Dispatchers.Main] context.
      *
-     * @param provider The provider that supplies the service instance.
-     * @param timeoutMillis The maximum time to wait for the service instance, in milliseconds.
-     * @return The service instance retrieved from the specified source.
-     * @throws Exception If the service cannot be retrieved or an error occurs during the process.
+     * @param provider The [IProvider] to use for creating the service manager.
+     * @param timeoutMillis The timeout in milliseconds for the operation (default is [TIMEOUT_MILLIS]).
+     * @return An [IServiceManager] instance if the provider is available and authorized.
+     * @throws IllegalStateException If the provider is not available or not authorized.
      */
     suspend fun from(
         provider: IProvider,
@@ -118,7 +119,7 @@ object ServiceManagerCompat {
         override fun isAvailable() = true
 
         override suspend fun isAuthorized() = suspendCancellableCoroutine { continuation ->
-            Shell.EXECUTOR.submit {
+            Shell.EXECUTOR.execute {
                 runCatching {
                     Shell.getShell()
                 }.onSuccess {
@@ -148,6 +149,9 @@ object ServiceManagerCompat {
         debug: Boolean,
     ) = from(LibSuProvider(context, platform, debug))
 
+    /**
+     * Represents the platform type.
+     */
     fun Intent.getPlatform(): Platform =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             this.getSerializableExtra(PLATFORM_KEY, Platform::class.java)
@@ -157,6 +161,20 @@ object ServiceManagerCompat {
             this.getSerializableExtra(PLATFORM_KEY) as Platform
         }
 
+    /**
+     * Creates an intent to start the [SuService] with the specified platform.
+     *
+     * This function constructs an explicit intent targeting the [SuService] within the application's package.
+     * It adds an extra to the intent, identifying the target platform using the [PLATFORM_KEY].
+     *
+     * @param context The application context used to determine the package name and resolve the service.
+     * @param platform The target platform, an enum value representing the desired platform.
+     * @return An intent configured to start the [SuService] with the given platform.
+     *
+     * @see SuService
+     * @see Platform
+     * @see PLATFORM_KEY
+     */
     fun getPlatformIntent(context: Context, platform: Platform) = Intent().apply {
         component = ComponentName(
             context.packageName,

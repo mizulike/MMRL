@@ -42,19 +42,36 @@ enum class Platform(val id: String) {
         val isAliveFlow get() = _isAliveFlow.asStateFlow()
 
         /**
-         * Initializes the platform with the specified configuration.
+         * Initializes the platform with the given configuration.
          *
-         * This function is a suspending function, meaning it can be called from a coroutine
-         * or another suspending function. It allows you to configure the platform by providing
-         * a lambda that applies settings to a [PlatformConfig] instance.
+         * This function sets up the underlying service manager for the platform. It requires
+         * a valid `android.content.Context` and a supported `com.dergoogler.mmrl.platform.Platform`
+         * to function correctly. If the platform is already initialized, it simply returns `true`.
          *
-         * **Note:** The properties [PlatformConfig.context] and [PlatformConfig.platform]
-         * must be set in the configuration. If they are not provided, this function will return `false`.
+         * @param config A lambda function with a receiver of type `PlatformConfig` that allows
+         *               configuring the platform's settings (e.g., context, platform type, debug mode).
+         *               This lambda is executed within the scope of a `PlatformConfig` instance,
+         *               allowing direct access to its properties and functions.
+         * @return `true` if the platform was successfully initialized or was already initialized,
+         *         `false` if the initialization failed due to missing configuration or an error.
          *
-         * @param config A lambda function used to configure the platform. The lambda receives
-         *               a [PlatformConfig] instance as its receiver, allowing you to set
-         *               various configuration options.
-         * @return `true` if the initialization was successful, `false` otherwise.
+         * @throws Exception If any unexpected error occurs during the initialization process.
+         *
+         * **Error Handling:**
+         * - If the provided configuration doesn't include a `context`, it logs an error and returns `false`.
+         * - If the configuration lacks a specified `platform` type, it also logs an error and returns `false`.
+         * - If an exception occurs during service manager creation, it catches the exception, logs it, clears the service, and returns the current `state()`
+         *
+         * **Initialization Process:**
+         * 1. Applies the provided configuration lambda to a `PlatformConfigImpl` instance.
+         * 2. Checks if the context and platform are defined in the configuration.
+         * 3. If the platform is already alive (`isAlive` is true), returns `true` immediately.
+         * 4. Otherwise, attempts to create the service manager based on the specified platform.
+         * 5. Uses `ServiceManagerCompat.fromLibSu` for Magisk, KsuNext, KernelSU, and APatch platforms, if no `fromProvider` is specified.
+         * 6. If no `fromProvider` and a different platform, it sets the service to null.
+         * 7. Calls the `state()` function to get the initialized or current state.
+         * 8. Returns true if no exception occurs and state() is successful
+         * 9. On exception clears the service to null and returns the state()
          */
         suspend fun init(config: suspend PlatformConfig.() -> Unit): Boolean {
             val conf = PlatformConfigImpl().applyConfig(config)
@@ -80,7 +97,7 @@ enum class Platform(val id: String) {
                         KsuNext,
                         KernelSU,
                         APatch,
-                        -> conf.fromProvider
+                            -> conf.fromProvider
                             ?: ServiceManagerCompat.fromLibSu(
                                 context = conf.context!!,
                                 platform = conf.platform!!,
@@ -104,8 +121,45 @@ enum class Platform(val id: String) {
             return this
         }
 
+        /**
+         * Provides access to the module manager, which is responsible for managing the available modules.
+         *
+         * The module manager allows you to:
+         * - Get a list of all available modules.
+         * - Find a specific module by its identifier.
+         * - Check if a module is enabled or disabled.
+         * - (Potentially) Enable or disable modules, depending on the underlying implementation.
+         * - (Potentially) Interact with individual modules.
+         *
+         * This property delegates to the module manager held by the underlying service [mService].
+         *
+         * @see IModuleManager
+         */
         val moduleManager: IModuleManager get() = mService.moduleManager
+
+        /**
+         * Provides access to the file management service.
+         *
+         * This property allows interaction with the underlying file management system, enabling
+         * operations like creating, deleting, reading, and writing files and directories.
+         *
+         * @see IFileManager
+         */
         val fileManager: IFileManager get() = mService.fileManager
+
+        /**
+         * The SELinux context associated with the binder service.
+         *
+         * This property provides the SELinux security context string that the binder service is running under.
+         * This context is used by the kernel's SELinux module to enforce security policies and control access to resources.
+         *
+         * @see [android.os.Binder.getCallingPid] For more information about how process SELinux contexts are managed.
+         * @see [android.os.Binder.getCallingUid] For more information about how user SELinux contexts are managed.
+         * @see [android.os.Binder] For more information about the Binder IPC mechanism.
+         *
+         * @return A String representing the SELinux context of the binder service.
+         */
+        val seLinuxContext: String get() = mService.seLinuxContext
 
         val platform: Platform
             get() = if (mServiceOrNull != null) Platform.from(mService.currentPlatform()) else NonRoot

@@ -13,6 +13,21 @@ import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 
+/**
+ * `SuFile` is a wrapper class around `java.io.File` that provides enhanced file system operations,
+ * including support for managing files and directories through an `IFileManager` interface.
+ * It facilitates platform-specific file management, offering a consistent API across different
+ * environments.
+ *
+ * This class provides a range of functions for interacting with files and directories, such as reading,
+ * writing, creating, deleting, and managing permissions. It also introduces functionalities
+ * for working with streams and handling exceptions.
+ *
+ * @param path The path to the file or directory represented by this `SuFile` instance.
+ *
+ * @property fileManager The `IFileManager` instance used to perform file system operations. Defaults to
+ *                       `Platform.fileManager`.
+ */
 class SuFile(
     path: String,
 ) : File(path) {

@@ -10,3 +10,5 @@ dependencyResolutionManagement {
         }
     }
 }
+
+include(":hidden-api")

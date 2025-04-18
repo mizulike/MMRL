@@ -42,9 +42,7 @@ class HomeViewModel @Inject constructor(
 
     val seLinuxContext: String
         get() = Platform.get("Failed") {
-            with(moduleManager) {
-                seLinuxContext
-            }
+            seLinuxContext
         }
 
     val superUserCount: Int

@@ -8,82 +8,67 @@ object WebUIPermissions {
     const val DSL_DEX_LOADING = "webui.permission.DSL_DEX_LOADING"
 }
 
+/**
+ * Represents the required version information for interacting with the Web UI.
+ *
+ * This data class specifies the minimum version of the Web UI that the client must be using,
+ * along with optional supporting text and a link for the user to get help or updates.
+ *
+ * @property required The minimum required version number (an integer). Defaults to 1.
+ *                    Clients with a Web UI version lower than this value should be prompted to upgrade.
+ * @property supportText Optional text providing additional context or instructions to the user.
+ *                       For example: "Please update to the latest version for the best experience."
+ * @property supportLink Optional URL link where the user can find more information about the
+ *                       required version, such as download instructions or release notes.
+ *                       For example: "https://example.com/webui-update"
+ */
 @JsonClass(generateAdapter = true)
 data class WebUIConfigRequireVersion(
-    /**
-     * Specifies the required value for this configuration.
-     * Default value is set to 1.
-     */
     val required: Int = 1,
-    /**
-     * Optional text providing additional support information or guidance.
-     * This can be null if no support text is provided.
-     */
     val supportText: String? = null,
-    /**
-     * A nullable string representing the support link.
-     * This can be used to provide a URL or contact information for support purposes.
-     * If null, no support link is provided.
-     */
     val supportLink: String? = null,
 )
 
+/**
+ * Represents the required configuration for the Web UI.
+ *
+ * This data class defines the minimum required configuration settings needed for the Web UI to function correctly.
+ * Currently, it only includes the required version information.
+ *
+ * @property version The required version details for the Web UI. Defaults to a new [WebUIConfigRequireVersion] instance.
+ */
 @JsonClass(generateAdapter = true)
 data class WebUIConfigRequire(
-    /**
-     * Represents the required version configuration for the Web UI.
-     * This property holds an instance of [WebUIConfigRequireVersion], which specifies
-     * the version requirements for the Web UI to function properly.
-     */
     val version: WebUIConfigRequireVersion = WebUIConfigRequireVersion(),
 )
 
+/**
+ * Configuration class for the Web UI.
+ *
+ * This data class defines the configuration options for how the Web UI should behave and appear.
+ * It includes settings for required dependencies, permissions, history handling,
+ * window behavior, and more.
+ *
+ * @property require Configuration for required dependencies for the Web UI. Defaults to an empty [WebUIConfigRequire].
+ * @property permissions List of permissions required by the Web UI. Defaults to an empty list.
+ * @property historyFallback Whether the Web UI should fallback to the `historyFallbackFile` if a route is not found. Defaults to `false`.
+ * @property title The title of the Web UI window. If null, the default title of the underlying platform will be used. Defaults to `null`.
+ * @property icon The path or URL to the icon of the Web UI. If null, the default icon of the underlying platform will be used. Defaults to `null`.
+ * @property windowResize Whether the Web UI window should be resizable. Defaults to `true`.
+ * @property backHandler Whether the Web UI should handle the back button/gesture events. Defaults to `true`.
+ * @property exitConfirm Whether the Web UI should show a confirmation dialog when the user tries to exit. Defaults to `true`.
+ * @property historyFallbackFile The file to use as a fallback when `historyFallback` is enabled. Defaults to "index.html".
+ */
 @JsonClass(generateAdapter = true)
 data class WebUIConfig(
-    /**
-     * Specifies the required configuration settings for the WebUI.
-     * This property holds an instance of [WebUIConfigRequire], which defines
-     * the mandatory parameters needed for the WebUI to function correctly.
-     */
     val require: WebUIConfigRequire = WebUIConfigRequire(),
     val permissions: List<String> = emptyList(),
-    /**
-     * Indicates whether the application should fall back to using history
-     * in case of certain failures or conditions. When set to `true`, the
-     * application will attempt to use historical data as a fallback mechanism.
-     * Defaults to `false`.
-     */
     val historyFallback: Boolean = false,
-    /**
-     * The title of the configuration. This is an optional property and can be null.
-     */
     val title: String? = null,
-    /**
-     * The icon associated with the configuration. This is an optional property
-     * and can be null if no icon is specified.
-     */
     val icon: String? = null,
-    /**
-     * Indicates whether the application window can be resized.
-     * If set to `true`, the window resizing feature is enabled.
-     */
     val windowResize: Boolean = true,
-    /**
-     * Indicates whether the back button handler is enabled or not.
-     * When set to `true`, the application will handle back button presses.
-     */
     val backHandler: Boolean = true,
-    /**
-     * Indicates whether a confirmation dialog should be displayed before exiting the application.
-     * If set to `true`, the user will be prompted to confirm their action before the application exits.
-     */
     val exitConfirm: Boolean = true,
-    /**
-     * The name of the fallback file to be used for history-based routing.
-     * Typically, this is used in single-page applications (SPAs) to serve
-     * a default file (e.g., "index.html") when a route does not match
-     * any static files.
-     */
     val historyFallbackFile: String = "index.html",
 ) {
     companion object {
