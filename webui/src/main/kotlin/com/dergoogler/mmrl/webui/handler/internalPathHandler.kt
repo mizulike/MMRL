@@ -18,7 +18,14 @@ import com.dergoogler.webui.handlers.assetsPathHandler
 import java.io.IOException
 
 @Composable
-fun mmrlPathHandler(options: WebUIOptions? = null): (String) -> WebResourceResponse {
+/**
+ * Handles internal path requests and generates a response based on the provided options.
+ *
+ * @param options Optional configuration for the WebUI. Defaults to `null` if not provided.
+ * @return A lambda function that takes a `String` representing the requested path
+ *         and returns a `WebResourceResponse` containing the response for the request.
+ */
+fun internalPathHandler(options: WebUIOptions? = null): (String) -> WebResourceResponse {
     val colorScheme = MaterialTheme.colorScheme
     val filledTonalButtonColors = ButtonDefaults.filledTonalButtonColors()
     val cardColors = CardDefaults.cardColors()

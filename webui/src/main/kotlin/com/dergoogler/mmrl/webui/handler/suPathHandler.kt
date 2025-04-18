@@ -8,6 +8,16 @@ import com.dergoogler.mmrl.webui.asResponse
 import java.io.IOException
 
 @Composable
+/**
+ * Handles the processing of a specific path for the WebUI.
+ *
+ * This function is responsible for managing and responding to requests
+ * related to a particular path in the application. It may include logic
+ * for routing, validation, and response generation.
+ *
+ * @param <Add relevant parameters here if applicable>
+ * @return <Describe the return value if applicable>
+ */
 fun suPathHandler(
     directory: SuFile,
 ): (String) -> WebResourceResponse? {

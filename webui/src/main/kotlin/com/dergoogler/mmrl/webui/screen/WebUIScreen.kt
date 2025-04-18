@@ -25,7 +25,7 @@ import com.dergoogler.mmrl.webui.component.Loading
 import com.dergoogler.mmrl.webui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.webui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.webui.component.dialog.rememberPrompt
-import com.dergoogler.mmrl.webui.handler.mmrlPathHandler
+import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.handler.suPathHandler
 import com.dergoogler.mmrl.webui.interfaces.FileInputInterface
 import com.dergoogler.mmrl.webui.interfaces.ModuleInterface
@@ -51,9 +51,15 @@ import kotlinx.html.stream.appendHTML
 import kotlinx.html.title
 import kotlinx.html.ul
 
-
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
+/**
+ * Represents a screen for displaying web content within the application.
+ *
+ * @param webView The required WebView instance used to render web content.
+ * @param options The required configuration options for the WebView.
+ * @param interfaces Optional additional JavaScript interfaces that can be added to the WebView.
+ */
 fun WebUIScreen(
     webView: WebView,
     options: WebUIOptions,
@@ -94,7 +100,8 @@ fun WebUIScreen(
         ) {
             val webuiAssetsLoader = rememberWebUIAssetLoader(
                 handlers = listOf(
-                    "/mmrl/" to mmrlPathHandler(options),
+                    "/mmrl/" to internalPathHandler(options),
+                    "/internal/" to internalPathHandler(options),
                     ".${options.modId}/" to suPathHandler("/data/adb/modules/${options.modId}".toSuFile()),
                     "/.adb/" to suPathHandler("/data/adb".toSuFile()),
                     "/.config/" to suPathHandler("/data/adb/.config".toSuFile()),

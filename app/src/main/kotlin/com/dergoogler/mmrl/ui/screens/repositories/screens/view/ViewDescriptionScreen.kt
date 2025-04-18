@@ -52,11 +52,11 @@ import com.dergoogler.mmrl.ui.utils.none
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import com.dergoogler.mmrl.webui.Insets
 import com.dergoogler.mmrl.webui.LocalInsets
+import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
-import com.dergoogler.mmrl.webui.handler.mmrlPathHandler
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 
-const val launchUrl = "https://mui.kernelsu.org/mmrl/assets/markdown.html"
+const val launchUrl = "https://mui.kernelsu.org/internal/assets/markdown.html"
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -80,7 +80,7 @@ fun ViewDescriptionScreen(
     ) {
         val webUiAssetLoader = rememberWebUIAssetLoader(
             handlers = listOf(
-                "/mmrl/" to mmrlPathHandler(),
+                "/internal/" to internalPathHandler(),
             )
         )
 

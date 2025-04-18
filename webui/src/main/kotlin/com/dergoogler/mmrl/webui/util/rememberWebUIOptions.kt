@@ -113,6 +113,16 @@ data class WebUIOptions(
 }
 
 @Composable
+/**
+ * Remembers and provides the WebUI options for the current composition.
+ *
+ * This function is typically used in a Jetpack Compose environment to manage
+ * and persist WebUI-related options across recompositions. It ensures that
+ * the options are retained and accessible throughout the lifecycle of the
+ * composable function.
+ *
+ * @return The remembered WebUI options.
+ */
 fun rememberWebUIOptions(
     modId: String,
     appVersionCode: Int = -1,

@@ -32,7 +32,8 @@ object ServiceManagerCompat {
 
     suspend fun get(
         provider: IProvider,
-    ) = withTimeout(TIMEOUT_MILLIS) {
+        timeoutMillis: Long = TIMEOUT_MILLIS
+    ) = withTimeout(timeoutMillis) {
         suspendCancellableCoroutine { continuation ->
             val connection = object : ServiceConnection {
                 override fun onServiceConnected(name: ComponentName, binder: IBinder) {
@@ -60,11 +61,26 @@ object ServiceManagerCompat {
         }
     }
 
-    suspend fun from(provider: IProvider): IServiceManager = withContext(Dispatchers.Main) {
+    /**
+     * Retrieves a service instance from a given source asynchronously.
+     *
+     * This function is a suspend function, meaning it must be called from a coroutine
+     * or another suspend function. The exact behavior and parameters required for this
+     * function depend on its implementation.
+     *
+     * @param provider The provider that supplies the service instance.
+     * @param timeoutMillis The maximum time to wait for the service instance, in milliseconds.
+     * @return The service instance retrieved from the specified source.
+     * @throws Exception If the service cannot be retrieved or an error occurs during the process.
+     */
+    suspend fun from(
+        provider: IProvider,
+        timeoutMillis: Long = TIMEOUT_MILLIS
+    ): IServiceManager = withContext(Dispatchers.Main) {
         when {
             !provider.isAvailable() -> throw IllegalStateException("${provider.name} not available")
             !provider.isAuthorized() -> throw IllegalStateException("${provider.name} not authorized")
-            else -> get(provider)
+            else -> get(provider, timeoutMillis)
         }
     }
 

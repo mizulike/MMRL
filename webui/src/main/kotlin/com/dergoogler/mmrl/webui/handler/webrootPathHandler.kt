@@ -44,7 +44,7 @@ fun webrootPathHandler(
         SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
     }
 
-    val reversedPaths = listOf("mmrl/", ".adb/", ".local/", ".config/", ".${options.modId}/")
+    val reversedPaths = listOf("mmrl/", "internal/", ".adb/", ".local/", ".config/", ".${options.modId}/")
 
     return handler@{ path ->
         reversedPaths.forEach {

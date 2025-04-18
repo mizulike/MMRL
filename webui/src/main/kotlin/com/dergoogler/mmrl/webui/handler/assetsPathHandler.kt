@@ -9,6 +9,13 @@ import com.dergoogler.mmrl.webui.notFoundResponse
 import java.io.IOException
 
 @Composable
+/**
+ * Handles the retrieval of web assets by providing a function that maps a given asset path
+ * to a corresponding `WebResourceResponse`.
+ *
+ * @return A lambda function that takes a `String` representing the asset path and returns
+ *         a `WebResourceResponse` containing the requested asset's data.
+ */
 fun assetsPathHandler(): (String) -> WebResourceResponse {
     val context = LocalContext.current
 

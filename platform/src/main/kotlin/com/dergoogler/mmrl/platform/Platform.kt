@@ -15,6 +15,11 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 
+/**
+ * Represents the various platforms supported by the application.
+ *
+ * @property id A unique identifier for the platform.
+ */
 enum class Platform(val id: String) {
     Magisk("magisk"),
     KernelSU("kernelsu"),
