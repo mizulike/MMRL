@@ -127,9 +127,9 @@ class ServiceManagerCompat(
 
     suspend fun fromLibSu(
         platform: Platform,
-        enableShellInitializer: Boolean,
+        debug: Boolean,
     ) =
-        from(LibSuProvider(context, platform, enableShellInitializer))
+        from(LibSuProvider(context, platform, debug))
 
     companion object {
         internal const val VERSION_CODE = 1
