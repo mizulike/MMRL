@@ -37,9 +37,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.navigation.MainScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.homeScreen
@@ -67,7 +67,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
     val configuration = LocalConfiguration.current
 
     val windowSize = WindowWidthSize(configuration, windowSizeClass)
-    val isRoot = userPreferences.workingMode.isRoot && Compat.isAlive
+    val isRoot = userPreferences.workingMode.isRoot && Platform.isAlive
 
     val mainScreens by remember(isRoot) {
         derivedStateOf {

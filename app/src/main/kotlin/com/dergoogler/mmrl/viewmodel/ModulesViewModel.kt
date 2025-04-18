@@ -19,7 +19,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.ModulesMenu
 import com.dergoogler.mmrl.datastore.model.Option
@@ -27,6 +26,7 @@ import com.dergoogler.mmrl.model.json.UpdateJson
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.VersionItem
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
@@ -74,11 +74,11 @@ class ModulesViewModel @Inject constructor(
     modulesRepository = modulesRepository,
     userPreferencesRepository = userPreferencesRepository
 ) {
-    val isProviderAlive get() = Compat.isAlive
-    val platform get() = Compat.platform
+    val isProviderAlive get() = Platform.isAlive
+    val platform get() = Platform.platform
 
     val moduleCompatibility
-        get() = Compat.get(
+        get() = Platform.get(
             ModuleCompatibility(
                 hasMagicMount = false,
                 canRestoreModules = false
@@ -138,7 +138,7 @@ class ModulesViewModel @Inject constructor(
     }
 
     private fun providerObserver() {
-        Compat.isAliveFlow
+        Platform.isAliveFlow
             .onEach {
                 if (it) getLocalAll()
 
@@ -271,12 +271,12 @@ class ModulesViewModel @Inject constructor(
             isOpsRunning = opsTasks.contains(module.id),
             toggle = {
                 opsTasks.add(module.id)
-                Compat.moduleManager
+                Platform.moduleManager
                     .disable(module.id, useShell, opsCallback)
             },
             change = {
                 opsTasks.add(module.id)
-                Compat.moduleManager
+                Platform.moduleManager
                     .remove(module.id, useShell, opsCallback)
             }
         )
@@ -285,12 +285,12 @@ class ModulesViewModel @Inject constructor(
             isOpsRunning = opsTasks.contains(module.id),
             toggle = {
                 opsTasks.add(module.id)
-                Compat.moduleManager
+                Platform.moduleManager
                     .enable(module.id, useShell, opsCallback)
             },
             change = {
                 opsTasks.add(module.id)
-                Compat.moduleManager
+                Platform.moduleManager
                     .remove(module.id, useShell, opsCallback)
             }
         )
@@ -300,7 +300,7 @@ class ModulesViewModel @Inject constructor(
             toggle = {},
             change = {
                 opsTasks.add(module.id)
-                Compat.moduleManager
+                Platform.moduleManager
                     .enable(module.id, useShell, opsCallback)
             }
         )

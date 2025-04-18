@@ -8,7 +8,7 @@ import android.webkit.WebView
 import android.widget.Toast
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.dergoogler.mmrl.platform.Compat
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
@@ -57,7 +57,7 @@ class KernelSUInterface(
 
     @JavascriptInterface
     fun exec(cmd: String): String {
-        return Compat.withNewRootShell(
+        return Platform.withNewRootShell(
             globalMnt = true,
             debug = debug
         ) { ShellUtils.fastCmd(this, cmd) }
@@ -95,7 +95,7 @@ class KernelSUInterface(
         processOptions(finalCommand, options)
         finalCommand.append(cmd)
 
-        val result = Compat.withNewRootShell(
+        val result = Platform.withNewRootShell(
             globalMnt = true,
             debug = debug
         ) {
@@ -132,7 +132,7 @@ class KernelSUInterface(
             finalCommand.append(command)
         }
 
-        val shell = Compat.createRootShell(
+        val shell = Platform.createRootShell(
             globalMnt = true,
             debug = debug
         )

@@ -21,7 +21,6 @@ import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.OnlineModule
 import com.dergoogler.mmrl.model.online.TrackJson
 import com.dergoogler.mmrl.model.online.VersionItem
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -53,20 +52,20 @@ class ModuleViewModel @AssistedInject constructor(
     userPreferencesRepository = userPreferencesRepository,
     application = application,
 ) {
-    val isProviderAlive get() = Compat.isAlive
+    val isProviderAlive get() = Platform.isAlive
 
     val version: String
-        get() = Compat.get("") {
+        get() = Platform.get("") {
             with(moduleManager) { version }
         }
 
     val versionCode: Int
-        get() = Compat.get(0) {
+        get() = Platform.get(0) {
             with(moduleManager) { versionCode }
         }
 
     val platform: Platform
-        get() = Compat.platform
+        get() = Platform.platform
 
     private val moduleId = arguments.panicString("moduleId")
     val repoUrl = arguments.panicString("repoUrl")
@@ -222,12 +221,12 @@ class ModuleViewModel @AssistedInject constructor(
             isOpsRunning = opsTasks.contains(module.id),
             toggle = {
                 opsTasks.add(module.id)
-                Compat.moduleManager.disable(module.id, useShell, opsCallback)
+                Platform.moduleManager.disable(module.id, useShell, opsCallback)
             },
             change = {
                 Timber.d("Pressed ENABLE")
                 opsTasks.add(module.id)
-                Compat.moduleManager.remove(module.id, useShell, opsCallback)
+                Platform.moduleManager.remove(module.id, useShell, opsCallback)
                 local = local?.copy(state = State.REMOVE)
             }
         )
@@ -236,12 +235,12 @@ class ModuleViewModel @AssistedInject constructor(
             isOpsRunning = opsTasks.contains(module.id),
             toggle = {
                 opsTasks.add(module.id)
-                Compat.moduleManager.enable(module.id, useShell, opsCallback)
+                Platform.moduleManager.enable(module.id, useShell, opsCallback)
             },
             change = {
                 Timber.d("Pressed DISABLE")
                 opsTasks.add(module.id)
-                Compat.moduleManager.remove(module.id, useShell, opsCallback)
+                Platform.moduleManager.remove(module.id, useShell, opsCallback)
                 local = local?.copy(state = State.REMOVE)
             }
         )
@@ -252,7 +251,7 @@ class ModuleViewModel @AssistedInject constructor(
             change = {
                 Timber.d("Pressed REMOVE")
                 opsTasks.add(module.id)
-                Compat.moduleManager.enable(module.id, useShell, opsCallback)
+                Platform.moduleManager.enable(module.id, useShell, opsCallback)
                 local = local?.copy(state = State.ENABLE)
             }
         )

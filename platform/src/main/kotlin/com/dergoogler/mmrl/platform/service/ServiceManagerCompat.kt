@@ -18,18 +18,19 @@ import org.lsposed.hiddenapibypass.HiddenApiBypass
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
-class ServiceManagerCompat(
-    private val context: Context,
-) {
-    interface IProvider {
-        val name: String
-        fun isAvailable(): Boolean
-        suspend fun isAuthorized(): Boolean
-        fun bind(connection: ServiceConnection)
-        fun unbind(connection: ServiceConnection)
-    }
+interface IProvider {
+    val name: String
+    fun isAvailable(): Boolean
+    suspend fun isAuthorized(): Boolean
+    fun bind(connection: ServiceConnection)
+    fun unbind(connection: ServiceConnection)
+}
 
-    private suspend fun get(
+object ServiceManagerCompat {
+    const val TIMEOUT_MILLIS = 15_000L
+    const val PLATFORM_KEY = "PLATFORM"
+
+    suspend fun get(
         provider: IProvider,
     ) = withTimeout(TIMEOUT_MILLIS) {
         suspendCancellableCoroutine { continuation ->
@@ -67,7 +68,7 @@ class ServiceManagerCompat(
         }
     }
 
-    private class SuService : RootService() {
+    class SuService : RootService() {
         override fun onBind(intent: Intent): IBinder {
             val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 intent.getSerializableExtra(PLATFORM_KEY, Platform::class.java)
@@ -82,7 +83,7 @@ class ServiceManagerCompat(
 
     }
 
-    private class LibSuProvider(
+    class LibSuProvider(
         private val context: Context,
         private val platform: Platform,
         debug: Boolean,
@@ -113,45 +114,39 @@ class ServiceManagerCompat(
         }
 
         override fun bind(connection: ServiceConnection) {
-            RootService.bind(getWorkingModeIntent(context, platform), connection)
+            RootService.bind(getPlatformIntent(context, platform), connection)
         }
 
         override fun unbind(connection: ServiceConnection) {
-            RootService.stop(getWorkingModeIntent(context, platform))
+            RootService.stop(getPlatformIntent(context, platform))
         }
-        
-        private class SuShellInitializer : Shell.Initializer() {
-            override fun onInit(context: Context, shell: Shell) = shell.isRoot
-        }
+    }
+
+    class SuShellInitializer : Shell.Initializer() {
+        override fun onInit(context: Context, shell: Shell) = shell.isRoot
     }
 
     suspend fun fromLibSu(
+        context: Context,
         platform: Platform,
         debug: Boolean,
-    ) =
-        from(LibSuProvider(context, platform, debug))
+    ) = from(LibSuProvider(context, platform, debug))
 
-    companion object {
-        internal const val VERSION_CODE = 1
-        private const val TIMEOUT_MILLIS = 15_000L
-
-        const val PLATFORM_KEY = "PLATFORM"
-
-        fun Intent.getPlatform(): Platform =
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                this.getSerializableExtra(PLATFORM_KEY, Platform::class.java)
-                    ?: Platform.NonRoot
-            } else {
-                @Suppress("DEPRECATION")
-                this.getSerializableExtra(PLATFORM_KEY) as Platform
-            }
-
-        private fun getWorkingModeIntent(context: Context, platform: Platform) = Intent().apply {
-            component = ComponentName(
-                context.packageName,
-                SuService::class.java.name
-            )
-            putExtra(PLATFORM_KEY, platform)
+    fun Intent.getPlatform(): Platform =
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            this.getSerializableExtra(PLATFORM_KEY, Platform::class.java)
+                ?: Platform.NonRoot
+        } else {
+            @Suppress("DEPRECATION")
+            this.getSerializableExtra(PLATFORM_KEY) as Platform
         }
+
+    fun getPlatformIntent(context: Context, platform: Platform) = Intent().apply {
+        component = ComponentName(
+            context.packageName,
+            SuService::class.java.name
+        )
+        putExtra(PLATFORM_KEY, platform)
     }
+
 }

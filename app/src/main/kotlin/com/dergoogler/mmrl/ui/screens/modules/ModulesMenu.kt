@@ -24,10 +24,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.ModulesMenu
 import com.dergoogler.mmrl.datastore.model.Option
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.MenuChip
 import com.dergoogler.mmrl.ui.component.Segment
@@ -153,12 +153,12 @@ private fun MenuBottomSheet(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedButton(
-            enabled = Compat.isAlive,
+            enabled = Platform.isAlive,
             onClick = {
                 val builder = StringBuilder()
 
                 with(builder) {
-                    Compat.moduleManager.modules.map {
+                    Platform.moduleManager.modules.map {
                         append("Name: ${it.name}\n")
                         append("ID: ${it.id}\n")
                         append("Version: ${it.version}\n")

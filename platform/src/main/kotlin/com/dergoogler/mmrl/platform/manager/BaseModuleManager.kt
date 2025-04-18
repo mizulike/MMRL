@@ -1,7 +1,6 @@
 package com.dergoogler.mmrl.platform.manager
 
 import android.os.Build
-import com.dergoogler.mmrl.platform.Compat
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ShellUtils

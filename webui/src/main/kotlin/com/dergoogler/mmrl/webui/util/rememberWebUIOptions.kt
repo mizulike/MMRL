@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.webui.webUiConfig
@@ -24,20 +23,20 @@ data class WebUIOptions(
     val isDarkMode: Boolean,
     val cls: Class<*>?,
 ) {
-    val isProviderAlive get() = Compat.isAlive
+    val isProviderAlive get() = Platform.isAlive
 
     val versionName: String
-        get() = Compat.get("") {
+        get() = Platform.get("") {
             with(moduleManager) { version }
         }
 
     val versionCode: Int
-        get() = Compat.get(-1) {
+        get() = Platform.get(-1) {
             with(moduleManager) { versionCode }
         }
 
     val platform: Platform
-        get() = Compat.get(Platform.NonRoot) {
+        get() = Platform.get(Platform.NonRoot) {
             platform
         }
 

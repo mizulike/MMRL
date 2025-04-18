@@ -2,7 +2,6 @@ package com.dergoogler.mmrl.platform.service
 
 import android.os.SELinux
 import android.system.Os
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.FileManager
 import com.dergoogler.mmrl.platform.manager.APatchModuleManager
@@ -13,7 +12,6 @@ import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
 import com.topjohnwu.superuser.Shell
-import kotlin.system.exitProcess
 
 internal class ServiceManager(
     private val platform: Platform,

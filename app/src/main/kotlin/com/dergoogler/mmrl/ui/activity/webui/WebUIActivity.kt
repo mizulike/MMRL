@@ -16,8 +16,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
 import com.dergoogler.mmrl.BuildConfig
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.VersionInterface
 import com.dergoogler.mmrl.ui.component.Failed
@@ -50,7 +50,10 @@ class WebUIActivity : MMRLComponentActivity() {
         rootView = findViewById(android.R.id.content)
 
         lifecycleScope.launch {
-            Compat.init(this@WebUIActivity, userPrefs.workingMode.toPlatform())
+            Platform.init {
+                context = this@WebUIActivity
+                platform = userPrefs.workingMode.toPlatform()
+            }
         }
 
         val modId = intent.getStringExtra("MOD_ID")
@@ -68,8 +71,8 @@ class WebUIActivity : MMRLComponentActivity() {
         setBaseContent {
             var isLoading by remember { mutableStateOf(true) }
 
-            LaunchedEffect(Compat.isAlive) {
-                while (!Compat.isAlive) {
+            LaunchedEffect(Platform.isAlive) {
+                while (!Platform.isAlive) {
                     delay(1000)
                 }
 

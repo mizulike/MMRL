@@ -3,13 +3,14 @@ package com.dergoogler.mmrl.viewmodel
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.compat.MediaStoreCompat.copyToDir
 import com.dergoogler.mmrl.compat.MediaStoreCompat.getPathForUri
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
+import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformConfig
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -42,7 +43,7 @@ class InstallViewModel @Inject constructor(
     }
 
     fun reboot(reason: String = "") {
-        Compat.moduleManager.reboot(reason)
+        Platform.moduleManager.reboot(reason)
     }
 
     suspend fun installModules(uris: List<Uri>) = viewModelScope.launch {
@@ -50,7 +51,12 @@ class InstallViewModel @Inject constructor(
         event = Event.LOADING
         var allSucceeded = true
 
-        if (!Compat.init(context, userPreferences.workingMode.toPlatform())) {
+        val initPlatform = Platform.init {
+            context = context
+            platform = userPreferences.workingMode.toPlatform()
+        }
+
+        if (!initPlatform) {
             event = Event.FAILED
             log(R.string.service_is_not_available)
             return@launch
@@ -72,7 +78,7 @@ class InstallViewModel @Inject constructor(
                 return@mapNotNull null
             }
 
-            val info = Compat.moduleManager.getModuleInfo(path)
+            val info = Platform.moduleManager.getModuleInfo(path)
 
             if (info == null) {
                 devLog(R.string.unable_to_gather_module_info_of_file, path)
@@ -128,7 +134,7 @@ class InstallViewModel @Inject constructor(
 
             devLog(R.string.install_view_path, path)
 
-            Compat.moduleManager.getModuleInfo(path)?.let {
+            Platform.moduleManager.getModuleInfo(path)?.let {
                 devLog(R.string.install_view_module_info, it.toString())
                 return@withContext install(path, bulkModules)
             }
@@ -155,7 +161,7 @@ class InstallViewModel @Inject constructor(
                 }
             }
 
-            val moduleInfo = Compat.moduleManager.getModuleInfo(tmpFile.path)
+            val moduleInfo = Platform.moduleManager.getModuleInfo(tmpFile.path)
 
             if (moduleInfo == null) {
                 event = Event.FAILED
@@ -167,7 +173,10 @@ class InstallViewModel @Inject constructor(
             return@withContext install(tmpFile.path, bulkModules)
         }
 
-    private suspend fun install(zipPath: String, bulkModules: List<com.dergoogler.mmrl.platform.content.BulkModule>): Boolean =
+    private suspend fun install(
+        zipPath: String,
+        bulkModules: List<com.dergoogler.mmrl.platform.content.BulkModule>,
+    ): Boolean =
         withContext(Dispatchers.IO) {
             val zipFile = File(zipPath)
             val userPreferences = userPreferencesRepository.data.first()
@@ -199,7 +208,7 @@ class InstallViewModel @Inject constructor(
                 override fun onFailure(module: LocalModule?) {
                     if (module != null && shell.isNotNull() && !shell!!.isAlive) {
                         runCatching {
-                            Compat.fileManager.delete("/data/adb/modules_update/${module.id}")
+                            Platform.fileManager.delete("/data/adb/modules_update/${module.id}")
                         }.onFailure {
                             Timber.e(it)
                             log(R.string.failed_to_remove_updated_folder)
@@ -213,7 +222,7 @@ class InstallViewModel @Inject constructor(
 
             log(R.string.install_view_installing, zipFile.name)
 
-            val installer = Compat.moduleManager.install(zipPath, bulkModules, callback)
+            val installer = Platform.moduleManager.install(zipPath, bulkModules, callback)
             shell = installer
             installer.exec()
 
@@ -229,7 +238,7 @@ class InstallViewModel @Inject constructor(
 
     private fun deleteBySu(zipPath: String) {
         runCatching {
-            Compat.fileManager.deleteOnExit(zipPath)
+            Platform.fileManager.deleteOnExit(zipPath)
         }.onFailure {
             Timber.e(it)
         }.onSuccess {

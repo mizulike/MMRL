@@ -3,7 +3,7 @@ package com.dergoogler.mmrl.webui.interfaces
 import android.content.Context
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import com.dergoogler.mmrl.platform.Compat
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 
 
@@ -11,7 +11,7 @@ class FileInterface(
     webView: WebView,
     context: Context,
 ) : WebUIInterface(webView, context) {
-    private val file = Compat.fileManager
+    private val file = Platform.fileManager
 
     @JavascriptInterface
     fun read(path: String): String? =

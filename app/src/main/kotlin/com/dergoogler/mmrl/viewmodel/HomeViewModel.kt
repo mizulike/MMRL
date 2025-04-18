@@ -2,8 +2,8 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import android.content.Context
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.model.local.ModuleAnalytics
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -22,39 +22,39 @@ class HomeViewModel @Inject constructor(
     modulesRepository: ModulesRepository,
     userPreferencesRepository: UserPreferencesRepository,
 ) : MMRLViewModel(application, localRepository, modulesRepository, userPreferencesRepository) {
-    val isProviderAlive get() = Compat.isAlive
-    val platform get() = Compat.platform
+    val isProviderAlive get() = Platform.isAlive
+    val platform get() = Platform.platform
 
     val versionName: String
-        get() = Compat.get("") {
+        get() = Platform.get("") {
             with(moduleManager) { version }
         }
 
     val isLkmMode: NullableBoolean
-        get() = Compat.get(NullableBoolean(null)) {
+        get() = Platform.get(NullableBoolean(null)) {
             with(moduleManager) { isLkmMode }
         }
 
     val versionCode
-        get() = Compat.get(0) {
+        get() = Platform.get(0) {
             with(moduleManager) { versionCode }
         }
 
     val seLinuxContext: String
-        get() = Compat.get("Failed") {
+        get() = Platform.get("Failed") {
             with(moduleManager) {
                 seLinuxContext
             }
         }
 
     val superUserCount: Int
-        get() = Compat.get(-1) {
+        get() = Platform.get(-1) {
             with(moduleManager) {
                 superUserCount
             }
         }
 
-    fun analytics(context: Context): ModuleAnalytics? = Compat.get(null) {
+    fun analytics(context: Context): ModuleAnalytics? = Platform.get(null) {
         with(moduleManager) {
             val local = runBlocking { localRepository.getLocalAllAsFlow().first() }
             return@get ModuleAnalytics(
@@ -69,7 +69,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun reboot(reason: String = "") {
-        Compat.get(Unit) {
+        Platform.get(Unit) {
             with(moduleManager) {
                 reboot(reason)
             }

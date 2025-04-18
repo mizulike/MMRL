@@ -2,10 +2,10 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.model.local.LocalModule
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -42,7 +42,12 @@ class ActionViewModel @Inject constructor(
         viewModelScope.launch {
             event = Event.LOADING
 
-            if (!Compat.init(context, userPreferences.workingMode.toPlatform())) {
+            val initPlatform = Platform.init {
+                context = context
+                platform = userPreferences.workingMode.toPlatform()
+            }
+
+            if (!initPlatform) {
                 event = Event.FAILED
                 log(R.string.service_is_not_available)
                 return@launch
@@ -103,7 +108,7 @@ class ActionViewModel @Inject constructor(
                 }
             }
 
-            val action = Compat.moduleManager.action(modId, legacy, callback)
+            val action = Platform.moduleManager.action(modId, legacy, callback)
             shell = action
             action.exec()
 

@@ -2,11 +2,11 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.viewModelScope
-import com.dergoogler.mmrl.platform.Compat
 import com.dergoogler.mmrl.datastore.model.DarkMode
 import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.model.online.Blacklist
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -25,24 +25,24 @@ class SettingsViewModel @Inject constructor(
     modulesRepository: ModulesRepository,
     userPreferencesRepository: UserPreferencesRepository,
 ) : MMRLViewModel(application, localRepository, modulesRepository, userPreferencesRepository) {
-    val isProviderAlive get() = Compat.isAlive
-    val platform get() = Compat.platform
+    val isProviderAlive get() = Platform.isAlive
+    val platform get() = Platform.platform
 
     val version
-        get() = Compat.get("") {
+        get() = Platform.get("") {
             with(moduleManager) { "$version (${versionCode})" }
         }
 
     val versionCode
-        get() = Compat.get(-1) {
+        get() = Platform.get(-1) {
             with(moduleManager) { versionCode }
         }
 
-    val isSuEnabled = Compat.get(true) {
+    val isSuEnabled = Platform.get(true) {
         with(moduleManager) { isSuEnabled }
     }
 
-    fun setSuEnabled(value: Boolean) = Compat.get(true) {
+    fun setSuEnabled(value: Boolean) = Platform.get(true) {
         with(moduleManager) { setSuEnabled(value) }
     }
 

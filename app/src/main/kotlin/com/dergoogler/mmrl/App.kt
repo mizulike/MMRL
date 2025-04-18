@@ -4,9 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.dergoogler.mmrl.app.utils.NotificationUtils
 import com.dergoogler.mmrl.network.NetworkUtils
-import com.dergoogler.mmrl.platform.Compat
-import com.dergoogler.mmrl.platform.service.SuShellInitializer
-import com.topjohnwu.superuser.Shell
+import com.dergoogler.mmrl.platform.Platform
 import com.toxicbakery.logging.Arbor
 import com.toxicbakery.logging.LogCatSeedling
 import dagger.hilt.android.HiltAndroidApp
@@ -21,7 +19,8 @@ class App : Application() {
         super.onCreate()
         app = this
 
-        Compat.setHiddenApiExemptions()
+        Platform.setHiddenApiExemptions()
+
         NotificationUtils.init(this)
         NetworkUtils.setCacheDir(cacheDir)
     }
