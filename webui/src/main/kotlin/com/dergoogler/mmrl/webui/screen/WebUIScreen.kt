@@ -21,10 +21,10 @@ import com.dergoogler.mmrl.webui.interfaces.FileInterface
 import com.dergoogler.mmrl.webui.LocalInsets
 import com.dergoogler.mmrl.webui.R
 import com.dergoogler.mmrl.webui.client.WebUIClient
-import com.dergoogler.mmrl.webui.component.Loading
-import com.dergoogler.mmrl.webui.component.dialog.ConfirmData
-import com.dergoogler.mmrl.webui.component.dialog.rememberConfirm
-import com.dergoogler.mmrl.webui.component.dialog.rememberPrompt
+import com.dergoogler.mmrl.ui.component.Loading
+import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
+import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
+import com.dergoogler.mmrl.ui.component.dialog.rememberPrompt
 import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.handler.suPathHandler
 import com.dergoogler.mmrl.webui.handler.webrootPathHandler

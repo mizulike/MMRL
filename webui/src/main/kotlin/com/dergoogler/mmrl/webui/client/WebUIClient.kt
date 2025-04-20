@@ -13,9 +13,9 @@ import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.ui.platform.UriHandler
+import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
+import com.dergoogler.mmrl.ui.component.dialog.PromptData
 import com.dergoogler.mmrl.webui.R
-import com.dergoogler.mmrl.webui.component.dialog.ConfirmData
-import com.dergoogler.mmrl.webui.component.dialog.PromptData
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 
 internal class WebUIClient(
