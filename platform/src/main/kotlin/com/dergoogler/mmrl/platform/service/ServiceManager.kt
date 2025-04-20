@@ -13,7 +13,7 @@ import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
 import com.topjohnwu.superuser.Shell
 
-internal class ServiceManager(
+class ServiceManager(
     private val platform: Platform,
 ) : IServiceManager.Stub() {
     private val main by lazy { Shell.getShell() }
