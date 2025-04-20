@@ -12,6 +12,7 @@ import java.io.InputStream
 import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
+import java.util.Locale
 
 /**
  * `SuFile` is a wrapper class around `java.io.File` that provides enhanced file system operations,
@@ -348,6 +349,31 @@ class SuFile(
             return res
         }
 
-    }
+        fun Int.toFormattedFileSize(): String = toDouble().toFormattedFileSize()
 
+        fun Long.toFormattedFileSize(): String = toDouble().toFormattedFileSize()
+
+        fun Float.toFormattedFileSize(): String = toDouble().toFormattedFileSize()
+
+        fun Double.toFormattedFileSize(): String {
+            if (this < 1024) return "$this B"
+
+            val units = arrayOf("B", "KB", "MB", "GB", "TB", "PB")
+            var size = this
+            val sizeRepresentation = SuFileSizeRepresentation.getRepresentation(size)
+            val base = sizeRepresentation.base.toDouble()
+            var unitIndex = 0
+
+            while (size >= base && unitIndex < units.size - 1) {
+                size /= base
+                unitIndex++
+            }
+
+            return if (size == size.toLong().toDouble()) {
+                String.format(Locale.getDefault(), "%.0f %s", size, units[unitIndex])
+            } else {
+                String.format(Locale.getDefault(), "%.2f %s", size, units[unitIndex])
+            }
+        }
+    }
 }

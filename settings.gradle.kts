@@ -26,3 +26,5 @@ include(
     ":platform",
     ":webui"
 )
+include(":ui")
+include(":ext")
