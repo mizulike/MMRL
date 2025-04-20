@@ -23,7 +23,5 @@ enum class WorkingMode {
         val WorkingMode.isRoot get() = this == MODE_MAGISK || this == MODE_KERNEL_SU || this == MODE_KERNEL_SU_NEXT || this == MODE_APATCH
         val WorkingMode.isNonRoot get() = this == MODE_NON_ROOT
         val WorkingMode.isSetup get() = this == FIRST_SETUP
-
-
     }
 }

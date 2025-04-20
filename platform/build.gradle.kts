@@ -73,7 +73,7 @@ android {
 }
 
 dependencies {
-    implementation(projects.hiddenApi)
+    compileOnly(projects.hiddenApi)
     implementation(libs.androidx.core.ktx)
     implementation(libs.hiddenApiBypass)
     implementation(libs.androidx.compose.runtime)

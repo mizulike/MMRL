@@ -2,8 +2,6 @@ import com.android.build.gradle.internal.api.ApkVariantOutputImpl
 import org.gradle.internal.extensions.stdlib.capitalized
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-group = "com.dergoogler.mmrl"
-
 plugins {
     alias(libs.plugins.self.application)
     alias(libs.plugins.self.compose)
@@ -29,7 +27,7 @@ android {
         versionName = "v$version"
         versionCode = version
 
-        resourceConfigurations += arrayOf(
+        androidResources.localeFilters += arrayOf(
             "en",
             "ar",
             "de",
@@ -185,6 +183,7 @@ dependencies {
     implementation(projects.webui)
     implementation(projects.ui)
     implementation(projects.ext)
+    implementation(projects.datastore)
 
     implementation(libs.hiddenApiBypass)
     // implementation(libs.timber)

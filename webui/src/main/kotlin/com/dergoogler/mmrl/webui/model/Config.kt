@@ -43,20 +43,20 @@ data class WebUIConfigRequire(
 )
 
 /**
- * Configuration class for the Web UI.
+ * Configuration class for the WebUI.
  *
- * This data class defines the configuration options for how the Web UI should behave and appear.
+ * This data class defines the configuration options for how the WebUI should behave and appear.
  * It includes settings for required dependencies, permissions, history handling,
  * window behavior, and more.
  *
- * @property require Configuration for required dependencies for the Web UI. Defaults to an empty [WebUIConfigRequire].
+ * @property require Configuration for required dependencies for the WebUI. Defaults to an empty [WebUIConfigRequire].
  * @property permissions List of permissions required by the Web UI. Defaults to an empty list.
- * @property historyFallback Whether the Web UI should fallback to the `historyFallbackFile` if a route is not found. Defaults to `false`.
- * @property title The title of the Web UI window. If null, the default title of the underlying platform will be used. Defaults to `null`.
- * @property icon The path or URL to the icon of the Web UI. If null, the default icon of the underlying platform will be used. Defaults to `null`.
- * @property windowResize Whether the Web UI window should be resizable. Defaults to `true`.
- * @property backHandler Whether the Web UI should handle the back button/gesture events. Defaults to `true`.
- * @property exitConfirm Whether the Web UI should show a confirmation dialog when the user tries to exit. Defaults to `true`.
+ * @property historyFallback Whether the WebUI should fallback to the `historyFallbackFile` if a route is not found. Defaults to `false`.
+ * @property title The title of the WebUI window. If null, the default title of the underlying platform will be used. Defaults to `null`.
+ * @property icon The path or URL to the icon of the WebUI. If null, the default icon of the underlying platform will be used. Defaults to `null`.
+ * @property windowResize Whether the WebUI window should be resizable. Defaults to `true`.
+ * @property backHandler Whether the WebUI should handle the back button/gesture events. Defaults to `true`.
+ * @property exitConfirm Whether the WebUI should show a confirmation dialog when the user tries to exit. Defaults to `true`.
  * @property historyFallbackFile The file to use as a fallback when `historyFallback` is enabled. Defaults to "index.html".
  */
 @JsonClass(generateAdapter = true)

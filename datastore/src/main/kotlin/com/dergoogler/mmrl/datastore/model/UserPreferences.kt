@@ -1,16 +1,17 @@
 package com.dergoogler.mmrl.datastore.model
 
+import android.os.Build
+import android.os.Environment
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
-import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.ui.theme.Colors
-import dev.dergoogler.mmrl.compat.BuildCompat
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromByteArray
 import kotlinx.serialization.encodeToByteArray
 import kotlinx.serialization.protobuf.ProtoBuf
 import kotlinx.serialization.protobuf.ProtoNumber
+import java.io.File
 import java.io.InputStream
 import java.io.OutputStream
 import kotlin.contracts.ExperimentalContracts
@@ -21,9 +22,9 @@ import kotlin.contracts.contract
 data class UserPreferences @OptIn(ExperimentalSerializationApi::class) constructor(
     @ProtoNumber(1) val workingMode: WorkingMode = WorkingMode.FIRST_SETUP,
     @ProtoNumber(2) val darkMode: DarkMode = DarkMode.FollowSystem,
-    @ProtoNumber(3) val themeColor: Int = if (BuildCompat.atLeastS) Colors.Dynamic.id else Colors.MMRLBase.id,
+    @ProtoNumber(3) val themeColor: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) Colors.Dynamic.id else Colors.MMRLBase.id,
     @ProtoNumber(4) val deleteZipFile: Boolean = false,
-    @ProtoNumber(5) val downloadPath: String = Const.PUBLIC_DOWNLOADS.path,
+    @ProtoNumber(5) val downloadPath: String = PUBLIC_DOWNLOADS.path,
     @ProtoNumber(6) val homepage: Homepage = Homepage.Home,
     @ProtoNumber(7) val repositoryMenu: RepositoryMenu = RepositoryMenu(),
     @ProtoNumber(8) val modulesMenu: ModulesMenu = ModulesMenu(),
@@ -50,8 +51,11 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     @ProtoNumber(27) val allowCancelInstall: Boolean = false,
     @ProtoNumber(28) val allowCancelAction: Boolean = false,
     @ProtoNumber(29) val blacklistAlerts: Boolean = true,
+    @Deprecated("This is no longer used")
     @ProtoNumber(30) val injectEruda: List<String> = emptyList(),
+    @Deprecated("This is no longer used")
     @ProtoNumber(31) val allowedFsModules: List<String> = emptyList(),
+    @Deprecated("This is no longer used")
     @ProtoNumber(32) val allowedKsuModules: List<String> = emptyList(),
     @Deprecated("Replaced by ProviderService.isActive")
     @ProtoNumber(33) val useProviderAsBackgroundService: Boolean = false,
@@ -71,6 +75,10 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     )
 
     companion object {
+        val PUBLIC_DOWNLOADS: File = Environment.getExternalStoragePublicDirectory(
+            Environment.DIRECTORY_DOWNLOADS
+        )
+
         @OptIn(ExperimentalSerializationApi::class)
         fun decodeFrom(input: InputStream): UserPreferences =
             ProtoBuf.decodeFromByteArray(input.readBytes())

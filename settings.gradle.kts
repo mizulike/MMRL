@@ -26,5 +26,6 @@ include(
     ":platform",
     ":webui",
     ":ui",
-    ":ext"
+    ":ext",
+    ":datastore"
 )

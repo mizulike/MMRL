@@ -10,6 +10,25 @@ import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.webui.webUiConfig
 import java.net.URI
 
+/**
+ * Configuration options for the WebUI.
+ *
+ * This data class holds various settings and derived properties that define the behavior and environment of the WebUI.
+ * It encapsulates information such as module identification, application version, domain settings, debugging flags,
+ * and file paths related to the WebUI.
+ *
+ * @property modId The unique identifier of the module associated with this WebUI.
+ * @property appVersionCode The version code of the application.
+ * @property domain The base domain used for the WebUI (e.g., "example.com").
+ * @property domainSafeRegex A regular expression used to validate if a domain is safe.
+ * @property remoteDebug Indicates whether remote debugging is enabled.
+ * @property debugDomainSafeRegex A regular expression used to validate if a debug domain is safe, typically used for local network checks.
+ * @property debug Indicates whether debug mode is enabled.
+ * @property enableEruda Indicates whether the Eruda console is enabled for debugging.
+ * @property debugDomain The domain used for debugging, often a local network address.
+ * @property isDarkMode Indicates whether the dark mode is enabled in the UI.
+ * @property cls Optional class associated with WebUI.
+ */
 data class WebUIOptions(
     val modId: String,
     val appVersionCode: Int,
@@ -112,17 +131,27 @@ data class WebUIOptions(
 
 }
 
-@Composable
 /**
- * Remembers and provides the WebUI options for the current composition.
+ * Creates and remembers a [WebUIOptions] instance within a Composable function.
  *
- * This function is typically used in a Jetpack Compose environment to manage
- * and persist WebUI-related options across recompositions. It ensures that
- * the options are retained and accessible throughout the lifecycle of the
- * composable function.
+ * This function is used to configure the settings for a web-based UI. It leverages Compose's
+ * `remember` to cache the [WebUIOptions] instance across recompositions as long as the input
+ * parameters remain the same.
  *
- * @return The remembered WebUI options.
+ * @param modId A unique identifier for the module using the web UI. This is a crucial parameter to track the origin.
+ * @param appVersionCode The version code of the application. Defaults to -1 if not specified.
+ * @param domain The base URL for the production web UI. Defaults to "https://mui.kernelsu.org".
+ * @param domainSafeRegex A regular expression used to validate the production domain. Defaults to a regex matching "https://mui.kernelsu.org" and its subpaths.
+ * @param debugDomainSafeRegex A regular expression used to validate debug domains (e.g., localhost, local IPs). Defaults to a regex matching common local development addresses.
+ * @param debug A boolean flag indicating whether to enable debug mode. Defaults to `false`.
+ * @param remoteDebug A boolean flag indicating whether to enable remote debugging. Defaults to `false`.
+ * @param enableEruda A boolean flag indicating whether to enable the Eruda developer tool. Defaults to `false`.
+ * @param debugDomain The base URL for the debug web UI. Defaults to "https://127.0.0.1:8080".
+ * @param isDarkMode A boolean flag indicating whether to enable dark mode in the web UI. Defaults to `false`.
+ * @param cls An optional Class object representing the caller class. Defaults to `null`. Primarily for internal logging/debugging and creating WebUI shortcuts.
+ * @return A [WebUIOptions] instance configured with the provided parameters.
  */
+@Composable
 fun rememberWebUIOptions(
     modId: String,
     appVersionCode: Int = -1,
