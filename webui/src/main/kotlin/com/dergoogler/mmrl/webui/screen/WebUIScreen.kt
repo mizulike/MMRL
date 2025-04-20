@@ -50,6 +50,7 @@ import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.title
 import kotlinx.html.ul
+import androidx.core.graphics.drawable.toDrawable
 
 /**
  * A Composable function that displays a WebView for a web-based UI.
@@ -132,7 +133,7 @@ fun WebUIScreen(
                 AndroidView(factory = {
                     webView.apply {
                         setBackgroundColor(colorScheme.background.toArgb())
-                        background = ColorDrawable(colorScheme.background.toArgb())
+                        background = colorScheme.background.toArgb().toDrawable()
                         layoutParams = ViewGroup.LayoutParams(
                             ViewGroup.LayoutParams.MATCH_PARENT,
                             ViewGroup.LayoutParams.MATCH_PARENT

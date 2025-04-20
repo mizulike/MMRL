@@ -29,8 +29,8 @@ enum class Platform(val id: String) {
 
     companion object {
         private const val TAG = "Platform"
-        private var mServiceOrNull: IServiceManager? = null
-        private val mService
+        var mServiceOrNull: IServiceManager? = null
+        val mService
             get() = checkNotNull(mServiceOrNull) {
                 "IServiceManager haven't been received"
             }
