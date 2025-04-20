@@ -9,7 +9,7 @@ import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
 
-internal class APatchModuleManager(
+open class APatchModuleManager(
     shell: Shell,
     seLinuxContext: String,
     val fileManager: FileManager,

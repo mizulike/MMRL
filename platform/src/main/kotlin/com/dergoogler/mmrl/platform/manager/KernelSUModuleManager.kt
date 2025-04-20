@@ -11,7 +11,7 @@ import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
 
-internal open class KernelSUModuleManager(
+open class KernelSUModuleManager(
     shell: Shell,
     seLinuxContext: String,
     fileManager: FileManager,

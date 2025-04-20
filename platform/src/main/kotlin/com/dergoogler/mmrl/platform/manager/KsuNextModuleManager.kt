@@ -7,7 +7,7 @@ import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
 
-internal class KsuNextModuleManager(
+open class KsuNextModuleManager(
     shell: Shell,
     seLinuxContext: String,
     fileManager: FileManager,
