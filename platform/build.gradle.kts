@@ -78,8 +78,8 @@ dependencies {
     implementation(libs.hiddenApiBypass)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.apache.commons.compress)
-    implementation(libs.libsu.core)
-    implementation(libs.libsu.service)
-    implementation(libs.libsu.io)
+    compileOnly(libs.libsu.core)
+    compileOnly(libs.libsu.service)
+    compileOnly(libs.libsu.io)
     ksp(libs.square.moshi.kotlin)
 }
