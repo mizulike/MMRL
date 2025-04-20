@@ -15,8 +15,8 @@ import com.topjohnwu.superuser.Shell
 
 class ServiceManager(
     private val platform: Platform,
+    private val shell: Shell = Shell.getShell()
 ) : IServiceManager.Stub() {
-    private val main by lazy { Shell.getShell() }
 
     private val fileManager by lazy {
         FileManager()
@@ -25,25 +25,25 @@ class ServiceManager(
     private val moduleManager by lazy {
         when (platform) {
             Platform.Magisk -> MagiskModuleManager(
-                shell = main,
+                shell = shell,
                 seLinuxContext = seLinuxContext,
                 fileManager = fileManager
             )
 
             Platform.KernelSU -> KernelSUModuleManager(
-                shell = main,
+                shell = shell,
                 seLinuxContext = seLinuxContext,
                 fileManager = fileManager
             )
 
             Platform.KsuNext -> KsuNextModuleManager(
-                shell = main,
+                shell = shell,
                 seLinuxContext = seLinuxContext,
                 fileManager = fileManager
             )
 
             Platform.APatch -> APatchModuleManager(
-                shell = main,
+                shell = shell,
                 seLinuxContext = seLinuxContext,
                 fileManager = fileManager
             )
