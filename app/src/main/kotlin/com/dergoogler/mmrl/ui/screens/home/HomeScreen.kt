@@ -43,8 +43,15 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isNonRoot
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
+import com.dergoogler.mmrl.ext.ModifierScopeUnit
+import com.dergoogler.mmrl.ext.managerVersion
+import com.dergoogler.mmrl.ext.navigateSingleTopTo
+import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
+import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
@@ -61,19 +68,10 @@ import com.dergoogler.mmrl.ui.screens.home.items.NonRootItem
 import com.dergoogler.mmrl.ui.screens.home.items.RebootBottomSheet
 import com.dergoogler.mmrl.ui.screens.home.items.RootItem
 import com.dergoogler.mmrl.ui.screens.settings.changelogs.items.ChangelogBottomSheet
-import com.dergoogler.mmrl.ui.utils.navigateSingleTopTo
-import com.dergoogler.mmrl.ui.utils.none
 import com.dergoogler.mmrl.viewmodel.HomeViewModel
-import dev.dergoogler.mmrl.compat.ext.ModifierScopeUnit
-import dev.dergoogler.mmrl.compat.ext.managerVersion
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.seLinuxStatus
-import dev.dergoogler.mmrl.compat.ext.takeTrue
-import dev.dergoogler.mmrl.compat.ext.toFormattedFileSize
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-
 
 val listItemContentPaddingValues: PaddingValues = PaddingValues(vertical = 8.dp, horizontal = 25.dp)
 
@@ -130,7 +128,6 @@ fun HomeScreen(
         ) {
             val compressedCardModifier: ModifierScopeUnit = {
                 column = Modifier.padding(vertical = 16.dp)
-
             }
 
             val compressedCardModifierRow: ModifierScopeUnit = {
@@ -248,7 +245,7 @@ fun HomeScreen(
                     contentPaddingValues = listItemContentPaddingValues,
                     icon = R.drawable.shield_bolt,
                     title = stringResource(id = R.string.selinux_status),
-                    desc = context.seLinuxStatus
+                    desc = "context.seLinuxStatus"
                 )
 
                 if (viewModel.platform.isKernelSuOrNext) {

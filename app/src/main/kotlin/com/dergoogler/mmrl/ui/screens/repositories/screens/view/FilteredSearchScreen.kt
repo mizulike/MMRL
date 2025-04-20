@@ -30,13 +30,13 @@ import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.screens.repositories.screens.repository.ModulesList
-import com.dergoogler.mmrl.ui.utils.none
-import com.dergoogler.mmrl.ui.utils.panicString
 import com.dergoogler.mmrl.viewmodel.RepositoryViewModel
-import dev.dergoogler.mmrl.compat.ext.shareText
-import dev.dergoogler.mmrl.compat.ext.takeTrue
-import dev.dergoogler.mmrl.compat.ext.toDecodedUrl
-import dev.dergoogler.mmrl.compat.ext.toEncodedUrl
+import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.panicString
+import com.dergoogler.mmrl.ext.shareText
+import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.ext.toDecodedUrl
+import com.dergoogler.mmrl.ext.toEncodedUrl
 
 @Composable
 fun FilteredSearchScreen(

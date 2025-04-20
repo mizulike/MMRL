@@ -44,15 +44,14 @@ import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.app.Event.Companion.isFinished
 import com.dergoogler.mmrl.app.Event.Companion.isLoading
 import com.dergoogler.mmrl.app.Event.Companion.isSucceeded
+import com.dergoogler.mmrl.ext.isScrollingUp
 import com.dergoogler.mmrl.ui.component.Console
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.ui.utils.isScrollingUp
 import com.dergoogler.mmrl.viewmodel.InstallViewModel
 import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import kotlinx.coroutines.launch
-
 
 @Composable
 fun InstallScreen(

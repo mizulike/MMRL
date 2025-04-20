@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.net.toFile
 import androidx.core.net.toUri
 import androidx.documentfile.provider.DocumentFile
-import dev.dergoogler.mmrl.compat.ext.nullable
+import com.dergoogler.mmrl.ext.nullable
 import java.io.File
 import java.io.IOException
 import java.io.InputStream

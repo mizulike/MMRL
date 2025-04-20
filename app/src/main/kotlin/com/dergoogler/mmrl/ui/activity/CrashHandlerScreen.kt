@@ -37,15 +37,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.MarkdownText
 import com.dergoogler.mmrl.ui.component.NavigationBarsSpacer
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.TopAppBarTitle
-import com.dergoogler.mmrl.ui.utils.none
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.shareText
 
 @Composable
 fun CrashHandlerScreen(

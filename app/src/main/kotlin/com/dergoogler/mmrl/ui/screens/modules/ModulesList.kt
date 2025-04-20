@@ -37,7 +37,7 @@ import com.dergoogler.mmrl.ui.component.scrollbar.VerticalFastScrollbar
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.ModulesViewModel
 import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
-import dev.dergoogler.mmrl.compat.ext.takeTrue
+import com.dergoogler.mmrl.ext.takeTrue
 
 @Composable
 fun ModulesList(

@@ -46,11 +46,11 @@ import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
-import dev.dergoogler.mmrl.compat.ext.fadingEdge
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.shareText
-import dev.dergoogler.mmrl.compat.ext.takeTrue
-import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
+import com.dergoogler.mmrl.ext.fadingEdge
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.shareText
+import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
 fun RepositoryItem(
@@ -137,7 +137,7 @@ fun RepositoryItem(
                     Text(
                         text = stringResource(
                             id = R.string.module_update_at,
-                            repo.timestamp.toFormattedDateSafely(userPreferences.datePattern)
+                            repo.timestamp.toFormattedDateSafely
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.outline,
@@ -240,7 +240,7 @@ private fun BottomSheetForItem(
                 Text(
                     text = stringResource(
                         id = R.string.module_update_at,
-                        repo.timestamp.toFormattedDateSafely(userPreferences.datePattern)
+                        repo.timestamp.toFormattedDateSafely
                     ),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.outline

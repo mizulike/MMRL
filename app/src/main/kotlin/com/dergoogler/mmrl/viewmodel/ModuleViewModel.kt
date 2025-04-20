@@ -15,6 +15,7 @@ import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.database.entity.Repo
 import com.dergoogler.mmrl.database.entity.Repo.Companion.toRepo
+import com.dergoogler.mmrl.ext.panicString
 import com.dergoogler.mmrl.model.json.UpdateJson
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
@@ -27,7 +28,6 @@ import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.service.DownloadService
-import com.dergoogler.mmrl.ui.utils.panicString
 import com.dergoogler.mmrl.utils.Utils
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

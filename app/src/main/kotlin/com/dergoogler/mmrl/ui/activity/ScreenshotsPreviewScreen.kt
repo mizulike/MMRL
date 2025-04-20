@@ -26,8 +26,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import coil.compose.AsyncImage
+import com.dergoogler.mmrl.ext.findActivity
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
-import dev.dergoogler.mmrl.compat.ext.findActivity
 import net.engawapg.lib.zoomable.rememberZoomState
 import net.engawapg.lib.zoomable.zoomable
 

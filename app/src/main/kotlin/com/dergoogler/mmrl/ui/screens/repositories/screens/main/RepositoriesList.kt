@@ -26,7 +26,7 @@ import com.dergoogler.mmrl.model.state.RepoState
 import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.screens.repositories.screens.main.items.ExploreReposCard
-import com.dergoogler.mmrl.ui.utils.navigateSingleTopTo
+import com.dergoogler.mmrl.ext.navigateSingleTopTo
 
 @Composable
 fun RepositoriesList(

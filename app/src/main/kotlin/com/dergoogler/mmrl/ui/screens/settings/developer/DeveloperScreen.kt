@@ -17,8 +17,8 @@ import com.dergoogler.mmrl.ui.component.listItem.ListHeader
 import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import dev.dergoogler.mmrl.compat.ext.isLocalWifiUrl
-import dev.dergoogler.mmrl.compat.ext.takeTrue
+import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.ext.isLocalWifiUrl
 
 @Composable
 fun DeveloperScreen() {

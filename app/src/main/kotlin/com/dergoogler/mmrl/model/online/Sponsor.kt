@@ -2,8 +2,8 @@ package com.dergoogler.mmrl.model.online
 
 import android.content.Context
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.toDollars
 import com.squareup.moshi.JsonClass
-import dev.dergoogler.mmrl.compat.ext.toDollars
 
 @JsonClass(generateAdapter = true)
 data class Sponsor(

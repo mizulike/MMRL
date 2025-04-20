@@ -90,3 +90,17 @@ val String.repoId
 
         return firstThree + middleThree + lastThree
     }
+
+fun String.isLocalWifiUrl(regex: Regex = Regex(
+    "^(https?://)?(localhost|127\\.0\\.0\\.1|::1|10(?:\\.\\d{1,3}){3}|172\\.(?:1[6-9]|2\\d|3[01])(?:\\.\\d{1,3}){2}|192\\.168(?:\\.\\d{1,3}){2})(?::([0-9]{1,5}))?$"
+)): Boolean {
+    return try {
+        val uri = URI(this)
+        val host = uri.host ?: return false
+        val port = uri.port
+
+        host.matches(regex) && (port == -1 || port in 1..65535)
+    } catch (e: Exception) {
+        false
+    }
+}

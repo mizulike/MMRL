@@ -28,7 +28,6 @@ import com.dergoogler.mmrl.ui.component.MarkdownText
 import com.dergoogler.mmrl.ui.component.NavigationBarsSpacer
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 
-
 @Composable
 fun ModuleItem(
     module: Blacklist,

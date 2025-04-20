@@ -10,7 +10,6 @@ import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.screens.settings.blacklist.items.ModuleItem
 
-
 @Composable
 fun BlacklistScreen() {
     val viewModel = LocalSettings.current

@@ -28,8 +28,8 @@ import com.dergoogler.mmrl.ui.component.SearchTopBar
 import com.dergoogler.mmrl.ui.component.TopAppBarTitle
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
-import com.dergoogler.mmrl.ui.utils.none
-import com.dergoogler.mmrl.ui.utils.panicString
+import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.panicString
 import com.dergoogler.mmrl.viewmodel.RepositoryViewModel
 
 @Composable

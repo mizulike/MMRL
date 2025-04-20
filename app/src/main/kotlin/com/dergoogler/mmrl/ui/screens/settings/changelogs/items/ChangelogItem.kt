@@ -27,9 +27,8 @@ import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.MarkdownText
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
-import dev.dergoogler.mmrl.compat.ext.fadingEdge
-import dev.dergoogler.mmrl.compat.ext.nullable
-
+import com.dergoogler.mmrl.ext.fadingEdge
+import com.dergoogler.mmrl.ext.nullable
 
 @Composable
 fun ChangelogItem(

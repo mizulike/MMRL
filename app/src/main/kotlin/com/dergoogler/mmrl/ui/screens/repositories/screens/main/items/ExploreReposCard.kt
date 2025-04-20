@@ -20,7 +20,7 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
-import com.dergoogler.mmrl.ui.utils.navigateSingleTopTo
+import com.dergoogler.mmrl.ext.navigateSingleTopTo
 
 @Composable
 fun ExploreReposCard() {

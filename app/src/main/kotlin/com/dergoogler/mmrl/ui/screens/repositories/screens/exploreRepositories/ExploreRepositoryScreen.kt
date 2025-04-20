@@ -52,16 +52,16 @@ import com.dergoogler.mmrl.ui.providable.LocalSnackbarHost
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.items.MemberCard
 import com.dergoogler.mmrl.ui.screens.repositories.screens.main.FailureDialog
-import com.dergoogler.mmrl.ui.utils.none
-import com.dergoogler.mmrl.ui.utils.panicMoshiParcelable
+import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.panicMoshiParcelable
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
-import dev.dergoogler.mmrl.compat.ext.fadingEdge
-import dev.dergoogler.mmrl.compat.ext.fillWidthOfParent
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrEmpty
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.systemBarsPaddingEnd
-import dev.dergoogler.mmrl.compat.ext.toDecodedUrl
+import com.dergoogler.mmrl.ext.fadingEdge
+import com.dergoogler.mmrl.ext.fillWidthOfParent
+import com.dergoogler.mmrl.ext.isNotNullOrEmpty
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
+import com.dergoogler.mmrl.ext.toDecodedUrl
 import kotlinx.coroutines.launch
 
 val listItemContentPaddingValues = PaddingValues(vertical = 16.dp, horizontal = 16.dp)

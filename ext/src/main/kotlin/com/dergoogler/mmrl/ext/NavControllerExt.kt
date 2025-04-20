@@ -5,10 +5,8 @@ import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavOptionsBuilder
-import com.dergoogler.mmrl.app.moshi
-import dev.dergoogler.mmrl.compat.core.BrickException
-import dev.dergoogler.mmrl.compat.ext.toDecodedUrl
-import dev.dergoogler.mmrl.compat.ext.toEncodedUrl
+import com.dergoogler.mmrl.ext.exception.BrickException
+import com.dergoogler.mmrl.ext.moshi.moshi
 import kotlinx.serialization.json.Json
 
 /**

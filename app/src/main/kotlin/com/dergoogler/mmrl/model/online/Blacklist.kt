@@ -1,9 +1,9 @@
 package com.dergoogler.mmrl.model.online
 
 import androidx.compose.runtime.Composable
+import com.dergoogler.mmrl.ext.isNotNullOrBlank
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.squareup.moshi.JsonClass
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrBlank
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 

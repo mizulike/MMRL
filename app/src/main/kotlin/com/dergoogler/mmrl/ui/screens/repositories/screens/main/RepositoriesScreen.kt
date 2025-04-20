@@ -23,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,17 +48,16 @@ import com.dergoogler.mmrl.ui.animate.slideInTopToBottom
 import com.dergoogler.mmrl.ui.animate.slideOutBottomToTop
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.PageIndicator
-import com.dergoogler.mmrl.ui.component.PullToRefreshBox
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.component.dialog.TextFieldDialog
 import com.dergoogler.mmrl.ui.providable.LocalWindowWidthSizeClass
 import com.dergoogler.mmrl.ui.screens.repositories.items.BulkBottomSheet
-import com.dergoogler.mmrl.ui.utils.isScrollingUp
-import com.dergoogler.mmrl.ui.utils.none
+import com.dergoogler.mmrl.ext.isScrollingUp
+import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
-import dev.dergoogler.mmrl.compat.ext.systemBarsPaddingEnd
+import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import timber.log.Timber
 import kotlin.reflect.KFunction1
 

@@ -1,11 +1,11 @@
 package com.dergoogler.mmrl.model.online
 
 import androidx.compose.runtime.Composable
+import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.utils.Utils
 import com.squareup.moshi.JsonClass
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrEmpty
 
 @JsonClass(generateAdapter = true)
 data class OnlineModule(

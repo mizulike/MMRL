@@ -39,6 +39,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
 import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
+import com.dergoogler.mmrl.ext.bars
+import com.dergoogler.mmrl.ext.barsWithSystem
+import com.dergoogler.mmrl.ext.navigatePopUpTo
+import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.navigation.MainScreen
@@ -51,10 +55,6 @@ import com.dergoogler.mmrl.ui.providable.LocalSnackbarHost
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.providable.LocalWindowWidthSizeClass
 import com.dergoogler.mmrl.ui.providable.WindowWidthSize
-import com.dergoogler.mmrl.ui.utils.bars
-import com.dergoogler.mmrl.ui.utils.barsWithSystem
-import com.dergoogler.mmrl.ui.utils.navigatePopUpTo
-import com.dergoogler.mmrl.ui.utils.none
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 
 @Composable

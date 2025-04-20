@@ -24,7 +24,7 @@ include(
     ":app",
     ":hidden-api",
     ":platform",
-    ":webui"
+    ":webui",
+    ":ui",
+    ":ext"
 )
-include(":ui")
-include(":ext")

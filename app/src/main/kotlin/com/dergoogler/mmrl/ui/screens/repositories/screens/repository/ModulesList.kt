@@ -13,14 +13,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.dergoogler.mmrl.datastore.model.RepoListMode
+import com.dergoogler.mmrl.ext.navigateSingleTopTo
+import com.dergoogler.mmrl.ext.panicString
 import com.dergoogler.mmrl.model.online.OnlineModule
 import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.ui.component.scrollbar.VerticalFastScrollbar
 import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.ui.utils.navigateSingleTopTo
-import com.dergoogler.mmrl.ui.utils.panicString
 
 @Composable
 fun ModulesList(

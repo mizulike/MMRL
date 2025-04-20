@@ -34,10 +34,10 @@ import com.dergoogler.mmrl.ui.component.Segment
 import com.dergoogler.mmrl.ui.component.SegmentedButtons
 import com.dergoogler.mmrl.ui.component.SegmentedButtonsDefaults
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrBlank
-import dev.dergoogler.mmrl.compat.ext.shareText
-import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
-import dev.dergoogler.mmrl.compat.ext.toFormattedFileSize
+import com.dergoogler.mmrl.ext.isNotNullOrBlank
+import com.dergoogler.mmrl.ext.shareText
+import com.dergoogler.mmrl.ext.toFormattedDateSafely
+import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 
 @Composable
 fun ModulesMenu(

@@ -3,8 +3,8 @@ package com.dergoogler.mmrl.model.online
 import com.dergoogler.mmrl.app.moshi
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrBlank
-import dev.dergoogler.mmrl.compat.ext.toEncodedUrl
+import com.dergoogler.mmrl.ext.isNotNullOrBlank
+import com.dergoogler.mmrl.ext.toEncodedUrl
 
 @JsonClass(generateAdapter = true)
 data class ExploreRepositoryMember(

@@ -35,7 +35,8 @@ import com.dergoogler.mmrl.ui.providable.LocalLifecycleScope
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.ui.theme.AppTheme
+import com.dergoogler.mmrl.ui.theme.Colors
+import com.dergoogler.mmrl.ui.theme.MMRLAppTheme
 import com.dergoogler.mmrl.viewmodel.SettingsViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import dev.dergoogler.mmrl.compat.BuildCompat
@@ -203,13 +204,14 @@ fun MMRLComponentActivity.setBaseContent(
     }
 
     val context = LocalContext.current
+    val currentTheme = Colors.getColor(preferences.themeColor, preferences.isDarkMode())
+    val toolbarColor = currentTheme.surface
 
-    AppTheme(
-        darkMode = preferences.isDarkMode(), themeColor = preferences.themeColor
-    ) {
-        val toolbarColor = MaterialTheme.colorScheme.surface
-
-        CompositionLocalProvider(
+    MMRLAppTheme(
+        darkMode = preferences.isDarkMode(),
+        navController = navController,
+        themeColor = preferences.themeColor,
+        providerValues = arrayOf(
             LocalSettings provides settingsViewModel,
             LocalUserPreferences provides preferences,
             dev.dergoogler.mmrl.compat.core.LocalUriHandler provides MMRLUriHandlerImpl(
@@ -220,8 +222,7 @@ fun MMRLComponentActivity.setBaseContent(
             LocalLifecycle provides lifecycle,
             LocalUriHandler provides MMRLUriHandlerImpl(context, toolbarColor),
             LocalNavController provides navController
-        ) {
-            content()
-        }
-    }
+        ),
+        content = content
+    )
 }

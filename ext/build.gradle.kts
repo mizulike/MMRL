@@ -1,6 +1,10 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.parcelize)
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -47,5 +51,10 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
-    implementation(libs.runtime.android)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.square.retrofit)
+    implementation(libs.square.retrofit.moshi)
+    implementation(libs.square.retrofit.kotlinxSerialization)
+    implementation(libs.square.moshi)
+    ksp(libs.square.moshi.kotlin)
 }

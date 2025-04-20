@@ -1,9 +1,7 @@
 package com.dergoogler.mmrl.model.online
 
+import com.dergoogler.mmrl.ext.isNotNullOrBlank
 import com.squareup.moshi.JsonClass
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrBlank
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 @JsonClass(generateAdapter = true)
 data class ModuleNote(

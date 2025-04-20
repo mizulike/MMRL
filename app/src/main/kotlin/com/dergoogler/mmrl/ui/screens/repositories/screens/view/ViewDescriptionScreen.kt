@@ -48,13 +48,14 @@ import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.providable.LocalNavController
-import com.dergoogler.mmrl.ui.utils.none
+import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import com.dergoogler.mmrl.webui.Insets
 import com.dergoogler.mmrl.webui.LocalInsets
 import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
+import androidx.core.graphics.drawable.toDrawable
 
 const val launchUrl = "https://mui.kernelsu.org/internal/assets/markdown.html"
 
@@ -125,7 +126,7 @@ fun ViewDescriptionScreen(
                         factory = {
                             WebView(it).apply {
                                 setBackgroundColor(colorScheme.background.toArgb())
-                                background = ColorDrawable(colorScheme.background.toArgb())
+                                background = colorScheme.background.toArgb().toDrawable()
                                 layoutParams = ViewGroup.LayoutParams(
                                     ViewGroup.LayoutParams.MATCH_PARENT,
                                     ViewGroup.LayoutParams.MATCH_PARENT

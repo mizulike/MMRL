@@ -27,11 +27,10 @@ import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.ui.utils.navigateSingleTopTo
-import dev.dergoogler.mmrl.compat.ext.fadingEdge
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
-
+import com.dergoogler.mmrl.ext.fadingEdge
+import com.dergoogler.mmrl.ext.navigateSingleTopTo
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
 fun RepoCard(
@@ -110,7 +109,7 @@ fun RepoCard(
                     Text(
                         text = stringResource(
                             id = R.string.module_update_at,
-                            it.toFormattedDateSafely(userPreferences.datePattern)
+                            it.toFormattedDateSafely
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.outline,

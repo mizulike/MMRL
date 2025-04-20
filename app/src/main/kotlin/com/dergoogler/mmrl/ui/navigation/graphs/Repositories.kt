@@ -11,6 +11,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
+import com.dergoogler.mmrl.ext.panicArguments
 import com.dergoogler.mmrl.ui.navigation.MainScreen
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.ExploreRepositoriesScreen
@@ -20,7 +21,6 @@ import com.dergoogler.mmrl.ui.screens.repositories.screens.repository.Repository
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.FilteredSearchScreen
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.NewViewScreen
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.ViewDescriptionScreen
-import com.dergoogler.mmrl.ui.utils.panicArguments
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel

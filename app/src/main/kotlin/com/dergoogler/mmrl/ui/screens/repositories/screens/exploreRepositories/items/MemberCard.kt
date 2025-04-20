@@ -27,9 +27,9 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.online.ExploreRepositoryMember
 import com.dergoogler.mmrl.ui.component.card.Card
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrEmpty
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.toDecodedUrl
+import com.dergoogler.mmrl.ext.isNotNullOrEmpty
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.toDecodedUrl
 
 @Composable
 fun MemberCard(

@@ -2,9 +2,9 @@ package com.dergoogler.mmrl.utils.log
 
 import android.content.Context
 import com.dergoogler.mmrl.App
+import com.dergoogler.mmrl.ext.getLogPath
+import com.dergoogler.mmrl.ext.shareFile
 import com.dergoogler.mmrl.utils.log.LogText.Companion.toLogPriority
-import dev.dergoogler.mmrl.compat.ext.getLogPath
-import dev.dergoogler.mmrl.compat.ext.shareFile
 
 object Logcat {
     const val FILE_NAME = "mmrl_log"

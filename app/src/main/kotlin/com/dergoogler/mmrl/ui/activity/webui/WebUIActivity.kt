@@ -34,7 +34,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import timber.log.Timber
 
-
 class WebUIActivity : MMRLComponentActivity() {
     private val userPrefs get() = runBlocking { userPreferencesRepository.data.first() }
     private lateinit var webView: WebView

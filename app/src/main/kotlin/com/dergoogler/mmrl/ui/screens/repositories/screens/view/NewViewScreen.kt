@@ -104,27 +104,26 @@ import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.LicenseIte
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.VersionsItem
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.ViewTrackBottomSheet
 import com.dergoogler.mmrl.ui.screens.settings.blacklist.items.BlacklistBottomSheet
-import com.dergoogler.mmrl.ui.utils.navigateSingleTopTo
-import com.dergoogler.mmrl.ui.utils.none
-import com.dergoogler.mmrl.ui.utils.panicString
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoryViewModel
-import dev.dergoogler.mmrl.compat.ext.fadingEdge
-import dev.dergoogler.mmrl.compat.ext.ifNotEmpty
-import dev.dergoogler.mmrl.compat.ext.ifNotNullOrBlank
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrBlank
-import dev.dergoogler.mmrl.compat.ext.isNullOrFalse
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.repoId
-import dev.dergoogler.mmrl.compat.ext.shareText
-import dev.dergoogler.mmrl.compat.ext.systemBarsPaddingEnd
-import dev.dergoogler.mmrl.compat.ext.takeTrue
-import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
-import dev.dergoogler.mmrl.compat.ext.toFormattedFileSize
+import com.dergoogler.mmrl.ext.navigateSingleTopTo
+import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.panicString
+import com.dergoogler.mmrl.ext.fadingEdge
+import com.dergoogler.mmrl.ext.ifNotEmpty
+import com.dergoogler.mmrl.ext.ifNotNullOrBlank
+import com.dergoogler.mmrl.ext.isNotNullOrBlank
+import com.dergoogler.mmrl.ext.isNullOrFalse
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.repoId
+import com.dergoogler.mmrl.ext.shareText
+import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
+import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.utils.toFormattedDateSafely
 import kotlinx.coroutines.launch
 import timber.log.Timber
-
 
 @Composable
 fun NewViewScreen(
@@ -982,7 +981,7 @@ fun NewViewScreen(
                     ModuleInfoListItem(
                         infoCanDiffer = true,
                         title = R.string.view_module_last_updated,
-                        desc = it.timestamp.toFormattedDateSafely(userPreferences.datePattern)
+                        desc = it.timestamp.toFormattedDateSafely
                     )
                 }
                 module.size?.let {
@@ -1055,7 +1054,7 @@ fun NewViewScreen(
                     ModuleInfoListItem(
                         infoCanDiffer = true,
                         title = R.string.view_module_added_on,
-                        desc = it.toFormattedDateSafely()
+                        desc = it.toFormattedDateSafely
                     )
                 }
 

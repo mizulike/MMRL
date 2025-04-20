@@ -21,6 +21,8 @@ import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.datastore.model.WorkingMode
+import com.dergoogler.mmrl.ext.navigateSingleTopTo
+import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarTitle
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
@@ -29,8 +31,6 @@ import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.ui.utils.navigateSingleTopTo
-import com.dergoogler.mmrl.ui.utils.none
 
 @Composable
 fun SettingsScreen() {

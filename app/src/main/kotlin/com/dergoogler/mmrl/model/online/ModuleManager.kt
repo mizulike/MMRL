@@ -3,9 +3,9 @@ package com.dergoogler.mmrl.model.online
 import android.annotation.SuppressLint
 import android.os.Build
 import androidx.compose.runtime.Composable
+import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.platform.Platform
 import com.squareup.moshi.JsonClass
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrEmpty
 
 @JsonClass(generateAdapter = true)
 data class ModuleManager(

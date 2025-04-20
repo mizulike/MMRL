@@ -39,10 +39,10 @@ import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.card.CardDefaults.cardStyle
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.takeTrue
-import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
-import dev.dergoogler.mmrl.compat.ext.toFormattedFileSize
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
 fun ModuleItem(
@@ -173,7 +173,6 @@ fun ModuleItem(
             )
 
         }
-
 
         when {
             indeterminate -> LinearProgressIndicator(

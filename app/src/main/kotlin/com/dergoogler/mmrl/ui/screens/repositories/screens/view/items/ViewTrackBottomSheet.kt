@@ -27,7 +27,7 @@ import com.dergoogler.mmrl.database.entity.Repo
 import com.dergoogler.mmrl.model.online.TrackJson
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.NavigationBarsSpacer
-import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
+import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
 fun ViewTrackBottomSheet(

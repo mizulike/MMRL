@@ -28,10 +28,10 @@ import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.card.CardDefaults
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import dev.dergoogler.mmrl.compat.ext.fadingEdge
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrEmpty
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
+import com.dergoogler.mmrl.ext.fadingEdge
+import com.dergoogler.mmrl.ext.isNotNullOrEmpty
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
 fun ModuleItemDetailed(

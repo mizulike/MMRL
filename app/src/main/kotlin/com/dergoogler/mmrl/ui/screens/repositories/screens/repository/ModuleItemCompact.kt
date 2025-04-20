@@ -24,14 +24,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.model.online.OnlineModule
 import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.Logo
 import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import dev.dergoogler.mmrl.compat.ext.nullable
-import dev.dergoogler.mmrl.compat.ext.toFormattedDateSafely
+import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
 fun ModuleItemCompact(

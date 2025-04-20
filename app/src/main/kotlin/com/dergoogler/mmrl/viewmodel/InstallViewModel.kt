@@ -7,16 +7,15 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.compat.MediaStoreCompat.copyToDir
 import com.dergoogler.mmrl.compat.MediaStoreCompat.getPathForUri
+import com.dergoogler.mmrl.ext.isNotNull
+import com.dergoogler.mmrl.ext.tmpDir
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.platform.Platform
-import com.dergoogler.mmrl.platform.PlatformConfig
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dev.dergoogler.mmrl.compat.ext.isNotNull
-import dev.dergoogler.mmrl.compat.ext.tmpDir
 import com.dergoogler.mmrl.platform.stub.IShellCallback
 import dev.dergoogler.mmrl.compat.viewmodel.TerminalViewModel
 import kotlinx.coroutines.CompletableDeferred
@@ -46,7 +45,7 @@ class InstallViewModel @Inject constructor(
         Platform.moduleManager.reboot(reason)
     }
 
-    suspend fun installModules(uris: List<Uri>) = viewModelScope.launch {
+    fun installModules(uris: List<Uri>) = viewModelScope.launch {
         val userPreferences = userPreferencesRepository.data.first()
         event = Event.LOADING
         var allSucceeded = true

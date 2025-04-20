@@ -15,7 +15,7 @@ import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
-import com.dergoogler.mmrl.ui.utils.panicString
+import com.dergoogler.mmrl.ext.panicString
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

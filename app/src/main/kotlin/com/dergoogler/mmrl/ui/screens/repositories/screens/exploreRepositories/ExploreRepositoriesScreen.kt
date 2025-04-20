@@ -22,6 +22,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.model.online.ExploreRepository
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.stub.IMMRLApiManager
@@ -31,8 +33,6 @@ import com.dergoogler.mmrl.ui.component.ScaffoldDefaults
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.items.RepoCard
-import com.dergoogler.mmrl.ui.utils.none
-import dev.dergoogler.mmrl.compat.ext.nullable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber

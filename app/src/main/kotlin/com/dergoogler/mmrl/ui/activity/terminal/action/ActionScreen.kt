@@ -46,7 +46,6 @@ import com.dergoogler.mmrl.viewmodel.ActionViewModel
 import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import kotlinx.coroutines.launch
 
-
 @Composable
 fun ActionScreen(
     viewModel: ActionViewModel = hiltViewModel(),

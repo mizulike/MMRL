@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.text.SpannableStringBuilder
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,17 +16,30 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.text.HtmlCompat
@@ -68,6 +82,106 @@ fun HtmlText(
         style = style,
         color = color,
         text = spanned.toAnnotatedString()
+    )
+}
+
+
+@Composable
+fun MarkdownText(
+    text: String,
+    modifier: Modifier = Modifier,
+    style: TextStyle = LocalTextStyle.current,
+    clickTagColor: Color = MaterialTheme.colorScheme.surfaceTint,
+    onTagClick: (String) -> Unit,
+) {
+    val boldPattern = """\*\*(.+?)\*\*""".toRegex() // Bold (double asterisks)
+    val italicPattern = """(?<!\*)\*(?![*\s])(?:[^*]*[^*\s])?\*(?!\*)""".toRegex() // Italic (single asterisk with the new regex)
+    val underlinePattern = """_(.+?)_""".toRegex()  // Underline (underscores)
+    val strikethroughPattern = """~~(.+?)~~""".toRegex() // Strikethrough (double tildes)
+    val clickablePattern = """@(\w+)\((.*?)\)""".toRegex() // Clickable tag
+
+    val annotatedString = buildAnnotatedString {
+        var currentIndex = 0
+        val processedRanges = mutableListOf<IntRange>()
+
+        val matches = mutableListOf<Pair<MatchResult, SpanStyle?>>()
+
+        listOf(
+            boldPattern to SpanStyle(fontWeight = FontWeight.Bold),
+            italicPattern to SpanStyle(fontStyle = FontStyle.Italic),
+            underlinePattern to SpanStyle(textDecoration = TextDecoration.Underline),
+            strikethroughPattern to SpanStyle(textDecoration = TextDecoration.LineThrough)
+        ).forEach { (regex, style) ->
+            matches.addAll(regex.findAll(text).map { it to style })
+        }
+
+        matches.addAll(clickablePattern.findAll(text).map { it to null })
+
+        matches.sortBy { it.first.range.first }
+
+        matches.forEach { (matchResult, style) ->
+            val matchRange = matchResult.range
+            if (processedRanges.any { it.first <= matchRange.last && it.last >= matchRange.first }) return@forEach
+
+            if (currentIndex < matchRange.first) {
+                append(text.substring(currentIndex, matchRange.first))
+            }
+
+            if (style != null) {
+                if (style == SpanStyle(fontStyle = FontStyle.Italic)) {
+                    val matchText = matchResult.value
+                    val textForItalics = matchText.substring(1, matchText.length - 1)
+                    withStyle(style) {
+                        append(textForItalics)
+                    }
+                } else {
+                    withStyle(style) {
+                        append(matchResult.groupValues[1])
+                    }
+                }
+            } else {
+                // Clickable tag
+                val id = matchResult.groupValues[1]
+                val displayText = matchResult.groupValues[2]
+                pushStringAnnotation(tag = "clickable", annotation = id)
+                withStyle(SpanStyle(color = clickTagColor)) {
+                    append(displayText)
+                }
+                pop()
+            }
+
+            processedRanges.add(matchRange)
+            currentIndex = matchRange.last + 1
+        }
+
+        if (currentIndex < text.length) {
+            append(text.substring(currentIndex))
+        }
+    }
+
+    var layoutResult: TextLayoutResult? by remember { mutableStateOf(null) }
+
+    Text(
+        text = annotatedString,
+        style = style,
+        onTextLayout = { layoutResult = it },
+        modifier = Modifier
+            .pointerInput(Unit) {
+                detectTapGestures { offset ->
+                    layoutResult?.let { layout ->
+                        val position = layout.getOffsetForPosition(offset)
+                        annotatedString
+                            .getStringAnnotations(
+                                tag = "clickable", start = position, end = position
+                            )
+                            .firstOrNull()
+                            ?.let { annotation ->
+                                onTagClick(annotation.item)
+                            }
+                    }
+                }
+            }
+            .then(modifier)
     )
 }
 

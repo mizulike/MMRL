@@ -12,10 +12,10 @@ import com.dergoogler.mmrl.database.entity.local.LocalModuleEntity
 import com.dergoogler.mmrl.database.entity.local.LocalModuleUpdatable
 import com.dergoogler.mmrl.database.entity.online.BlacklistEntity
 import com.dergoogler.mmrl.database.entity.online.OnlineModuleEntity
+import com.dergoogler.mmrl.ext.merge
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.model.online.OnlineModule
-import dev.dergoogler.mmrl.compat.ext.merge
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext

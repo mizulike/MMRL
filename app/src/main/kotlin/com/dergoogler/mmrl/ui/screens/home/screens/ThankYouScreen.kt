@@ -23,14 +23,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.isNotNullOrEmpty
+import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.toDollars
 import com.dergoogler.mmrl.ui.component.HorizontalDividerWithText
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.items.MemberCard
-import com.dergoogler.mmrl.ui.utils.none
 import com.dergoogler.mmrl.viewmodel.ThankYouViewModel
-import dev.dergoogler.mmrl.compat.ext.isNotNullOrEmpty
-import dev.dergoogler.mmrl.compat.ext.toDollars
 
 @Composable
 fun ThankYouScreen(

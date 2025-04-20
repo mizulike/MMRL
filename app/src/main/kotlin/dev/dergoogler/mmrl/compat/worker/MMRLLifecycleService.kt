@@ -10,9 +10,9 @@ import androidx.core.app.ServiceCompat
 import androidx.lifecycle.LifecycleService
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.database.AppDatabase
+import com.dergoogler.mmrl.ext.isAppForeground
 import com.dergoogler.mmrl.repository.ModulesRepository
 import dagger.hilt.android.AndroidEntryPoint
-import dev.dergoogler.mmrl.compat.ext.isAppForeground
 import timber.log.Timber
 import javax.inject.Inject
 import kotlin.random.Random
@@ -28,7 +28,7 @@ open class MMRLLifecycleService : LifecycleService() {
     @StringRes
     open val title: Int = 0
     open val channelId: String = ""
-    open val notificationId: Int = 0
+    open val notificationId: Int = -1
     open val groupKey: String = ""
 
     override fun onCreate() {

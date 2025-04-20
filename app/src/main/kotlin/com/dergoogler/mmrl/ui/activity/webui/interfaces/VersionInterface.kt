@@ -5,8 +5,8 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import android.widget.Toast
 import com.dergoogler.mmrl.BuildConfig
+import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.webui.util.WebUIOptions
-import dev.dergoogler.mmrl.compat.ext.managerVersion
 
 class VersionInterface(
     private val context: Context,

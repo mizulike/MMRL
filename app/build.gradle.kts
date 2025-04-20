@@ -183,6 +183,8 @@ dependencies {
     compileOnly(projects.hiddenApi)
     implementation(projects.platform)
     implementation(projects.webui)
+    implementation(projects.ui)
+    implementation(projects.ext)
 
     implementation(libs.hiddenApiBypass)
     // implementation(libs.timber)

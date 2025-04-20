@@ -7,11 +7,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListItemTextStyle
 import com.dergoogler.mmrl.webui.model.WebUIPermissions
-import dev.dergoogler.mmrl.compat.ext.nullable
 
 @Composable
 fun PermissionItem(
