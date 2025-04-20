@@ -158,7 +158,7 @@ interface ModifierScope {
 typealias ModifierScopeUnit = @Composable (ModifierScope.() -> Unit)
 
 @Immutable
-class ModifierScopeImpl constructor(
+class ModifierScopeImpl(
     override var surface: Modifier,
     override var box: Modifier,
     override var column: Modifier,
