@@ -3,7 +3,6 @@ package com.dergoogler.mmrl.ui.activity
 import android.Manifest
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.compose.animation.Crossfade
 import androidx.compose.material3.windowsizeclass.ExperimentalMaterial3WindowSizeClassApi

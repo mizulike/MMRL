@@ -38,7 +38,7 @@ internal class WebUIClient(
             result: JsResult,
         ): Boolean {
             showConfirm(
-                ConfirmData(title = context.getString(R.string.says, options.modId),
+                ConfirmData(title = context.getString(R.string.says, options.modId.id),
                     description = message,
                     onConfirm = { result.confirm() },
                     onClose = { result.cancel() })
@@ -54,7 +54,7 @@ internal class WebUIClient(
             result: JsResult,
         ): Boolean {
             showConfirm(
-                ConfirmData(title = context.getString(R.string.says, options.modId),
+                ConfirmData(title = context.getString(R.string.says, options.modId.id),
                     description = message,
                     onConfirm = {
                         result.confirm()
@@ -78,7 +78,7 @@ internal class WebUIClient(
                 PromptData(
                     title = message ?: context.getString(
                         R.string.says,
-                        options.modId
+                        options.modId.id
                     ),
                     value = defaultValue ?: "",
                     onConfirm = {

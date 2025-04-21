@@ -36,8 +36,8 @@ class SuFile(
 
     constructor(
         path: String,
-        parent: File,
-    ) : this(File(parent, path).path)
+        parent: SuFile,
+    ) : this(SuFile(parent, path).path)
 
     constructor(vararg paths: String) : this(resolve(*paths))
 

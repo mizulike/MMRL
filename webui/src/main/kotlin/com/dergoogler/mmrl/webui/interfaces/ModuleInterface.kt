@@ -1,6 +1,5 @@
 package com.dergoogler.mmrl.webui.interfaces
 
-import android.content.Context
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
@@ -9,16 +8,19 @@ import android.graphics.drawable.Icon
 import android.os.Build
 import android.util.Log
 import android.webkit.JavascriptInterface
-import android.webkit.WebView
 import android.widget.Toast
 import androidx.core.app.ShareCompat
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.webui.Insets
 import com.dergoogler.mmrl.webui.R
-import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUiConfig
+import com.dergoogler.mmrl.webui.model.JavaScriptInterface
+import com.dergoogler.mmrl.webui.moshi
 import com.dergoogler.mmrl.webui.util.WebUIOptions
+import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import java.io.BufferedInputStream
 
@@ -30,11 +32,31 @@ internal data class Manager(
 )
 
 class ModuleInterface(
-    context: Context,
-    webView: WebView,
+    wxOptions: WXOptions,
     private val insets: Insets,
     private val options: WebUIOptions,
-) : WebUIInterface(webView, context) {
+) : WebUIInterface(wxOptions) {
+    override var name: String = "$${modId.sanitizedId}"
+    companion object {
+        fun factory(
+            wxOptions: WXOptions,
+            insets: Insets,
+            options: WebUIOptions,
+        ) = JavaScriptInterface(
+            clazz = ModuleInterface::class.java,
+            initargs = arrayOf(
+                wxOptions,
+                insets,
+                options,
+            ),
+            parameterTypes = arrayOf(
+                WXOptions::class.java,
+                Insets::class.java,
+                WebUIOptions::class.java,
+            )
+        )
+    }
+
     private var windowInsetsController: WindowInsetsControllerCompat =
         WindowCompat.getInsetsController(
             activity.window,
@@ -47,13 +69,53 @@ class ModuleInterface(
             WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
     }
 
+    private var managerAdapter: JsonAdapter<Manager> = moshi.adapter(Manager::class.java)
+
+    @get:JavascriptInterface
+    val manager: String
+        get() {
+            deprecated("$name.getManager()", "webui.getCurrentRootManager()")
+
+            return managerAdapter.toJson(
+                Manager(
+                    name = Platform.platform.name,
+                    versionName = Platform.moduleManager.version,
+                    versionCode = Platform.moduleManager.versionCode
+                )
+            )
+        }
+
+    @get:JavascriptInterface
+    val mmrl: String
+        get() {
+            deprecated("$name.getMmrl()", "webui.getCurrentApplication()")
+
+            val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
+            val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
+            val versionName = packageInfo.versionName
+
+            return managerAdapter.toJson(
+                Manager(
+                    name = packageInfo.packageName,
+                    versionName = versionName,
+                    versionCode = versionCode.toInt()
+                )
+            )
+        }
+
     @get:JavascriptInterface
     val hasAccessToFileSystem: Boolean
-        get() = true
+        get() {
+            deprecated("getHasAccessToFileSystem()")
+            return true
+        }
 
     @get:JavascriptInterface
     val hasAccessToAdvancedKernelSuAPI: Boolean
-        get() = true
+        get() {
+            deprecated("getHasAccessToAdvancedKernelSuAPI()")
+            return true
+        }
 
     @get:JavascriptInterface
     val windowTopInset: Int
@@ -120,12 +182,12 @@ class ModuleInterface(
 
     @JavascriptInterface
     fun requestAdvancedKernelSUAPI() {
-        console.info("requestAdvancedKernelSUAPI() is deprecated")
+        deprecated("requestAdvancedKernelSUAPI()")
     }
 
     @JavascriptInterface
     fun requestFileSystemAPI() {
-        console.info("requestFileSystemAPI() is deprecated")
+        deprecated("requestFileSystemAPI()")
     }
 
     @JavascriptInterface
@@ -143,7 +205,7 @@ class ModuleInterface(
 
     @JavascriptInterface
     fun createShortcut() {
-        val config = options.modId.toWebUiConfig()
+        val config = modId.toWebUIConfig()
         val title = config.title
         val icon = config.icon
 
@@ -168,7 +230,7 @@ class ModuleInterface(
             ).show()
         }
 
-        val id = options.modId
+        val id = modId.id
         val shortcutId = "shortcut_$id"
         val webRoot = SuFile("/data/adb/modules/$id/webroot")
         val iconFile = SuFile(webRoot, icon)

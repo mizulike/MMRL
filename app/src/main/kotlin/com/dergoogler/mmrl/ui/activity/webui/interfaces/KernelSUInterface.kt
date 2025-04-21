@@ -9,7 +9,9 @@ import android.widget.Toast
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
+import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
 import com.topjohnwu.superuser.internal.UiThreadHandler
@@ -18,10 +20,25 @@ import org.json.JSONObject
 import java.util.concurrent.CompletableFuture
 
 class KernelSUInterface(
-    context: Context,
-    webView: WebView,
+    wxOptions: WXOptions,
     private val debug: Boolean = false,
-) : WebUIInterface(webView, context) {
+) : WebUIInterface(wxOptions) {
+    override var name: String = "ksu"
+
+    companion object {
+        fun factory(wxOptions: WXOptions, debug: Boolean = false) = JavaScriptInterface(
+            clazz = KernelSUInterface::class.java,
+            initargs = arrayOf(
+                wxOptions,
+                debug
+            ),
+            parameterTypes = arrayOf(
+                WXOptions::class.java,
+                Boolean::class.java
+            )
+        )
+    }
+
     @JavascriptInterface
     fun mmrl(): Boolean {
         return true

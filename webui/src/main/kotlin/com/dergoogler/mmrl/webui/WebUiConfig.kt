@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.webui
 
 import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.webui.model.ModId
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 
 /**
@@ -15,8 +16,8 @@ import com.dergoogler.mmrl.webui.model.WebUIConfig
  * @param modId The module ID used to locate the configuration file.
  * @return A [WebUIConfig] object containing the loaded configuration.
  */
-fun webUiConfig(modId: String): WebUIConfig {
-    val moduleDir = SuFile("/data/adb/modules", modId)
+fun webUiConfig(modId: ModId): WebUIConfig {
+    val moduleDir = SuFile("/data/adb/modules", modId.id)
     val webRoot = SuFile(moduleDir, "webroot")
     val configFile = SuFile(webRoot, "config.json")
 

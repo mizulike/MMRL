@@ -36,7 +36,7 @@ import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.service.DownloadService
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.utils.Utils
-import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUiConfig
+import com.dergoogler.mmrl.webui.model.ModId
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dev.dergoogler.mmrl.compat.viewmodel.MMRLViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -399,8 +399,9 @@ class ModulesViewModel @Inject constructor(
     }
 
     fun createShortcut(id: String) {
-        val shortcutId = "shortcut_$id"
-        val config = id.toWebUiConfig()
+        val modId = ModId(id)
+        val shortcutId = "shortcut_${modId.id}"
+        val config = modId.toWebUIConfig()
         if (config.title == null && config.icon == null) {
             Toast.makeText(
                 context,
@@ -409,7 +410,7 @@ class ModulesViewModel @Inject constructor(
             return
         }
 
-        val webRoot = SuFile("/data/adb/modules/$id/webroot")
+        val webRoot = SuFile("/data/adb/modules/${modId.id}/webroot")
         val iconFile = SuFile(webRoot, config.icon!!)
         if (!iconFile.exists()) {
             Timber.d("Icon not found: $iconFile")
@@ -431,7 +432,7 @@ class ModulesViewModel @Inject constructor(
             }
 
             val shortcutIntent = Intent(context, WebUIActivity::class.java).apply {
-                putExtra("MOD_ID", id)
+                putExtra("MOD_ID", modId.id)
             }
             shortcutIntent.action = Intent.ACTION_VIEW
 

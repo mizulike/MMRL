@@ -70,8 +70,4 @@ data class WebUIConfig(
     val backHandler: Boolean = true,
     val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
-) {
-    companion object {
-        fun String.toWebUiConfig() = webUiConfig(this)
-    }
-}
+)

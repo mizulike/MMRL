@@ -24,7 +24,7 @@ fun webrootPathHandler(
     val insets = LocalInsets.current
 
     val configBase =
-        SuFile("/data/adb/.config/${options.modId}")
+        SuFile("/data/adb/.config/${options.modId.id}")
     val configStyleBase = SuFile(configBase, "style")
     val configJsBase = SuFile(configBase, "js")
 
@@ -44,7 +44,7 @@ fun webrootPathHandler(
         SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
     }
 
-    val reversedPaths = listOf("mmrl/", "internal/", ".adb/", ".local/", ".config/", ".${options.modId}/")
+    val reversedPaths = listOf("mmrl/", "internal/", ".adb/", ".local/", ".config/", ".${options.modId.id}/")
 
     return handler@{ path ->
         reversedPaths.forEach {
@@ -84,9 +84,9 @@ fun webrootPathHandler(
             val injections = buildList {
                 if (options.isErudaEnabled) {
                     addInjection({
-                        appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/mmrl/assets/eruda/eruda-editor.js\"></script>")
-                        appendLine("<script data-mmrl type=\"module\">")
-                        appendLine("\timport eruda from \"https://mui.kernelsu.org/mmrl/assets/eruda/eruda.mjs\";")
+                        appendLine("<script data-internal src=\"https://mui.kernelsu.org/internal/assets/eruda/eruda-editor.js\"></script>")
+                        appendLine("<script data-internal type=\"module\">")
+                        appendLine("\timport eruda from \"https://mui.kernelsu.org/internal/assets/eruda/eruda.mjs\";")
                         appendLine("\teruda.init();")
 
                         val editors = listOf(
@@ -96,8 +96,8 @@ fun webrootPathHandler(
 
                         for (editor in editors) {
                             appendLine("\tconst ${editor.name} = erudaEditor({")
-                            appendLine("\t\t\tmodId: \"${options.modId}\",")
-                            appendLine("\t\t\tfile: ${options.sanitizedModIdWithFile},")
+                            appendLine("\t\t\tmodId: \"${options.modId.id}\",")
+                            appendLine("\t\t\tfile: ${options.modId.sanitizedIdWithFile},")
                             appendLine("\t\t\tfileToEdit: \"${editor.file.path}\",")
                             appendLine("\t\t\tlang: \"${editor.mode}\",")
                             appendLine("\t\t\tname: \"${editor.name}\",")
@@ -115,23 +115,23 @@ fun webrootPathHandler(
                 configStyleBase.exists {
                     it.listFiles { f -> f.exists() && f.extension == "css" }.forEach {
                         addInjection({
-                            appendLine("<link data-mmrl rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${options.modId}/style/${it.name}\" type=\"text/css\" />")
+                            appendLine("<link data-internal rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/style/${it.name}\" type=\"text/css\" />")
                         })
                     }
                 }
 
                 addInjection({
-                    appendLine("<script data-mmrl-internal data-mmrl-dont-use src=\"https://mui.kernelsu.org/mmrl/scripts/require.js\" type=\"module\"></script>")
+                    appendLine("<script data-internal data-internal-dont-use src=\"https://mui.kernelsu.org/internal/scripts/require.js\" type=\"module\"></script>")
                 }, InjectionType.BODY)
 
                 addInjection({
-                    appendLine("<script data-mmrl-internal data-mmrl-dont-use src=\"https://mui.kernelsu.org/mmrl/scripts/sufile-fetch-ext.js\" type=\"module\"></script>")
+                    appendLine("<script data-internal data-internal-dont-use src=\"https://mui.kernelsu.org/internal/scripts/sufile-fetch-ext.js\" type=\"module\"></script>")
                 }, InjectionType.BODY)
 
                 customJsHead.exists {
                     it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
                         addInjection({
-                            appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${options.modId}/js/head/${it.name}\" type=\"module\"></script>")
+                            appendLine("<script data-internal src=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/js/head/${it.name}\" type=\"module\"></script>")
                         }, InjectionType.HEAD)
                     }
                 }
@@ -139,7 +139,7 @@ fun webrootPathHandler(
                 customJsBody.exists {
                     it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
                         addInjection({
-                            appendLine("<script data-mmrl src=\"https://mui.kernelsu.org/.adb/.config/${options.modId}/js/body/${it.name}\" type=\"module\"></script>")
+                            appendLine("<script data-internal src=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/js/body/${it.name}\" type=\"module\"></script>")
                         }, InjectionType.BODY)
                     }
                 }

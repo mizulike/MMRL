@@ -7,6 +7,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.webui.model.ModId
 import com.dergoogler.mmrl.webui.webUiConfig
 import java.net.URI
 
@@ -30,7 +31,7 @@ import java.net.URI
  * @property cls Optional class associated with WebUI.
  */
 data class WebUIOptions(
-    val modId: String,
+    val modId: ModId,
     val appVersionCode: Int,
     val domain: String,
     val domainSafeRegex: Regex,
@@ -59,26 +60,8 @@ data class WebUIOptions(
             platform
         }
 
-    val moduleDir = SuFile("/data/adb/modules", modId)
+    val moduleDir = SuFile("/data/adb/modules", modId.id)
     val webRoot = SuFile(moduleDir, "webroot")
-
-    val sanitizedModId: String
-        get() {
-            return modId.replace(Regex("[^a-zA-Z0-9._]"), "_")
-        }
-
-    val sanitizedModIdWithFile
-        get(): String {
-            return "$${
-                when {
-                    sanitizedModId.length >= 2 -> sanitizedModId[0].uppercase() + sanitizedModId[1]
-                    sanitizedModId.isNotEmpty() -> sanitizedModId[0].uppercase()
-                    else -> ""
-                }
-            }File"
-        }
-
-    val sanitizedModIdWithFileInputStream = "${sanitizedModIdWithFile}InputStream"
 
     fun isDomainSafe(domain: String): Boolean {
         if (debug) {
@@ -153,7 +136,7 @@ data class WebUIOptions(
  */
 @Composable
 fun rememberWebUIOptions(
-    modId: String,
+    modId: ModId,
     appVersionCode: Int = -1,
     domain: String = "https://mui.kernelsu.org",
     domainSafeRegex: Regex = Regex("^https?://mui\\.kernelsu\\.org(/.*)?$"),

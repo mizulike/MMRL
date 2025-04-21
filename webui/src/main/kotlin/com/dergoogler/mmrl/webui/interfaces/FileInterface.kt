@@ -1,16 +1,18 @@
 package com.dergoogler.mmrl.webui.interfaces
 
-import android.content.Context
 import android.webkit.JavascriptInterface
-import android.webkit.WebView
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
-
+import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 
 class FileInterface(
-    webView: WebView,
-    context: Context,
-) : WebUIInterface(webView, context) {
+    wxOptions: WXOptions
+) : WebUIInterface(wxOptions) {
+    override var name: String = modId.sanitizedIdWithFile
+    companion object {
+        fun factory() = JavaScriptInterface(FileInterface::class.java)
+    }
+
     private val file = Platform.fileManager
 
     @JavascriptInterface
@@ -66,7 +68,7 @@ class FileInterface(
 
     @JavascriptInterface
     fun stat(path: String, total: Boolean): Long {
-        console.error("fs.stat is NOT IMPLEMENTED!")
+        deprecated("$name.stat(path, total)")
         return -1
     }
 

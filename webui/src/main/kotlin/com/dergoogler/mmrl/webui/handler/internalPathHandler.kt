@@ -84,8 +84,8 @@ fun internalPathHandler(options: WebUIOptions? = null): (String) -> WebResourceR
                 return@handler assetsHandler(path.removePrefix("assets/"))
             }
 
-            val file = options?.sanitizedModIdWithFile ?: "undefined"
-            val inputStream = options?.sanitizedModIdWithFileInputStream ?: "undefined"
+            val file = options?.modId?.sanitizedIdWithFile ?: "undefined"
+            val inputStream = options?.modId?.sanitizedIdWithFileInputStream ?: "undefined"
 
             if (options != null && path.matches(Regex("scripts/sufile-fetch-ext\\.js"))) {
                 return@handler """window.$file = window.$file || {};
@@ -187,7 +187,7 @@ window.$file.fetch = function (path, options = {}) {
                 return@handler """(function() {
     // Configuration
     var BASE_MODULE_PATH = '/data/adb/modules';
-    var CURRENT_MODULE_ID = '${options.modId}';
+    var CURRENT_MODULE_ID = '${options.modId.id}';
     
     // Module cache
     var moduleCache = {};

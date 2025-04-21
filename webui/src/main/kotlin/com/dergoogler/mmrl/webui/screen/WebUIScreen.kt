@@ -3,7 +3,6 @@ package com.dergoogler.mmrl.webui.screen
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
@@ -51,6 +50,10 @@ import kotlinx.html.stream.appendHTML
 import kotlinx.html.title
 import kotlinx.html.ul
 import androidx.core.graphics.drawable.toDrawable
+import com.dergoogler.mmrl.webui.interfaces.ApplicationInterface
+import com.dergoogler.mmrl.webui.interfaces.WXOptions
+import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
+import com.dergoogler.mmrl.webui.util.addJavascriptInterface
 
 /**
  * A Composable function that displays a WebView for a web-based UI.
@@ -82,7 +85,7 @@ import androidx.core.graphics.drawable.toDrawable
 fun WebUIScreen(
     webView: WebView,
     options: WebUIOptions,
-    interfaces: List<JavaScriptInterface> = listOf(),
+    interfaces: List<JavaScriptInterface<out WebUIInterface>> = listOf(),
 ) {
     val context = LocalContext.current
     val showConfirm = rememberConfirm(context)
@@ -99,12 +102,13 @@ fun WebUIScreen(
         }
 
         if (options.config.exitConfirm) {
-            showConfirm(ConfirmData(
-                title = context.getString(R.string.exit),
-                description = context.getString(R.string.exit_desc),
-                onConfirm = { (context as Activity).finish() },
-                onClose = {}
-            ))
+            showConfirm(
+                ConfirmData(
+                    title = context.getString(R.string.exit),
+                    description = context.getString(R.string.exit_desc),
+                    onConfirm = { (context as Activity).finish() },
+                    onClose = {}
+                ))
             return@BackHandler
         }
 
@@ -121,7 +125,7 @@ fun WebUIScreen(
                 handlers = listOf(
                     "/mmrl/" to internalPathHandler(options),
                     "/internal/" to internalPathHandler(options),
-                    ".${options.modId}/" to suPathHandler("/data/adb/modules/${options.modId}".toSuFile()),
+                    ".${options.modId.id}/" to suPathHandler("/data/adb/modules/${options.modId.id}".toSuFile()),
                     "/.adb/" to suPathHandler("/data/adb".toSuFile()),
                     "/.config/" to suPathHandler("/data/adb/.config".toSuFile()),
                     "/.local/" to suPathHandler("/data/adb/.local".toSuFile()),
@@ -159,30 +163,25 @@ fun WebUIScreen(
                         )
 
                         for (i in interfaces) {
-                            addJavascriptInterface(
-                                i.instance, i.name
-                            )
+                            addJavascriptInterface(context, options.modId, i)
                         }
 
-                        addJavascriptInterface(
-                            FileInputInterface(
-                                context = context,
-                                webView = this,
-                            ), options.sanitizedModIdWithFileInputStream
+                        val internalInterfaces = listOf(
+                            FileInputInterface.factory(),
+                            ApplicationInterface.factory(),
+                            FileInterface.factory(),
+                            ModuleInterface.factory(
+                                WXOptions(
+                                    context = context,
+                                    webView = this,
+                                    modId = options.modId
+                                ), insets, options
+                            ),
                         )
 
-                        addJavascriptInterface(
-                            ModuleInterface(
-                                options = options,
-                                context = context,
-                                webView = this,
-                                insets = insets
-                            ), "$${options.sanitizedModId}"
-                        )
-
-                        addJavascriptInterface(
-                            FileInterface(this, context), options.sanitizedModIdWithFile
-                        )
+                        for (i in internalInterfaces) {
+                            addJavascriptInterface(context, options.modId, i)
+                        }
                     }
                 }, update = {
                     it.apply {
@@ -248,7 +247,7 @@ fun getRequireNewVersion(
                 div(classes = "content") {
                     div(classes = "title") { +context.getString(R.string.requireNewVersion_cannot_load_webui) }
                     div {
-                        b { +options.modId }
+                        b { +options.modId.id }
                         +" "
                         +context.getString(R.string.requireNewVersion_require_text)
                         +" "

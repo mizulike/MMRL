@@ -39,8 +39,8 @@ data class Insets(
                 .replace(Regex("\t"), "\t\t")
                 .replace(Regex("\n\\}"), "\n\t}")
 
-            appendLine("<!-- MMRL Insets Inject -->")
-            appendLine("<style data-mmrl type=\"text/css\">")
+            appendLine("<!-- WebUI X Insets Inject -->")
+            appendLine("<style data-internal type=\"text/css\">")
             appendLine("\t$sdg")
             appendLine("</style>")
         }

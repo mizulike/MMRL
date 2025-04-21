@@ -1,33 +1,36 @@
 package com.dergoogler.mmrl.webui.interfaces
 
-import android.content.Context
 import android.webkit.JavascriptInterface
-import android.webkit.WebView
+import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.moshi
 import java.io.BufferedInputStream
 import java.io.InputStream
 
 class FileInputInterface(
-    webView: WebView,
-    context: Context,
-) : WebUIInterface(webView, context) {
+    wxOptions: WXOptions
+) : WebUIInterface(wxOptions) {
+    override var name: String = modId.sanitizedIdWithFileInputStream
+    companion object {
+        fun factory() = JavaScriptInterface(FileInputInterface::class.java)
+    }
+
     @JavascriptInterface
     fun open(path: String): FileInputInterfaceStream? =
         try {
             val file = com.dergoogler.mmrl.platform.file.SuFile(path)
             val inputStream = file.newInputStream()
 
-            FileInputInterfaceStream(inputStream, webView, context)
+            FileInputInterfaceStream(inputStream, wxOptions)
         } catch (e: Exception) {
             null
         }
+
 }
 
 class FileInputInterfaceStream(
     inputStream: InputStream,
-    webView: WebView,
-    context: Context,
-) : WebUIInterface(webView, context) {
+    wxOptions: WXOptions
+) : WebUIInterface(wxOptions) {
     private val bufferedInputStream = BufferedInputStream(inputStream)
 
     @JavascriptInterface
