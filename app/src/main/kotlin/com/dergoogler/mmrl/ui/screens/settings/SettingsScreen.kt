@@ -16,31 +16,37 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
-import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.model.local.managers
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarTitle
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
+import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
+import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
+import com.dergoogler.mmrl.ui.component.listItem.ListRadioCheckItem
 import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
+import com.jakewharton.processphoenix.ProcessPhoenix
 
 @Composable
 fun SettingsScreen() {
     val userPreferences = LocalUserPreferences.current
     val viewModel = LocalSettings.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-
     val navController = LocalNavController.current
-
     val browser = LocalUriHandler.current
+    val context = LocalContext.current
+    val confirm = rememberConfirm(context)
 
     var workingModeBottomSheet by remember { mutableStateOf(false) }
     if (workingModeBottomSheet) WorkingModeBottomSheet(
@@ -119,34 +125,32 @@ fun SettingsScreen() {
                 }
             )
 
-            val workingModeIcon = when (userPreferences.workingMode) {
-                WorkingMode.MODE_MAGISK -> R.drawable.magisk_logo
-                WorkingMode.MODE_KERNEL_SU -> R.drawable.kernelsu_logo
-                WorkingMode.MODE_KERNEL_SU_NEXT -> R.drawable.kernelsu_next_logo
-                WorkingMode.MODE_APATCH -> R.drawable.brand_android
-                WorkingMode.MODE_NON_ROOT -> R.drawable.shield_lock
-                else -> R.drawable.components
-            }
+            val manager = managers.find { userPreferences.workingMode == it.platform }
 
-            val workingModeText = when (userPreferences.workingMode) {
-                WorkingMode.MODE_MAGISK -> R.string.working_mode_magisk_title
-                WorkingMode.MODE_KERNEL_SU -> R.string.working_mode_kernelsu_title
-                WorkingMode.MODE_KERNEL_SU_NEXT -> R.string.working_mode_kernelsu_next_title
-                WorkingMode.MODE_APATCH -> R.string.working_mode_apatch_title
-                WorkingMode.MODE_NON_ROOT -> R.string.setup_non_root_title
-                else -> R.string.settings_root_none
+            manager.nullable { mng ->
+                ListRadioCheckItem(
+                    icon = mng.icon,
+                    title = stringResource(id = R.string.platform),
+                    desc = stringResource(mng.name),
+                    options = managers.map { it.toRadioOption() },
+                    onConfirm = {
+                        confirm(
+                            ConfirmData(
+                                title = context.getString(R.string.change_platform),
+                                description = context.getString(R.string.working_mode_change_dialog_desc),
+                                closeText = context.getString(R.string.keep),
+                                onClose = {},
+                                confirmText = context.getString(R.string.apply),
+                                onConfirm = {
+                                    viewModel.setWorkingMode(it.value)
+                                    ProcessPhoenix.triggerRebirth(context)
+                                }
+                            )
+                        )
+                    },
+                    value = mng.platform
+                )
             }
-
-            ListButtonItem(
-                icon = workingModeIcon,
-                title = stringResource(id = R.string.setup_mode),
-                desc = stringResource(
-                    id = workingModeText
-                ),
-                onClick = {
-                    workingModeBottomSheet = true
-                }
-            )
 
             ListButtonItem(
                 icon = R.drawable.files,

@@ -11,12 +11,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import com.dergoogler.mmrl.ui.R
 
 data class ConfirmData(
     val title: String,
     val description: String,
     val onConfirm: () -> Unit,
     val onClose: () -> Unit,
+    val confirmText: String? = null,
+    val closeText: String? = null
 )
 
 @Composable
@@ -39,6 +43,8 @@ fun rememberConfirm(
                                         showDialog = false
                                         confirm.onClose()
                                     },
+                                    closeText = confirm.closeText ?: stringResource(id = R.string.cancel),
+                                    confirmText = confirm.confirmText ?: stringResource(id = R.string.confirm),
                                     title = confirm.title,
                                     description = confirm.description,
                                     onClose = {
