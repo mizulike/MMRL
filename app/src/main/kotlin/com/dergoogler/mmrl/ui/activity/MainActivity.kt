@@ -81,7 +81,7 @@ class MainActivity : MMRLComponentActivity() {
             ) { isSetup ->
                 if (isSetup) {
                     SetupScreen(
-                        setMode = ::setWorkingMode
+                        setWorkingMode = ::setWorkingMode
                     )
                 } else {
                     MainScreen(windowSizeClass)

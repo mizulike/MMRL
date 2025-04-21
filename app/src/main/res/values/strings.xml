@@ -382,4 +382,9 @@
     <string name="exit">Exit</string>
     <string name="says">%1$s says</string>
     <string name="shortcut_not_supported">Shortcuts are not supported on your device or launcher</string>
+    <string name="welcome">Welcome!</string>
+    <string name="select_your_platform">Select your platform</string>
+    <string name="continue_with">Continue with %1$s</string>
+    <string name="select">Select</string>
+    <string name="setup_root_note">To access all features of MMRL, a rooted Android device is required. MMRL does not provide instructions for rooting and is not responsible for any damage that may occur during the rooting process or from the use of MMRL itself.</string>
 </resources>
