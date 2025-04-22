@@ -70,4 +70,5 @@ data class WebUIConfig(
     val backHandler: Boolean = true,
     val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
+    val autoStatusBarsStyle: Boolean = true
 )

@@ -44,7 +44,8 @@ fun webrootPathHandler(
         SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
     }
 
-    val reversedPaths = listOf("mmrl/", "internal/", ".adb/", ".local/", ".config/", ".${options.modId.id}/")
+    val reversedPaths =
+        listOf("mmrl/", "internal/", ".adb/", ".local/", ".config/", ".${options.modId.id}/")
 
     return handler@{ path ->
         reversedPaths.forEach {
@@ -83,7 +84,7 @@ fun webrootPathHandler(
 
             val injections = buildList {
                 if (options.isErudaEnabled) {
-                    addInjection({
+                    addInjection {
                         appendLine("<script data-internal src=\"https://mui.kernelsu.org/internal/assets/eruda/eruda-editor.js\"></script>")
                         appendLine("<script data-internal type=\"module\">")
                         appendLine("\timport eruda from \"https://mui.kernelsu.org/internal/assets/eruda/eruda.mjs\";")
@@ -109,38 +110,46 @@ fun webrootPathHandler(
                         appendLine("\tsheet.replaceSync(\".eruda-dev-tools { padding-bottom: ${insets.bottom}px }\");")
                         appendLine("\twindow.eruda.shadowRoot.adoptedStyleSheets.push(sheet)")
                         appendLine("</script>")
-                    })
+                    }
+                }
+
+                if (options.config.autoStatusBarsStyle) {
+                    addInjection {
+                        appendLine("<script data-internal-configurable type=\"module\">")
+                        appendLine("$${options.modId.sanitizedId}.setLightStatusBars(!$${options.modId.sanitizedId}.isDarkMode())")
+                        appendLine("</script>")
+                    }
                 }
 
                 configStyleBase.exists {
                     it.listFiles { f -> f.exists() && f.extension == "css" }.forEach {
-                        addInjection({
+                        addInjection {
                             appendLine("<link data-internal rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/style/${it.name}\" type=\"text/css\" />")
-                        })
+                        }
                     }
                 }
 
-                addInjection({
+                addInjection(InjectionType.BODY) {
                     appendLine("<script data-internal data-internal-dont-use src=\"https://mui.kernelsu.org/internal/scripts/require.js\" type=\"module\"></script>")
-                }, InjectionType.BODY)
+                }
 
-                addInjection({
+                addInjection(InjectionType.BODY) {
                     appendLine("<script data-internal data-internal-dont-use src=\"https://mui.kernelsu.org/internal/scripts/sufile-fetch-ext.js\" type=\"module\"></script>")
-                }, InjectionType.BODY)
+                }
 
                 customJsHead.exists {
                     it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
-                        addInjection({
+                        addInjection(InjectionType.HEAD) {
                             appendLine("<script data-internal src=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/js/head/${it.name}\" type=\"module\"></script>")
-                        }, InjectionType.HEAD)
+                        }
                     }
                 }
 
                 customJsBody.exists {
                     it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
-                        addInjection({
+                        addInjection(InjectionType.BODY) {
                             appendLine("<script data-internal src=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/js/body/${it.name}\" type=\"module\"></script>")
-                        }, InjectionType.BODY)
+                        }
                     }
                 }
 

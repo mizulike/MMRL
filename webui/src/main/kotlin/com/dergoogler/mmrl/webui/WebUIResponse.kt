@@ -40,8 +40,8 @@ enum class InjectionType {
 }
 
 fun MutableList<Injection>.addInjection(
-    code: StringBuilder.() -> Unit,
     type: InjectionType = InjectionType.HEAD,
+    code: StringBuilder.() -> Unit,
 ) = addInjection(buildString(code), type)
 
 fun MutableList<Injection>.addInjection(
