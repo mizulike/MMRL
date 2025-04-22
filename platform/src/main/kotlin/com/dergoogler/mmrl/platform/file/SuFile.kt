@@ -59,6 +59,17 @@ class SuFile(
         return content
     }
 
+    fun fromPaths(vararg paths: Any): SuFile? {
+        val files = paths.map { SuFile(path, it) }
+        for (f in files) {
+            if (f.exists()){
+                return f
+            }
+        }
+
+        return null
+    }
+
     fun parcelStream(): FileInputStream {
         val fd = fileManager.parcelFile(this.path)
         return FileInputStream(fd.fileDescriptor)

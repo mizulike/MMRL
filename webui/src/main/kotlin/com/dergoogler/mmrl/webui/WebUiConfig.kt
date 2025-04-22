@@ -19,11 +19,7 @@ import com.dergoogler.mmrl.webui.model.WebUIConfig
 fun webUiConfig(modId: ModId): WebUIConfig {
     val moduleDir = SuFile("/data/adb/modules", modId.id)
     val webRoot = SuFile(moduleDir, "webroot")
-    val configFile = SuFile(webRoot, "config.json")
-
-    if (!configFile.exists()) {
-        return WebUIConfig()
-    }
+    val configFile = webRoot.fromPaths("config.json", "config.mmrl.json") ?: return WebUIConfig()
 
     val json = configFile.readText()
     val jsonAdapter = moshi.adapter(WebUIConfig::class.java)
