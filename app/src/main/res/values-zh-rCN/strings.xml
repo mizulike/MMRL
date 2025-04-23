@@ -196,7 +196,7 @@
     <string name="menu_sort_option_name">名字</string>
     <string name="menu_sort_option_updated">更新时间</string>
     <string name="menu_descending">降序</string>
-    <string name="menu_pin_enabled">启用置顶</string>
+    <string name="menu_pin_enabled">已启用优先</string>
     <string name="menu_show_updated">显示更新时间</string>
     <string name="menu_show_antifeatures">显示不受欢迎的功能</string>
     <!-- Message -->
@@ -363,11 +363,11 @@
     <string name="settings_strict_mode">严格模式</string>
     <string name="view_module_features_mmrl_webui_config">MMRL WebUI 设置</string>
     <string name="view_module_features_filesystem">文件系统 API</string>
-    <string name="view_module_features_filesystem_sub">此模块可能需要使用由 MMRL 提供的文件系统 API</string>
-    <string name="view_module_features_eruda_sub">此模块含有可开关的开发者控制台</string>
+    <string name="view_module_features_filesystem_sub">此模块可能需要使用由 MMRL 提供的文件系统 API。</string>
+    <string name="view_module_features_eruda_sub">此模块含有可开关的开发者控制台。</string>
     <string name="view_module_features_dex_loader">WebUI 插件</string>
     <string name="view_module_features_eruda">Eruda 控制台</string>
-    <string name="view_module_features_dex_loader_sub">此模块支持通过 WebUI 插件来添加新的 JavaScript API</string>
+    <string name="view_module_features_dex_loader_sub">此模块支持通过 WebUI 插件来添加新的 JavaScript API。</string>
     <string name="view_module_features_mmrl_webui">MMRL WebUI</string>
     <string name="view_module_features_mmrl_webui_sub">此模块包含 MMRL WebUI。</string>
     <string name="view_module_features_mmrl_webui_config_sub">此模块使用一个 config 文件来管理 MMRL WebUI</string>
@@ -376,4 +376,8 @@
     <string name="icon_not_found">未找到图标</string>
     <string name="shortcut_already_exists">快捷方式已存在</string>
     <string name="provider_service_not_active">提供者服务未启动</string>
+    <string name="are_you_sure_you_want_to_exit">你确定要退出吗？</string>
+    <string name="says">%1$s 说</string>
+    <string name="exit">退出</string>
+    <string name="shortcut_not_supported">您的设备或启动器不支持快捷方式</string>
 </resources>
