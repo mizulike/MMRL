@@ -261,4 +261,5 @@
     <string name="working_mode_kernelsu_title">KernelSU</string>
     <string name="working_mode_kernelsu_next_title">KernelSU Next</string>
     <string name="working_mode_apatch_desc">يقوم بتعديل الكيرنيل الخاص بالأندرويد و كذالك النظام. يعتمد على الكيرنيل مع دعم الإضافات مثل Magisk. مبني على KernelSU.</string>
+    <string name="working_mode_kernelsu_next_desc">حل جذري متقدم قائم على النواة مع دعم magic mount وتحكم محسن في تطبيقات المستخدم مع امكانية التخصيص</string>
 </resources>
