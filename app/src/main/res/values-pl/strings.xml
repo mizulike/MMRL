@@ -106,7 +106,7 @@
     <string name="view_module_features_apks">Apki</string>
     <string name="view_module_features_boot_completed">Ukończono rozruch</string>
     <string name="view_module_features_service_sub">Uruchamia kod później podczas rozruchu (po zainicjowaniu systemu).</string>
-    <string name="view_module_features_post_fs_data">Dane Post FS</string>
+    <string name="view_module_features_post_fs_data">Post FS Data</string>
     <string name="view_module_features_webui">WebUI</string>
     <string name="view_module_features_post_mount">Post Mount</string>
     <string name="settings_reboot_protection_desc">Jeśli jest włączona, musisz potwierdzać przy każdym ponownym uruchomieniu</string>
@@ -347,4 +347,20 @@
     <string name="view_module_features_dex_loader">Wtyczki WebUI</string>
     <string name="view_module_features_mmrl_webui_sub">Ten moduł zawiera wyłącznie WebUI MMRL.</string>
     <string name="view_module_features_dex_loader_sub">Ten moduł obsługuje wtyczki WebUI umożliwiające dodawanie nowych API JavaScript.</string>
+    <string name="shortcut_already_exists">Skrót już istnieje</string>
+    <string name="provider_service_not_active">Usługa dostawcy jest nieaktywna</string>
+    <string name="icon_not_found">Nie znaleziono ikony</string>
+    <string name="title_or_icon_not_found">Nie znaleziono tytułu lub ikony</string>
+    <string name="missing_mod_id">Nie zdefiniowano ID modułu</string>
+    <string name="exit">Wyjdź</string>
+    <string name="are_you_sure_you_want_to_exit">Czy na pewno chcesz wyjść?</string>
+    <string name="says">%1$s mówi</string>
+    <string name="shortcut_not_supported">Urządzenie lub launcher nie obsługuje skrótów</string>
+    <string name="select_your_platform">Wybierz swoją platformę</string>
+    <string name="continue_with">Kontynuuj z %1$s</string>
+    <string name="select">Wybierz</string>
+    <string name="welcome">Witaj!</string>
+    <string name="setup_root_note">Aby uzyskać dostęp do wszystkich funkcji MMRL, wymagane jest zrootowane urządzenie z Androidem. MMRL nie udostępnia instrukcji rootowania i nie ponosi odpowiedzialności za jakiekolwiek szkody, które mogą wystąpić podczas procesu rootowania lub z powodu korzystania z samego MMRL.</string>
+    <string name="platform">Platforma</string>
+    <string name="change_platform">Zmień platformę</string>
 </resources>
