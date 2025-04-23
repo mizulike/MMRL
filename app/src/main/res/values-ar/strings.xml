@@ -70,7 +70,7 @@
     <string name="view_module_features_sepolicy_sub">إضافة سياسات أمان مخصصة (قواعد SEPolicy).</string>
     <string name="view_module_features_zygisk_sub">يسمح للإضافات بالتفاعل مع إطار عمل Zygisk، مما يمكّن التعديلات والتفاعلات على مستوى النظام.</string>
     <string name="view_module_features_apks_sub">تضمين APKs إضافية داخل الإضافة.</string>
-    <string name="view_module_features_webui_sub">واجهة ويب لإدارة الإضافات (KernelSU و APatch، وليس Magisk).</string>
+    <string name="view_module_features_webui_sub">واجهة ويب لإدارة الإضافات (يجب للمستخدم تأكيد استخدام واجهة البرمجيات الخاصة ب JavaScript.</string>
     <string name="view_module_features_postmount_sub">تنفيذ السكربت بعد تثبيت OverlayFS (KernelSU و APatch).</string>
     <string name="view_module_features_bootcompleted_sub">تنفيذ السكربت بعد اكتمال التمهيد (KernelSU و APatch).</string>
     <!-- Modules -->
@@ -255,4 +255,10 @@
     <string name="home_support_content">MMRL يكون، ودائما سيكون مجانيا و مفتوح المصدر. تستطيع أن تظهر لي الاهتمام عن طريق التبرع.</string>
     <string name="bulk_install_module_added">تمت الإضافة</string>
     <string name="new_version_available">اصدار%s متاح ! انقر للتحديث.</string>
+    <string name="working_mode_shizuku_title">Shizuku</string>
+    <string name="working_mode_magisk_title">Magisk</string>
+    <string name="working_mode_apatch_title">APatch</string>
+    <string name="working_mode_kernelsu_title">KernelSU</string>
+    <string name="working_mode_kernelsu_next_title">KernelSU Next</string>
+    <string name="working_mode_apatch_desc">يقوم بتعديل الكيرنيل الخاص بالأندرويد و كذالك النظام. يعتمد على الكيرنيل مع دعم الإضافات مثل Magisk. مبني على KernelSU.</string>
 </resources>
