@@ -15,4 +15,7 @@
     <string name="module_is_disabled_or_removed_unable_to_execute_action">! Modul dinonaktifkan atau dihapus. Tidak dapat menjalankan tindakan.</string>
     <string name="cannot_install_blacklisted_modules_settings_security_blacklist_alerts">! Tidak dapat memasang modul yang masuk dalam daftar hitam. Pengaturan → Keamanan → Peringatan Daftar Hitam</string>
     <string name="unable_to_find_path_for_uri">! Tidak dapat menemukan path untuk uri: %1$s</string>
+    <string name="is_not_a_module_file_magisk_modules_must_be_zip_files_skipping">! %1$s bukanlah file modul. Modul Magisk harus berupa file .zip.</string>
+    <string name="failed_to_remove_updated_folder">! Gagal menghapus folder yang diperbarui</string>
+    <string name="removed_updated_folder">- Menghapus folder yang diperbarui</string>
 </resources>

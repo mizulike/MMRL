@@ -15,4 +15,7 @@
     <string name="this_module_don_t_have_an_action">! 这个模块没有 action 脚本。</string>
     <string name="copying_zip_to_temp_directory">- 复制压缩文件到临时目录</string>
     <string name="unable_to_find_path_for_uri">! 无法找到 URI 的路径：%1$s</string>
+    <string name="removed_updated_folder">- 移除已更新的文件夹</string>
+    <string name="failed_to_remove_updated_folder">! 无法移除已更新的文件夹</string>
+    <string name="is_not_a_module_file_magisk_modules_must_be_zip_files_skipping">! %1$s 不是一个模块文件, Magisk 模块应该是 .zip 文件, 已跳过...</string>
 </resources>
