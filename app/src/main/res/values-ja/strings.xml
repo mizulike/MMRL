@@ -333,11 +333,11 @@
     <string name="settings_log_viewer">ログビューワー</string>
     <string name="settings_terms_of_service">利用規約</string>
     <string name="get_the_most_out_of_mmrl">MMRL を最大限に活用しよう！</string>
-    <string name="allow_advanced_kernelsu_api">高度な KernelSU API を許可しますか？</string>
-    <string name="allow_filesystem_api">ファイルシステム API を許可しますか？</string>
-    <string name="allow_filesystem_api_desc">このモジュールでファイルシステム API にアクセスすることを許可しますか？このモジュールが安全でないと思われる場合は、許可しないでください！</string>
+    <string name="allow_advanced_kernelsu_api">高度な KernelSU API へのアクセスを許可しますか？</string>
+    <string name="allow_filesystem_api">ファイルシステム API へのアクセスを許可しますか？</string>
+    <string name="allow_filesystem_api_desc">このモジュールでファイルシステム API にアクセスすることを許可しますか？信頼できない場合はアクセスを拒否できます</string>
     <string name="explore_more_repositories">さらにリポジトリを探す</string>
-    <string name="allow_advanced_kernelsu_api_desc">このモジュールで高度な KernelSU API にアクセスすることを許可しますか？このモジュールが安全でないと思われる場合は、許可しないでください！</string>
+    <string name="allow_advanced_kernelsu_api_desc">このモジュールで高度な KernelSU API にアクセスすることを許可しますか？信頼できない場合はアクセスを拒否できます</string>
     <string name="working_mode_shizuku_title">Shizuku</string>
     <string name="working_mode_shizuku_desc">完全な root アクセスなしで、アプリがシステムレベルのコマンドを実行できるようにする権限ベースのソリューションです。Sui または Shizuku から権限の許可を行うことで、システムの整合性を維持しながら特定の操作に対して昇格された権限を有効化します。</string>
     <string name="settings_provider_service">プロバイダーサービス</string>
@@ -371,4 +371,13 @@
     <string name="view_module_features_filesystem">ファイルシステム API</string>
     <string name="view_module_features_filesystem_sub">このモジュールは MMRL によって提供されるファイルシステム API を使用します。</string>
     <string name="view_module_features_eruda_sub">このモジュールには切り替え可能な開発者コンソールがあります。</string>
+    <string name="shortcut_already_exists">ショートカットはすでに存在します</string>
+    <string name="title_or_icon_not_found">タイトルまたはアイコンが見つかりません</string>
+    <string name="icon_not_found">アイコンが見つかりません</string>
+    <string name="missing_mod_id">モジュール ID が定義されていません</string>
+    <string name="provider_service_not_active">プロバイダーサービスが有効ではありません</string>
+    <string name="exit">終了</string>
+    <string name="says">%1$s の発言</string>
+    <string name="are_you_sure_you_want_to_exit">本当に終了してもよろしいですか？</string>
+    <string name="shortcut_not_supported">使用しているデバイスまたはランチャーはショートカットに対応していません</string>
 </resources>

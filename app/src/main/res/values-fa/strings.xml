@@ -1,0 +1,358 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="setup_mode">حالت کاری</string>
+    <string name="view_module_version">نگارش</string>
+    <string name="view_module_required_os">سیستم‌عامل مورد نیاز</string>
+    <string name="view_module_install_confirm_desc"><![CDATA[آیا مطمئنید که میخواهید <font color=\"%1$s\">%2$s</font> را نصب کنید؟]]></string>
+    <string name="view_module_install_confirm_desc_deps"><![CDATA[آیا مطمئنید که میخواهید <font color=\"%1$s\">%2$s</font>نصب کنید؟ همچنین این ماژول نیاز دارد به:]]></string>
+    <string name="view_module_unsupported_device_desc">به نظر می‌رسد دستگاه شما توسط این ماژول پشتیبانی نمی‌شود یا کنار گذاشته شده است.</string>
+    <string name="settings_security_desc">موارد مرتبط با امنیت برنامه</string>
+    <string name="settings_appearance">ظاهر</string>
+    <string name="settings_changelog">فهرست تغییرات</string>
+    <string name="settings_blacklist">فهرست سیاه</string>
+    <string name="settings_modules">ماژول‌ها و نصب‌کننده‌ها</string>
+    <string name="reboot_bootloader">راه‌اندازی مجدد به بوت‌لودر</string>
+    <string name="events_halloween">بوو! … آه</string>
+    <string name="copy_logs">رونوشت گزارش‌ها</string>
+    <string name="settings_modules_permissions">ماژول‌ها و دسترسی‌ها</string>
+    <string name="about_this_repository">درباره این مخزن</string>
+    <string name="working_mode_change_dialog_title">تغییر حالت کاری؟</string>
+    <string name="repository_service_started">خدمت مخزن آغاز شد</string>
+    <string name="module_service_started">خدمت ماژول آغاز شد</string>
+    <string name="are_you_sure_you_want_to_exit">آیا مطمئن هستید که می‌خواهید خارج شوید؟</string>
+    <string name="exit">خروج</string>
+    <string name="says">%1$s می‌گوید</string>
+    <string name="setup_non_root_title">بدون دسترسی ریشه</string>
+    <string name="setup_non_root_desc">نیازی به دسترسی ریشه ندارد، تنها عملکرد بارگیری ماژول در دسترس است</string>
+    <string name="working_mode_magisk_title">مجیسک</string>
+    <string name="working_mode_kernelsu_title">کرنل‌سو</string>
+    <string name="working_mode_kernelsu_next_title">کرنل‌سو بعدی</string>
+    <string name="working_mode_apatch_title">اِی‌پچ</string>
+    <string name="unsafe_url_redirecting">پیوند ناامن: %1$s. در حال هدایت…</string>
+    <string name="selected">انتخاب‌شده</string>
+    <string name="invalid_ip">این یک دامنه محلی معتبر نیست!</string>
+    <string name="install_screen_cancel_title">رد نصب؟</string>
+    <string name="working_mode_shizuku_title">شیزوکو</string>
+    <string name="working_mode_apatch_desc">وصله‌زنی(پچ) هسته و سامانه اندروید. یک راه‌حل جدید مبتنی بر هسته برای دسترسی ریشه با پشتیبانی از ماژول‌ها مشابه مجیسک و تزریق عملکردهای هسته (نیاز به inline-hook و syscall-table-hook دارد). برگرفته و اصلاح‌شده از کرنل‌سو</string>
+    <string name="working_mode_kernelsu_next_desc">یک راه‌حل پیشرفته مبتنی بر هسته برای دسترسی ریشه با پشتیبانی از Magic Mount، هدایت بهبودیافته برنامه‌های فضای کاربر، و امتیازات دسترسی ریشه قابل تنظیم.</string>
+    <string name="working_mode_kernelsu_desc">یک راه‌حل مبتنی بر هسته برای دسترسی ر persuasive\nیشه با هدایت بهبودیافته برنامه‌های فضای کاربر، امتیازات دسترسی ریشه قابل تنظیم، و پشتیبانی از ماژول‌های بدون تغییر سامانه با به‌کارگیری OverlayFS.</string>
+    <string name="working_mode_magisk_desc">مجموعه‌ای از ابزارها برای سفارشی‌سازی اندروید، قراهم‌کننده دسترسی ریشه، پشتیبانی از ماژول، تغییر تصویر بوت، و اجرای کد در سطح فرآیند با Zygisk.</string>
+    <string name="working_mode_shizuku_desc">یک راه‌حل مبتنی بر مجوز که به برنامه‌ها اجازه می‌دهد دستورات سطح سامانه را بدون دسترسی کامل ریشه اجرا کنند. نیاز به پذیرش از Sui یا شیزوکو دارد، که امتیازات بالاتری را برای عملیات خاص فراهم می‌کند در حالی که یکپارچگی سامانه حفظ می‌شود.</string>
+    <string name="install_screen_title">نصب</string>
+    <string name="install_flashing">فلش کردن</string>
+    <string name="install_done">انجام شد</string>
+    <string name="install_failure">ناموفق</string>
+    <string name="install_logs_saved">گزارش‌ها ذخیره شدند</string>
+    <string name="install_logs_save_failed">ذخیره ناموفق: %s</string>
+    <string name="install_screen_reboot_title">راه‌اندازی مجدد؟</string>
+    <string name="install_screen_reboot_text">آیا مطمئن هستید که می‌خواهید دستگاه خود را راه‌اندازی مجدد کنید؟</string>
+    <string name="install_screen_reboot_dismiss">رد کردن</string>
+    <string name="license_title">نمایش پروانه</string>
+    <string name="license_osi_approved">تأییدشده توسط OSI</string>
+    <string name="license_fsf_libre">آزاد FSF</string>
+    <string name="page_home">خانه</string>
+    <string name="page_repository">مخزن</string>
+    <string name="page_modules">ماژول‌ها</string>
+    <string name="page_settings">تنظیمات</string>
+    <string name="repository_empty">مخزن خالی است</string>
+    <string name="module_new">جدید</string>
+    <string name="menu_pin_installed">سنجاق نصب‌شده‌ها</string>
+    <string name="menu_pin_updatable">سنجاق قابل به‌روزرسانی</string>
+    <string name="menu_show_icon">نمایش نماد</string>
+    <string name="menu_show_license">نمایش پروانه</string>
+    <string name="menu_show_cover">نمایش جلد</string>
+    <string name="menu_show_verified">نمایش تأییدشده</string>
+    <string name="menu_sort_repolistmode_detailed">جزئی</string>
+    <string name="menu_sort_repolistmode_compact">فشرده</string>
+    <string name="view_module_last_updated">آخرین به‌روزرسانی</string>
+    <string name="view_module_update_notify">آگاه‌سازی</string>
+    <string name="view_module_update_ignore">نادیده گرفتن</string>
+    <string name="view_module_provided">فراهم‌شده به‌دست %s</string>
+    <string name="view_module_version_dialog_desc">آیا می‌خواهید این نگارش از ماژول را نصب یا بارگیری کنید؟</string>
+    <string name="view_module_homepage">صفحه اصلی</string>
+    <string name="view_module_source">کد منبع</string>
+    <string name="view_module_support">پشتیبانی</string>
+    <string name="view_module_view_track">نمایش مسیر</string>
+    <string name="view_module_type">نوع: %s</string>
+    <string name="view_module_added">افزوده‌شده در: %s</string>
+    <string name="view_module_file_size">اندازه پرونده</string>
+    <string name="view_module_antifeatures">ویژگی‌های مخالف</string>
+    <string name="view_module_unsupported">پشتیبانی‌نشده</string>
+    <string name="view_module_unsupported_desc">به نظر می‌رسد دستگاه شما از این نگارش ماژول پشتیبانی نمی‌کند. با مسئولیت خود نصب کنید!</string>
+    <string name="view_module_license">پروانه</string>
+    <string name="view_module_features">ویژگی‌ها</string>
+    <string name="view_module_features_service">خدمات</string>
+    <string name="view_module_features_post_fs_data">داده‌های پس از FS</string>
+    <string name="view_module_features_system_properties">ویژگی‌های سامانه</string>
+    <string name="view_module_features_selinux_policy">سیاست SELinux</string>
+    <string name="view_module_features_zygisk">زیگیسک</string>
+    <string name="view_module_features_apks">برنامه‌های APK</string>
+    <string name="view_module_features_webui">رابط وب</string>
+    <string name="view_module_features_action">کنش</string>
+    <string name="view_module_features_post_mount">پس از سوار شدن</string>
+    <string name="view_module_features_boot_completed">راه‌اندازی کامل شد</string>
+    <string name="view_module_features_service_sub">اجرای کد در مراحل بعدی راه‌اندازی (سامانه بیشتر مقداردهی شده).</string>
+    <string name="view_module_features_post_fs_data_sub">اجرای کد در اوایل پس از راه‌اندازی (سامانه تا حدی راه‌اندازی شده).</string>
+    <string name="view_module_features_resetprop_sub">تنظیم ویژگی‌های سامانهی که توسط resetprop مجیسک بارگذاری می‌شوند.</string>
+    <string name="view_module_features_sepolicy_sub">افزودن سیاست‌های امنیتی سفارشی (قوانین SEPolicy).</string>
+    <string name="view_module_features_zygisk_sub">به ماژول‌ها اجازه می‌دهد با چارچوب زیگیسک تعامل کنند، که امکان تغییرات و تعاملات در سطح سامانه را فراهم می‌کند.</string>
+    <string name="view_module_features_apks_sub">دارای برنامه‌های APK اضافی در داخل ماژول.</string>
+    <string name="view_module_features_webui_sub">رابط وب برای مدیریت ماژول‌ها. کاربر باید به‌کارگیری APIهای مختلف جاوااسکریپت را تأیید کند.</string>
+    <string name="view_module_features_action_sub">به کاربر اجازه می‌دهد با کلیک بر روی دکمه، اسکریپتی را اجرا کند</string>
+    <string name="view_module_features_postmount_sub">اجرای اسکریپت پس از سوار شدن OverlayFS</string>
+    <string name="view_module_features_bootcompleted_sub">اجرای اسکریپت پس از تکمیل راه‌اندازی</string>
+    <string name="view_module_module_support">پشتیبانی ماژول</string>
+    <string name="view_module_provided_by">فراهم‌شده توسط</string>
+    <string name="view_module_added_on">افزوده‌شده در</string>
+    <string name="view_module_about_this_module">درباره این ماژول</string>
+    <string name="view_module_section_count">%1$s+</string>
+    <string name="view_module_donate">کمک مالی</string>
+    <string name="view_module_donate_desc">با اهدای یک قهوه به توسعه‌دهنده این ماژول، قدردانی خود را نشان دهید! ☕</string>
+    <string name="view_module_module_id">شناسه ماژول</string>
+    <string name="view_module_required_os_value">اندروید %1$s و بالاتر</string>
+    <string name="view_module_dependencies">وابستگی‌ها</string>
+    <string name="view_module_share">هم‌رسانی</string>
+    <string name="view_module_install_confirm_title">این ماژول نصب شود؟</string>
+    <string name="view_module_install_confirm_confirm_deps">نصب (وابستگی‌ها)</string>
+    <string name="view_module_install_confirm_confirm">نصب</string>
+    <string name="view_module_low_root_version">نگارش دسترسی ریشه بسیار قدیمی است!</string>
+    <string name="view_module_low_root_version_desc">به نظر می‌رسد نگارش فراهم‌کننده دسترسی ریشه شما بسیار قدیمی است. بررسی کنید که آیا به‌روزرسانی برای فراهم‌کننده دسترسی ریشه شما موجود است.</string>
+    <string name="view_module_required_root_version">نگارش مورد نیاز دسترسی ریشه</string>
+    <string name="view_module_unsupported_device">دستگاه پشتیبانی‌نشده</string>
+    <string name="view_module_unsupported_arch">معماری پشتیبانی‌نشده</string>
+    <string name="view_module_unsupported_arch_desc">به نظر می‌رسد دستگاه شما از معماری مورد نیاز اعلام‌شده توسط توسعه‌دهنده پشتیبانی نمی‌کند.</string>
+    <string name="modules_empty">هیچ ماژولی یافت نشد</string>
+    <string name="module_version_author">%1$s به‌دست %2$s</string>
+    <string name="module_remove">پاک کردن</string>
+    <string name="module_install">نصب</string>
+    <string name="module_reinstall">نصب مجدد</string>
+    <string name="module_download">بارگیری</string>
+    <string name="module_restore">بازیابی</string>
+    <string name="module_update">به‌روزرسانی</string>
+    <string name="settings_app">برنامه</string>
+    <string name="settings_about">درباره</string>
+    <string name="settings_resources">منابع</string>
+    <string name="settings_resources_desc">مستندات، مخزن‌های پشتیبانی‌شده و هر چیز دیگر</string>
+    <string name="settings_security">امنیت</string>
+    <string name="settings_appearance_desc">برنامه را مطابق نیازهای خود تغییر دهید</string>
+    <string name="settings_other">سایر</string>
+    <string name="settings_other_desc">DoH، مسیر بارگیری و بیشتر</string>
+    <string name="settings_text_wrap">پیچش متن</string>
+    <string name="settings_text_wrap_desc">پیچش متن را در پایانه نصب فعال می‌کند</string>
+    <string name="settings_changelo_desc">تمام تغییرات کنونی در MMRL</string>
+    <string name="settings_open_notification_settings">باز کردن تنظیمات آگاه‌سازی</string>
+    <string name="settings_root_access">دسترسی ریشه: %s</string>
+    <string name="settings_root_provider">فراهم‌کننده: %s</string>
+    <string name="settings_root_version">نگارش: %s</string>
+    <string name="settings_root_granted">داده‌شده</string>
+    <string name="settings_root_not_available">در دسترس نیست</string>
+    <string name="settings_root_none">هیچ</string>
+    <string name="settings_non_root_desc">عملکرد محدود است</string>
+    <string name="settings_app_theme">پوسته برنامه</string>
+    <string name="settings_app_theme_desc">تغییر طرح رنگ و حالت شب</string>
+    <string name="settings_download_path">مسیر بارگیری</string>
+    <string name="settings_delete_zip">پاک کردن پرونده زیپ</string>
+    <string name="settings_delete_zip_desc">پاک کردن پرونده زیپ ماژول پس از نصب موفق، این توسط کاربر ارشد اجرا می‌شود</string>
+    <string name="settings_doh">DNS بر بستر HTTPS</string>
+    <string name="settings_doh_desc">راه‌حل برای مسمومیت DNS در برخی کشورها</string>
+    <string name="settings_reboot_protection">حفاظت از راه‌اندازی مجدد</string>
+    <string name="settings_reboot_protection_desc">در صورت فعال بودن، باید هر راه‌اندازی مجدد را تأیید کنید</string>
+    <string name="settings_blacklist_desc">ماژول‌های فهرست‌شده که ممکن است منبع بسته یا خطرناک باشند</string>
+    <string name="settings_date_pattern">الگوی تاریخ</string>
+    <string name="settings_date_pattern_desc">از فرمت تاریخ دلخواه خود استفاده کنید</string>
+    <string name="settings_updates">به‌روزرسانی‌ها</string>
+    <string name="settings_updates_desc">ترجیحات خود را در فرآیند به‌روزرسانی مدیریت کنید</string>
+    <string name="settings_homepage">صفحه اصلی برنامه</string>
+    <string name="settings_homepage_desc">صفحه آغازین برنامه را انتخاب کنید</string>
+    <string name="settings_auto_update_repos">به‌روزرسانی خودکار مخزن</string>
+    <string name="settings_auto_update_repos_desc">به‌روزرسانی خودکار مخزن‌ها در پس‌زمینه</string>
+    <string name="settings_repo_update_interval">بازه به‌روزرسانی مخزن</string>
+    <string name="settings_repo_update_interval_desc">بازه زمانی برای به‌روزرسانی مخزن‌ها را انتخاب کنید</string>
+    <string name="settings_check_app_updates">بررسی به‌روزرسانی‌های برنامه</string>
+    <string name="settings_check_app_updates_desc">هر بار که برنامه را باز می‌کنید، به‌طور خودکار به‌روزرسانی‌های برنامه را بررسی می‌کند</string>
+    <string name="settings_hide_fingerprint">پنهان کردن اثر انگشت در خانه</string>
+    <string name="settings_hide_fingerprint_desc">مهم نیست که واقعی باشد یا جعلی</string>
+    <string name="settings_check_modules_update">بررسی به‌روزرسانی‌های ماژول</string>
+    <string name="settings_check_modules_update_desc">بررسی به‌روزرسانی برای ماژول‌های نصب‌شده را فعال می‌کند</string>
+    <string name="settings_check_modules_update_interval">بازه بررسی به‌روزرسانی ماژول</string>
+    <string name="settings_check_modules_update_interval_desc">بازه زمانی برای بررسی ماژول‌های نصب‌شده خود را انتخاب کنید</string>
+    <string name="settings_include_preleases">دارای پیش‌نشرها</string>
+    <string name="settings_developer_mode">حالت توسعه‌دهنده</string>
+    <string name="settings_developer_mode_desc">شناسه‌های ماژول‌ها و موارد دیگر را نمایش می‌دهد</string>
+    <string name="settings_clear_install_terminal">پاک کردن پایانه نصب</string>
+    <string name="settings_clear_install_terminal_desc">پاک کردن پایانه نصب هنگام نصب بیش از یک ماژول</string>
+    <string name="settings_shell_module_state_change">به‌کارگیری پوسته برای حالت‌ها</string>
+    <string name="settings_shell_module_state_change_desc">به جای ایجاد پرونده‌ها در پوشه ماژول، از پوسته استفاده می‌کند. پس از فعال شدن، به دلیل محدودیت‌ها نمی‌توانید از دکمه بازگردانی استفاده کنید.</string>
+    <string name="settings_modules_desc">تغییر رفتار گرداننده‌ها برای ماژول‌ها یا موارد بیشتر درباره ماژول‌ها</string>
+    <string name="settings_modules_handlers">گرداننده‌ها</string>
+    <string name="settings_modules_installer">نصاب</string>
+    <string name="settings_security_allow_advanced_kernelsu_api">اجازه به‌کارگیری API پیشرفته کرنل‌سو</string>
+    <string name="settings_security_allow_filesystem_api">اجازه به‌کارگیری API سامانه پرونده</string>
+    <string name="settings_developer">توسعه‌دهنده</string>
+    <string name="settings_developer_desc">ابزارهای اشکال‌زدایی برای توسعه‌دهندگان</string>
+    <string name="settings_webui_remote_url">نشانی رابط وب راه دور</string>
+    <string name="settings_webui_remote_url_desc">برای ساده‌سازی اشکال‌زدایی، یک دامنه محلی مانند http://localhost ارائه دهید. برای اطلاعات بیشتر به هشدار بالا مراجعه کنید.</string>
+    <string name="app_theme_palette">تخته‌رنگ پوسته</string>
+    <string name="settings_webui_remote_url_alert_desc">رابط وب اکنون به‌طور مداوم از نشانی ارائه‌شده شما برای همه ماژول‌ها استفاده می‌کند، خطاهای SSL را دور می‌زند و دسترسی به /data/adb/modules/{ID}/webroot را غیرفعال می‌کند. توجه داشته باشید که برای به‌کارگیری این ویژگی نیاز به یک سرور وب محلی خود-امضاشده است، که تنها برای اهداف اشکال‌زدایی در نظر گرفته شده، برای استفاده روزمره مناسب نیست و با مسئولیت خودتان استفاده می‌شود.</string>
+    <string name="app_theme_dark_theme">پوسته تیره</string>
+    <string name="app_theme_dark_theme_auto">خودکار</string>
+    <string name="app_theme_dark_theme_light">روشن</string>
+    <string name="app_theme_dark_theme_dark">تیره</string>
+    <string name="repo_modules">%d ماژول</string>
+    <string name="repo_update_at">به‌روزرسانی‌شده در: %s</string>
+    <string name="repo_incompatible">ناسازگار</string>
+    <string name="repo_options">گزینه‌ها</string>
+    <string name="repo_options_update">به‌روزرسانی</string>
+    <string name="repo_options_delete">پاک کردن</string>
+    <string name="repo_options_support">پشتیبانی</string>
+    <string name="repo_options_submission">ارسال</string>
+    <string name="repo_options_website">وبگاه</string>
+    <string name="repo_options_donate">اهدا</string>
+    <string name="repo_delete_dialog_desc">آیا مطمئن هستید که می‌خواهید %s را پاک کنید؟</string>
+    <string name="repo_add_dialog_title">افزودن مخزن</string>
+    <string name="repo_add_dialog_add">افزودن</string>
+    <string name="about_app_version">نگارش %1$s (%2$s)</string>
+    <string name="about_desc1">ارائه مخزن‌های ماژول و مدیریت ماژول‌ها برای مجیسک و کرنل‌سو</string>
+    <string name="about_desc2">ساخته‌شده با ❤️ به‌دست %s</string>
+    <string name="dialog_attention">توجه</string>
+    <string name="dialog_cancel">رد کردن</string>
+    <string name="dialog_ok">تأیید</string>
+    <string name="menu_advanced_menu">منوی پیشرفته</string>
+    <string name="menu_sort_mode">حالت مرتب‌سازی</string>
+    <string name="menu_sort_option_name">نام</string>
+    <string name="menu_sort_option_updated">زمان به‌روزرسانی</string>
+    <string name="menu_descending">نزولی</string>
+    <string name="menu_pin_enabled">سنجاق فعال‌شده‌ها</string>
+    <string name="menu_pin_action">سنجاق کنش</string>
+    <string name="menu_pin_webui">سنجاق رابط وب</string>
+    <string name="menu_show_updated">نمایش زمان به‌روزرسانی</string>
+    <string name="menu_show_antifeatures">نمایش ویژگی‌های مخالف</string>
+    <string name="menu_export_modules_as_text">صدور ماژول‌ها به‌صورت متن</string>
+    <string name="message_download_success">بارگیری موفق</string>
+    <string name="message_loading">در حال بارگذاری…</string>
+    <string name="notification_name_download">خدمات بارگیری</string>
+    <string name="search_empty">فهرست خالی</string>
+    <string name="search_placeholder">جستجو…</string>
+    <string name="unknown_error">خطای ناشناخته</string>
+    <string name="help">راهنما</string>
+    <string name="we_hit_a_brick_crash">به دیوار برخورد کردیم!</string>
+    <string name="report_to_issues">گزارش به مشکلات</string>
+    <string name="stack_trace_truncated">%s\n… %d مورد دیگر</string>
+    <string name="additional_notes">یادداشت‌های اضافی</string>
+    <string name="repo_added">مخزن افزوده شد</string>
+    <string name="repo_update_service">مخزن‌ها با موفقیت به‌روزرسانی شدند</string>
+    <string name="repo_update_service_desc">نگران نباشید، MMRL مخزن‌های نصب‌شده شما را برایتان به‌روزرسانی کرد. 😋</string>
+    <string name="repo_update_service_failed">هیچ به‌روزرسانی برای مخزن‌ها یافت نشد</string>
+    <string name="repo_update_service_failed_desc">هیچ به‌روزرسانی برای مخزن‌ها وجود ندارد</string>
+    <string name="selinux_status">وضعیت SELinux</string>
+    <string name="selinux_status_enforcing">اجراکننده</string>
+    <string name="selinux_status_permissive">مجاز</string>
+    <string name="selinux_status_unknown">ناشناخته</string>
+    <string name="reboot_recovery">راه‌اندازی مجدد به حالت بازیابی</string>
+    <string name="reboot_download">راه‌اندازی مجدد به حالت بارگیری</string>
+    <string name="reboot_edl">راه‌اندازی مجدد به EDL</string>
+    <string name="home_support_title">پشتیبانی از من</string>
+    <string name="home_support_content">MMRL همیشه رایگان و متن‌باز است و خواهد بود. با این حال، می‌توانید با اهدا نشان دهید که به من اهمیت می‌دهید.</string>
+    <string name="home_installed_modules">ماژول‌های نصب‌شده</string>
+    <string name="home_enabled_modules">ماژول‌های فعال</string>
+    <string name="home_disabled_modules">ماژول‌های غیرفعال</string>
+    <string name="home_updated_modules">ماژول‌های به‌روزرسانی‌شده</string>
+    <string name="home_root_provider_version_name">نام نگارش فراهم‌کننده دسترسی ریشه</string>
+    <string name="home_root_provider_se_linux_context">زمینه SELinux</string>
+    <string name="bulk_install_module_already_added">ماژول از پیش افزوده شده است</string>
+    <string name="bulk_install_module_added">ماژول افزوده شد</string>
+    <string name="bulk_module_install">نصب گروهی ماژول</string>
+    <string name="bulk_add_as_bulk">افزودن به‌صورت گروهی</string>
+    <string name="action_activity">کنش</string>
+    <string name="action_failure">شکست کنش</string>
+    <string name="action_executing">در حال اجرا…</string>
+    <string name="has_a_new_update">%1$s به‌روزرسانی جدیدی دارد!</string>
+    <string name="update_available_from_to">به‌روزرسانی از %s (%d) به %s (%d) در دسترس است.</string>
+    <string name="events_birthday">%1$s سال MMRL!</string>
+    <string name="events_christmas">← درخت.</string>
+    <string name="events_new_years_eve">شب سال نو!</string>
+    <string name="open_source">متن‌باز</string>
+    <string name="kernel">هسته</string>
+    <string name="manager_version">نگارش مدیر</string>
+    <string name="fingerprint">اثر انگشت</string>
+    <string name="new_version_available">نگارش جدید %s در دسترس است، برای ارتقا کلیک کنید.</string>
+    <string name="pre_release">پیش‌نشر</string>
+    <string name="hidden">پنهان شد</string>
+    <string name="install_screen_reboot_confirm">تأیید</string>
+    <string name="apply">اعمال</string>
+    <string name="module_installed">نصب شد</string>
+    <string name="selinux_status_disabled">غیرفعال شد</string>
+    <string name="reboot">راه‌اندازی دوباره</string>
+    <string name="reboot_userspace">راه‌اندازی نرم</string>
+    <string name="settings_terms_of_service">شرایط خدمات</string>
+    <string name="home_storage_usage">مصرف فضای ذخیره‌سازی</string>
+    <string name="settings_privacy_policy">سیاست حریم خصوصی</string>
+    <string name="install_screen_cancel_text">آیا مطمئن هستید که می‌خواهید نصب را رد کنید؟</string>
+    <string name="action_screen_cancel_title">رد کنش؟</string>
+    <string name="action_screen_cancel_text">آیا مطمئن هستید که می‌خواهید این کنش را رد کنید؟</string>
+    <string name="settings_use_generic_action">به‌کارگیری کنش عمومی</string>
+    <string name="settings_use_generic_action_desc">بیشتر ارائه‌دهندگان روت از دستور کنش CLI پشتیبانی نمی‌کنند. در عوض، می‌توانید از یک اسکریپت عمومی استفاده کنید</string>
+    <string name="learn_more">بیشتر بدانید</string>
+    <string name="sponsors">حامیان</string>
+    <string name="blacklisted">فهرست سیاه</string>
+    <string name="blacklisted_desc">این ماژول توسط MMRL در فهرست سیاه قرار گرفته است. نصب آن برای اطمینان از امنیت شما غیرفعال شده است. اگر همچنان می‌خواهید این ماژول را نصب کنید، می‌توانید هشدارهای فهرست سیاه را در تنظیمات با رفتن به **تنظیمات → امنیت → هشدارهای فهرست سیاه** غیرفعال کنید.\n@more(بیشتر بدانید)</string>
+    <string name="settings_blacklist_alerts">هشدارهای فهرست سیاه</string>
+    <string name="settings_blacklist_alerts_desc">نمایش هشدار برای ماژول‌های محلی و کاوش، و همچنین جلوگیری از نصب هرگونه ماژول در فهرست سیاه</string>
+    <string name="page_repositorys">مخازن</string>
+    <string name="menu_show_modules_count">نمایش تعداد ماژول‌ها</string>
+    <string name="settings_modules_permissions_desc">اجازه به APIهای جاوااسکریپت و امکانات بیشتر درباره ماژول‌های محلی</string>
+    <string name="debugging">اشکال‌زدایی</string>
+    <string name="settings_security_inject_eruda">تزریق ارودا</string>
+    <string name="settings_security_inject_eruda_desc">درج‌ها نیازمند وارد کردن ویژگی درج‌های MMRL هستند.</string>
+    <string name="explore_repositories">کاوش مخازن</string>
+    <string name="submit_module">ارسال ماژول</string>
+    <string name="team">تیم</string>
+    <string name="in_total">%1$s در مجموع</string>
+    <string name="contributions">%1$d مشارکت</string>
+    <string name="thank_you">سپاسگزاریم</string>
+    <string name="total_community_contributions">%1$s مشارکت کل جامعه</string>
+    <string name="have_been_total_sponsored">%1$s در مجموع حمایت شده‌اند</string>
+    <string name="contributors">مشارکت‌کنندگان</string>
+    <string name="install_screen_confirm_title">تأیید نصب؟</string>
+    <string name="install_screen_confirm_text">آیا مطمئن هستید که می‌خواهید این ماژول را نصب کنید؟</string>
+    <string name="settings_log_viewer">نمایشگر گزارش</string>
+    <string name="explore_more_repositories">کاوش مخازن بیشتر</string>
+    <string name="get_the_most_out_of_mmrl">بیشترین بهره را از MMRL ببرید!</string>
+    <string name="allow_advanced_kernelsu_api">اجازه دسترسی به API پیشرفته KernelSU؟</string>
+    <string name="allow_advanced_kernelsu_api_desc">آیا می‌خواهید به این ماژول اجازه استفاده از API پیشرفته KernelSU را بدهید؟ اگر به آن اعتماد ندارید، می‌توانید دسترسی را رد کنید</string>
+    <string name="allow_filesystem_api">اجازه دسترسی به API سامانه پرونده؟</string>
+    <string name="allow_filesystem_api_desc">آیا می‌خواهید به این ماژول اجازه استفاده از API سامانه پرونده را بدهید؟ اگر به آن اعتماد ندارید، می‌توانید دسترسی را رد کنید</string>
+    <string name="settings_provider_service">خدمت ارائه‌دهنده</string>
+    <string name="settings_provider_service_desc">ارائه‌دهنده را در پس‌زمینه فعال نگه دارید تا زمان راه‌اندازی به‌طور قابل‌توجهی کاهش یابد و پاسخگویی کلی بهبود یابد</string>
+    <string name="notification_name_repository">خدمت مخزن</string>
+    <string name="notification_name_provider">خدمت ارائه‌دهنده</string>
+    <string name="notification_name_module">خدمت ماژول</string>
+    <string name="provider_service_stopped">خدمت ارائه‌دهنده متوقف شد</string>
+    <string name="repository_service_stopped">خدمت مخزن متوقف شد</string>
+    <string name="module_service_stopped">خدمت ماژول متوقف شد</string>
+    <string name="working_mode_change_dialog_desc">با تغییر حالت کاری، باید برنامه و همه خدمت‌های مرتبط را دوباره راه‌اندازی کنید تا حالت جدید به‌درستی اعمال شود. لطفاً توجه کنید که با فشردن «اعمال»، فرآیندی آغاز می‌شود که برنامه و همه خدمت‌ها را دوباره راه‌اندازی می‌کند تا تغییرات طبق انتظار اعمال شوند.</string>
+    <string name="keep">نگه داشتن</string>
+    <string name="provider_service_started">خدمت ارائه‌دهنده آغاز شد</string>
+    <string name="file_already_exists">پرونده از پیش موجود است</string>
+    <string name="settings_strict_mode">حالت سخت‌گیرانه</string>
+    <string name="allow_cancel_action">اجازه رد کنش</string>
+    <string name="allow_cancel_installation">اجازه رد نصب</string>
+    <string name="failed_to_close_the_installer">بستن نصب‌کننده ناموفق بود</string>
+    <string name="failed_to_close_the_action_execution">بستن اجرای کنش ناموفق بود</string>
+    <string name="view_module_features_mmrl_webui">رابط وب MMRL</string>
+    <string name="view_module_features_mmrl_webui_sub">این ماژول شامل یک رابط وب اختصاصی MMRL است.</string>
+    <string name="view_module_features_mmrl_webui_config">پیکربندی رابط وب MMRL</string>
+    <string name="view_module_features_mmrl_webui_config_sub">این ماژول از یک پرونده پیکربندی برای رابط‌های وب در MMRL استفاده می‌کند</string>
+    <string name="view_module_features_filesystem">API سامانه پرونده</string>
+    <string name="view_module_features_filesystem_sub">این ماژول ممکن است از API سامانه پرونده ارائه‌شده توسط MMRL استفاده کند.</string>
+    <string name="view_module_features_eruda">کنسول ارودا</string>
+    <string name="view_module_features_eruda_sub">این ماژول دارای یک کنسول توسعه‌دهنده قابل‌تغییر است.</string>
+    <string name="view_module_features_dex_loader">افزونه‌های رابط وب</string>
+    <string name="view_module_features_dex_loader_sub">این ماژول از افزونه‌های رابط وب برای افزودن APIهای جاوااسکریپت جدید پشتیبانی می‌کند.</string>
+    <string name="provider_service_not_active">خدمت ارائه‌دهنده فعال نیست</string>
+    <string name="title_or_icon_not_found">عنوان یا نماد یافت نشد</string>
+    <string name="icon_not_found">نماد یافت نشد</string>
+    <string name="shortcut_already_exists">میان‌بر از پیش موجود است</string>
+    <string name="missing_mod_id">شناسه ماژول تعریف نشده است</string>
+    <string name="shortcut_not_supported">میان‌برها در دستگاه یا راه‌انداز شما پشتیبانی نمی‌شوند</string>
+</resources>
