@@ -292,4 +292,5 @@
     <string name="settings_shell_module_state_change_desc">Использует shell вместо создания файлов в директории модуля. После включения вы не сможете использовать кнопку восстановления из-за ограничений.</string>
     <string name="settings_shell_module_state_change">Использовать Shell для состояний</string>
     <string name="working_mode_shizuku_title">Shizuku</string>
+    <string name="settings_webui_remote_url">WebUI Remote URL</string>
 </resources>
