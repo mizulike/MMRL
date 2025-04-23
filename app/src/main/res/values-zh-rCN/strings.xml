@@ -380,4 +380,11 @@
     <string name="says">%1$s 说</string>
     <string name="exit">退出</string>
     <string name="shortcut_not_supported">您的设备或启动器不支持快捷方式</string>
+    <string name="welcome">欢迎！</string>
+    <string name="continue_with">以 %1$s 继续</string>
+    <string name="select">选择</string>
+    <string name="platform">平台</string>
+    <string name="change_platform">切换平台</string>
+    <string name="select_your_platform">选择你的平台</string>
+    <string name="setup_root_note">你需要一台已获取 root 权限的安卓手机来使用 MMRL 的全部功能。MMRL 不提供获取 root 的方式与教程，且对获取 root 或对于 MMRL 的不当使用的风险概不负责。</string>
 </resources>
