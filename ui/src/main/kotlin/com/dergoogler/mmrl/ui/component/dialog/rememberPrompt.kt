@@ -28,7 +28,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ui.R
-import com.dergoogler.mmrl.ui.component.listItem.DialogParameters
 
 data class PromptData(
     val title: String,
