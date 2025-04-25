@@ -262,8 +262,6 @@
     <string name="working_mode_kernelsu_next_title">KernelSU Next</string>
     <string name="working_mode_apatch_desc">يقوم بتعديل الكيرنيل الخاص بالأندرويد و كذالك النظام. يعتمد على الكيرنيل مع دعم الإضافات مثل Magisk. مبني على KernelSU.</string>
     <string name="working_mode_kernelsu_next_desc">حل جذري متقدم قائم على النواة مع دعم magic mount وتحكم محسن في تطبيقات المستخدم مع امكانية التخصيص</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[هل أنت متأكد من أنك تود تثبيت <font color=\"%1$s\">%2$s</font>?]]></string>
-    <string name="view_module_install_confirm_desc_deps">&lt;![CDATA[هل انت متأكد من أنك تود تثبيت &lt;font color=\\\"%1$s\\\"&gt;%2$s&lt;/font&gt;?]]&gt;هذه الإضافة تتطلب ايضا:]]&gt;</string>
     <string name="view_module_unsupported_device">جهاز غير مدعوم</string>
     <string name="view_module_unsupported_arch">بنية غير مدعومة</string>
     <string name="view_module_required_root_version">اصدار الروت المطلوب</string>
