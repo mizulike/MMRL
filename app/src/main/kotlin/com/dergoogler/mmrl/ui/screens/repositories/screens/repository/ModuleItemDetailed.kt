@@ -31,17 +31,20 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.fadingEdge
 import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ui.providable.LocalModule
+import com.dergoogler.mmrl.ui.providable.LocalModuleState
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
 fun ModuleItemDetailed(
-    module: OnlineModule,
-    state: OnlineState,
     alpha: Float = 1f,
     onClick: () -> Unit = {},
     decoration: TextDecoration = TextDecoration.None,
     enabled: Boolean = true,
 ) {
+    val module = LocalModule.current
+    val state = LocalModuleState.current
+
     val context = LocalContext.current
     val userPreferences = LocalUserPreferences.current
     val menu = userPreferences.repositoryMenu

@@ -30,13 +30,13 @@ import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.Logo
 import com.dergoogler.mmrl.ui.component.TextWithIcon
+import com.dergoogler.mmrl.ui.providable.LocalModule
+import com.dergoogler.mmrl.ui.providable.LocalModuleState
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
 fun ModuleItemCompact(
-    module: OnlineModule,
-    state: OnlineState,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     enabled: Boolean = true,
@@ -46,6 +46,9 @@ fun ModuleItemCompact(
     enabled = enabled,
     shape = RoundedCornerShape(10.dp)
 ) {
+    val module = LocalModule.current
+    val state = LocalModuleState.current
+
     val userPreferences = LocalUserPreferences.current
     val menu = userPreferences.repositoryMenu
     val hasLabel =

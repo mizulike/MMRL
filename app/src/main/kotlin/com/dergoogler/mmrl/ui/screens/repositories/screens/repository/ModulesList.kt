@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -19,6 +20,8 @@ import com.dergoogler.mmrl.model.online.OnlineModule
 import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.ui.component.scrollbar.VerticalFastScrollbar
 import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
+import com.dergoogler.mmrl.ui.providable.LocalModule
+import com.dergoogler.mmrl.ui.providable.LocalModuleState
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 
@@ -32,20 +35,6 @@ fun ModulesList(
 ) {
     val userPreferences = LocalUserPreferences.current
     val menu = userPreferences.repositoryMenu
-    when (menu.repoListMode) {
-        RepoListMode.Compact -> Compact(before, after, list, state, navController)
-        RepoListMode.Detailed -> Detailed(before, after, list, state, navController)
-    }
-}
-
-@Composable
-fun Detailed(
-    before: (@Composable () -> Unit)? = null,
-    after: (@Composable () -> Unit)? = null,
-    list: List<Pair<OnlineState, OnlineModule>>,
-    state: LazyListState,
-    navController: NavController,
-) {
     val arguments = LocalPanicArguments.current
 
     Box(
@@ -54,7 +43,7 @@ fun Detailed(
         LazyColumn(
             state = state,
             modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(16.dp),
+            contentPadding = PaddingValues(if (menu.repoListMode == RepoListMode.Compact) 0.dp else 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             before?.let {
@@ -66,77 +55,39 @@ fun Detailed(
             items(
                 items = list,
                 key = { it.second.id }
-            ) { (state, module) ->
-                ModuleItemDetailed(
-                    module = module,
-                    state = state,
-                    onClick = {
-                        navController.navigateSingleTopTo(
-                            route = RepositoriesScreen.View.route,
-                            args = mapOf(
-                                "moduleId" to module.id,
-                                "repoUrl" to arguments.panicString("repoUrl")
-                            )
+            ) { (moduleState, module) ->
+
+                CompositionLocalProvider(
+                    LocalModuleState provides moduleState,
+                    LocalModule provides module
+                ) {
+
+                    when (menu.repoListMode) {
+                        RepoListMode.Compact -> ModuleItemCompact(
+                            onClick = {
+                                navController.navigateSingleTopTo(
+                                    route = RepositoriesScreen.View.route,
+                                    args = mapOf(
+                                        "moduleId" to module.id,
+                                        "repoUrl" to arguments.panicString("repoUrl")
+                                    )
+                                )
+                            }
+                        )
+
+                        RepoListMode.Detailed -> ModuleItemDetailed(
+                            onClick = {
+                                navController.navigateSingleTopTo(
+                                    route = RepositoriesScreen.View.route,
+                                    args = mapOf(
+                                        "moduleId" to module.id,
+                                        "repoUrl" to arguments.panicString("repoUrl")
+                                    )
+                                )
+                            }
                         )
                     }
-                )
-            }
-
-            after?.let {
-                item {
-                    it()
                 }
-            }
-        }
-
-        VerticalFastScrollbar(
-            state = state,
-            modifier = Modifier.align(Alignment.CenterEnd)
-        )
-    }
-}
-
-@Composable
-fun Compact(
-    before: (@Composable () -> Unit)? = null,
-    after: (@Composable () -> Unit)? = null,
-    list: List<Pair<OnlineState, OnlineModule>>,
-    state: LazyListState,
-    navController: NavController,
-) {
-    val arguments = LocalPanicArguments.current
-
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyColumn(
-            state = state,
-            modifier = Modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.spacedBy(5.dp)
-        ) {
-            before?.let {
-                item {
-                    it()
-                }
-            }
-
-            items(
-                items = list,
-                key = { it.second.id }
-            ) { (state, module) ->
-                ModuleItemCompact(
-                    module = module,
-                    state = state,
-                    onClick = {
-                        navController.navigateSingleTopTo(
-                            route = RepositoriesScreen.View.route,
-                            args = mapOf(
-                                "moduleId" to module.id,
-                                "repoUrl" to arguments.panicString("repoUrl")
-                            )
-                        )
-                    }
-                )
             }
 
             after?.let {
