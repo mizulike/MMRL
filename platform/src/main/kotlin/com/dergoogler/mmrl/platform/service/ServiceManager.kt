@@ -11,11 +11,9 @@ import com.dergoogler.mmrl.platform.manager.MagiskModuleManager
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
-import com.topjohnwu.superuser.Shell
 
 class ServiceManager(
     private val platform: Platform,
-    private val shell: Shell = Shell.getShell()
 ) : IServiceManager.Stub() {
 
     private val fileManager by lazy {
@@ -25,26 +23,18 @@ class ServiceManager(
     private val moduleManager by lazy {
         when (platform) {
             Platform.Magisk -> MagiskModuleManager(
-                shell = shell,
-                seLinuxContext = seLinuxContext,
                 fileManager = fileManager
             )
 
             Platform.KernelSU -> KernelSUModuleManager(
-                shell = shell,
-                seLinuxContext = seLinuxContext,
                 fileManager = fileManager
             )
 
             Platform.KsuNext -> KsuNextModuleManager(
-                shell = shell,
-                seLinuxContext = seLinuxContext,
                 fileManager = fileManager
             )
 
             Platform.APatch -> APatchModuleManager(
-                shell = shell,
-                seLinuxContext = seLinuxContext,
                 fileManager = fileManager
             )
 

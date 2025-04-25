@@ -22,6 +22,7 @@ import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.VersionInterface
 import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.ui.component.Loading
+import com.dergoogler.mmrl.utils.initPlatform
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.model.ModId
@@ -51,10 +52,7 @@ class WebUIActivity : MMRLComponentActivity() {
         rootView = findViewById(android.R.id.content)
 
         lifecycleScope.launch {
-            Platform.init {
-                context = this@WebUIActivity
-                platform = userPrefs.workingMode.toPlatform()
-            }
+            initPlatform(baseContext, userPrefs.workingMode.toPlatform())
         }
 
         val mModId = intent.getStringExtra("MOD_ID")

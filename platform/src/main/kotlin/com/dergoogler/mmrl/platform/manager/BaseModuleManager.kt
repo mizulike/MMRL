@@ -1,9 +1,6 @@
 package com.dergoogler.mmrl.platform.manager
 
 import android.os.Build
-import com.topjohnwu.superuser.CallbackList
-import com.topjohnwu.superuser.Shell
-import com.topjohnwu.superuser.ShellUtils
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.content.LocalModule
 import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
@@ -12,26 +9,21 @@ import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
+import com.dergoogler.mmrl.platform.util.Shell.exec
 import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
 
 abstract class BaseModuleManager(
-    private val shell: Shell,
-    private val seLinuxContext: String,
     private val fileManager: IFileManager,
 ) : IModuleManager.Stub() {
     internal val modulesDir = File(MODULES_PATH)
 
     internal val mVersion by lazy {
-        runCatching {
-            "su -v".exec()
-        }.getOrDefault("unknown")
+        "su -v".exec().getOrDefault("unknown")
     }
 
     internal val mVersionCode by lazy {
-        runCatching {
-            "su -V".exec().toInt()
-        }.getOrDefault(-1)
+        "su -V".exec().getOrDefault("").toIntOr(-1)
     }
 
     override fun reboot(reason: String) {
@@ -172,88 +164,76 @@ abstract class BaseModuleManager(
             toInt()
         }.getOrDefault(defaultValue)
 
-    private fun String.exec() = ShellUtils.fastCmd(shell, this)
-
-
     internal fun install(
-        cmd: String,
+        cmd: List<String>,
         path: String,
         bulkModules: List<BulkModule>,
         callback: IShellCallback,
+        env: Map<String, String> = emptyMap(),
         versionCode: Int = -1,
         versionName: String = "unknown",
     ): IShell {
-        val cmds = listOf(
-            "export MMRL=true",
-            "export MMRL_VER=$versionName",
-            "export MMRL_VER_CODE=$versionCode",
-            "export BULK_MODULES=\"${bulkModules.joinToString(" ") { it.id }}\"",
-            cmd
+        val mEnv = mutableMapOf(
+            "MMRL" to "true",
+            "MMRL_VER" to versionName,
+            "MMRL_VER_CODE" to versionCode.toString(),
+            "BULK_MODULES" to bulkModules.joinToString(" ") { it.id },
         )
+
+        mEnv.putAll(env)
 
         val module = getModuleInfo(path)
 
-        return getShell(cmds, module, callback)
+        return getShell(cmd, mEnv, module, callback)
     }
 
     internal fun action(
-        cmd: Array<String>,
+        cmd: List<String>,
         callback: IShellCallback,
+        env: Map<String, String> = emptyMap(),
         versionCode: Int = -1,
         versionName: String = "unknown",
     ): IShell {
-        val cmds = listOf(
-            "export PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:\$PATH",
-            "export MMRL=true",
-            "export MMRL_VER=$versionName",
-            "export MMRL_VER_CODE=$versionCode",
-            "export BOOTMODE=true",
-            "export ARCH=${Build.SUPPORTED_ABIS[0]}",
-            "export API=${Build.VERSION.SDK_INT}",
-            "export IS64BIT=${Build.SUPPORTED_64_BIT_ABIS.isNotEmpty()}",
-            *cmd
+        val mEnv = mutableMapOf(
+            "MMRL" to "true",
+            "MMRL_VER" to versionName,
+            "MMRL_VER_CODE" to versionCode.toString(),
+            "BOOTMODE" to "true",
+            "ARCH" to Build.SUPPORTED_ABIS[0],
+            "API" to Build.VERSION.SDK_INT.toString(),
+            "IS64BIT" to Build.SUPPORTED_64_BIT_ABIS.isNotEmpty().toString()
         )
 
-        return this.getShell(cmds, null, callback)
+        mEnv.putAll(env)
+
+
+        return this.getShell(cmd, mEnv, null, callback)
     }
 
     override fun getShell(
         command: List<String>,
+        env: Map<String, String>,
         module: LocalModule?,
         callback: IShellCallback,
     ): IShell =
         object : IShell.Stub() {
-            val main = Shell.getShell()
+            val pid = com.dergoogler.mmrl.platform.util.Shell.nativeCreateShell()
 
-            override fun isAlive(): Boolean = main.isAlive
+            override fun isAlive(): Boolean =
+                com.dergoogler.mmrl.platform.util.Shell.nativeIsAlive(pid)
 
             override fun exec() {
-                val stdout = object : CallbackList<String?>() {
-                    override fun onAddElement(msg: String?) {
-                        msg?.let(callback::onStdout)
-                    }
-                }
-
-                val stderr = object : CallbackList<String?>() {
-                    override fun onAddElement(msg: String?) {
-                        msg?.let(callback::onStderr)
-                    }
-                }
-
-                val result = main.newJob().add(*command.toTypedArray()).to(stdout, stderr).exec()
-                if (result.isSuccess) {
-                    callback.onSuccess(module)
-                } else {
-                    callback.onFailure(module)
-                }
+                com.dergoogler.mmrl.platform.util.Shell.nativeExec(
+                    pid,
+                    command.toTypedArray(),
+                    module,
+                    callback,
+                    env
+                )
             }
 
-            override fun close() = main.close()
+            override fun close() = com.dergoogler.mmrl.platform.util.Shell.nativeClose(pid)
         }
-
-    internal fun String.submit(cb: Shell.ResultCallback) = shell
-        .newJob().add(this).to(ArrayList(), null)
-        .submit(cb)
 
     companion object {
         const val PROP_FILE = "module.prop"

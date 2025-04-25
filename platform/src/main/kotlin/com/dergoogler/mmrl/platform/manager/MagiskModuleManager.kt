@@ -1,6 +1,5 @@
 package com.dergoogler.mmrl.platform.manager
 
-import com.topjohnwu.superuser.Shell
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.content.NullableBoolean
@@ -10,12 +9,8 @@ import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
 
 open class MagiskModuleManager(
-    shell: Shell,
-    seLinuxContext: String,
     fileManager: FileManager,
 ) : BaseModuleManager(
-    shell = shell,
-    seLinuxContext = seLinuxContext,
     fileManager = fileManager
 ) {
     override fun getManagerName(): String = "Magisk"
@@ -82,17 +77,17 @@ open class MagiskModuleManager(
     }
 
     override fun action(modId: String, legacy: Boolean, callback: IShellCallback): IShell {
-        val cmds = arrayOf(
-            "export ASH_STANDALONE=1",
-            "export MAGISK=true",
-            "export MAGISK_VER=${version}",
-            "export MAGISKTMP=$(magisk --path)",
-            "export MAGISK_VER_CODE=${versionCode}",
-            "busybox sh /data/adb/modules/$modId/action.sh"
+        val env = mutableMapOf(
+            "ASH_STANDALONE" to "1",
+            "MAGISK" to "true",
+            "MAGISK_VER" to version,
+            "MAGISK_VER_CODE" to versionCode.toString(),
+            "MAGISKTMP" to "null"
         )
 
         return action(
-            cmd = cmds,
+            cmd = listOf("busybox", "sh", "/data/adb/modules/$modId/action.sh"),
+            env = env,
             callback = callback
         )
     }
@@ -103,7 +98,7 @@ open class MagiskModuleManager(
         callback: IShellCallback,
     ): IShell =
         install(
-            cmd = "magisk --install-module '${path}'",
+            cmd = listOf("magisk", "--install-module", path),
             path = path,
             bulkModules = bulkModules,
             callback = callback

@@ -16,7 +16,7 @@ interface IModuleManager {
     ModuleCompatibility getModuleCompatibility();
     LocalModule getModuleById(String id);
     LocalModule getModuleInfo(String zipPath);
-    IShell getShell(in List<String> command, in LocalModule module, IShellCallback callback);
+    IShell getShell(in List<String> command, in Map<String, String> env, in LocalModule module, IShellCallback callback);
     oneway void reboot(String reason);
     oneway void enable(String id, boolean useShell, IModuleOpsCallback callback);
     oneway void disable(String id, boolean useShell, IModuleOpsCallback callback);

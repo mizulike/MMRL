@@ -9,6 +9,8 @@ import android.widget.Toast
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.utils.createRootShell
+import com.dergoogler.mmrl.utils.withNewRootShell
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
@@ -74,7 +76,7 @@ class KernelSUInterface(
 
     @JavascriptInterface
     fun exec(cmd: String): String {
-        return Platform.withNewRootShell(
+        return withNewRootShell(
             globalMnt = true,
             debug = debug
         ) { ShellUtils.fastCmd(this, cmd) }
@@ -112,7 +114,7 @@ class KernelSUInterface(
         processOptions(finalCommand, options)
         finalCommand.append(cmd)
 
-        val result = Platform.withNewRootShell(
+        val result = withNewRootShell(
             globalMnt = true,
             debug = debug
         ) {
@@ -149,7 +151,7 @@ class KernelSUInterface(
             finalCommand.append(command)
         }
 
-        val shell = Platform.createRootShell(
+        val shell = createRootShell(
             globalMnt = true,
             debug = debug
         )

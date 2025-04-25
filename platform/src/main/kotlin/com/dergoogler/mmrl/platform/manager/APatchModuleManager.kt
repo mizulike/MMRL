@@ -1,6 +1,5 @@
 package com.dergoogler.mmrl.platform.manager
 
-import com.topjohnwu.superuser.Shell
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.content.NullableBoolean
@@ -8,14 +7,11 @@ import com.dergoogler.mmrl.platform.file.FileManager
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
+import com.dergoogler.mmrl.platform.util.Shell.submit
 
 open class APatchModuleManager(
-    shell: Shell,
-    seLinuxContext: String,
     val fileManager: FileManager,
 ) : BaseModuleManager(
-    shell = shell,
-    seLinuxContext = seLinuxContext,
     fileManager = fileManager
 ) {
     override fun getManagerName(): String = "APatch"
@@ -47,10 +43,10 @@ open class APatchModuleManager(
 
         if (useShell) {
             "apd module enable $id".submit {
-                if (it.isSuccess) {
+                if (isSuccess) {
                     callback.onSuccess(id)
                 } else {
-                    callback.onFailure(id, it.out.joinToString())
+                    callback.onFailure(id, out.joinToString())
                 }
             }
         } else {
@@ -71,10 +67,10 @@ open class APatchModuleManager(
 
         if (useShell) {
             "apd module disable $id".submit {
-                if (it.isSuccess) {
+                if (isSuccess) {
                     callback.onSuccess(id)
                 } else {
-                    callback.onFailure(id, it.out.joinToString())
+                    callback.onFailure(id, out.joinToString())
                 }
             }
         } else {
@@ -95,10 +91,10 @@ open class APatchModuleManager(
 
         if (useShell) {
             "apd module uninstall $id".submit {
-                if (it.isSuccess) {
+                if (isSuccess) {
                     callback.onSuccess(id)
                 } else {
-                    callback.onFailure(id, it.out.joinToString())
+                    callback.onFailure(id, out.joinToString())
                 }
             }
         } else {
@@ -115,21 +111,21 @@ open class APatchModuleManager(
 
     override fun action(modId: String, legacy: Boolean, callback: IShellCallback): IShell =
         if (legacy) {
-            val cmds = arrayOf(
-                "export ASH_STANDALONE=1",
-                "export APATCH=true",
-                "export APATCH_VER=${version}",
-                "export APATCH_VER_CODE=${versionCode}",
-                "busybox sh /data/adb/modules/$modId/action.sh"
+            val env = mutableMapOf(
+                "ASH_STANDALONE" to "1",
+                "APATCH" to "true",
+                "APATCH_VER" to version,
+                "APATCH_VER_CODE" to versionCode.toString(),
             )
 
             action(
-                cmd = cmds,
+                cmd = listOf("busybox", "sh", "/data/adb/modules/$modId/action.sh"),
+                env = env,
                 callback = callback
             )
         } else {
             action(
-                cmd = arrayOf("apd module action $modId"),
+                cmd = listOf("apd", "module", "action", modId),
                 callback = callback
             )
         }
@@ -140,7 +136,7 @@ open class APatchModuleManager(
         bulkModules: List<BulkModule>,
         callback: IShellCallback,
     ): IShell = install(
-        cmd = "apd module install '${path}'",
+        cmd = listOf("apd", "module", "install", path),
         path = path,
         bulkModules = bulkModules,
         callback = callback

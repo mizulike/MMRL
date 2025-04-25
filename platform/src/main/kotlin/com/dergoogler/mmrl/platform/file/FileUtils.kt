@@ -2,6 +2,7 @@ package com.dergoogler.mmrl.platform.file
 
 import android.annotation.SuppressLint
 import android.os.Build
+import android.os.ParcelFileDescriptor
 import android.system.ErrnoException
 import android.system.Int64Ref
 import android.system.Os
@@ -9,7 +10,6 @@ import android.system.OsConstants
 import android.util.ArraySet
 import android.util.MutableLong
 import androidx.annotation.RequiresApi
-import com.topjohnwu.superuser.nio.FileSystemManager
 import java.io.File
 import java.io.FileDescriptor
 import java.io.IOException
@@ -20,8 +20,16 @@ import java.lang.reflect.Method
 import java.nio.file.OpenOption
 import java.nio.file.StandardOpenOption
 
+
 @SuppressLint("DiscouragedPrivateApi")
 internal object FileUtils {
+    const val MODE_READ_ONLY: Int = ParcelFileDescriptor.MODE_READ_ONLY
+    const val MODE_WRITE_ONLY: Int = ParcelFileDescriptor.MODE_WRITE_ONLY
+    const val MODE_READ_WRITE: Int = ParcelFileDescriptor.MODE_READ_WRITE
+    const val MODE_CREATE: Int = ParcelFileDescriptor.MODE_CREATE
+    const val MODE_TRUNCATE: Int = ParcelFileDescriptor.MODE_TRUNCATE
+    const val MODE_APPEND: Int = ParcelFileDescriptor.MODE_APPEND
+
     private var os: Any? = null
     private var splice: Method? = null
     private var sendfile: Method? = null
@@ -30,22 +38,22 @@ internal object FileUtils {
     fun modeToPosix(mode: Int): Int {
         var res: Int
         res =
-            if ((mode and FileSystemManager.MODE_READ_WRITE) == FileSystemManager.MODE_READ_WRITE) {
+            if ((mode and MODE_READ_WRITE) == MODE_READ_WRITE) {
                 OsConstants.O_RDWR
-            } else if ((mode and FileSystemManager.MODE_WRITE_ONLY) == FileSystemManager.MODE_WRITE_ONLY) {
+            } else if ((mode and MODE_WRITE_ONLY) == MODE_WRITE_ONLY) {
                 OsConstants.O_WRONLY
-            } else if ((mode and FileSystemManager.MODE_READ_ONLY) == FileSystemManager.MODE_READ_ONLY) {
+            } else if ((mode and MODE_READ_ONLY) == MODE_READ_ONLY) {
                 OsConstants.O_RDONLY
             } else {
                 throw IllegalArgumentException("Bad mode: $mode")
             }
-        if ((mode and FileSystemManager.MODE_CREATE) == FileSystemManager.MODE_CREATE) {
+        if ((mode and MODE_CREATE) == MODE_CREATE) {
             res = res or OsConstants.O_CREAT
         }
-        if ((mode and FileSystemManager.MODE_TRUNCATE) == FileSystemManager.MODE_TRUNCATE) {
+        if ((mode and MODE_TRUNCATE) == MODE_TRUNCATE) {
             res = res or OsConstants.O_TRUNC
         }
-        if ((mode and FileSystemManager.MODE_APPEND) == FileSystemManager.MODE_APPEND) {
+        if ((mode and MODE_APPEND) == MODE_APPEND) {
             res = res or OsConstants.O_APPEND
         }
         return res
@@ -53,23 +61,23 @@ internal object FileUtils {
 
     fun modeToOptions(mode: Int): Set<OpenOption> {
         val set: MutableSet<OpenOption> = ArraySet()
-        if ((mode and FileSystemManager.MODE_READ_WRITE) == FileSystemManager.MODE_READ_WRITE) {
+        if ((mode and MODE_READ_WRITE) == MODE_READ_WRITE) {
             set.add(StandardOpenOption.READ)
             set.add(StandardOpenOption.WRITE)
-        } else if ((mode and FileSystemManager.MODE_WRITE_ONLY) == FileSystemManager.MODE_WRITE_ONLY) {
+        } else if ((mode and MODE_WRITE_ONLY) == MODE_WRITE_ONLY) {
             set.add(StandardOpenOption.WRITE)
-        } else if ((mode and FileSystemManager.MODE_READ_ONLY) == FileSystemManager.MODE_READ_ONLY) {
+        } else if ((mode and MODE_READ_ONLY) == MODE_READ_ONLY) {
             set.add(StandardOpenOption.READ)
         } else {
             throw IllegalArgumentException("Bad mode: $mode")
         }
-        if ((mode and FileSystemManager.MODE_CREATE) == FileSystemManager.MODE_CREATE) {
+        if ((mode and MODE_CREATE) == MODE_CREATE) {
             set.add(StandardOpenOption.CREATE)
         }
-        if ((mode and FileSystemManager.MODE_TRUNCATE) == FileSystemManager.MODE_TRUNCATE) {
+        if ((mode and MODE_TRUNCATE) == MODE_TRUNCATE) {
             set.add(StandardOpenOption.TRUNCATE_EXISTING)
         }
-        if ((mode and FileSystemManager.MODE_APPEND) == FileSystemManager.MODE_APPEND) {
+        if ((mode and MODE_APPEND) == MODE_APPEND) {
             set.add(StandardOpenOption.APPEND)
         }
         return set
@@ -77,23 +85,23 @@ internal object FileUtils {
 
     fun modeToFlag(mode: Int): Flag {
         val f = Flag()
-        if ((mode and FileSystemManager.MODE_READ_WRITE) == FileSystemManager.MODE_READ_WRITE) {
+        if ((mode and MODE_READ_WRITE) == MODE_READ_WRITE) {
             f.read = true
             f.write = true
-        } else if ((mode and FileSystemManager.MODE_WRITE_ONLY) == FileSystemManager.MODE_WRITE_ONLY) {
+        } else if ((mode and MODE_WRITE_ONLY) == MODE_WRITE_ONLY) {
             f.write = true
-        } else if ((mode and FileSystemManager.MODE_READ_ONLY) == FileSystemManager.MODE_READ_ONLY) {
+        } else if ((mode and MODE_READ_ONLY) == MODE_READ_ONLY) {
             f.read = true
         } else {
             throw IllegalArgumentException("Bad mode: $mode")
         }
-        if ((mode and FileSystemManager.MODE_CREATE) == FileSystemManager.MODE_CREATE) {
+        if ((mode and MODE_CREATE) == MODE_CREATE) {
             f.create = true
         }
-        if ((mode and FileSystemManager.MODE_TRUNCATE) == FileSystemManager.MODE_TRUNCATE) {
+        if ((mode and MODE_TRUNCATE) == MODE_TRUNCATE) {
             f.truncate = true
         }
-        if ((mode and FileSystemManager.MODE_APPEND) == FileSystemManager.MODE_APPEND) {
+        if ((mode and MODE_APPEND) == MODE_APPEND) {
             f.append = true
         }
 

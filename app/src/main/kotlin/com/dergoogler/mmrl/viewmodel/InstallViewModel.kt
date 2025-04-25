@@ -17,6 +17,7 @@ import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dergoogler.mmrl.platform.stub.IShellCallback
+import com.dergoogler.mmrl.utils.initPlatform
 import dev.dergoogler.mmrl.compat.viewmodel.TerminalViewModel
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
@@ -50,12 +51,7 @@ class InstallViewModel @Inject constructor(
         event = Event.LOADING
         var allSucceeded = true
 
-        val initPlatform = Platform.init {
-            context = context
-            platform = userPreferences.workingMode.toPlatform()
-        }
-
-        if (!initPlatform) {
+        if (!initPlatform(context, userPreferences.workingMode.toPlatform())) {
             event = Event.FAILED
             log(R.string.service_is_not_available)
             return@launch

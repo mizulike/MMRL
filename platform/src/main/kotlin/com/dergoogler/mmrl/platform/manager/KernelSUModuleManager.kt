@@ -1,7 +1,6 @@
 package com.dergoogler.mmrl.platform.manager
 
 import com.dergoogler.mmrl.platform.file.FileManager
-import com.topjohnwu.superuser.Shell
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.content.NullableBoolean
@@ -10,14 +9,11 @@ import com.dergoogler.mmrl.platform.ksu.getKernelVersion
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.stub.IShell
 import com.dergoogler.mmrl.platform.stub.IShellCallback
+import com.dergoogler.mmrl.platform.util.Shell.submit
 
 open class KernelSUModuleManager(
-    shell: Shell,
-    seLinuxContext: String,
     fileManager: FileManager,
 ) : BaseModuleManager(
-    shell = shell,
-    seLinuxContext = seLinuxContext,
     fileManager = fileManager
 ) {
     override fun getManagerName(): String = "KernelSU"
@@ -67,10 +63,10 @@ open class KernelSUModuleManager(
 
         if (useShell) {
             "ksud module enable $id".submit {
-                if (it.isSuccess) {
+                if (isSuccess) {
                     callback.onSuccess(id)
                 } else {
-                    callback.onFailure(id, it.out.joinToString())
+                    callback.onFailure(id, out.joinToString())
                 }
             }
         } else {
@@ -91,10 +87,10 @@ open class KernelSUModuleManager(
 
         if (useShell) {
             "ksud module disable $id".submit {
-                if (it.isSuccess) {
+                if (isSuccess) {
                     callback.onSuccess(id)
                 } else {
-                    callback.onFailure(id, it.out.joinToString())
+                    callback.onFailure(id, out.joinToString())
                 }
             }
         } else {
@@ -115,10 +111,10 @@ open class KernelSUModuleManager(
 
         if (useShell) {
             "ksud module uninstall $id".submit {
-                if (it.isSuccess) {
+                if (isSuccess) {
                     callback.onSuccess(id)
                 } else {
-                    callback.onFailure(id, it.out.joinToString())
+                    callback.onFailure(id, out.joinToString())
                 }
             }
         } else {
@@ -135,21 +131,21 @@ open class KernelSUModuleManager(
 
     override fun action(modId: String, legacy: Boolean, callback: IShellCallback): IShell =
         if (legacy) {
-            val cmds = arrayOf(
-                "export ASH_STANDALONE=1",
-                "export KSU=true",
-                "export KSU_VER=${version}",
-                "export KSU_VER_CODE=${versionCode}",
-                "busybox sh /data/adb/modules/$modId/action.sh"
+            val env = mutableMapOf(
+                "ASH_STANDALONE" to "1",
+                "KSU" to "true",
+                "KSU_VER" to version,
+                "KSU_VER_CODE" to versionCode.toString(),
             )
 
             action(
-                cmd = cmds,
+                cmd = listOf("busybox", "sh", "/data/adb/modules/$modId/action.sh"),
+                env = env,
                 callback = callback
             )
         } else {
             action(
-                cmd = arrayOf("ksud module action $modId"),
+                cmd = listOf("ksud", "module", "action", modId),
                 callback = callback
             )
         }
@@ -160,7 +156,7 @@ open class KernelSUModuleManager(
         bulkModules: List<BulkModule>,
         callback: IShellCallback,
     ): IShell = install(
-        cmd = "ksud module install '${path}'",
+        cmd = listOf("ksud", "module", "install", path),
         path = path,
         bulkModules = bulkModules,
         callback = callback

@@ -1,19 +1,21 @@
 package com.dergoogler.mmrl.platform
 
-import android.content.Context
 import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.dergoogler.mmrl.platform.service.ServiceManagerCompat
+import com.dergoogler.mmrl.platform.model.PlatformConfig
+import com.dergoogler.mmrl.platform.model.PlatformConfigImpl
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
-import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import org.lsposed.hiddenapibypass.HiddenApiBypass
+
+const val TIMEOUT_MILLIS = 15_000L
+const val PLATFORM_KEY = "PLATFORM"
 
 /**
  * Represents the various platforms supported by the application.
@@ -77,16 +79,15 @@ enum class Platform(val id: String) {
             val conf = PlatformConfigImpl().applyConfig(config)
 
             if (conf.context == null) {
-                Log.e(TAG, "Cannot initialize Platform without defining 'android.content.Context'")
-                return false
+                throw IllegalArgumentException("Context cannot be null")
             }
 
             if (conf.platform == null) {
-                Log.e(
-                    TAG,
-                    "Cannot initialize Platform without defining 'com.dergoogler.mmrl.platform.Platform'"
-                )
-                return false
+                throw IllegalArgumentException("Platform cannot be null")
+            }
+
+            if (conf.provider == null) {
+                throw IllegalArgumentException("Provider cannot be null")
             }
 
             return when {
@@ -97,12 +98,7 @@ enum class Platform(val id: String) {
                         KsuNext,
                         KernelSU,
                         APatch,
-                            -> conf.fromProvider
-                            ?: ServiceManagerCompat.fromLibSu(
-                                context = conf.context!!,
-                                platform = conf.platform!!,
-                                debug = conf.debug
-                            )
+                            -> conf.provider
 
                         else -> null
                     }
@@ -178,28 +174,6 @@ enum class Platform(val id: String) {
             }
         }
 
-        inline fun <T> withNewRootShell(
-            globalMnt: Boolean = false,
-            debug: Boolean = false,
-            commands: Array<String> = arrayOf("su"),
-            block: Shell.() -> T,
-        ): T {
-            return createRootShell(globalMnt, debug, commands).use(block)
-        }
-
-        fun createRootShell(
-            globalMnt: Boolean = false,
-            debug: Boolean = false,
-            commands: Array<String> = arrayOf("su"),
-        ): Shell {
-            Shell.enableVerboseLogging = debug
-            val builder = Shell.Builder.create()
-            if (globalMnt) {
-                builder.setFlags(Shell.FLAG_MOUNT_MASTER)
-            }
-            return builder.build(*commands)
-        }
-
         fun setHiddenApiExemptions(vararg signaturePrefixes: String = arrayOf("")) = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> HiddenApiBypass.addHiddenApiExemptions(
                 *signaturePrefixes
@@ -228,17 +202,3 @@ enum class Platform(val id: String) {
 
     val current get() = id
 }
-
-interface PlatformConfig {
-    var context: Context?
-    var platform: Platform?
-    var debug: Boolean
-    var fromProvider: IServiceManager?
-}
-
-data class PlatformConfigImpl(
-    override var context: Context? = null,
-    override var platform: Platform? = null,
-    override var debug: Boolean = false,
-    override var fromProvider: IServiceManager? = null,
-) : PlatformConfig

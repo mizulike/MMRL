@@ -13,9 +13,10 @@ import androidx.lifecycle.lifecycleScope
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.utils.NotificationUtils
 import com.dergoogler.mmrl.datastore.model.WorkingMode
+import com.dergoogler.mmrl.platform.PLATFORM_KEY
 import com.dergoogler.mmrl.platform.Platform
-import com.dergoogler.mmrl.platform.service.ServiceManagerCompat
-import com.dergoogler.mmrl.platform.service.ServiceManagerCompat.getPlatform
+import com.dergoogler.mmrl.platform.model.PlatformIntent.Companion.getPlatform
+import com.dergoogler.mmrl.utils.initPlatform
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
@@ -44,10 +45,7 @@ class ProviderService : LifecycleService() {
         }
 
         lifecycleScope.launch {
-            isActive = Platform.init {
-                context = context
-                platform = intent.getPlatform()
-            }
+            isActive = initPlatform(baseContext, intent.getPlatform())
         }
 
         return START_STICKY
@@ -75,10 +73,7 @@ class ProviderService : LifecycleService() {
         private const val GROUP_KEY = "PROVIDER_SERVICE_GROUP_KEY"
 
         suspend fun init(context: Context, platform: Platform) = if (!isActive) {
-            Platform.init {
-                this.context = context
-                this.platform = platform
-            }
+            initPlatform(context, platform)
         } else isActive
 
         fun start(
@@ -90,7 +85,7 @@ class ProviderService : LifecycleService() {
                     context.packageName,
                     ProviderService::class.java.name
                 )
-                putExtra(ServiceManagerCompat.PLATFORM_KEY, mode.toPlatform())
+                putExtra(PLATFORM_KEY, mode.toPlatform())
             }
             context.startService(intent)
         }
