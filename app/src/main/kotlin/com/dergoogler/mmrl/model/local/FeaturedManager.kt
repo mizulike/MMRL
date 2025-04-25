@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.WorkingMode
-import com.dergoogler.mmrl.ui.component.listItem.RadioOptionItem
+import com.dergoogler.mmrl.ui.component.dialog.RadioOptionItem
 
 data class FeaturedManager(
     @StringRes val name: Int,
