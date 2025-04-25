@@ -29,7 +29,7 @@ import com.dergoogler.mmrl.ui.theme.color.WildRosesLightScheme
 sealed class Colors(
     val id: Int,
     val lightColorScheme: ColorScheme,
-    val darkColorScheme: ColorScheme
+    val darkColorScheme: ColorScheme,
 ) {
     @RequiresApi(Build.VERSION_CODES.S)
     class Dynamic(context: Context) : Colors(
@@ -42,72 +42,86 @@ sealed class Colors(
             const val id = -1
         }
     }
+
     data object Pourville : Colors(
         id = 0,
         lightColorScheme = PourvilleLightScheme,
         darkColorScheme = PourvilleDarkScheme
     )
+
     data object SoleilLevant : Colors(
         id = 1,
         lightColorScheme = SoleilLevantLightScheme,
         darkColorScheme = SoleilLevantDarkScheme
     )
-    data object Jeufosse: Colors(
+
+    data object Jeufosse : Colors(
         id = 2,
         lightColorScheme = JeufosseLightScheme,
         darkColorScheme = JeufosseDarkScheme
     )
-    data object PoppyField: Colors(
+
+    data object PoppyField : Colors(
         id = 3,
         lightColorScheme = PoppyFieldLightScheme,
         darkColorScheme = PoppyFieldDarkScheme
     )
-    data object AlmondBlossom: Colors(
+
+    data object AlmondBlossom : Colors(
         id = 4,
         lightColorScheme = AlmondBlossomLightScheme,
         darkColorScheme = AlmondBlossomDarkScheme
     )
-    data object PlainAuvers: Colors(
+
+    data object PlainAuvers : Colors(
         id = 5,
         lightColorScheme = PlainAuversLightScheme,
         darkColorScheme = PlainAuversDarkScheme
     )
-    data object WildRoses: Colors(
+
+    data object WildRoses : Colors(
         id = 6,
         lightColorScheme = WildRosesLightScheme,
         darkColorScheme = WildRosesDarkScheme
     )
-    data object MMRLBase: Colors(
+
+    data object MMRLBase : Colors(
         id = 7,
         lightColorScheme = MMRLBaseLightScheme,
         darkColorScheme = MMRLBaseDarkScheme
     )
 
     companion object {
-        private val mColors get() = listOf(
-            Pourville,
-            SoleilLevant,
-            Jeufosse,
-            PoppyField,
-            AlmondBlossom,
-            PlainAuvers,
-            WildRoses,
-            MMRLBase
-        )
+        private val mColors
+            get() = listOf(
+                Pourville,
+                SoleilLevant,
+                Jeufosse,
+                PoppyField,
+                AlmondBlossom,
+                PlainAuvers,
+                WildRoses,
+                MMRLBase
+            )
 
         fun getColorIds(): List<Int> {
             return mColors.map { it.id }
+        }
+        
+        @JvmStatic
+        fun Context.getThemeColor(id: Int): Colors {
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && id == Dynamic.id) {
+                Dynamic(this)
+            } else {
+                mColors[id]
+            }
         }
 
         @Composable
         fun getColor(id: Int): Colors {
             val context = LocalContext.current
 
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && id == Dynamic.id) {
-                Dynamic(context)
-            } else {
-                mColors[id]
-            }
+            return context.getThemeColor(id)
         }
 
         @Composable
