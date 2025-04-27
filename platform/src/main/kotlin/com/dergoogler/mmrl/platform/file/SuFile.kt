@@ -62,7 +62,7 @@ class SuFile(
     fun fromPaths(vararg paths: Any): SuFile? {
         val files = paths.map { SuFile(path, it) }
         for (f in files) {
-            if (f.exists()){
+            if (f.exists()) {
                 return f
             }
         }
@@ -89,7 +89,14 @@ class SuFile(
         return this.size(false)
     }
 
-    fun size(recursively: Boolean = false): Long = fileManager.size(this.path, recursively)
+    fun size(recursively: Boolean = false): Long =
+        fileManager.size(this.path, recursively, emptyList(), true)
+
+    fun size(recursively: Boolean = false, skipPaths: List<String>): Long =
+        fileManager.size(this.path, recursively, skipPaths, true)
+
+    fun size(recursively: Boolean = false, skipPaths: List<String>, skipSymLinks: Boolean): Long =
+        fileManager.size(this.path, recursively, skipPaths, skipSymLinks)
 
     fun stat(): Long {
         return this.lastModified()

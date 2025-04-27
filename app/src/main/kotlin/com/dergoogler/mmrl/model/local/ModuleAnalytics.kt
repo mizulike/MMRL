@@ -20,7 +20,10 @@ data class ModuleAnalytics(
     val totalDisabled = getTotalByState(State.DISABLE)
     val totalUpdated = getTotalByState(State.UPDATE)
 
-    val totalModulesUsageBytes = SuFile("/data/adb/modules").size(true)
+    private val modulesImg = "/data/adb/ksu/modules.img"
+
+    val totalModulesUsageBytes =
+        SuFile("/data/adb/modules").size(true, listOf(modulesImg))
     val totalDeviceStorageBytes: Long
         get() {
             val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager

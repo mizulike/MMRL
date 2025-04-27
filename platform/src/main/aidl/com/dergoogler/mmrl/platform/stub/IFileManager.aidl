@@ -7,7 +7,7 @@ interface IFileManager {
     boolean deleteOnExit(String path);
     String[] list(String path);
     long stat(String path);
-    long size(String path, boolean recursive);
+    long size(String path, boolean recursive, in List<String> skipPaths, boolean skipSymLinks);
     boolean delete(String path);
     boolean exists(String path);
     boolean isDirectory(String path);
