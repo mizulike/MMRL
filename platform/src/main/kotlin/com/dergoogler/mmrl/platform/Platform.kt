@@ -1,5 +1,8 @@
 package com.dergoogler.mmrl.platform
 
+import android.app.ActivityThread
+import android.content.Context
+import android.content.ContextWrapper
 import android.os.Build
 import android.os.IBinder
 import android.os.IInterface
@@ -327,6 +330,34 @@ enum class Platform(val id: String) {
         } else {
             null
         }
+
+        /**
+         * Provides the base application [Context].
+         *
+         * This property traverses the chain of [ContextWrapper] objects, if any,
+         * to retrieve the underlying application context. It starts with the context
+         * obtained from [ActivityThread.currentApplication()] and unwraps any
+         * [ContextWrapper] instances until it reaches the base context, which is
+         * typically the application context.
+         *
+         * This is particularly useful when you need the actual application context
+         * and not a wrapped context that might have limited capabilities or
+         * lifecycles. For example, when dealing with services or other components
+         * that need a context that outlives any specific activity.
+         *
+         * @return The base application [Context].
+         * @throws IllegalStateException if [ActivityThread.currentApplication] returns null, in other words application is not initialized.
+         */
+        val context
+            @Throws(IllegalStateException::class)
+            get(): Context {
+                var context: Context = ActivityThread.currentApplication()
+                while (context is ContextWrapper) {
+                    context = context.baseContext
+                }
+
+                return context
+            }
     }
 
     val isMagisk get() = this == Magisk
