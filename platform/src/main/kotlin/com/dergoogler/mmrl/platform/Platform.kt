@@ -165,8 +165,23 @@ enum class Platform(val id: String) {
          */
         val seLinuxContext: String get() = mService.seLinuxContext
 
+        /**
+         * The currently active platform.
+         *
+         * This property retrieves the platform information from the underlying service.
+         * It uses the `currentPlatform()` method of the service and converts it to a [Platform] enum value.
+         *
+         * If the service is not available or `currentPlatform()` returns an invalid or unknown value,
+         * this property will return `Platform.NonRoot`.
+         *
+         * The retrieval is done using `serviceOrNull`, ensuring a safe access to the service.
+         *
+         * @see Platform
+         */
         val platform: Platform
-            get() = if (mServiceOrNull != null) Platform.from(mService.currentPlatform()) else NonRoot
+            get() = serviceOrNull(NonRoot) {
+                Platform.from(currentPlatform())
+            }
 
         private fun state(): Boolean {
             isAlive = mServiceOrNull != null
@@ -175,6 +190,20 @@ enum class Platform(val id: String) {
             return isAlive
         }
 
+        /**
+         * Retrieves a value from a block if the object is alive, otherwise returns a fallback value.
+         *
+         * This function provides a safe way to access properties or perform actions within a block
+         * only when the object associated with this companion object is considered "alive".
+         * If the object is not alive, the function gracefully returns a pre-defined fallback value.
+         *
+         * @param fallback The value to return if the object is not alive.
+         * @param block A lambda function that takes the Companion object as its receiver and returns a value of type T.
+         *              This block is executed only if `isAlive` is true.
+         * @return The value returned by the block if the object is alive, otherwise the fallback value.
+         * @param T The type of the value being retrieved.
+         * @throws Any exceptions that the provided `block` may throw.
+         */
         fun <T> get(fallback: T, block: Companion.() -> T): T {
             return when {
                 isAlive -> block(this)
@@ -182,6 +211,33 @@ enum class Platform(val id: String) {
             }
         }
 
+        /**
+         * Sets hidden API exemptions for the current process.
+         *
+         * This function allows you to bypass the hidden API restrictions introduced in Android P (API level 28) and later.
+         * It does so by adding signature prefixes to the list of exemptions.
+         *
+         * Note that this function is only effective on Android P and above. On earlier versions, it does nothing and returns true.
+         *
+         * **Important Security Considerations:**
+         *
+         * - Using hidden APIs is strongly discouraged by Google and can lead to app instability and crashes.
+         * - Exemption from these restrictions can introduce security vulnerabilities if not handled with extreme care.
+         * - This functionality might break without notice in future Android versions.
+         * - Use this function with caution, and only when absolutely necessary, after thoroughly understanding the risks.
+         * - This is useful when working with legacy code that uses hidden apis, or for research purposes.
+         *
+         * @param signaturePrefixes A vararg of String representing the signature prefixes to be added to the exemption list.
+         *                          If no prefixes are provided, it defaults to an empty string, which effectively bypasses all hidden api checks
+         *                          (not recommended for production). Each string in the vararg must be a valid signature prefix.
+         *
+         * @return `true` if the operation succeeded or if the SDK version is lower than P (in which case no action is taken).
+         *         It returns `false` if the addHiddenApiExemptions returns false in the HiddenApiBypass class.
+         *         Please note that the `addHiddenApiExemptions` method in the `HiddenApiBypass` class might return `false` in certain scenarios, even if the method runs without error.
+         *         Such cases are related to the internal workings of the `HiddenApiBypass` class, and may depend on the device or android version.
+         *
+         * @see HiddenApiBypass.addHiddenApiExemptions
+         */
         fun setHiddenApiExemptions(vararg signaturePrefixes: String = arrayOf("")) = when {
             Build.VERSION.SDK_INT >= Build.VERSION_CODES.P -> HiddenApiBypass.addHiddenApiExemptions(
                 *signaturePrefixes
@@ -237,14 +293,40 @@ enum class Platform(val id: String) {
             }
         }
 
+        fun <T : IService> addService(clazz: Class<T>): IBinder? = serviceOrNull {
+            addService(Service(clazz))
+        }
+
+        fun <T : IService> addService(service: Service<T>): IBinder? = serviceOrNull {
+            addService(service)
+        }
+
+        fun <T : IService> Class<T>.addAsService(): IBinder? = serviceOrNull {
+            addService(Service(this@addAsService))
+        }
+
+        fun getService(name: String): IBinder? = serviceOrNull {
+            getService(name)
+        }
+
         fun <T : IInterface> T.proxyBy(service: IServiceManager) =
             asBinder().proxyBy(service)
 
         fun <T : IServiceManager> T.getSystemService(name: String) =
             ServiceManager.getService(name).proxyBy(this)
 
-        fun <T : IServiceManager, S : IService> T.addService(cls: Class<S>): IBinder? =
-            addService(Service(cls))
+        fun <T> serviceOrNull(default: T, block: IServiceManager.() -> T): T =
+            if (mServiceOrNull != null) {
+                block(mServiceOrNull!!)
+            } else {
+                default
+            }
+
+        fun <T> serviceOrNull(block: IServiceManager.() -> T): T? = if (mServiceOrNull != null) {
+            block(mServiceOrNull!!)
+        } else {
+            null
+        }
     }
 
     val isMagisk get() = this == Magisk
