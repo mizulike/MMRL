@@ -389,4 +389,6 @@
     <string name="setup_root_note">To access all features of MMRL, a rooted Android device is required. MMRL does not provide instructions for rooting and is not responsible for any damage that may occur during the rooting process or from the use of MMRL itself.</string>
     <string name="platform">Platform</string>
     <string name="change_platform">Change Platform</string>
+    <string name="page_search">Search</string>
+    <string name="from_other_repositories">From other Repositories</string>
 </resources>

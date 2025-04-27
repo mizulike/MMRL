@@ -49,6 +49,7 @@ import com.dergoogler.mmrl.ui.navigation.MainScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.homeScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.modulesScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.repositoryScreen
+import com.dergoogler.mmrl.ui.navigation.graphs.searchScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.settingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSnackbarHost
@@ -74,6 +75,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
             if (isRoot) {
                 return@derivedStateOf listOf(
                     MainScreen.Home,
+                    MainScreen.Search,
                     MainScreen.Repository,
                     MainScreen.Modules,
                     MainScreen.Settings
@@ -82,6 +84,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
 
             return@derivedStateOf listOf(
                 MainScreen.Home,
+                MainScreen.Search,
                 MainScreen.Repository,
                 MainScreen.Settings
             )
@@ -93,6 +96,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
             if (isRoot) {
                 return@derivedStateOf when (userPreferences.homepage) {
                     Homepage.Home -> MainScreen.Home.route
+                    Homepage.Search -> MainScreen.Search.route
                     Homepage.Repositories -> MainScreen.Repository.route
                     Homepage.Modules -> MainScreen.Modules.route
                 }
@@ -100,6 +104,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
 
             return@derivedStateOf when (userPreferences.homepage) {
                 Homepage.Home -> MainScreen.Home.route
+                Homepage.Search -> MainScreen.Search.route
                 Homepage.Repositories -> MainScreen.Repository.route
                 else -> MainScreen.Home.route
             }
@@ -134,6 +139,7 @@ fun MainScreen(windowSizeClass: WindowSizeClass) {
                     startDestination = startDestination
                 ) {
                     homeScreen()
+                    searchScreen()
                     repositoryScreen(bulkInstallViewModel = bulkInstallViewModel)
                     if (isRoot) {
                         modulesScreen()

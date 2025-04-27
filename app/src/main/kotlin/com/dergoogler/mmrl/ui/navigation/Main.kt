@@ -17,6 +17,13 @@ enum class MainScreen(
         iconFilled = R.drawable.home_filled
     ),
 
+    Search(
+        route = "SearchScreen",
+        label = R.string.page_search,
+        icon = R.drawable.search,
+        iconFilled = R.drawable.search_filled
+    ),
+
     Repository(
         route = "RepositoriesScreen",
         label = R.string.page_repositorys,

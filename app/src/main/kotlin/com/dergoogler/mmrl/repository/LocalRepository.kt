@@ -111,7 +111,11 @@ class LocalRepository @Inject constructor(
         repoDao.delete(value)
     }
 
-    fun getOnlineAllAsFlow() = joinDao.getOnlineAllAsFlow().map { list ->
+    fun getOnlineAllAsFlow(duplicates: Boolean = false) = joinDao.getOnlineAllAsFlow().map { list ->
+        if (duplicates) {
+            return@map list.map { it.toModule().copy(versions = getVersionById(it.id)) }
+        }
+
         val values = mutableListOf<OnlineModule>()
         list.forEach { entity ->
             val new = entity.toModule()
@@ -128,8 +132,7 @@ class LocalRepository @Inject constructor(
                 )
             }
         }
-
-        return@map values
+        values
     }
 
     fun getOnlineAllByUrlAsFlow(repoUrl: String) =

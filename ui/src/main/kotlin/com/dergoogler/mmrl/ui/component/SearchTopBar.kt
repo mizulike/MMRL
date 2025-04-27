@@ -33,24 +33,25 @@ import com.dergoogler.mmrl.ui.R
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SearchTopBar(
+    modifier: Modifier = Modifier,
     isSearch: Boolean,
+    autoFocus: Boolean = true,
     query: String,
     onQueryChange: (String) -> Unit,
-    onClose: () -> Unit,
+    onClose: (() -> Unit)? = null,
     title: @Composable () -> Unit,
-    modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
-    scrollBehavior: TopAppBarScrollBehavior? = null
+    scrollBehavior: TopAppBarScrollBehavior? = null,
 ) = TopAppBar(
     modifier = modifier,
     actions = actions,
     windowInsets = windowInsets,
     colors = colors,
     scrollBehavior = scrollBehavior,
-    navigationIcon = if (isSearch) {
+    navigationIcon = if (onClose != null && isSearch) {
         {
             IconButton(
                 onClick = onClose
@@ -68,7 +69,9 @@ fun SearchTopBar(
             val keyboardController = LocalSoftwareKeyboardController.current
 
             LaunchedEffect(focusRequester) {
-                focusRequester.requestFocus()
+                if (autoFocus) {
+                    focusRequester.requestFocus()
+                }
                 keyboardController?.show()
             }
 

@@ -953,7 +953,7 @@ fun NewViewScreen(
                 viewModel.otherSources.ifNotEmpty {
                     ListItem(
                         contentPaddingValues = listItemContentPaddingValues,
-                        title = "From other Repositories",
+                        title = stringResource(R.string.from_other_repositories),
                     )
 
                     OtherSourcesItem(viewModel.otherSources)
