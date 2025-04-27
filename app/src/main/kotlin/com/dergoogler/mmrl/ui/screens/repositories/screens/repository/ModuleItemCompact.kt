@@ -40,6 +40,8 @@ fun ModuleItemCompact(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     enabled: Boolean = true,
+    showLabels: Boolean = true,
+    sourceProvider: String? = null,
 ) = Surface(
     onClick = onClick,
     modifier = modifier.fillMaxWidth(),
@@ -52,7 +54,7 @@ fun ModuleItemCompact(
     val userPreferences = LocalUserPreferences.current
     val menu = userPreferences.repositoryMenu
     val hasLabel =
-        (state.hasLicense && menu.showLicense) || state.installed || (module.track.hasAntifeatures && menu.showAntiFeatures)
+        showLabels && ((state.hasLicense && menu.showLicense) || state.installed || (module.track.hasAntifeatures && menu.showAntiFeatures))
     val isVerified = module.isVerified && menu.showVerified
 
     Row(
@@ -60,7 +62,6 @@ fun ModuleItemCompact(
         verticalAlignment = Alignment.CenterVertically
     ) {
         if (menu.showIcon) {
-
             if (module.icon != null) {
                 AsyncImage(
                     model = module.icon,
@@ -89,7 +90,7 @@ fun ModuleItemCompact(
                     fontWeight = FontWeight.Bold
                 ),
                 text = module.name,
-                icon = module.isVerified nullable R.drawable.rosette_discount_check,
+                icon = isVerified nullable R.drawable.rosette_discount_check,
                 tint = MaterialTheme.colorScheme.surfaceTint,
                 rightIcon = true,
                 iconScalingFactor = 1.0f,
@@ -110,6 +111,14 @@ fun ModuleItemCompact(
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline
             )
+
+            sourceProvider.nullable {
+                Text(
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.surfaceTint
+                )
+            }
 
             if (menu.showUpdatedTime) {
                 Spacer(modifier = Modifier.height(2.dp))

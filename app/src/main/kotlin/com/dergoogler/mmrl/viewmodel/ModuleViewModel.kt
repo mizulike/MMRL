@@ -20,8 +20,11 @@ import com.dergoogler.mmrl.model.json.UpdateJson
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.OnlineModule
+import com.dergoogler.mmrl.model.online.OtherSources
 import com.dergoogler.mmrl.model.online.TrackJson
 import com.dergoogler.mmrl.model.online.VersionItem
+import com.dergoogler.mmrl.model.state.OnlineState
+import com.dergoogler.mmrl.model.state.OnlineState.Companion.createState
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -72,6 +75,8 @@ class ModuleViewModel @AssistedInject constructor(
 
     var online: OnlineModule by mutableStateOf(OnlineModule.example())
         private set
+    var repo: Repo by mutableStateOf(Repo.example())
+        private set
     val lastVersionItem by derivedStateOf {
         versions.firstOrNull()?.second
     }
@@ -97,6 +102,7 @@ class ModuleViewModel @AssistedInject constructor(
         versions.count { it.second.versionCode > localVersionCode }
     }
 
+    val otherSources = mutableStateListOf<OtherSources>()
     val versions = mutableStateListOf<Pair<Repo, VersionItem>>()
     val tracks = mutableStateListOf<Pair<Repo, TrackJson>>()
 
@@ -106,8 +112,27 @@ class ModuleViewModel @AssistedInject constructor(
     }
 
     private fun loadData() = viewModelScope.launch {
-        localRepository.getOnlineAllByIdAndUrl(moduleId, repoUrl).first().let {
+        localRepository.getOnlineByIdAndUrl(moduleId, repoUrl).let {
             online = it
+        }
+
+        localRepository.getOnlineAllById(moduleId).let {
+            val filtered = it.filter { f -> f.repoUrl != repoUrl }
+
+            otherSources.addAll(filtered.map { module ->
+                OtherSources(
+                    repo = localRepository.getRepoByUrl(module.repoUrl),
+                    online = module,
+                    state = module.createState(
+                        local = localRepository.getLocalByIdOrNull(module.id),
+                        hasUpdatableTag = localRepository.hasUpdatableTag(module.id)
+                    )
+                )
+            })
+        }
+
+        localRepository.getRepoByUrl(repoUrl).let {
+            repo = it
         }
 
         localRepository.getLocalByIdOrNull(moduleId)?.let {
@@ -148,8 +173,10 @@ class ModuleViewModel @AssistedInject constructor(
         onSuccess: (File) -> Unit,
     ) {
         viewModelScope.launch {
-            val downloadPath = File(userPreferencesRepository.data
-                .first().downloadPath)
+            val downloadPath = File(
+                userPreferencesRepository.data
+                    .first().downloadPath
+            )
 
             val filename = Utils.getFilename(
                 name = online.name,
@@ -169,14 +196,17 @@ class ModuleViewModel @AssistedInject constructor(
             val listener = object : DownloadService.IDownloadListener {
                 override fun getProgress(value: Float) {}
                 override fun onFileExists() {
-                    Toast.makeText(context,
-                        context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT
+                    ).show()
                 }
+
                 override fun onSuccess() {
                     if (downloadPath.exists() && downloadPath.mkdirs()) {
                         Timber.d("Created directory: $downloadPath")
                     }
-                    
+
                     onSuccess(downloadPath.resolve(filename))
                 }
 

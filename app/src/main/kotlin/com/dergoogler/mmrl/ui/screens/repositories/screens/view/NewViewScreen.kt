@@ -120,11 +120,15 @@ import com.dergoogler.mmrl.ext.repoId
 import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.model.online.OtherSources
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.OtherSourcesItem
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.uuid.ExperimentalUuidApi
 
+@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun NewViewScreen(
     viewModel: ModuleViewModel,
@@ -873,7 +877,7 @@ fun NewViewScreen(
                                 vertical = 8.dp,
                                 horizontal = 16.dp
                             ),
-                            permissions =  it
+                            permissions = it
                         )
                     }
                 }
@@ -946,6 +950,16 @@ fun NewViewScreen(
                     }
                 }
 
+                viewModel.otherSources.ifNotEmpty {
+                    ListItem(
+                        contentPaddingValues = listItemContentPaddingValues,
+                        title = "From other Repositories",
+                    )
+
+                    OtherSourcesItem(viewModel.otherSources)
+                }
+
+                // Information section
                 HorizontalDivider(
                     modifier = Modifier.padding(vertical = 16.dp),
                     thickness = 0.9.dp
@@ -1008,7 +1022,7 @@ fun NewViewScreen(
                         modifier = Modifier.clickable(
                             onClick = { viewTrackBottomSheet = true }
                         ),
-                        text = stringResource(id = R.string.view_module_view_track),
+                        text = viewModel.repo.name,
                     )
                 }
 

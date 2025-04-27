@@ -80,6 +80,7 @@ data class OnlineModuleEntity(
     )
 
     fun toModule() = OnlineModule(
+        repoUrl = repoUrl,
         id = id,
         name = name,
         version = version,

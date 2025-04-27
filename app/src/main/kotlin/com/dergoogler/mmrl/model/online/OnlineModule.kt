@@ -5,10 +5,12 @@ import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.utils.Utils
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
 data class OnlineModule(
+    @Json(ignore = true) val repoUrl: String = "",
     val id: String,
     val name: String,
     val version: String,
