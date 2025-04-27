@@ -193,6 +193,58 @@ enum class Platform(val id: String) {
         fun from(value: String): Platform {
             return entries.firstOrNull { it.id == value } ?: NonRoot
         }
+
+        fun <T : IBinder> T.proxyBy(service: IServiceManager) = object : IBinder {
+            override fun getInterfaceDescriptor() = this@proxyBy.interfaceDescriptor
+
+            override fun pingBinder() = this@proxyBy.pingBinder()
+
+            override fun isBinderAlive() = this@proxyBy.isBinderAlive
+
+            override fun queryLocalInterface(descriptor: String) = null
+
+            override fun dump(fd: FileDescriptor, args: Array<out String>?) =
+                this@proxyBy.dump(fd, args)
+
+            override fun dumpAsync(fd: FileDescriptor, args: Array<out String>?) =
+                this@proxyBy.dumpAsync(fd, args)
+
+            override fun linkToDeath(recipient: IBinder.DeathRecipient, flags: Int) =
+                this@proxyBy.linkToDeath(recipient, flags)
+
+            override fun unlinkToDeath(recipient: IBinder.DeathRecipient, flags: Int) =
+                this@proxyBy.unlinkToDeath(recipient, flags)
+
+            override fun transact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean {
+                val serviceBinder = service.asBinder()
+                val newData = Parcel.obtain()
+
+                try {
+                    newData.apply {
+                        writeInterfaceToken(IServiceManager.DESCRIPTOR)
+                        writeStrongBinder(this@proxyBy)
+                        writeInt(code)
+                        writeInt(flags)
+                        appendFrom(data, 0, data.dataSize())
+                    }
+
+                    serviceBinder.transact(BINDER_TRANSACTION, newData, reply, 0)
+                } finally {
+                    newData.recycle()
+                }
+
+                return true
+            }
+        }
+
+        fun <T : IInterface> T.proxyBy(service: IServiceManager) =
+            asBinder().proxyBy(service)
+
+        fun <T : IServiceManager> T.getSystemService(name: String) =
+            ServiceManager.getService(name).proxyBy(this)
+
+        fun <T : IServiceManager, S : IService> T.addService(cls: Class<S>): IBinder? =
+            addService(Service(cls))
     }
 
     val isMagisk get() = this == Magisk
@@ -209,56 +261,4 @@ enum class Platform(val id: String) {
     val isKernelSuOrNext get() = this == KernelSU || this == KsuNext
 
     val current get() = id
-    
-    fun <T : IBinder> T.proxyBy(service: IServiceManager) = object : IBinder {
-        override fun getInterfaceDescriptor() = this@proxyBy.interfaceDescriptor
-
-        override fun pingBinder() = this@proxyBy.pingBinder()
-
-        override fun isBinderAlive() = this@proxyBy.isBinderAlive
-
-        override fun queryLocalInterface(descriptor: String) = null
-
-        override fun dump(fd: FileDescriptor, args: Array<out String>?) =
-            this@proxyBy.dump(fd, args)
-
-        override fun dumpAsync(fd: FileDescriptor, args: Array<out String>?) =
-            this@proxyBy.dumpAsync(fd, args)
-
-        override fun linkToDeath(recipient: IBinder.DeathRecipient, flags: Int) =
-            this@proxyBy.linkToDeath(recipient, flags)
-
-        override fun unlinkToDeath(recipient: IBinder.DeathRecipient, flags: Int) =
-            this@proxyBy.unlinkToDeath(recipient, flags)
-
-        override fun transact(code: Int, data: Parcel, reply: Parcel?, flags: Int): Boolean {
-            val serviceBinder = service.asBinder()
-            val newData = Parcel.obtain()
-
-            try {
-                newData.apply {
-                    writeInterfaceToken(IServiceManager.DESCRIPTOR)
-                    writeStrongBinder(this@proxyBy)
-                    writeInt(code)
-                    writeInt(flags)
-                    appendFrom(data, 0, data.dataSize())
-                }
-
-                serviceBinder.transact(BINDER_TRANSACTION, newData, reply, 0)
-            } finally {
-                newData.recycle()
-            }
-
-            return true
-        }
-    }
-
-    fun <T : IInterface> T.proxyBy(service: IServiceManager) =
-        asBinder().proxyBy(service)
-
-    fun <T : IServiceManager> T.getSystemService(name: String) =
-        ServiceManager.getService(name).proxyBy(this)
-
-    fun <T : IServiceManager, S : IService> T.addService(cls: Class<S>): IBinder? =
-        addService(Service(cls))
 }
