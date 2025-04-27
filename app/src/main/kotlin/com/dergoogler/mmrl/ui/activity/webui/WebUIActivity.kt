@@ -2,7 +2,9 @@ package com.dergoogler.mmrl.ui.activity.webui
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Rect
+import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.webkit.WebView
@@ -17,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.VersionInterface
@@ -42,6 +45,24 @@ class WebUIActivity : MMRLComponentActivity() {
     private lateinit var webView: WebView
     private var isKeyboardShowing by mutableStateOf(false)
     private lateinit var rootView: View
+
+    private val userAgent
+        get(): String {
+            val mmrlVersion = this.managerVersion.second
+
+            val platform = Platform.get("Unknown") {
+                platform.name
+            }
+
+            val platformVersion = Platform.get(-1) {
+                moduleManager.versionCode
+            }
+
+            val osVersion = Build.VERSION.RELEASE
+            val deviceModel = Build.MODEL
+
+            return "MMRL/$mmrlVersion (Linux; Android $osVersion; $deviceModel; $platform/$platformVersion)"
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.d("WebUIActivity onCreate")
@@ -118,6 +139,7 @@ class WebUIActivity : MMRLComponentActivity() {
                 enableEruda = userPrefs.enableErudaConsole,
                 debugDomain = userPrefs.webUiDevUrl,
                 isDarkMode = isDarkMode,
+                userAgentString = userAgent,
                 cls = WebUIActivity::class.java
             )
 

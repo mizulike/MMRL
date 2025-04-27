@@ -41,6 +41,7 @@ data class WebUIOptions(
     val enableEruda: Boolean,
     val debugDomain: String,
     val isDarkMode: Boolean,
+    val userAgentString: String,
     val cls: Class<*>?,
 ) {
     val isProviderAlive get() = Platform.isAlive
@@ -148,6 +149,7 @@ fun rememberWebUIOptions(
     enableEruda: Boolean = false,
     debugDomain: String = "https://127.0.0.1:8080",
     isDarkMode: Boolean = false,
+    userAgentString: String = "DON'T TRACK ME DOWN MOTHERFUCKER!",
     cls: Class<*>? = null,
 ) = remember(
     modId,
@@ -160,6 +162,7 @@ fun rememberWebUIOptions(
     enableEruda,
     debugDomain,
     isDarkMode,
+    userAgentString,
     cls
 ) {
     WebUIOptions(
@@ -173,6 +176,7 @@ fun rememberWebUIOptions(
         enableEruda = enableEruda,
         debugDomain = debugDomain,
         isDarkMode = isDarkMode,
+        userAgentString = userAgentString,
         cls = cls,
     )
 }

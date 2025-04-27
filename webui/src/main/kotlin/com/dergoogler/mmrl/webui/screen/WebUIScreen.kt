@@ -194,7 +194,7 @@ fun WebUIScreen(
                                     android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
 
                             }
-                            userAgentString = "DON'T TRACK ME DOWN MOTHERFUCKER!"
+                            userAgentString = options.userAgentString
                         }
 
 
