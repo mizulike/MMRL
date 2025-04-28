@@ -220,6 +220,15 @@ class ModuleInterface(
         createShortcutInternal(title, icon)
     }
 
+    private val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+
+    @JavascriptInterface
+    fun hasShortcut(): Boolean {
+        val id = modId.id
+        val shortcutId = "shortcut_$id"
+        return shortcutManager.pinnedShortcuts.any { it.id == shortcutId }
+    }
+
     private fun createShortcutInternal(title: String, icon: String) {
 
         if (options.cls == null) {
@@ -242,7 +251,6 @@ class ModuleInterface(
             return
         }
 
-        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
 
         if (!shortcutManager.isRequestPinShortcutSupported) {
             Toast.makeText(
@@ -252,7 +260,7 @@ class ModuleInterface(
             ).show()
         }
 
-        if (shortcutManager.pinnedShortcuts.any { it.id == shortcutId }) {
+        if (hasShortcut()) {
             Toast.makeText(
                 context,
                 context.getString(R.string.shortcut_already_exists),
