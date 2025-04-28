@@ -156,7 +156,13 @@ fun webrootPathHandler(
                 addInjection(insets.cssInject)
             }
 
-            return@handler file.asResponse(injections)
+            val fileExt = file.extension
+
+            if (fileExt == "html" || fileExt == "htm") {
+                return@handler file.asResponse(injections)
+            }
+
+            return@handler file.asResponse()
         } catch (e: IOException) {
             Log.e("webrootPathHandler", "Error opening webroot path: $path", e)
             return@handler null
