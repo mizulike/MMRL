@@ -14,6 +14,7 @@ import com.dergoogler.mmrl.ui.component.listItem.ListEditTextItem
 import com.dergoogler.mmrl.ui.component.listItem.ListRadioCheckItem
 import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
 import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -23,7 +24,7 @@ fun AppearanceScreen() {
     val viewModel = LocalSettings.current
     val userPreferences = LocalUserPreferences.current
 
-    val navController = LocalNavController.current
+    val mainNavController = LocalMainNavController.current
 
     SettingsScaffold(
         title = R.string.settings_appearance
@@ -33,7 +34,7 @@ fun AppearanceScreen() {
             title = stringResource(id = R.string.settings_app_theme),
             desc = stringResource(id = R.string.settings_app_theme_desc),
             onClick = {
-                navController.navigateSingleTopTo(SettingsScreen.AppTheme.route)
+                mainNavController.navigateSingleTopTo(SettingsScreen.AppTheme.route)
             }
         )
 
