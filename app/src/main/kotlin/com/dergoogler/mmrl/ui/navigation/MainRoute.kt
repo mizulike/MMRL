@@ -1,35 +1,30 @@
-package com.dergoogler.mmrl.ui.navigation.graphs
+package com.dergoogler.mmrl.ui.navigation
 
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.navigation
-import com.dergoogler.mmrl.ui.navigation.BottomNavRoute
-import com.dergoogler.mmrl.ui.screens.home.HomeScreen
 import com.dergoogler.mmrl.ui.screens.home.screens.AboutScreen
 import com.dergoogler.mmrl.ui.screens.home.screens.ThankYouScreen
+import com.dergoogler.mmrl.ui.screens.main.BottomBarMainScreen
 
-enum class HomeScreen(val route: String) {
-    Home("Home"),
+enum class MainRoute(val route: String) {
+    BottomNavScreen("BottomNavScreen"),
     About("About"),
     ThankYou("ThankYou")
 }
 
-fun NavGraphBuilder.homeScreen() = navigation(
-    startDestination = HomeScreen.Home.route,
-    route = BottomNavRoute.Home.route
-) {
+fun NavGraphBuilder.mainScreen() {
     composable(
-        route = HomeScreen.Home.route,
+        route = MainRoute.BottomNavScreen.route,
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
     ) {
-        HomeScreen()
+        BottomBarMainScreen()
     }
 
     composable(
-        route = HomeScreen.About.route,
+        route = MainRoute.About.route,
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
     ) {
@@ -37,7 +32,7 @@ fun NavGraphBuilder.homeScreen() = navigation(
     }
 
     composable(
-        route = HomeScreen.ThankYou.route,
+        route = MainRoute.ThankYou.route,
         enterTransition = { fadeIn() },
         exitTransition = { fadeOut() }
     ) {

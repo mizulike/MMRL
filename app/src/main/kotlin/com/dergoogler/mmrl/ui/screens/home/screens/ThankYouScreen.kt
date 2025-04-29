@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
@@ -28,6 +29,7 @@ import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.toDollars
 import com.dergoogler.mmrl.ui.component.HorizontalDividerWithText
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.items.MemberCard
 import com.dergoogler.mmrl.viewmodel.ThankYouViewModel
@@ -37,7 +39,7 @@ fun ThankYouScreen(
     vm: ThankYouViewModel = hiltViewModel(),
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    val navController = LocalNavController.current
+    val mainNavController = LocalMainNavController.current
 
     val sponsors by vm.sponsors.collectAsStateWithLifecycle()
     val contributors by vm.contributors.collectAsStateWithLifecycle()
@@ -48,13 +50,15 @@ fun ThankYouScreen(
             NavigateUpTopBar(
                 title = stringResource(id = R.string.thank_you),
                 scrollBehavior = scrollBehavior,
-                navController = navController
+                navController = mainNavController
             )
         },
         contentWindowInsets = WindowInsets.none
     ) { innerPadding ->
         LazyVerticalGrid(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier
+                .padding(innerPadding)
+                .navigationBarsPadding(),
             columns = GridCells.Fixed(2),
             contentPadding = PaddingValues(16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),

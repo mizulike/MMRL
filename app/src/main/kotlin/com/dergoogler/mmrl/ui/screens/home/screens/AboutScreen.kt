@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -33,6 +34,7 @@ import com.dergoogler.mmrl.ui.component.Logo
 import com.dergoogler.mmrl.ui.component.MarkdownText
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.component.card.OutlinedCard
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 
@@ -40,7 +42,7 @@ import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 fun AboutScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val browser = LocalUriHandler.current
-    val navController = LocalNavController.current
+    val mainNavController = LocalMainNavController.current
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -48,7 +50,7 @@ fun AboutScreen() {
             NavigateUpTopBar(
                 title = stringResource(id = R.string.settings_about),
                 scrollBehavior = scrollBehavior,
-                navController = navController
+                navController = mainNavController
             )
         },
         contentWindowInsets = WindowInsets(0.dp)
@@ -58,7 +60,8 @@ fun AboutScreen() {
                 .padding(innerPadding)
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(all = 16.dp),
+                .padding(all = 16.dp)
+                .navigationBarsPadding(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {

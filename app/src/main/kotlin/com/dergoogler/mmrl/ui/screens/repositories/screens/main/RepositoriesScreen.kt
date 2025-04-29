@@ -49,15 +49,14 @@ import com.dergoogler.mmrl.ui.animate.slideOutBottomToTop
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.PageIndicator
 import com.dergoogler.mmrl.ui.component.TopAppBar
-import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.component.dialog.TextFieldDialog
-import com.dergoogler.mmrl.ui.providable.LocalWindowWidthSizeClass
 import com.dergoogler.mmrl.ui.screens.repositories.items.BulkBottomSheet
 import com.dergoogler.mmrl.ext.isScrollingUp
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
+import com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle
 import timber.log.Timber
 import kotlin.reflect.KFunction1
 
@@ -264,13 +263,9 @@ private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     setMenu: KFunction1<RepositoriesMenu, Unit>,
 ) {
-    val windowSize = LocalWindowWidthSizeClass.current
-
     TopAppBar(
         title = {
-            if (windowSize.isRailShown) return@TopAppBar
-
-            TopAppBarIcon()
+            TopAppBarTitle(title = R.string.page_repository)
         },
         scrollBehavior = scrollBehavior,
         actions = {

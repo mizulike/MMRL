@@ -12,7 +12,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.dergoogler.mmrl.ext.panicArguments
-import com.dergoogler.mmrl.ui.navigation.MainScreen
+import com.dergoogler.mmrl.ui.navigation.BottomNavRoute
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.ExploreRepositoriesScreen
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.ExploreRepositoryScreen
@@ -40,7 +40,7 @@ fun NavGraphBuilder.repositoryScreen(
     bulkInstallViewModel: BulkInstallViewModel,
 ) = navigation(
     startDestination = RepositoriesScreen.Home.route,
-    route = MainScreen.Repository.route
+    route = BottomNavRoute.Repository.route
 ) {
     composable(
         route = RepositoriesScreen.Home.route,

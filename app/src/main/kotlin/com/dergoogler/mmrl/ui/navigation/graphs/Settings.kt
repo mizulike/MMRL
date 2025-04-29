@@ -6,7 +6,7 @@ import androidx.compose.animation.scaleIn
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.dergoogler.mmrl.ui.navigation.MainScreen
+import com.dergoogler.mmrl.ui.navigation.BottomNavRoute
 import com.dergoogler.mmrl.ui.screens.settings.SettingsScreen
 import com.dergoogler.mmrl.ui.screens.settings.appearance.AppearanceScreen
 import com.dergoogler.mmrl.ui.screens.settings.appearance.screens.AppThemeScreen
@@ -20,23 +20,20 @@ import com.dergoogler.mmrl.ui.screens.settings.security.SecurityScreen
 import com.dergoogler.mmrl.ui.screens.settings.updates.UpdatesScreen
 
 enum class SettingsScreen(val route: String) {
-    Home("Settings"),
-    Appearance("Appearance"),
-    Updates("Updates"),
-    Security("Security"),
-    Modules("Modules"),
-    Other("Other"),
-    Blacklist("Blacklist"),
-    Changelog("Changelog"),
-    Developer("Developer"),
-    LogViewer("LogViewer"),
-    AppTheme("AppTheme")
+    Home("Settings_Settings"),
+    Appearance("Settings_Appearance"),
+    Updates("Settings_Updates"),
+    Security("Settings_Security"),
+    Modules("Settings_Modules"),
+    Other("Settings_Other"),
+    Blacklist("Settings_Blacklist"),
+    Changelog("Settings_Changelog"),
+    Developer("Settings_Developer"),
+    LogViewer("Settings_LogViewer"),
+    AppTheme("Settings_AppTheme")
 }
 
-fun NavGraphBuilder.settingsScreen() = navigation(
-    startDestination = SettingsScreen.Home.route,
-    route = MainScreen.Settings.route
-) {
+fun NavGraphBuilder.settingsScreen() {
     composable(
         route = SettingsScreen.Home.route,
         enterTransition = { fadeIn() },

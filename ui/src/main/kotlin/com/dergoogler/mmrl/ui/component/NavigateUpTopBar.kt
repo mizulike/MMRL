@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.navigation.NavController
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle;
 import com.dergoogler.mmrl.ui.R
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -86,25 +87,7 @@ fun NavigateUpTopBar(
 ) = NavigateUpTopBar(
     modifier = modifier,
     title = {
-        Column(
-            horizontalAlignment = Alignment.Start
-        ) {
-            Text(
-                text = title,
-                style = MaterialTheme.typography.titleLarge,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            subtitle?.let {
-                Text(
-                    text = subtitle,
-                    style = MaterialTheme.typography.titleSmall,
-                    color = MaterialTheme.colorScheme.outline,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
+        TopAppBarTitle(title = title, subtitle = subtitle)
     },
     onBack = onBack,
     actions = actions,

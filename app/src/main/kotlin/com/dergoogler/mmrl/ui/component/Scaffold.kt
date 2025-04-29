@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -20,6 +21,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 
 @Composable
@@ -48,7 +50,7 @@ fun SettingsScaffold(
     absolute: @Composable (BoxScope.() -> Unit) = {},
     relative: @Composable (ColumnScope.() -> Unit),
 ) {
-    val navController = LocalNavController.current
+    val mainNavController = LocalMainNavController.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
@@ -57,7 +59,7 @@ fun SettingsScaffold(
             NavigateUpTopBar(
                 title = title,
                 scrollBehavior = scrollBehavior,
-                navController = navController,
+                navController = mainNavController,
                 actions = actions
             )
         },
@@ -70,7 +72,9 @@ fun SettingsScaffold(
                 .then(modifier.box)
         ) {
             Column(
-                modifier = modifier.column.systemBarsPaddingEnd(),
+                modifier = modifier.column
+                    .systemBarsPaddingEnd()
+                    .navigationBarsPadding(),
             ) {
                 relative()
             }

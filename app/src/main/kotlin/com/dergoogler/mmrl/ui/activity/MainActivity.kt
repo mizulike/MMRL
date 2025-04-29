@@ -25,6 +25,7 @@ import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
+import com.dergoogler.mmrl.ui.screens.main.MainScreen
 import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
 import dev.dergoogler.mmrl.compat.activity.setBaseContent
 import kotlinx.coroutines.launch
@@ -36,7 +37,6 @@ class MainActivity : MMRLComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     override val requirePermissions = listOf(Manifest.permission.POST_NOTIFICATIONS)
 
-    @OptIn(ExperimentalMaterial3WindowSizeClassApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -45,8 +45,6 @@ class MainActivity : MMRLComponentActivity() {
         splashScreen.setKeepOnScreenCondition { isLoading }
 
         setBaseContent {
-            val windowSizeClass = calculateWindowSizeClass(this)
-
             val userPreferences by userPreferencesRepository.data
                 .collectAsStateWithLifecycle(initialValue = null)
 
@@ -84,7 +82,7 @@ class MainActivity : MMRLComponentActivity() {
                         setWorkingMode = ::setWorkingMode
                     )
                 } else {
-                    MainScreen(windowSizeClass)
+                    MainScreen()
                 }
             }
         }

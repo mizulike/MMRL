@@ -4,24 +4,17 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.dergoogler.mmrl.R
 
-enum class MainScreen(
+enum class BottomNavRoute(
     val route: String,
     @StringRes val label: Int,
     @DrawableRes val icon: Int,
-    @DrawableRes val iconFilled: Int
+    @DrawableRes val iconFilled: Int,
 ) {
     Home(
         route = "HomeScreen",
         label = R.string.page_home,
         icon = R.drawable.home,
         iconFilled = R.drawable.home_filled
-    ),
-
-    Search(
-        route = "SearchScreen",
-        label = R.string.page_search,
-        icon = R.drawable.search,
-        iconFilled = R.drawable.search_filled
     ),
 
     Repository(
@@ -38,10 +31,10 @@ enum class MainScreen(
         iconFilled = R.drawable.keyframes_filled
     ),
 
-    Settings(
-        route = "SettingsScreen",
-        label = R.string.page_settings,
-        icon = R.drawable.settings,
-        iconFilled = R.drawable.settings_filled
-    )
+    Search(
+        route = "SearchScreen",
+        label = R.string.page_search,
+        icon = R.drawable.search,
+        iconFilled = R.drawable.search_filled
+    ),
 }

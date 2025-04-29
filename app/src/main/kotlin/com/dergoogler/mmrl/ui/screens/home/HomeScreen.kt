@@ -30,6 +30,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,6 +54,8 @@ import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.stub.IMMRLApiManager
+import com.dergoogler.mmrl.ui.component.CenterAlignedTopAppBar
+import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
@@ -61,15 +64,16 @@ import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListProgressBarItem
 import com.dergoogler.mmrl.ui.navigation.graphs.HomeScreen
+import com.dergoogler.mmrl.ui.providable.LocalDrawerState
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.ui.providable.LocalWindowWidthSizeClass
 import com.dergoogler.mmrl.ui.screens.home.items.NonRootItem
 import com.dergoogler.mmrl.ui.screens.home.items.RebootBottomSheet
 import com.dergoogler.mmrl.ui.screens.home.items.RootItem
 import com.dergoogler.mmrl.ui.screens.settings.changelogs.items.ChangelogBottomSheet
 import com.dergoogler.mmrl.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -82,16 +86,7 @@ fun HomeScreen(
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val context = LocalContext.current
     val userPreferences = LocalUserPreferences.current
-
-    val navController = LocalNavController.current
-
     val browser = LocalUriHandler.current
-
-    var openRebootSheet by remember { mutableStateOf(false) }
-    if (openRebootSheet) {
-        RebootBottomSheet(
-            onClose = { openRebootSheet = false })
-    }
 
     var workingModeBottomSheet by remember { mutableStateOf(false) }
     if (workingModeBottomSheet) WorkingModeBottomSheet(
@@ -104,16 +99,6 @@ fun HomeScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBar(
-                isProviderAlive = viewModel.isProviderAlive,
-                onInfoClick = {
-                    navController.navigateSingleTopTo(HomeScreen.About.route)
-                },
-                onHeartClick = {
-                    navController.navigateSingleTopTo(HomeScreen.ThankYou.route)
-                },
-                onRebootClick = {
-                    openRebootSheet = true
-                },
                 scrollBehavior = scrollBehavior
             )
         }, contentWindowInsets = WindowInsets.none
@@ -367,44 +352,32 @@ fun HomeScreen(
 
 @Composable
 private fun TopBar(
-    isProviderAlive: Boolean,
-    onRebootClick: () -> Unit = {},
-    onInfoClick: () -> Unit = {},
-    onHeartClick: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val windowSize = LocalWindowWidthSizeClass.current
+    val drawerState = LocalDrawerState.current
+    val scope = rememberCoroutineScope()
 
-    TopAppBar(
+    CenterAlignedTopAppBar(
+        navigationIcon = {
+            IconButton(
+                onClick = {
+                    scope.launch {
+                        drawerState.open()
+                    }
+                }
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.menu),
+                    contentDescription = null
+                )
+            }
+        },
         title = {
-            if (windowSize.isRailShown) return@TopAppBar
-
-            TopAppBarIcon()
+            TextWithIcon(
+                text = stringResource(id = R.string.app_name),
+                icon = com.dergoogler.mmrl.ui.R.drawable.mmrl_logo
+            )
         },
         scrollBehavior = scrollBehavior,
-        actions = {
-            if (isProviderAlive) {
-                IconButton(onClick = onRebootClick) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.refresh),
-                        contentDescription = null
-                    )
-                }
-            }
-
-            IconButton(onClick = onHeartClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.heart),
-                    contentDescription = null
-                )
-            }
-
-            IconButton(onClick = onInfoClick) {
-                Icon(
-                    painter = painterResource(id = R.drawable.info_circle),
-                    contentDescription = null
-                )
-            }
-        }
     )
 }

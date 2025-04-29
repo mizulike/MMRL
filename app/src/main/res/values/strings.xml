@@ -391,4 +391,8 @@
     <string name="change_platform">Change Platform</string>
     <string name="page_search">Search</string>
     <string name="from_other_repositories">From other Repositories</string>
+    <string name="drawer_legal">Legal</string>
+    <string name="drawer_tools">Tools</string>
+    <string name="drawer_support">Support</string>
+    <string name="drawer_general">General</string>
 </resources>

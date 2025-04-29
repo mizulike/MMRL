@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ui.R
 
-
+@Deprecated("Use TopAppBarTitle instead", replaceWith = ReplaceWith("com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle(text = text, modifier = modifier)"))
 @Composable
 fun TopAppBarTitle(
     text: String,
@@ -75,6 +75,35 @@ fun TopAppBar(
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
 ) = androidx.compose.material3.TopAppBar(
+    title = title,
+    modifier = Modifier
+        .clip(
+            RoundedCornerShape(
+                bottomStart = 20.dp,
+                bottomEnd = 20.dp
+            )
+        )
+        .then(modifier),
+    navigationIcon = navigationIcon,
+    actions = actions,
+    colors = colors,
+    scrollBehavior = scrollBehavior,
+    windowInsets = windowInsets,
+    expandedHeight = expandedHeight,
+)
+
+@ExperimentalMaterial3Api
+@Composable
+fun CenterAlignedTopAppBar(
+    title: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
+    expandedHeight: Dp = TopAppBarDefaults.TopAppBarExpandedHeight,
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+    colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+) = androidx.compose.material3.CenterAlignedTopAppBar(
     title = title,
     modifier = Modifier
         .clip(

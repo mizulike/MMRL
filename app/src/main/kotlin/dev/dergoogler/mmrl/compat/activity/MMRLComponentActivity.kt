@@ -32,6 +32,7 @@ import com.dergoogler.mmrl.ui.activity.CrashHandlerActivity
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.providable.LocalLifecycle
 import com.dergoogler.mmrl.ui.providable.LocalLifecycleScope
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -196,6 +197,7 @@ fun MMRLComponentActivity.setBaseContent(
         initialValue = null
     )
     val navController = rememberNavController()
+    val mainNavController = rememberNavController()
 
     val preferences = if (userPreferences == null) {
         return@setContent
@@ -221,7 +223,8 @@ fun MMRLComponentActivity.setBaseContent(
             LocalLifecycleScope provides lifecycleScope,
             LocalLifecycle provides lifecycle,
             LocalUriHandler provides MMRLUriHandlerImpl(context, toolbarColor),
-            LocalNavController provides navController
+            LocalNavController provides navController,
+            LocalMainNavController provides mainNavController
         ),
         content = content
     )

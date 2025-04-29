@@ -58,6 +58,7 @@ import com.dergoogler.mmrl.ui.providable.LocalLifecycle
 import com.dergoogler.mmrl.ui.providable.LocalLifecycleScope
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ext.none
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.utils.log.LogText
 import com.dergoogler.mmrl.utils.log.LogText.Companion.toTextPriority
 import com.dergoogler.mmrl.utils.log.Logcat
@@ -179,7 +180,7 @@ private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
 ) = NavigateUpTopBar(
     title = stringResource(id = R.string.settings_log_viewer),
-    navController = LocalNavController.current,
+    navController = LocalMainNavController.current,
     actions = {
         val context = LocalContext.current
         IconButton(

@@ -48,7 +48,7 @@ import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.PageIndicator
 import com.dergoogler.mmrl.ui.component.SearchTopBar
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
-import com.dergoogler.mmrl.ui.providable.LocalWindowWidthSizeClass
+import com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle
 import com.dergoogler.mmrl.viewmodel.ModulesViewModel
 
 @Composable
@@ -157,8 +157,6 @@ private fun TopBar(
     setMenu: (ModulesMenu) -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val windowSize = LocalWindowWidthSizeClass.current
-
     var currentQuery by remember { mutableStateOf(query) }
     DisposableEffect(isSearch) {
         onDispose { currentQuery = "" }
@@ -176,9 +174,7 @@ private fun TopBar(
             currentQuery = ""
         },
         title = {
-            if (windowSize.isRailShown) return@SearchTopBar
-
-            TopAppBarIcon()
+            TopAppBarTitle(title = R.string.page_modules)
         },
         scrollBehavior = scrollBehavior,
         actions = {
