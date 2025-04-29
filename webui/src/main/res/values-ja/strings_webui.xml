@@ -2,4 +2,8 @@
 <resources>
     <string name="requireNewVersion_cannot_load_webui">WebUI が読み込めません</string>
     <string name="requireNewVersion_refresh">更新</string>
+    <string name="requireNewVersion_try_the_following">次のことをお試しください:</string>
+    <string name="requireNewVersion_require_text">最低限必要: 最新の MMRL &gt;=</string>
+    <string name="requireNewVersion_try_the_following_one">Google Play または GitHub のリリースから MMRL を最新バージョンに更新する。</string>
+    <string name="requireNewVersion_try_the_following_two">回避策については、モジュールの開発者にお問い合わせください。</string>
 </resources>
