@@ -5,7 +5,7 @@ import com.dergoogler.mmrl.webui.webUiConfig
 data class ModId(var id: String) {
     val sanitizedId: String
         get() {
-            return id.replace(Regex("[^a-zA-Z0-9._]"), "_")
+            return id.replace(Regex("[^a-zA-Z0-9_]"), "_")
         }
 
     val sanitizedIdWithFile
