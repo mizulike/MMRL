@@ -56,35 +56,27 @@ fun ModulesList(
                 items = list,
                 key = { it.second.id }
             ) { (moduleState, module) ->
-
                 CompositionLocalProvider(
                     LocalModuleState provides moduleState,
                     LocalModule provides module
                 ) {
+                    val click = {
+                        navController.navigateSingleTopTo(
+                            route = RepositoriesScreen.View.route,
+                            args = mapOf(
+                                "moduleId" to module.id,
+                                "repoUrl" to arguments.panicString("repoUrl")
+                            )
+                        )
+                    }
 
                     when (menu.repoListMode) {
                         RepoListMode.Compact -> ModuleItemCompact(
-                            onClick = {
-                                navController.navigateSingleTopTo(
-                                    route = RepositoriesScreen.View.route,
-                                    args = mapOf(
-                                        "moduleId" to module.id,
-                                        "repoUrl" to arguments.panicString("repoUrl")
-                                    )
-                                )
-                            }
+                            onClick = click
                         )
 
                         RepoListMode.Detailed -> ModuleItemDetailed(
-                            onClick = {
-                                navController.navigateSingleTopTo(
-                                    route = RepositoriesScreen.View.route,
-                                    args = mapOf(
-                                        "moduleId" to module.id,
-                                        "repoUrl" to arguments.panicString("repoUrl")
-                                    )
-                                )
-                            }
+                            onClick = click
                         )
                     }
                 }
