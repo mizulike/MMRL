@@ -11,4 +11,4 @@ dependencyResolutionManagement {
     }
 }
 
-include(":hidden-api")
+include(":hidden-api", ":ext")
