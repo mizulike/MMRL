@@ -35,7 +35,7 @@ import com.dergoogler.mmrl.ui.navigation.BottomNavRoute
 import com.dergoogler.mmrl.ui.navigation.graphs.homeScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.modulesScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.repositoryScreen
-import com.dergoogler.mmrl.ui.navigation.graphs.searchScreen
+import com.dergoogler.mmrl.ui.navigation.graphs.settingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSnackbarHost
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -58,14 +58,14 @@ fun BottomBarMainScreen() {
                     BottomNavRoute.Home,
                     BottomNavRoute.Repository,
                     BottomNavRoute.Modules,
-                    BottomNavRoute.Search,
+                    BottomNavRoute.Settings,
                 )
             }
 
             return@derivedStateOf listOf(
                 BottomNavRoute.Home,
                 BottomNavRoute.Repository,
-                BottomNavRoute.Search,
+                BottomNavRoute.Settings,
             )
         }
     }
@@ -77,14 +77,12 @@ fun BottomBarMainScreen() {
                     Homepage.Home -> BottomNavRoute.Home.route
                     Homepage.Repositories -> BottomNavRoute.Repository.route
                     Homepage.Modules -> BottomNavRoute.Modules.route
-                    Homepage.Search -> BottomNavRoute.Search.route
                 }
             }
 
             return@derivedStateOf when (userPreferences.homepage) {
                 Homepage.Home -> BottomNavRoute.Home.route
                 Homepage.Repositories -> BottomNavRoute.Repository.route
-                Homepage.Search -> BottomNavRoute.Search.route
                 else -> BottomNavRoute.Home.route
             }
         }
@@ -110,7 +108,7 @@ fun BottomBarMainScreen() {
                 if (isRoot) {
                     modulesScreen()
                 }
-                searchScreen()
+                settingsScreen()
             }
         }
     }

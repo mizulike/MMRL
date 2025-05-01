@@ -174,7 +174,7 @@ private fun TopBar(
             currentQuery = ""
         },
         title = {
-            TopAppBarTitle(title = R.string.page_modules)
+            TopAppBarIcon()
         },
         scrollBehavior = scrollBehavior,
         actions = {

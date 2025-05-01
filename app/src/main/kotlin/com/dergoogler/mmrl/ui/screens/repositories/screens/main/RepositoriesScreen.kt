@@ -56,7 +56,9 @@ import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
-import com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle
+import com.dergoogler.mmrl.ui.component.TopAppBarIcon
+import com.dergoogler.mmrl.ui.navigation.MainRoute
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import timber.log.Timber
 import kotlin.reflect.KFunction1
 
@@ -263,17 +265,21 @@ private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
     setMenu: KFunction1<RepositoriesMenu, Unit>,
 ) {
+    val mainNavController = LocalMainNavController.current
+
     TopAppBar(
         title = {
-            TopAppBarTitle(title = R.string.page_repository)
+            TopAppBarIcon()
         },
         scrollBehavior = scrollBehavior,
         actions = {
             IconButton(
-                onClick = onUpdate
+                onClick = {
+                    mainNavController.navigate(MainRoute.GlobalSearch.route)
+                }
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.refresh),
+                    painter = painterResource(id = R.drawable.search),
                     contentDescription = null
                 )
             }
@@ -281,7 +287,7 @@ private fun TopBar(
                 onClick = onAdd
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.pencil_plus),
+                    painter = painterResource(id = R.drawable.plus),
                     contentDescription = null
                 )
             }

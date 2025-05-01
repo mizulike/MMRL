@@ -1,21 +1,10 @@
 package com.dergoogler.mmrl.ui.screens.settings
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
@@ -31,7 +20,7 @@ import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.ListRadioCheckItem
 import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
-import com.dergoogler.mmrl.ui.providable.LocalMainNavController
+import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.jakewharton.processphoenix.ProcessPhoenix
@@ -40,7 +29,7 @@ import com.jakewharton.processphoenix.ProcessPhoenix
 fun SettingsScreen() {
     val userPreferences = LocalUserPreferences.current
     val viewModel = LocalSettings.current
-    val mainNavController = LocalMainNavController.current
+    val navController = LocalNavController.current
     val browser = LocalUriHandler.current
     val context = LocalContext.current
     val confirm = rememberConfirm(context)
@@ -53,6 +42,7 @@ fun SettingsScreen() {
     )
 
     SettingsScaffold(
+        allowNavigateBack = false,
         title = R.string.page_settings
     ) {
         ListButtonItem(
@@ -60,7 +50,7 @@ fun SettingsScreen() {
             title = stringResource(id = R.string.settings_appearance),
             desc = stringResource(id = R.string.settings_appearance_desc),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.Appearance.route)
+                navController.navigateSingleTopTo(SettingsScreen.Appearance.route)
             }
         )
 
@@ -69,7 +59,7 @@ fun SettingsScreen() {
             title = stringResource(id = R.string.settings_security),
             desc = stringResource(id = R.string.settings_security_desc),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.Security.route)
+                navController.navigateSingleTopTo(SettingsScreen.Security.route)
             }
         )
 
@@ -78,7 +68,7 @@ fun SettingsScreen() {
             title = stringResource(id = R.string.settings_updates),
             desc = stringResource(id = R.string.settings_updates_desc),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.Updates.route)
+                navController.navigateSingleTopTo(SettingsScreen.Updates.route)
             }
         )
 
@@ -88,7 +78,7 @@ fun SettingsScreen() {
             title = stringResource(id = R.string.settings_modules),
             desc = stringResource(id = R.string.settings_modules_desc),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.Modules.route)
+                navController.navigateSingleTopTo(SettingsScreen.Modules.route)
             }
         )
 
@@ -97,7 +87,7 @@ fun SettingsScreen() {
             title = stringResource(id = R.string.settings_other),
             desc = stringResource(id = R.string.settings_other_desc),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.Other.route)
+                navController.navigateSingleTopTo(SettingsScreen.Other.route)
             }
         )
 
@@ -142,7 +132,7 @@ fun SettingsScreen() {
             title = stringResource(id = R.string.settings_changelog),
             desc = stringResource(id = R.string.settings_changelo_desc),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.Changelog.route)
+                navController.navigateSingleTopTo(SettingsScreen.Changelog.route)
             }
         )
 
@@ -151,7 +141,7 @@ fun SettingsScreen() {
             title = stringResource(id = R.string.settings_blacklist),
             desc = stringResource(id = R.string.settings_blacklist_desc),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.Blacklist.route)
+                navController.navigateSingleTopTo(SettingsScreen.Blacklist.route)
             }
         )
 
@@ -159,7 +149,7 @@ fun SettingsScreen() {
             icon = R.drawable.logs,
             title = stringResource(id = R.string.settings_log_viewer),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.LogViewer.route)
+                navController.navigateSingleTopTo(SettingsScreen.LogViewer.route)
             }
         )
 
@@ -168,7 +158,23 @@ fun SettingsScreen() {
             title = stringResource(id = R.string.settings_developer),
             desc = stringResource(id = R.string.settings_developer_desc),
             onClick = {
-                mainNavController.navigateSingleTopTo(SettingsScreen.Developer.route)
+                navController.navigateSingleTopTo(SettingsScreen.Developer.route)
+            }
+        )
+
+        ListButtonItem(
+            icon = R.drawable.spy,
+            title = stringResource(id = R.string.settings_privacy_policy),
+            onClick = {
+                browser.openUri(Const.PRIVACY_POLICY_URL)
+            }
+        )
+
+        ListButtonItem(
+            icon = R.drawable.files,
+            title = stringResource(id = R.string.settings_terms_of_service),
+            onClick = {
+                browser.openUri(Const.TERMS_OF_SERVICE_URL)
             }
         )
     }

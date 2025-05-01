@@ -64,7 +64,6 @@ import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListProgressBarItem
 import com.dergoogler.mmrl.ui.navigation.graphs.HomeScreen
-import com.dergoogler.mmrl.ui.providable.LocalDrawerState
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.screens.home.items.NonRootItem
@@ -73,7 +72,6 @@ import com.dergoogler.mmrl.ui.screens.home.items.RootItem
 import com.dergoogler.mmrl.ui.screens.settings.changelogs.items.ChangelogBottomSheet
 import com.dergoogler.mmrl.viewmodel.HomeViewModel
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 
@@ -85,6 +83,7 @@ fun HomeScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val context = LocalContext.current
+    val navController = LocalNavController.current
     val userPreferences = LocalUserPreferences.current
     val browser = LocalUriHandler.current
 
@@ -95,10 +94,26 @@ fun HomeScreen(
         }
     )
 
+    var openRebootSheet by remember { mutableStateOf(false) }
+    if (openRebootSheet) {
+        RebootBottomSheet(
+            onClose = { openRebootSheet = false })
+    }
+
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBar(
+                isProviderAlive = viewModel.isProviderAlive,
+                onInfoClick = {
+                    navController.navigateSingleTopTo(HomeScreen.About.route)
+                },
+                onHeartClick = {
+                    navController.navigateSingleTopTo(HomeScreen.ThankYou.route)
+                },
+                onRebootClick = {
+                    openRebootSheet = true
+                },
                 scrollBehavior = scrollBehavior
             )
         }, contentWindowInsets = WindowInsets.none
@@ -352,32 +367,40 @@ fun HomeScreen(
 
 @Composable
 private fun TopBar(
+    isProviderAlive: Boolean,
+    onRebootClick: () -> Unit = {},
+    onInfoClick: () -> Unit = {},
+    onHeartClick: () -> Unit = {},
     scrollBehavior: TopAppBarScrollBehavior,
 ) {
-    val drawerState = LocalDrawerState.current
-    val scope = rememberCoroutineScope()
-
-    CenterAlignedTopAppBar(
-        navigationIcon = {
-            IconButton(
-                onClick = {
-                    scope.launch {
-                        drawerState.open()
-                    }
+    TopAppBar(
+        title = {
+            TopAppBarIcon()
+        },
+        scrollBehavior = scrollBehavior,
+        actions = {
+            if (isProviderAlive) {
+                IconButton(onClick = onRebootClick) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.refresh),
+                        contentDescription = null
+                    )
                 }
-            ) {
+            }
+
+            IconButton(onClick = onHeartClick) {
                 Icon(
-                    painter = painterResource(id = R.drawable.menu),
+                    painter = painterResource(id = R.drawable.heart),
                     contentDescription = null
                 )
             }
-        },
-        title = {
-            TextWithIcon(
-                text = stringResource(id = R.string.app_name),
-                icon = com.dergoogler.mmrl.ui.R.drawable.mmrl_logo
-            )
-        },
-        scrollBehavior = scrollBehavior,
+
+            IconButton(onClick = onInfoClick) {
+                Icon(
+                    painter = painterResource(id = R.drawable.info_circle),
+                    contentDescription = null
+                )
+            }
+        }
     )
 }

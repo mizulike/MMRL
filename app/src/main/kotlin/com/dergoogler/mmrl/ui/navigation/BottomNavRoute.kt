@@ -31,10 +31,10 @@ enum class BottomNavRoute(
         iconFilled = R.drawable.keyframes_filled
     ),
 
-    Search(
-        route = "SearchScreen",
-        label = R.string.page_search,
-        icon = R.drawable.search,
-        iconFilled = R.drawable.search_filled
+    Settings(
+        route = "SettingsScreen",
+        label = R.string.page_settings,
+        icon = R.drawable.settings,
+        iconFilled = R.drawable.settings_filled
     ),
 }

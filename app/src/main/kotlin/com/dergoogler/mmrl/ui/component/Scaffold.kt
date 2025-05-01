@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -19,15 +18,16 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle;
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
-import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 
 @Composable
 fun SettingsScaffold(
     modifier: ScaffoldModifier = ScaffoldDefaults.settingsScaffoldScrollModifier,
     @StringRes title: Int,
+    allowNavigateBack: Boolean = true,
     actions: @Composable (RowScope.() -> Unit) = {},
     floatingActionButton: @Composable () -> Unit = {},
     absolute: @Composable (BoxScope.() -> Unit) = {},
@@ -36,6 +36,7 @@ fun SettingsScaffold(
     title = stringResource(id = title),
     modifier = modifier,
     actions = actions,
+    allowNavigateBack = allowNavigateBack,
     floatingActionButton = floatingActionButton,
     absolute = absolute,
     relative = relative
@@ -45,23 +46,34 @@ fun SettingsScaffold(
 fun SettingsScaffold(
     modifier: ScaffoldModifier = ScaffoldDefaults.settingsScaffoldScrollModifier,
     title: String,
+    allowNavigateBack: Boolean = true,
     actions: @Composable (RowScope.() -> Unit) = {},
     floatingActionButton: @Composable () -> Unit = {},
     absolute: @Composable (BoxScope.() -> Unit) = {},
     relative: @Composable (ColumnScope.() -> Unit),
 ) {
-    val mainNavController = LocalMainNavController.current
+    val navController = LocalNavController.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
 
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
-            NavigateUpTopBar(
-                title = title,
-                scrollBehavior = scrollBehavior,
-                navController = mainNavController,
-                actions = actions
-            )
+            if (allowNavigateBack) {
+                NavigateUpTopBar(
+                    title = title,
+                    scrollBehavior = scrollBehavior,
+                    navController = navController,
+                    actions = actions
+                )
+            } else {
+                TopAppBar(
+                    title = {
+                        TopAppBarTitle(title = title)
+                    },
+                    scrollBehavior = scrollBehavior,
+                    actions = actions
+                )
+            }
         },
         floatingActionButton = floatingActionButton,
         contentWindowInsets = WindowInsets.none
@@ -73,8 +85,7 @@ fun SettingsScaffold(
         ) {
             Column(
                 modifier = modifier.column
-                    .systemBarsPaddingEnd()
-                    .navigationBarsPadding(),
+                    .systemBarsPaddingEnd(),
             ) {
                 relative()
             }

@@ -33,7 +33,10 @@ enum class SettingsScreen(val route: String) {
     AppTheme("Settings_AppTheme")
 }
 
-fun NavGraphBuilder.settingsScreen() {
+fun NavGraphBuilder.settingsScreen() = navigation(
+    startDestination = SettingsScreen.Home.route,
+    route = BottomNavRoute.Settings.route
+) {
     composable(
         route = SettingsScreen.Home.route,
         enterTransition = { fadeIn() },
