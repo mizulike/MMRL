@@ -52,12 +52,13 @@ import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.dialog.TextFieldDialog
 import com.dergoogler.mmrl.ui.screens.repositories.items.BulkBottomSheet
 import com.dergoogler.mmrl.ext.isScrollingUp
+import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.none
-import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.navigation.MainRoute
+import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import timber.log.Timber
 import kotlin.reflect.KFunction1
@@ -65,10 +66,10 @@ import kotlin.reflect.KFunction1
 @Composable
 fun RepositoriesScreen(
     viewModel: RepositoriesViewModel,
-    bulkInstallViewModel: BulkInstallViewModel,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val list by viewModel.repos.collectAsStateWithLifecycle()
+    val bulkInstallViewModel = LocalBulkInstall.current
     val bulkModules by bulkInstallViewModel.bulkModules.collectAsStateWithLifecycle()
 
     val state by viewModel.screenState.collectAsStateWithLifecycle()
@@ -137,7 +138,6 @@ fun RepositoriesScreen(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             TopBar(
-                onUpdate = viewModel::getRepoAll,
                 setMenu = viewModel::setRepositoriesMenu,
                 scrollBehavior = scrollBehavior,
                 onAdd = { add = true }
@@ -260,7 +260,6 @@ private fun AddDialog(
 
 @Composable
 private fun TopBar(
-    onUpdate: () -> Unit,
     onAdd: () -> Unit,
     scrollBehavior: TopAppBarScrollBehavior,
     setMenu: KFunction1<RepositoriesMenu, Unit>,
@@ -275,7 +274,7 @@ private fun TopBar(
         actions = {
             IconButton(
                 onClick = {
-                    mainNavController.navigate(MainRoute.GlobalSearch.route)
+                    mainNavController.navigateSingleTopTo(MainRoute.GlobalSearch.route)
                 }
             ) {
                 Icon(

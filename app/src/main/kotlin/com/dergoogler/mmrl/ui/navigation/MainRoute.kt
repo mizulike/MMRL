@@ -5,6 +5,8 @@ import androidx.compose.animation.fadeOut
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
+import com.dergoogler.mmrl.ui.navigation.graphs.moduleScreen
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.screens.home.screens.AboutScreen
 import com.dergoogler.mmrl.ui.screens.home.screens.ThankYouScreen
 import com.dergoogler.mmrl.ui.screens.main.BottomBarMainScreen
@@ -52,4 +54,6 @@ fun NavGraphBuilder.mainScreen() {
     ) {
         ThankYouScreen()
     }
+
+    moduleScreen(LocalMainNavController)
 }

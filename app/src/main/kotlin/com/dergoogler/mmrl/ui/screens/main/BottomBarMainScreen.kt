@@ -9,11 +9,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -22,7 +19,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -37,18 +33,12 @@ import com.dergoogler.mmrl.ui.navigation.graphs.modulesScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.repositoryScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.settingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
-import com.dergoogler.mmrl.ui.providable.LocalSnackbarHost
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 
 @Composable
 fun BottomBarMainScreen() {
     val userPreferences = LocalUserPreferences.current
-    val bulkInstallViewModel: BulkInstallViewModel = hiltViewModel()
-
     val navController = LocalNavController.current
-    val snackbarHostState = remember { SnackbarHostState() }
-
     val isRoot = userPreferences.workingMode.isRoot && Platform.isAlive
 
     val mainScreens by remember(isRoot) {
@@ -92,24 +82,19 @@ fun BottomBarMainScreen() {
         bottomBar = {
             BottomNav(mainScreens)
         },
-        snackbarHost = { SnackbarHost(snackbarHostState) },
         contentWindowInsets = WindowInsets.none
     ) { paddingValues ->
-        CompositionLocalProvider(
-            LocalSnackbarHost provides snackbarHostState,
+        NavHost(
+            modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
+            navController = navController,
+            startDestination = startDestination
         ) {
-            NavHost(
-                modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),
-                navController = navController,
-                startDestination = startDestination
-            ) {
-                homeScreen()
-                repositoryScreen(bulkInstallViewModel = bulkInstallViewModel)
-                if (isRoot) {
-                    modulesScreen()
-                }
-                settingsScreen()
+            homeScreen()
+            repositoryScreen()
+            if (isRoot) {
+                modulesScreen()
             }
+            settingsScreen()
         }
     }
 }

@@ -9,17 +9,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ui.navigation.MainRoute
 import com.dergoogler.mmrl.ui.navigation.mainScreen
+import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalSnackbarHost
+import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 
 @Composable
 fun MainScreen() {
     val mainNavController = LocalMainNavController.current
     val snackbarHostState = remember { SnackbarHostState() }
+    val bulkInstallViewModel: BulkInstallViewModel = hiltViewModel()
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -27,6 +31,7 @@ fun MainScreen() {
     ) { paddingValues ->
         CompositionLocalProvider(
             LocalSnackbarHost provides snackbarHostState,
+            LocalBulkInstall provides bulkInstallViewModel
         ) {
             NavHost(
                 modifier = Modifier.padding(bottom = paddingValues.calculateBottomPadding()),

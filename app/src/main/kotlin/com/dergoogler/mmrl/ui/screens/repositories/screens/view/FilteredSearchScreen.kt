@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavHostController
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ui.component.HtmlText
 import com.dergoogler.mmrl.ui.component.Loading
@@ -41,6 +42,7 @@ import com.dergoogler.mmrl.ext.toEncodedUrl
 @Composable
 fun FilteredSearchScreen(
     viewModel: RepositoryViewModel,
+    navController: NavHostController,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val list by viewModel.online.collectAsStateWithLifecycle()
@@ -48,7 +50,6 @@ fun FilteredSearchScreen(
     val userPrefs = LocalUserPreferences.current
     val context = LocalContext.current
 
-    val navController = LocalNavController.current
     val arguments = LocalPanicArguments.current
 
     val type = arguments.panicString("type")

@@ -5,12 +5,14 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.local.BulkModule
 import com.dergoogler.mmrl.model.online.VersionItem
+import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -92,9 +94,12 @@ class BulkInstallViewModel @Inject constructor(
                 val listener = object : DownloadService.IDownloadListener {
                     override fun getProgress(value: Float) {}
                     override fun onFileExists() {
-                        Toast.makeText(context,
-                            context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.file_already_exists), Toast.LENGTH_SHORT
+                        ).show()
                     }
+
                     override fun onSuccess() {
                         val file = downloadPath.resolve(filename)
                         downloadDeferred.complete(file.toUri())

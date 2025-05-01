@@ -10,6 +10,7 @@ import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.model.online.OtherSources
 import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalModule
 import com.dergoogler.mmrl.ui.providable.LocalModuleState
 import com.dergoogler.mmrl.ui.providable.LocalNavController
@@ -20,7 +21,7 @@ fun ModulesList(
     list: List<OtherSources>,
     state: LazyListState,
 ) {
-    val navController = LocalNavController.current
+    val navController = LocalMainNavController.current
 
     LazyColumn(
         state = state,

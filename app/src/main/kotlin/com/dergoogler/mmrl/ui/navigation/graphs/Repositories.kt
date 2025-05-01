@@ -4,8 +4,10 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
@@ -13,6 +15,7 @@ import androidx.navigation.navDeepLink
 import androidx.navigation.navigation
 import com.dergoogler.mmrl.ext.panicArguments
 import com.dergoogler.mmrl.ui.navigation.BottomNavRoute
+import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.ExploreRepositoriesScreen
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.ExploreRepositoryScreen
@@ -21,7 +24,6 @@ import com.dergoogler.mmrl.ui.screens.repositories.screens.repository.Repository
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.FilteredSearchScreen
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.NewViewScreen
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.ViewDescriptionScreen
-import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoryViewModel
@@ -36,9 +38,7 @@ enum class RepositoriesScreen(val route: String) {
     ExploreRepository("ExploreRepository/{repo}")
 }
 
-fun NavGraphBuilder.repositoryScreen(
-    bulkInstallViewModel: BulkInstallViewModel,
-) = navigation(
+fun NavGraphBuilder.repositoryScreen() = navigation(
     startDestination = RepositoriesScreen.Home.route,
     route = BottomNavRoute.Repository.route
 ) {
@@ -50,8 +50,7 @@ fun NavGraphBuilder.repositoryScreen(
         val viewModel = hiltViewModel<RepositoriesViewModel>()
 
         RepositoriesScreen(
-            viewModel = viewModel,
-            bulkInstallViewModel = bulkInstallViewModel
+            viewModel = viewModel
         )
     }
 
@@ -80,6 +79,37 @@ fun NavGraphBuilder.repositoryScreen(
         }
     }
 
+    composable(
+        route = RepositoriesScreen.ExploreRepositories.route,
+        enterTransition = { scaleIn() + fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        ExploreRepositoriesScreen()
+    }
+
+    composable(
+        route = RepositoriesScreen.ExploreRepository.route,
+        arguments = listOf(
+            navArgument("repo") { type = NavType.StringType },
+        ),
+        enterTransition = { scaleIn() + fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        val arguments = it.panicArguments
+
+        CompositionLocalProvider(
+            LocalPanicArguments provides arguments
+        ) {
+            ExploreRepositoryScreen()
+        }
+    }
+
+    moduleScreen()
+}
+
+fun NavGraphBuilder.moduleScreen(
+    navController: ProvidableCompositionLocal<NavHostController> = LocalNavController,
+) {
     composable(
         route = RepositoriesScreen.View.route,
         arguments = listOf(
@@ -111,9 +141,9 @@ fun NavGraphBuilder.repositoryScreen(
             LocalPanicArguments provides arguments,
         ) {
             NewViewScreen(
+                navController = navController.current,
                 viewModel = moduleViewModel,
-                repositoryViewModel = repositoryViewModel,
-                bulkInstallViewModel = bulkInstallViewModel
+                repositoryViewModel = repositoryViewModel
             )
         }
     }
@@ -137,6 +167,7 @@ fun NavGraphBuilder.repositoryScreen(
             LocalPanicArguments provides arguments
         ) {
             ViewDescriptionScreen(
+                navController = navController.current,
                 viewModel = moduleViewModel
             )
         }
@@ -171,34 +202,9 @@ fun NavGraphBuilder.repositoryScreen(
             LocalPanicArguments provides arguments
         ) {
             FilteredSearchScreen(
+                navController = navController.current,
                 viewModel = repositoryViewModel
             )
         }
     }
-
-    composable(
-        route = RepositoriesScreen.ExploreRepositories.route,
-        enterTransition = { scaleIn() + fadeIn() },
-        exitTransition = { fadeOut() }
-    ) {
-        ExploreRepositoriesScreen()
-    }
-
-    composable(
-        route = RepositoriesScreen.ExploreRepository.route,
-        arguments = listOf(
-            navArgument("repo") { type = NavType.StringType },
-        ),
-        enterTransition = { scaleIn() + fadeIn() },
-        exitTransition = { fadeOut() }
-    ) {
-        val arguments = it.panicArguments
-
-        CompositionLocalProvider(
-            LocalPanicArguments provides arguments
-        ) {
-            ExploreRepositoryScreen()
-        }
-    }
-
 }

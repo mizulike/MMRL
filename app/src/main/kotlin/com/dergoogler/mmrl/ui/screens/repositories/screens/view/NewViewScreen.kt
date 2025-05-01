@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -71,6 +72,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.local.BulkModule
@@ -104,7 +106,6 @@ import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.LicenseIte
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.VersionsItem
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.ViewTrackBottomSheet
 import com.dergoogler.mmrl.ui.screens.settings.blacklist.items.BlacklistBottomSheet
-import com.dergoogler.mmrl.viewmodel.BulkInstallViewModel
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import com.dergoogler.mmrl.viewmodel.RepositoryViewModel
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
@@ -120,21 +121,20 @@ import com.dergoogler.mmrl.ext.repoId
 import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ext.takeTrue
-import com.dergoogler.mmrl.model.online.OtherSources
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.OtherSourcesItem
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.uuid.ExperimentalUuidApi
 
-@OptIn(ExperimentalUuidApi::class)
 @Composable
 fun NewViewScreen(
     viewModel: ModuleViewModel,
     repositoryViewModel: RepositoryViewModel,
-    bulkInstallViewModel: BulkInstallViewModel,
+    navController: NavHostController,
 ) {
+    val bulkInstallViewModel = LocalBulkInstall.current
     val userPreferences = LocalUserPreferences.current
     val repositoryMenu = userPreferences.repositoryMenu
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -142,8 +142,6 @@ fun NewViewScreen(
     val local = viewModel.local
 
     val repositoryList by repositoryViewModel.onlineAll.collectAsStateWithLifecycle()
-
-    val navController = LocalNavController.current
 
     val lastVersionItem = viewModel.lastVersionItem
     val context = LocalContext.current
@@ -987,20 +985,17 @@ fun NewViewScreen(
                     }
                 }
                 ModuleInfoListItem(
-                    infoCanDiffer = true,
                     title = R.string.view_module_version,
                     desc = "${module.version} (${module.versionCode})"
                 )
                 lastVersionItem?.let {
                     ModuleInfoListItem(
-                        infoCanDiffer = true,
                         title = R.string.view_module_last_updated,
                         desc = it.timestamp.toFormattedDateSafely
                     )
                 }
                 module.size?.let {
                     ModuleInfoListItem(
-                        infoCanDiffer = true,
                         title = R.string.view_module_file_size,
                         desc = it.toFormattedFileSize()
                     )
@@ -1028,7 +1023,6 @@ fun NewViewScreen(
 
                 manager.min?.let {
                     ModuleInfoListItem(
-                        infoCanDiffer = true,
                         title = R.string.view_module_required_root_version,
                         desc = it.toString()
                     )
@@ -1066,7 +1060,6 @@ fun NewViewScreen(
 
                 module.track.added?.let {
                     ModuleInfoListItem(
-                        infoCanDiffer = true,
                         title = R.string.view_module_added_on,
                         desc = it.toFormattedDateSafely
                     )
@@ -1097,21 +1090,7 @@ fun NewViewScreen(
                     }
                 }
 
-//                MarkdownText(
-//                    modifier = Modifier.padding(16.dp),
-//                    style = MaterialTheme.typography.bodySmall,
-//                    text = stringResource(
-//                        R.string.view_module_mod_infos_disclaimer,
-//                        MaterialTheme.colorScheme.surfaceTint.toArgb()
-//                    ),
-//                    onTagClick = { id ->
-//                        when (id) {
-//                            "track" -> {
-//                                viewTrackBottomSheet = true
-//                            }
-//                        }
-//                    }
-//                )
+                Spacer(modifier = Modifier.navigationBarsPadding())
             }
         }
     }

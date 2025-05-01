@@ -1,7 +1,6 @@
 package com.dergoogler.mmrl.ui.screens.repositories.screens.view
 
 import android.annotation.SuppressLint
-import android.graphics.drawable.ColorDrawable
 import android.view.ViewGroup
 import android.webkit.JavascriptInterface
 import android.webkit.WebResourceRequest
@@ -56,6 +55,7 @@ import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 import androidx.core.graphics.drawable.toDrawable
+import androidx.navigation.NavHostController
 
 const val launchUrl = "https://mui.kernelsu.org/internal/assets/markdown.html"
 
@@ -63,10 +63,10 @@ const val launchUrl = "https://mui.kernelsu.org/internal/assets/markdown.html"
 @Composable
 fun ViewDescriptionScreen(
     viewModel: ModuleViewModel,
+    navController: NavHostController,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val browser = LocalUriHandler.current
-    val navController = LocalNavController.current
     val context = LocalContext.current
     val colorScheme = MaterialTheme.colorScheme
 
