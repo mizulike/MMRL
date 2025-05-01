@@ -42,7 +42,7 @@ fun RepositoryMenu(
         onClick = { open = true }
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.menu_2),
+            painter = painterResource(id = R.drawable.filter_outlined),
             contentDescription = null
         )
 
