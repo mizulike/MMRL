@@ -56,6 +56,7 @@ import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
+import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.navigation.MainRoute
 import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
@@ -268,7 +269,7 @@ private fun TopBar(
 
     TopAppBar(
         title = {
-            TopAppBarIcon()
+            TopAppBarEventIcon()
         },
         scrollBehavior = scrollBehavior,
         actions = {

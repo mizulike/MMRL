@@ -81,5 +81,11 @@ fun AppearanceScreen() {
                 viewModel.setHomepage(it.value)
             }
         )
+
+        ListSwitchItem(
+            title = stringResource(id = R.string.settings_enable_toolbar_events),
+            checked = userPreferences.enableToolbarEvents,
+            onChange = viewModel::setEnableToolbarEvents
+        )
     }
 }

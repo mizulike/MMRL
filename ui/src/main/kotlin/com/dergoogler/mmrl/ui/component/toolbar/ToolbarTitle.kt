@@ -17,23 +17,61 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Constraints
 import com.dergoogler.mmrl.ext.nullable
 
+/**
+ * Displays a title and an optional subtitle in a toolbar.
+ *
+ * This composable provides a convenient way to display localized title and subtitle text in a toolbar.
+ * It takes string resource IDs as input and handles the string resolution internally.
+ *
+ * @param modifier The modifier to be applied to the layout.
+ * @param title The string resource ID for the main title.
+ * @param subtitle The optional string resource ID for the subtitle. If null, no subtitle is displayed.
+ *
+ * @sample
+ * ```kotlin
+ *  ToolbarTitle(
+ *    title = R.string.my_app_name,
+ *    subtitle = R.string.my_app_subtitle
+ * )
+ * ```
+ *
+ * @sample
+ * ```kotlin
+ * ToolbarTitle(
+ *     title = R.string.only_title
+ * )
+ * ```
+ */
 @Composable
-fun TopAppBarTitle(
+fun ToolbarTitle(
     modifier: Modifier = Modifier,
     @StringRes title: Int,
     @StringRes subtitle: Int? = null,
-) = TopAppBarTitle(
+) = ToolbarTitle(
     title = stringResource(title),
     subtitle = subtitle.nullable { stringResource(it) },
     modifier = modifier,
 )
 
+/**
+ * Displays a title and an optional subtitle in a layout suitable for a toolbar.
+ *
+ * This composable provides a convenient way to render a primary title with an optional secondary
+ * subtitle, typically used within a toolbar or header area. It automatically applies appropriate
+ * text styles and handles text truncation for long titles or subtitles.
+ *
+ * @param modifier Modifier to be applied to the layout.
+ * @param title The main title text to display.
+ * @param subtitle An optional subtitle text to display below the title. If null, no subtitle will be shown.
+ *
+ * @see ToolbarTitleLayout
+ */
 @Composable
-fun TopAppBarTitle(
+fun ToolbarTitle(
     modifier: Modifier = Modifier,
     title: String,
     subtitle: String? = null,
-) = TopAppBarTitleLayout(
+) = ToolbarTitleLayout(
     modifier = modifier,
     title = {
         Text(
@@ -58,12 +96,12 @@ fun TopAppBarTitle(
 )
 
 @Composable
-private fun TopAppBarTitleLayout(
+internal fun ToolbarTitleLayout(
     modifier: Modifier = Modifier,
     title: @Composable () -> Unit,
     subtitle: (@Composable () -> Unit)? = null,
 ) {
-    val measurePolicy = remember { TopAppBarTitleMeasurePolicy() }
+    val measurePolicy = remember { ToolbarTitleMeasurePolicy() }
 
     Layout(
         contents = listOf(
@@ -75,7 +113,7 @@ private fun TopAppBarTitleLayout(
     )
 }
 
-private class TopAppBarTitleMeasurePolicy : MultiContentMeasurePolicy {
+private class ToolbarTitleMeasurePolicy : MultiContentMeasurePolicy {
     override fun MeasureScope.measure(
         measurables: List<List<Measurable>>,
         constraints: Constraints,

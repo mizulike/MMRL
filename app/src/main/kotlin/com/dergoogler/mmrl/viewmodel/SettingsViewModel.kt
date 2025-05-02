@@ -240,4 +240,10 @@ class SettingsViewModel @Inject constructor(
             userPreferencesRepository.setEnableEruda(value)
         }
     }
+
+    fun setEnableToolbarEvents(value: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setEnableToolbarEvents(value)
+        }
+    }
 }

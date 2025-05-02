@@ -395,4 +395,5 @@
     <string name="drawer_tools">Tools</string>
     <string name="drawer_support">Support</string>
     <string name="drawer_general">General</string>
+    <string name="settings_enable_toolbar_events">Enable Toolbar Events</string>
 </resources>

@@ -26,7 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ui.R
 
-@Deprecated("Use TopAppBarTitle instead", replaceWith = ReplaceWith("com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle(text = text, modifier = modifier)"))
+@Deprecated("Use ToolbarTitle instead", replaceWith = ReplaceWith("com.dergoogler.mmrl.ui.component.toolbar.ToolbarTitle(text = text, modifier = modifier)"))
 @Composable
 fun TopAppBarTitle(
     text: String,
@@ -45,6 +45,7 @@ fun TopAppBarTitle(
     )
 }
 
+@Deprecated("Use ToolbarIcon instead", replaceWith = ReplaceWith("com.dergoogler.mmrl.ui.component.toolbar.ToolbarIcon(icon = icon, modifier = modifier)"))
 @Composable
 fun TopAppBarIcon(
     modifier: Modifier = Modifier,

@@ -18,9 +18,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
-import com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle;
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
+import com.dergoogler.mmrl.ui.component.toolbar.ToolbarTitle
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 
 @Composable
@@ -68,7 +68,7 @@ fun SettingsScaffold(
             } else {
                 TopAppBar(
                     title = {
-                        TopAppBarTitle(title = title)
+                        ToolbarTitle(title = title)
                     },
                     scrollBehavior = scrollBehavior,
                     actions = actions

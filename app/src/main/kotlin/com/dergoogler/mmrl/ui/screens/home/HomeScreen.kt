@@ -57,6 +57,7 @@ import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.CenterAlignedTopAppBar
 import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.TopAppBar
+import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
 import com.dergoogler.mmrl.ui.component.card.Card
@@ -375,7 +376,7 @@ private fun TopBar(
 ) {
     TopAppBar(
         title = {
-            TopAppBarIcon()
+            TopAppBarEventIcon()
         },
         scrollBehavior = scrollBehavior,
         actions = {

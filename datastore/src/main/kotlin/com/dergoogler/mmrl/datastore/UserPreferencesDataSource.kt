@@ -282,11 +282,18 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
-
     suspend fun setEnableEruda(value: Boolean) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
                 enableErudaConsole = value
+            )
+        }
+    }
+
+    suspend fun setEnableToolbarEvents(value: Boolean) = withContext(Dispatchers.IO) {
+        userPreferences.updateData {
+            it.copy(
+                enableToolbarEvents = value
             )
         }
     }

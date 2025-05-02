@@ -25,11 +25,11 @@ import com.dergoogler.mmrl.datastore.model.RepositoryMenu
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.PageIndicator
 import com.dergoogler.mmrl.ui.component.SearchTopBar
-import com.dergoogler.mmrl.ui.component.toolbar.TopAppBarTitle
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.panicString
+import com.dergoogler.mmrl.ui.component.toolbar.ToolbarTitle
 import com.dergoogler.mmrl.viewmodel.RepositoryViewModel
 
 @Composable
@@ -115,7 +115,7 @@ private fun TopBar(
             onCloseSearch()
             currentQuery = ""
         }, title = {
-            TopAppBarTitle(
+            ToolbarTitle(
                 title = arguments.panicString("repoName")
             )
         },
