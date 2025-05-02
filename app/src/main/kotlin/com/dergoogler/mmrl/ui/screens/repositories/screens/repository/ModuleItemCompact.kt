@@ -25,11 +25,10 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ext.nullable
-import com.dergoogler.mmrl.model.online.OnlineModule
-import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.Logo
-import com.dergoogler.mmrl.ui.component.TextWithIcon
+import com.dergoogler.mmrl.ui.component.text.TextWithIcon
+import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.ui.providable.LocalModule
 import com.dergoogler.mmrl.ui.providable.LocalModuleState
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -86,17 +85,19 @@ fun ModuleItemCompact(
             modifier = Modifier.weight(1f)
         ) {
             TextWithIcon(
-                style = MaterialTheme.typography.titleSmall.copy(
-                    fontWeight = FontWeight.Bold
+                style = TextWithIconDefaults.style.copy(
+                    textStyle = MaterialTheme.typography.titleSmall.copy(
+                        fontWeight = FontWeight.Bold
+                    ),
+                    iconTint = MaterialTheme.colorScheme.surfaceTint,
+                    iconScaling = 1.0f,
+                    spacing = 8f,
+                    rightIcon = true,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 ),
                 text = module.name,
                 icon = isVerified nullable R.drawable.rosette_discount_check,
-                tint = MaterialTheme.colorScheme.surfaceTint,
-                rightIcon = true,
-                iconScalingFactor = 1.0f,
-                spacing = 8f,
-                maxLines = 2,
-                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.height(2.dp))

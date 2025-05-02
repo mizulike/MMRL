@@ -91,7 +91,7 @@ import com.dergoogler.mmrl.ui.component.Cover
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.Logo
 import com.dergoogler.mmrl.ui.component.PermissionItem
-import com.dergoogler.mmrl.ui.component.TextWithIcon
+import com.dergoogler.mmrl.ui.component.text.TextWithIcon
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.ListCollapseItem
@@ -122,6 +122,7 @@ import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.OtherSourcesItem
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
@@ -468,15 +469,17 @@ fun NewViewScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         TextWithIcon(
-                            style = MaterialTheme.typography.titleLarge,
+                            style = TextWithIconDefaults.style.copy(
+                                textStyle = MaterialTheme.typography.titleLarge,
+                                iconTint = MaterialTheme.colorScheme.surfaceTint,
+                                iconScaling = 1.0f,
+                                spacing = 8f,
+                                rightIcon = true,
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            ),
                             text = module.name,
                             icon = module.isVerified nullable R.drawable.rosette_discount_check,
-                            tint = MaterialTheme.colorScheme.surfaceTint,
-                            rightIcon = true,
-                            iconScalingFactor = 1.0f,
-                            spacing = 8f,
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
                         )
 
                         Spacer(modifier = Modifier.height(4.dp))

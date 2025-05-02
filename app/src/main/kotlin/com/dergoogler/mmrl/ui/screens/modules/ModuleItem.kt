@@ -35,13 +35,14 @@ import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.local.versionDisplay
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.component.LabelItem
-import com.dergoogler.mmrl.ui.component.TextWithIcon
+import com.dergoogler.mmrl.ui.component.text.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.card.CardDefaults.cardStyle
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
@@ -113,7 +114,7 @@ fun ModuleItem(
                 TextWithIcon(
                     text = module.name,
                     icon = module.features.webui nullable icon,
-                    style = MaterialTheme.typography.titleSmall
+                    style = TextWithIconDefaults.style.copy(textStyle = MaterialTheme.typography.titleSmall)
                 )
 
                 Text(

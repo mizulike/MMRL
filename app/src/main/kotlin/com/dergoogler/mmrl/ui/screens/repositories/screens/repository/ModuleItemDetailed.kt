@@ -16,21 +16,21 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.model.online.OnlineModule
-import com.dergoogler.mmrl.model.state.OnlineState
 import com.dergoogler.mmrl.ui.component.Cover
 import com.dergoogler.mmrl.ui.component.LabelItem
-import com.dergoogler.mmrl.ui.component.TextWithIcon
+import com.dergoogler.mmrl.ui.component.text.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.card.CardDefaults
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.fadingEdge
 import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.ui.providable.LocalModule
 import com.dergoogler.mmrl.ui.providable.LocalModuleState
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
@@ -91,18 +91,22 @@ fun ModuleItemDetailed(
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
+
+
                 TextWithIcon(
-                    style = MaterialTheme.typography.titleSmall.copy(
-                        textDecoration = decoration
+                    style = TextWithIconDefaults.style.copy(
+                        textStyle = MaterialTheme.typography.titleSmall.copy(
+                            textDecoration = decoration
+                        ),
+                        iconTint = MaterialTheme.colorScheme.surfaceTint,
+                        iconScaling = 1.0f,
+                        spacing = 8f,
+                        rightIcon = true,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                     ),
                     text = module.name,
                     icon = isVerified nullable R.drawable.rosette_discount_check,
-                    tint = MaterialTheme.colorScheme.surfaceTint,
-                    rightIcon = true,
-                    iconScalingFactor = 1.0f,
-                    spacing = 8f,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
                 )
 
                 Text(
