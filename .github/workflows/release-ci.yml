@@ -11,6 +11,11 @@ on:
               required: false
               default: 'No message.'
               description: 'Message'
+            spoof_build:
+              description: 'Spoof Build'
+              required: true
+              default: false
+              type: boolean 
             send_telegram:
               description: 'Release to Telegram'
               required: true
@@ -45,6 +50,12 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Spoof Package ID
+        if: github.event.inputs.spoof_build == 'true'
+        run: |
+          chmod +x spoof
+          ./spoof
+ 
       - name: Parse input
         run: |
             BUILD_TYPE_CASED=$(echo "${{ inputs.buildType }}" | sed 's/^\(.\)/\L\1/')
@@ -178,14 +189,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Find AAB
-        if: github.event.inputs.send_playstore == 'true'
+        if: github.event.inputs.send_playstore == 'true' && github.event.inputs.spoof_build == 'false'
         id: find_aab
         run: |
           AAB_PATH=$(find app/build/outputs/bundle/playstore -name "*.aab" | head -n 1)
           echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
 
       - name: Upload to Google Play
-        if: github.event.inputs.send_playstore == 'true'
+        if: github.event.inputs.send_playstore == 'true' && github.event.inputs.spoof_build == 'false'
         uses: r0adkll/upload-google-play@v1.1.3
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
