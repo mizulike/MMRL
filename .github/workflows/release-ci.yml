@@ -160,49 +160,53 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-    
+
       - name: Download Un-Spoofed APK
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.build.outputs.release-name }}
+          path: unspoofed-apk
 
       - name: Download Spoofed APK
         uses: actions/download-artifact@v4
         with:
-          name: ${{ needs.spoofed-build.outputs.release-name }}
+          name: spoofed-${{ needs.spoofed-build.outputs.release-name }}
+          path: spoofed-apk
 
       - name: Download Un-Spoofed Mappings
         uses: actions/download-artifact@v4
         with:
-          name: mappings
+          name: mapping
+          path: mapping
 
       - name: Download Spoofed Mappings
         uses: actions/download-artifact@v4
         with:
-          name: spoofed-mappings
+          name: spoofed-mapping
+          path: spoofed-mapping
 
       - name: Find normal APK
         id: find_normal_apk
         run: |
-          APK_PATH=$(find ${{ needs.build.outputs.release-name }} -name "*.apk" | head -n 1)
+          APK_PATH=$(find unspoofed-apk -name "*.apk" | head -n 1)
           echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Find spoofed APK
         id: find_spoofed_apk
         run: |
-          APK_PATH=$(find ${{ needs.spoofed-build.outputs.release-name }} -name "*.apk" | head -n 1)
-          echo "APK_PATH=APK_PATH" >> $GITHUB_OUTPUT
+          APK_PATH=$(find spoofed-apk -name "*.apk" | head -n 1)
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Find normal mapping file
         id: normal_mapping
         run: |
-          MAPPING_PATH=$(find mappings -name "mapping.txt" | head -n 1)
+          MAPPING_PATH=$(find mapping -name "mapping.txt" | head -n 1)
           echo "MAPPING_PATH=$MAPPING_PATH" >> $GITHUB_OUTPUT
 
       - name: Find spoofed mapping file
         id: spoofed_mapping
         run: |
-          MAPPING_PATH=$(find spoofed-mappings -name "mapping.txt" | head -n 1)
+          MAPPING_PATH=$(find spoofed-mapping -name "mapping.txt" | head -n 1)
           echo "MAPPING_PATH=$MAPPING_PATH" >> $GITHUB_OUTPUT
 
       - name: Get commit info and build timestamp
@@ -233,7 +237,7 @@ jobs:
               [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           files: |
             ${{ steps.find_normal_apk.outputs.APK_PATH }}
-            ${{ steps.find_spoofed_apk.outputs.SPOOFED_APK_PATH }}
+            ${{ steps.find_spoofed_apk.outputs.APK_PATH }}
         env:
           API_ID: ${{ secrets.API_ID }}
           API_HASH: ${{ secrets.API_HASH }}
@@ -243,14 +247,14 @@ jobs:
         if: github.event.inputs.send_github == 'true'
         id: check_release
         run: |
-            if gh release view v${{ env.VERSION }} --repo ${{ github.repository }} > /dev/null 2>&1; then
-              echo "exists=true" >> $GITHUB_OUTPUT
-            else
-              echo "exists=false" >> $GITHUB_OUTPUT
-            fi
+          if gh release view v${{ env.VERSION }} --repo ${{ github.repository }} > /dev/null 2>&1; then
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        
       - name: Create GitHub Release
         if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         id: create_release
@@ -261,18 +265,18 @@ jobs:
           body: |
             ${{ inputs.title }}
             #ci_${{ env.VERSION }}
-
+        
             Build on ${{ env.BUILD_DATE }}.
-
+        
             ## What's new?
-
+        
             ${{ inputs.message }}
-
+        
             Type: ${{ inputs.buildType }}
             [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        
       - name: Upload normal APK to GitHub Release
         if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         uses: actions/upload-release-asset@v1
@@ -283,7 +287,7 @@ jobs:
           asset_content_type: application/vnd.android.package-archive
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        
       - name: Upload spoofed APK to GitHub Release
         if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         uses: actions/upload-release-asset@v1
@@ -294,7 +298,7 @@ jobs:
           asset_content_type: application/vnd.android.package-archive
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        
       - name: Upload normal mapping to GitHub Release
         if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         uses: actions/upload-release-asset@v1
@@ -305,7 +309,7 @@ jobs:
           asset_content_type: text/plain
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+        
       - name: Upload spoofed mapping to GitHub Release
         if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         uses: actions/upload-release-asset@v1
