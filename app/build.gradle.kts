@@ -101,6 +101,7 @@ android {
 
         create("spoofed") {
             initWith(buildTypes.getByName("release"))
+            resValue("string", "app_name", generateRandomName())
             matchingFallbacks += listOf("debug", "release")
             versionNameSuffix = "-spoofed"
         }
