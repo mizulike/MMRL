@@ -43,7 +43,7 @@ import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.ActionViewModel
-import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
+import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -80,7 +80,7 @@ fun ActionScreen(
     val allowCancel = userPreferences.allowCancelAction
 
     val backHandler = {
-        if (allowCancel && shell != null) {
+        if (allowCancel) {
             when {
                 event.isLoading && shell.isAlive -> cancelAction = true
                 event.isFinished -> (context as MMRLComponentActivity).finish()
@@ -129,15 +129,6 @@ fun ActionScreen(
         onConfirm = {
             scope.launch {
                 cancelAction = false
-                
-                if (shell == null) {
-                    snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.failed_to_close_the_action_execution),
-                        duration = SnackbarDuration.Short
-                    )
-                    return@launch
-                }
-                
                 shell.close()
             }
         }

@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.webui.model
 
+import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.webui.webUiConfig
 import com.squareup.moshi.JsonClass
 
@@ -71,4 +72,26 @@ data class WebUIConfig(
     val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
     val autoStatusBarsStyle: Boolean = true
-)
+) {
+    companion object {
+        /**
+         * Converts a [ModId] to a [webUiConfig] string representation.
+         *
+         * This function takes a [ModId] and returns a string that represents the
+         * configuration for the web UI, specifically utilizing the provided Mod ID.
+         * It's a concise way to generate the configuration based solely on the Mod ID.
+         *
+         * @receiver The [ModId] to convert.
+         * @return A string representing the web UI configuration for the given [ModId].
+         * @see webUiConfig
+         *
+         * @sample
+         * ```kotlin
+         * val modId = ModId("my-mod")
+         * val webUiConfigString = modId.toWebUIConfig()
+         * println(webUiConfigString) // Output will be "webUiConfig(ModId(id=my-mod))"
+         * ```
+         */
+        fun ModId.toWebUIConfig() = webUiConfig(this)
+    }
+}

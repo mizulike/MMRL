@@ -1,19 +1,19 @@
 package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
+import android.os.Build
 import androidx.lifecycle.viewModelScope
+import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
-import com.dergoogler.mmrl.model.local.LocalModule
-import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dergoogler.mmrl.platform.content.State
-import com.dergoogler.mmrl.platform.stub.IShellCallback
+import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.utils.initPlatform
-import dev.dergoogler.mmrl.compat.viewmodel.TerminalViewModel
+import com.topjohnwu.superuser.CallbackList
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -49,6 +49,24 @@ class ActionViewModel @Inject constructor(
                 return@launch
             }
 
+            if (platform.isNotValid) {
+                event = Event.FAILED
+                log(R.string.non_root_platform_is_not_supported)
+                return@launch
+            }
+
+            if (moduleManager == null) {
+                event = Event.FAILED
+                log(R.string.module_manager_is_null)
+                return@launch
+            }
+
+            if (fileManager == null) {
+                event = Event.FAILED
+                log(R.string.file_manager_is_null)
+                return@launch
+            }
+
             if (module == null) {
                 event = Event.FAILED
                 log(R.string.module_not_found)
@@ -81,32 +99,50 @@ class ActionViewModel @Inject constructor(
         withContext(Dispatchers.IO) {
             val actionResult = CompletableDeferred<Boolean>()
 
-            val callback = object : IShellCallback.Stub() {
-                override fun onStdout(msg: String) {
+            val stdout = object : CallbackList<String?>() {
+                override fun onAddElement(msg: String?) {
+                    if (msg == null) return
+
                     viewModelScope.launch {
                         log(msg)
                     }
                 }
+            }
 
-                override fun onStderr(msg: String) {
+            val stderr = object : CallbackList<String?>() {
+                override fun onAddElement(msg: String?) {
+                    if (msg == null) return
+
                     viewModelScope.launch {
                         logs.add(msg)
                     }
                 }
-
-                override fun onSuccess(module: LocalModule?) {
-                    actionResult.complete(true)
-                }
-
-                override fun onFailure(module: LocalModule?) {
-                    log(R.string.execution_failed_try_to_use_shell_for_the_action_execution_settings_module_use_shell_for_module_action)
-                    actionResult.complete(false)
-                }
             }
 
-            val action = Platform.moduleManager.action(modId, legacy, callback)
-            shell = action
-            action.exec()
+            val cmds = if (legacy || platform.isMagisk) {
+                listOf(
+                    "export PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:\$PATH",
+                    "export MMRL=true",
+                    "export MMRL_VER=${BuildConfig.VERSION_NAME}",
+                    "export MMRL_VER_CODE=${BuildConfig.VERSION_CODE}",
+                    "export BOOTMODE=true",
+                    "export ARCH=${Build.SUPPORTED_ABIS[0]}",
+                    "export API=${Build.VERSION.SDK_INT}",
+                    "export IS64BIT=${Build.SUPPORTED_64_BIT_ABIS.isNotEmpty()}",
+                    "busybox sh /data/adb/modules/$modId/action.sh"
+                )
+            } else {
+                listOf(moduleManager!!.getActionCommand(ModId(modId)))
+            }
+
+            val result = shell.newJob().add(*cmds.toTypedArray()).to(stdout, stderr).exec()
+
+            if (result.isSuccess) {
+                actionResult.complete(true)
+            } else {
+                log(R.string.execution_failed_try_to_use_shell_for_the_action_execution_settings_module_use_shell_for_module_action)
+                actionResult.complete(false)
+            }
 
             return@withContext actionResult.await()
         }

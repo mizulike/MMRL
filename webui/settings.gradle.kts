@@ -12,3 +12,4 @@ dependencyResolutionManagement {
 }
 
 include(":ui")
+include(":platform")

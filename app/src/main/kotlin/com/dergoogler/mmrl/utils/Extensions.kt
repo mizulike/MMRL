@@ -1,8 +1,6 @@
 package com.dergoogler.mmrl.utils
 
-import java.net.URI
 import androidx.compose.runtime.Composable
-import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.ext.toFormattedDateSafely
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.topjohnwu.superuser.Shell

@@ -18,6 +18,7 @@ import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.webui.Insets
 import com.dergoogler.mmrl.webui.R
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
+import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUIConfig
 import com.dergoogler.mmrl.webui.moshi
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.squareup.moshi.JsonAdapter

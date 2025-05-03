@@ -1,14 +1,12 @@
 package com.dergoogler.mmrl.platform.manager
 
 import com.dergoogler.mmrl.platform.file.FileManager
-import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.content.NullableBoolean
 import com.dergoogler.mmrl.platform.ksu.KsuNative
 import com.dergoogler.mmrl.platform.ksu.getKernelVersion
+import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
-import com.dergoogler.mmrl.platform.stub.IShell
-import com.dergoogler.mmrl.platform.stub.IShellCallback
 import com.dergoogler.mmrl.platform.util.Shell.submit
 
 open class KernelSUModuleManager(
@@ -129,36 +127,13 @@ open class KernelSUModuleManager(
         }
     }
 
-    override fun action(modId: String, legacy: Boolean, callback: IShellCallback): IShell =
-        if (legacy) {
-            val env = mutableMapOf(
-                "ASH_STANDALONE" to "1",
-                "KSU" to "true",
-                "KSU_VER" to version,
-                "KSU_VER_CODE" to versionCode.toString(),
-            )
+    override fun getInstallCommand(path: String): String = "ksud module install $path"
+    override fun getActionCommand(id: ModId): String = "ksud module action ${id.id}"
 
-            action(
-                cmd = listOf("busybox", "sh", "/data/adb/modules/$modId/action.sh"),
-                env = env,
-                callback = callback
-            )
-        } else {
-            action(
-                cmd = listOf("ksud", "module", "action", modId),
-                callback = callback
-            )
-        }
-
-
-    override fun install(
-        path: String,
-        bulkModules: List<BulkModule>,
-        callback: IShellCallback,
-    ): IShell = install(
-        cmd = listOf("ksud", "module", "install", path),
-        path = path,
-        bulkModules = bulkModules,
-        callback = callback
+    override fun getActionEnvironment(): List<String> = listOf(
+        "export ASH_STANDALONE=1",
+        "export KSU=true",
+        "export KSU_VER=${version}",
+        "export KSU_VER_CODE=${versionCode}",
     )
 }

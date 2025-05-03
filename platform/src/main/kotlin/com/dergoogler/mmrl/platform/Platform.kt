@@ -371,6 +371,7 @@ enum class Platform(val id: String) {
     val isNotAPatch get() = !isAPatch
 
     val isValid get() = this != NonRoot
+    val isNotValid get() = !isValid
     val isKernelSuOrNext get() = this == KernelSU || this == KsuNext
 
     val current get() = id

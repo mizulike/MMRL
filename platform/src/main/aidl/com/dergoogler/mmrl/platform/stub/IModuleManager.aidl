@@ -4,9 +4,8 @@ import com.dergoogler.mmrl.platform.content.LocalModule;
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility;
 import com.dergoogler.mmrl.platform.content.BulkModule;
 import com.dergoogler.mmrl.platform.content.NullableBoolean;
-import com.dergoogler.mmrl.platform.stub.IShellCallback;
+import com.dergoogler.mmrl.platform.model.ModId;
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback;
-import com.dergoogler.mmrl.platform.stub.IShell;
 
 interface IModuleManager {
     String getManagerName();
@@ -16,13 +15,13 @@ interface IModuleManager {
     ModuleCompatibility getModuleCompatibility();
     LocalModule getModuleById(String id);
     LocalModule getModuleInfo(String zipPath);
-    IShell getShell(in List<String> command, in Map<String, String> env, in LocalModule module, IShellCallback callback);
     oneway void reboot(String reason);
     oneway void enable(String id, boolean useShell, IModuleOpsCallback callback);
     oneway void disable(String id, boolean useShell, IModuleOpsCallback callback);
     oneway void remove(String id, boolean useShell, IModuleOpsCallback callback);
-    IShell install(String path, in List<BulkModule> bulkModule, IShellCallback callback);
-    IShell action(String modId, boolean legacy, IShellCallback callback);
+    String getInstallCommand(String path);
+    String getActionCommand(in ModId id);
+    List<String> getActionEnvironment();
 
     // General
     int getSuperUserCount();

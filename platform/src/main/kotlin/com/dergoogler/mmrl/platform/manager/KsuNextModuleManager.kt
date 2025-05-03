@@ -3,8 +3,6 @@ package com.dergoogler.mmrl.platform.manager
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.file.FileManager
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
-import com.dergoogler.mmrl.platform.stub.IShell
-import com.dergoogler.mmrl.platform.stub.IShellCallback
 import com.dergoogler.mmrl.platform.util.Shell.submit
 
 open class KsuNextModuleManager(
@@ -41,25 +39,11 @@ open class KsuNextModuleManager(
         }
     }
 
-    override fun action(modId: String, legacy: Boolean, callback: IShellCallback): IShell =
-        if (legacy) {
-            val env = mutableMapOf(
-                "ASH_STANDALONE" to "1",
-                "KSU" to "true",
-                "KSU_NEXT" to "true",
-                "KSU_VER" to version,
-                "KSU_VER_CODE" to versionCode.toString(),
-            )
-
-            action(
-                cmd = listOf("busybox", "sh", "/data/adb/modules/$modId/action.sh"),
-                env = env,
-                callback = callback
-            )
-        } else {
-            action(
-                cmd = listOf("ksud", "module", "action", modId),
-                callback = callback
-            )
-        }
+    override fun getActionEnvironment(): List<String> = listOf(
+        "export ASH_STANDALONE=1",
+        "export KSU=true",
+        "export KSU_NEXT=true",
+        "export KSU_VER=${version}",
+        "export KSU_VER_CODE=${versionCode}",
+    )
 }

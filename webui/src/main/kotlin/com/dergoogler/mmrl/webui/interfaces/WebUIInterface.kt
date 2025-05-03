@@ -5,7 +5,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.webkit.WebView
-import com.dergoogler.mmrl.webui.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId
 
 interface WebUIConsole {
     fun error(message: String, vararg args: String?)

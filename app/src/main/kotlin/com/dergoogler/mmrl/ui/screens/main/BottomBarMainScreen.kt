@@ -145,7 +145,7 @@ private fun BottomNav(
                 onClick = {
                     navController.navigatePopUpTo(
                         route = screen.route,
-                        restoreState = !selected
+                        restoreState = false
                     )
                 }
             )

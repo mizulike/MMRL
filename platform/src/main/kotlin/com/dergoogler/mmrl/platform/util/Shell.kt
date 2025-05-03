@@ -1,31 +1,10 @@
 package com.dergoogler.mmrl.platform.util
 
 import android.util.Log
-import com.dergoogler.mmrl.platform.content.LocalModule
 import com.dergoogler.mmrl.platform.model.ShellResult
-import com.dergoogler.mmrl.platform.stub.IShellCallback
-
-
 
 object Shell {
-    const val TAG = "Shell"
-
-    init {
-        System.loadLibrary("mmrl-shell")
-    }
-
-    external fun nativeCreateShell(): Long
-    external fun nativeIsAlive(ptr: Long): Boolean
-    external fun nativeExec(
-        ptr: Long,
-        command: Array<String>,
-        module: LocalModule?,
-        callback: IShellCallback,
-        env: Map<String, String>
-    )
-
-    external fun nativeClose(ptr: Long)
-
+    private const val TAG = "Shell"
 
     fun String.exec(): Result<String> =
         runCatching {
@@ -99,5 +78,4 @@ object Shell {
             callback(result)
         }.start()
     }
-
 }

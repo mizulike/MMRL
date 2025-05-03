@@ -6,7 +6,7 @@ import android.webkit.WebView
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
-import com.dergoogler.mmrl.webui.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId
 
 @SuppressLint("JavascriptInterface")
 internal fun <T : WebUIInterface> WebView.addJavascriptInterface(

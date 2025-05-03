@@ -1,8 +1,10 @@
-package com.dergoogler.mmrl.webui.model
+package com.dergoogler.mmrl.platform.model
 
-import com.dergoogler.mmrl.webui.webUiConfig
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 
-data class ModId(var id: String) {
+@Parcelize
+data class ModId(var id: String) : Parcelable {
     val sanitizedId: String
         get() {
             return id.replace(Regex("[^a-zA-Z0-9_]"), "_")
@@ -19,7 +21,5 @@ data class ModId(var id: String) {
             }File"
         }
 
-    val sanitizedIdWithFileInputStream = "${sanitizedIdWithFile}InputStream"
-
-    fun toWebUIConfig() = webUiConfig(this)
+    val sanitizedIdWithFileInputStream get(): String = "${sanitizedIdWithFile}InputStream"
 }

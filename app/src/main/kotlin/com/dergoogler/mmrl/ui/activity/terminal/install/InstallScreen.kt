@@ -50,7 +50,7 @@ import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.InstallViewModel
-import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
+import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import kotlinx.coroutines.launch
 
 @Composable
@@ -94,7 +94,7 @@ fun InstallScreen(
     }
 
     val backHandler = {
-        if (allowCancel && shell != null) {
+        if (allowCancel) {
             when {
                 event.isLoading && shell.isAlive -> cancelInstall = true
                 event.isFinished -> (context as MMRLComponentActivity).finish()
@@ -154,15 +154,6 @@ fun InstallScreen(
         onConfirm = {
             scope.launch {
                 cancelInstall = false
-
-                if (shell == null) {
-                    snackbarHostState.showSnackbar(
-                        message = context.getString(R.string.failed_to_close_the_installer),
-                        duration = SnackbarDuration.Short
-                    )
-                    return@launch
-                }
-
                 shell.close()
             }
         }

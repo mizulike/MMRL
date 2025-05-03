@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.WindowManager
 import com.dergoogler.mmrl.ext.tmpDir
-import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
-import dev.dergoogler.mmrl.compat.activity.setBaseContent
 import timber.log.Timber
 
 class ScreenshotsPreviewActivity : MMRLComponentActivity() {

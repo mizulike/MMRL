@@ -19,13 +19,6 @@ add_library(mmrl-file-manager SHARED
 )
 target_link_libraries(mmrl-file-manager ${log-lib})
 
-add_library(mmrl-shell SHARED
-        shell/jni.cpp
-        shell/ShellWrapper.cpp
-        include/logging.hpp
-)
-target_link_libraries(mmrl-shell ${log-lib})
-
 add_library(mmrl-kernelsu SHARED
         kernelsu/ksu.cpp
         kernelsu/jni.cpp

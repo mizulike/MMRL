@@ -1,4 +1,4 @@
-package dev.dergoogler.mmrl.compat.viewmodel
+package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import android.content.BroadcastReceiver
@@ -7,21 +7,28 @@ import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
+import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const.CLEAR_CMD
 import com.dergoogler.mmrl.app.Event
+import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.model.local.LocalModule
+import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.stub.IFileManager
+import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.ui.activity.terminal.Actions
 import com.dergoogler.mmrl.ui.activity.terminal.ShellBroadcastReceiver
+import com.dergoogler.mmrl.utils.createRootShell
 import dev.dergoogler.mmrl.compat.BuildCompat
-import com.dergoogler.mmrl.platform.stub.IShell
+import com.topjohnwu.superuser.Shell
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -31,7 +38,6 @@ import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.util.Locale
 import javax.inject.Inject
-
 
 open class TerminalViewModel @Inject constructor(
     application: Application,
@@ -43,7 +49,7 @@ open class TerminalViewModel @Inject constructor(
     internal val console = mutableStateListOf<String>()
     var event by mutableStateOf(Event.LOADING)
         internal set
-    var shell by mutableStateOf<IShell?>(null)
+    var shell by mutableStateOf(createRootShell())
         internal set
 
     private val localFlow = MutableStateFlow<LocalModule?>(null)
@@ -81,8 +87,37 @@ open class TerminalViewModel @Inject constructor(
         receiver = null
     }
 
+    override fun onCleared() {
+        shell.close()
+        super.onCleared()
+    }
+
     private fun IntentFilter.addAction(action: Actions) {
         addAction("${context.packageName}.${action.name}")
+    }
+
+    val platform: Platform = Platform.get(Platform.NonRoot) {
+        this.platform
+    }
+
+    val moduleManager: IModuleManager? = Platform.get(null) {
+            this.moduleManager
+        }
+
+    val fileManager: IFileManager? = Platform.get(null) {
+            this.fileManager
+        }
+
+    fun reboot(reason: String = "") {
+        if (moduleManager == null) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.unable_to_perform_reboot_task), Toast.LENGTH_SHORT
+            ).show()
+            return
+        }
+
+        moduleManager.reboot(reason)
     }
 
     suspend fun writeLogsTo(uri: Uri) = withContext(Dispatchers.IO) {
@@ -94,7 +129,6 @@ open class TerminalViewModel @Inject constructor(
             Timber.e(it)
         }
     }
-
 
     private val localizedEnglishResources
         get(): Resources {

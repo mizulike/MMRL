@@ -1,7 +1,7 @@
 package com.dergoogler.mmrl.webui
 
 import com.dergoogler.mmrl.platform.file.SuFile
-import com.dergoogler.mmrl.webui.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 
 /**

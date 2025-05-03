@@ -3,22 +3,23 @@ package com.dergoogler.mmrl.viewmodel
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.viewModelScope
+import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.compat.MediaStoreCompat.copyToDir
 import com.dergoogler.mmrl.compat.MediaStoreCompat.getPathForUri
-import com.dergoogler.mmrl.ext.isNotNull
+import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.tmpDir
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.dergoogler.mmrl.platform.stub.IShellCallback
 import com.dergoogler.mmrl.utils.initPlatform
-import dev.dergoogler.mmrl.compat.viewmodel.TerminalViewModel
+import com.topjohnwu.superuser.CallbackList
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -42,10 +43,6 @@ class InstallViewModel @Inject constructor(
         Timber.d("InstallViewModel initialized")
     }
 
-    fun reboot(reason: String = "") {
-        Platform.moduleManager.reboot(reason)
-    }
-
     fun installModules(uris: List<Uri>) = viewModelScope.launch {
         val userPreferences = userPreferencesRepository.data.first()
         event = Event.LOADING
@@ -54,6 +51,24 @@ class InstallViewModel @Inject constructor(
         if (!initPlatform(context, userPreferences.workingMode.toPlatform())) {
             event = Event.FAILED
             log(R.string.service_is_not_available)
+            return@launch
+        }
+
+        if (platform.isNotValid) {
+            event = Event.FAILED
+            log(R.string.non_root_platform_is_not_supported)
+            return@launch
+        }
+
+        if (moduleManager == null) {
+            event = Event.FAILED
+            log(R.string.module_manager_is_null)
+            return@launch
+        }
+
+        if (fileManager == null) {
+            event = Event.FAILED
+            log(R.string.file_manager_is_null)
             return@launch
         }
 
@@ -89,7 +104,7 @@ class InstallViewModel @Inject constructor(
                 return@launch
             }
 
-            com.dergoogler.mmrl.platform.content.BulkModule(
+            BulkModule(
                 id = info.id,
                 name = info.name
             )
@@ -117,7 +132,7 @@ class InstallViewModel @Inject constructor(
 
     private suspend fun loadAndInstallModule(
         uri: Uri,
-        bulkModules: List<com.dergoogler.mmrl.platform.content.BulkModule>,
+        bulkModules: List<BulkModule>,
     ): Boolean =
         withContext(Dispatchers.IO) {
             val path = context.getPathForUri(uri)
@@ -131,7 +146,7 @@ class InstallViewModel @Inject constructor(
 
             Platform.moduleManager.getModuleInfo(path)?.let {
                 devLog(R.string.install_view_module_info, it.toString())
-                return@withContext install(path, bulkModules)
+                return@withContext install(path, bulkModules, it)
             }
 
             log(R.string.copying_zip_to_temp_directory)
@@ -170,7 +185,8 @@ class InstallViewModel @Inject constructor(
 
     private suspend fun install(
         zipPath: String,
-        bulkModules: List<com.dergoogler.mmrl.platform.content.BulkModule>,
+        bulkModules: List<BulkModule>,
+        module: LocalModule? = null,
     ): Boolean =
         withContext(Dispatchers.IO) {
             val zipFile = File(zipPath)
@@ -178,48 +194,61 @@ class InstallViewModel @Inject constructor(
 
             val installationResult = CompletableDeferred<Boolean>()
 
-            val callback = object : IShellCallback.Stub() {
-                override fun onStdout(msg: String) {
+            val cmds = listOf(
+                "export ASH_STANDALONE=1",
+                "export MMRL=true",
+                "export MMRL_VER=${BuildConfig.VERSION_NAME}",
+                "export MMRL_VER_CODE=${BuildConfig.VERSION_CODE}",
+                "export BULK_MODULES=\"${bulkModules.joinToString(" ") { it.id }}\"",
+                moduleManager!!.getInstallCommand(zipPath)
+            )
+
+            val stdout = object : CallbackList<String?>() {
+                override fun onAddElement(msg: String?) {
+                    if (msg == null) return
+
                     viewModelScope.launch {
                         log(msg)
                     }
                 }
+            }
 
-                override fun onStderr(msg: String) {
+            val stderr = object : CallbackList<String?>() {
+                override fun onAddElement(msg: String?) {
+                    if (msg == null) return
+
                     viewModelScope.launch {
                         if (userPreferences.developerMode) console.add(msg)
                         logs.add(msg)
                     }
                 }
-
-                override fun onSuccess(module: LocalModule?) {
-                    module?.let(::insertLocal)
-                    if (userPreferences.deleteZipFile) {
-                        deleteBySu(zipPath)
-                    }
-                    installationResult.complete(true)
-                }
-
-                override fun onFailure(module: LocalModule?) {
-                    if (module != null && shell.isNotNull() && !shell!!.isAlive) {
-                        runCatching {
-                            Platform.fileManager.delete("/data/adb/modules_update/${module.id}")
-                        }.onFailure {
-                            Timber.e(it)
-                            log(R.string.failed_to_remove_updated_folder)
-                        }.onSuccess {
-                            devLog(R.string.removed_updated_folder)
-                        }
-                    }
-                    installationResult.complete(false)
-                }
             }
 
             log(R.string.install_view_installing, zipFile.name)
 
-            val installer = Platform.moduleManager.install(zipPath, bulkModules, callback)
-            shell = installer
-            installer.exec()
+            val result = shell.newJob().add(*cmds.toTypedArray()).to(stdout, stderr).exec()
+
+            if (result.isSuccess) {
+                module.nullable(::insertLocal)
+                if (userPreferences.deleteZipFile) {
+                    deleteBySu(zipPath)
+                }
+                installationResult.complete(true)
+            } else {
+                if (module != null && !shell.isAlive) {
+                    runCatching {
+                        fileManager.nullable {
+                            it.delete("/data/adb/modules_update/${module.id}")
+                        }
+                    }.onFailure {
+                        Timber.e(it)
+                        log(R.string.failed_to_remove_updated_folder)
+                    }.onSuccess {
+                        devLog(R.string.removed_updated_folder)
+                    }
+                }
+                installationResult.complete(false)
+            }
 
             return@withContext installationResult.await()
         }

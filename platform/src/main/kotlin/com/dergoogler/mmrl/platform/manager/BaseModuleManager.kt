@@ -1,14 +1,10 @@
 package com.dergoogler.mmrl.platform.manager
 
-import android.os.Build
-import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.content.LocalModule
 import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 import com.dergoogler.mmrl.platform.content.State
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
-import com.dergoogler.mmrl.platform.stub.IShell
-import com.dergoogler.mmrl.platform.stub.IShellCallback
 import com.dergoogler.mmrl.platform.util.Shell.exec
 import org.apache.commons.compress.archivers.zip.ZipFile
 import java.io.File
@@ -163,77 +159,6 @@ abstract class BaseModuleManager(
         runCatching {
             toInt()
         }.getOrDefault(defaultValue)
-
-    internal fun install(
-        cmd: List<String>,
-        path: String,
-        bulkModules: List<BulkModule>,
-        callback: IShellCallback,
-        env: Map<String, String> = emptyMap(),
-        versionCode: Int = -1,
-        versionName: String = "unknown",
-    ): IShell {
-        val mEnv = mutableMapOf(
-            "MMRL" to "true",
-            "MMRL_VER" to versionName,
-            "MMRL_VER_CODE" to versionCode.toString(),
-            "BULK_MODULES" to bulkModules.joinToString(" ") { it.id },
-        )
-
-        mEnv.putAll(env)
-
-        val module = getModuleInfo(path)
-
-        return getShell(cmd, mEnv, module, callback)
-    }
-
-    internal fun action(
-        cmd: List<String>,
-        callback: IShellCallback,
-        env: Map<String, String> = emptyMap(),
-        versionCode: Int = -1,
-        versionName: String = "unknown",
-    ): IShell {
-        val mEnv = mutableMapOf(
-            "MMRL" to "true",
-            "MMRL_VER" to versionName,
-            "MMRL_VER_CODE" to versionCode.toString(),
-            "BOOTMODE" to "true",
-            "ARCH" to Build.SUPPORTED_ABIS[0],
-            "API" to Build.VERSION.SDK_INT.toString(),
-            "IS64BIT" to Build.SUPPORTED_64_BIT_ABIS.isNotEmpty().toString()
-        )
-
-        mEnv.putAll(env)
-
-
-        return this.getShell(cmd, mEnv, null, callback)
-    }
-
-    override fun getShell(
-        command: List<String>,
-        env: Map<String, String>,
-        module: LocalModule?,
-        callback: IShellCallback,
-    ): IShell =
-        object : IShell.Stub() {
-            val pid = com.dergoogler.mmrl.platform.util.Shell.nativeCreateShell()
-
-            override fun isAlive(): Boolean =
-                com.dergoogler.mmrl.platform.util.Shell.nativeIsAlive(pid)
-
-            override fun exec() {
-                com.dergoogler.mmrl.platform.util.Shell.nativeExec(
-                    pid,
-                    command.toTypedArray(),
-                    module,
-                    callback,
-                    env
-                )
-            }
-
-            override fun close() = com.dergoogler.mmrl.platform.util.Shell.nativeClose(pid)
-        }
 
     companion object {
         const val PROP_FILE = "module.prop"

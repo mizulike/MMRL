@@ -2,7 +2,6 @@ package com.dergoogler.mmrl.ui.activity.webui
 
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
@@ -22,18 +21,16 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
-import com.dergoogler.mmrl.ui.activity.webui.interfaces.VersionInterface
 import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.utils.initPlatform
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
-import com.dergoogler.mmrl.webui.model.JavaScriptInterface
-import com.dergoogler.mmrl.webui.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.webui.screen.WebUIScreen
 import com.dergoogler.mmrl.webui.util.rememberWebUIOptions
 import com.dergoogler.mmrl.webui.webUiConfig
-import dev.dergoogler.mmrl.compat.activity.MMRLComponentActivity
-import dev.dergoogler.mmrl.compat.activity.setBaseContent
+import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
+import com.dergoogler.mmrl.ui.activity.setBaseContent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
