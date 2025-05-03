@@ -42,6 +42,7 @@ on:
 
 jobs:
   spoofed-build:
+    name: Build spoofed APK
     runs-on: ubuntu-latest
     outputs:
       spoofed_apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
@@ -97,6 +98,7 @@ jobs:
             path: app/build/outputs/apk/spoofed/*.apk
 
   build:
+    name: Build un-spoofed APK
     runs-on: ubuntu-latest
     outputs:
       apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
@@ -152,6 +154,7 @@ jobs:
             path: app/build/outputs/apk/${{ env.BUILD_TYPE_CASED }}/*.apk
 
   release:
+    name: Release on Telegram or GitHub
     runs-on: ubuntu-latest
     needs: [ build, spoofed-build ]
     steps:
@@ -274,6 +277,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   playstore-build:
+    name: Build for Google Play Store and release
     runs-on: ubuntu-latest
     if: github.event.inputs.send_playstore == 'true'
     steps:
