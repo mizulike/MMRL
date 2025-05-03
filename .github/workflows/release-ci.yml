@@ -104,6 +104,11 @@ jobs:
       apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
       mapping_path: ${{ steps.normal_mapping.outputs.MAPPING_PATH }}
     steps:
+      - name: Parse input
+        run: |
+            BUILD_TYPE_CASED=$(echo "${{ inputs.buildType }}" | sed 's/^\(.\)/\L\1/')
+            echo "BUILD_TYPE_CASED=$BUILD_TYPE_CASED" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
@@ -123,18 +128,18 @@ jobs:
         if: success() && github.ref == 'refs/heads/master'
         id: release-name
         run: |
-            name=`ls app/build/outputs/apk/${{ inputs.buildType }}/*.apk | awk -F '(/|.apk)' '{print $6}'` && echo "name=${name}" >> $GITHUB_OUTPUT
+            name=`ls app/build/outputs/apk/${{ env.BUILD_TYPE_CASED }}/*.apk | awk -F '(/|.apk)' '{print $6}'` && echo "name=${name}" >> $GITHUB_OUTPUT
 
       - name: Find APK
         id: find_apk
         run: |
-          APK_PATH=$(find app/build/outputs/apk/${{ inputs.buildType }} -name "*.apk" | head -n 1)
+          APK_PATH=$(find app/build/outputs/apk/${{ env.BUILD_TYPE_CASED }} -name "*.apk" | head -n 1)
           echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Find mapping file
         id: normal_mapping
         run: |
-          MAPPING_PATH=$(find app/build/outputs/mapping/${{ inputs.buildType }} -name "mapping.txt" | head -n 1)
+          MAPPING_PATH=$(find app/build/outputs/mapping/${{ env.BUILD_TYPE_CASED }} -name "mapping.txt" | head -n 1)
           echo "MAPPING_PATH=$MAPPING_PATH" >> $GITHUB_OUTPUT
 
       - name: Upload normal mapping as artifact
@@ -148,7 +153,7 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
             name: ${{ steps.release-name.outputs.name }}
-            path: app/build/outputs/apk/${{ inputs.buildType }}/*.apk
+            path: app/build/outputs/apk/${{ env.BUILD_TYPE_CASED }}/*.apk
 
   release:
     name: Release on Telegram or GitHub
