@@ -55,6 +55,7 @@ import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.CenterAlignedTopAppBar
+import com.dergoogler.mmrl.ui.component.SELinuxStatus
 import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
@@ -242,11 +243,8 @@ fun HomeScreen(
                     }
                 )
 
-                ListItem(
-                    contentPaddingValues = listItemContentPaddingValues,
-                    icon = R.drawable.shield_bolt,
-                    title = stringResource(id = R.string.selinux_status),
-                    desc = "context.seLinuxStatus"
+                SELinuxStatus(
+                    contentPaddingValues = listItemContentPaddingValues
                 )
 
                 if (viewModel.platform.isKernelSuOrNext) {
