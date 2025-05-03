@@ -44,8 +44,9 @@ import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.MarkdownText
 import com.dergoogler.mmrl.ui.component.NavigationBarsSpacer
 import com.dergoogler.mmrl.ui.component.TopAppBar
-import com.dergoogler.mmrl.ui.component.TextWithIcon
-import com.dergoogler.mmrl.ui.component.TopAppBarTitle
+import com.dergoogler.mmrl.ui.component.text.TextWithIcon
+import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
+import com.dergoogler.mmrl.ui.component.toolbar.ToolbarTitle
 
 @Composable
 fun CrashHandlerScreen(
@@ -127,14 +128,16 @@ fun CrashHandlerScreen(
                         onClick = { helperSheet = true }
                     ) {
                         TextWithIcon(
-                            rightIcon = true,
+                            style = TextWithIconDefaults.style.copy(
+                                rightIcon = true,
+                                textStyle = MaterialTheme.typography.labelLarge
+                            ),
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.Center,
-                            rowModifier = Modifier.padding(
+                            modifier = Modifier.padding(
                                 vertical = 8.dp,
                                 horizontal = 24.dp
                             ),
-                            style = MaterialTheme.typography.labelLarge,
                             icon = R.drawable.help_outlined,
                             text = stringResource(R.string.help)
                         )
@@ -219,7 +222,7 @@ private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
 ) = TopAppBar(
     title = {
-        TopAppBarTitle(text = stringResource(id = R.string.we_hit_a_brick_crash))
+        ToolbarTitle(title = R.string.we_hit_a_brick_crash)
     },
     scrollBehavior = scrollBehavior,
 )
