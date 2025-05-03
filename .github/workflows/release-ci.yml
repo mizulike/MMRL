@@ -53,8 +53,9 @@ jobs:
       - name: Spoof Package ID
         if: github.event.inputs.spoof_build == 'true'
         run: |
-          chmod +x spoof
-          ./spoof
+            ls
+            chmod +x spoof
+            ./spoof
  
       - name: Parse input
         run: |
