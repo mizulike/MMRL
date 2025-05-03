@@ -47,9 +47,6 @@ jobs:
       spoofed_apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
       spoofed_mapping_path: ${{ steps.find_mapping.outputs.MAPPING_PATH }}
     steps:
-      - name: Parse input
-        run: echo "BUILD_TYPE_CASED=$(echo '${{ inputs.buildType }}' | sed 's/^\(.*\)$/\L\1/')" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
@@ -66,24 +63,24 @@ jobs:
         uses: gradle/actions/setup-gradle@v4.3.1
 
       - name: Build Spoofed APK
-        run: chmod 755 gradlew && ./gradlew assemble${{ inputs.buildType }}
+        run: chmod 755 gradlew && ./gradlew assembleSpoofed
 
       - name: Get release name
         if: success() && github.ref == 'refs/heads/master'
         id: release-name
         run: |
-            name=`ls app/build/outputs/apk/${{ env.BUILD_TYPE_CASED }}/*.apk | awk -F '(/|.apk)' '{print $6}'` && echo "name=${name}" >> $GITHUB_OUTPUT
+            name=`ls app/build/outputs/apk/spoofed/*.apk | awk -F '(/|.apk)' '{print $6}'` && echo "name=${name}" >> $GITHUB_OUTPUT
 
       - name: Find APK
         id: find_apk
         run: |
-          APK_PATH=$(find app/build/outputs/apk/${{ env.BUILD_TYPE_CASED }} -name "*.apk" | head -n 1)
+          APK_PATH=$(find app/build/outputs/apk/spoofed -name "*.apk" | head -n 1)
           echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Find mapping file
         id: find_mapping
         run: |
-          MAPPING_PATH=$(find app/build/outputs/mapping/${{ env.BUILD_TYPE_CASED }} -name "mapping.txt" | head -n 1)
+          MAPPING_PATH=$(find app/build/outputs/mapping/spoofed -name "mapping.txt" | head -n 1)
           echo "MAPPING_PATH=$MAPPING_PATH" >> $GITHUB_OUTPUT
 
       - name: Upload spoofed mapping as artifact
@@ -97,7 +94,7 @@ jobs:
         uses: actions/upload-artifact@v4.6.2
         with:
             name: spoofed-${{ steps.release-name.outputs.name }}
-            path: app/build/outputs/apk/${{ env.BUILD_TYPE_CASED }}/*.apk
+            path: app/build/outputs/apk/spoofed/*.apk
 
   build:
     runs-on: ubuntu-latest
