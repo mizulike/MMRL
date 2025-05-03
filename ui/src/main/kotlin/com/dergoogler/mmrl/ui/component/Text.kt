@@ -214,7 +214,7 @@ fun BulletList(
     }
 }
 
-@Deprecated("Use TextWithIcon instead", ReplaceWith("com.dergoogler.mmrl.ui.component.text.TextWithIcon"))
+@Deprecated("Use TextRow instead", ReplaceWith("com.dergoogler.mmrl.ui.component.text.TextRow"))
 @Composable
 fun TextWithIcon(
     text: (@Composable RowScope.(TextStyle) -> Unit)? = null,

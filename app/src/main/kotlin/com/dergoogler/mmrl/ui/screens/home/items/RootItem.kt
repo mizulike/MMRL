@@ -26,6 +26,7 @@ import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.text.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.card.CardDefaults
+import com.dergoogler.mmrl.ui.component.text.TextRow
 import com.dergoogler.mmrl.viewmodel.HomeViewModel
 
 @Composable
@@ -97,26 +98,10 @@ internal fun RootItem(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-
-                TextWithIcon(
-                    text = {
-                        Text(
-                            text = if (isAlive) {
-                                stringResource(
-                                    id = R.string.settings_root_access,
-                                    stringResource(id = R.string.settings_root_granted)
-                                )
-                            } else {
-                                stringResource(
-                                    id = R.string.settings_root_access,
-                                    stringResource(id = R.string.settings_root_none)
-                                )
-                            },
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.onSecondaryContainer
-                        )
-                    },
-                    icon = (developerMode && platform.isKernelSuOrNext) nullable {
+                TextRow(
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically,
+                    leadingContent = (developerMode && platform.isKernelSuOrNext) nullable {
                         LabelItem(
                             text = when (viewModel.isLkmMode.value) {
                                 null -> "LTS"
@@ -124,8 +109,24 @@ internal fun RootItem(
                                 else -> "GKI"
                             }
                         )
-                    }
-                )
+                    },
+                ) {
+                    Text(
+                        text = if (isAlive) {
+                            stringResource(
+                                id = R.string.settings_root_access,
+                                stringResource(id = R.string.settings_root_granted)
+                            )
+                        } else {
+                            stringResource(
+                                id = R.string.settings_root_access,
+                                stringResource(id = R.string.settings_root_none)
+                            )
+                        },
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
+                }
 
                 Text(
                     text = if (isAlive) {
