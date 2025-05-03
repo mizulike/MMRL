@@ -127,7 +127,7 @@ open class KernelSUModuleManager(
         }
     }
 
-    override fun getInstallCommand(path: String): String = "ksud module install $path"
+    override fun getInstallCommand(path: String): String = "ksud module install \"$path\""
     override fun getActionCommand(id: ModId): String = "ksud module action ${id.id}"
 
     override fun getActionEnvironment(): List<String> = listOf(

@@ -107,7 +107,7 @@ open class APatchModuleManager(
         }
     }
 
-    override fun getInstallCommand(path: String): String = "apd module install $path"
+    override fun getInstallCommand(path: String): String = "apd module install \"$path\""
     override fun getActionCommand(id: ModId): String = "apd module action ${id.id}"
 
     override fun getActionEnvironment(): List<String> = listOf(

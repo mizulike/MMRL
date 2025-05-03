@@ -74,7 +74,7 @@ open class MagiskModuleManager(
         }
     }
 
-    override fun getInstallCommand(path: String): String = "magisk --install-module $path"
+    override fun getInstallCommand(path: String): String = "magisk --install-module \"$path\""
     override fun getActionCommand(id: ModId): String = ""
 
     override fun getActionEnvironment(): List<String> = listOf(
