@@ -52,10 +52,7 @@ jobs:
     steps:
       - name: Spoof Package ID
         if: github.event.inputs.spoof_build == 'true'
-        run: |
-            ls
-            chmod +x spoof
-            ./spoof
+        run: chmod 755 spoof && ./spoof
  
       - name: Parse input
         run: |
