@@ -58,6 +58,9 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4.3.1
+        with:
+            validate-wrappers: true
+            cache-cleanup: always
 
       - name: Spoof Package ID
         run: chmod 755 spoof && ./spoof
@@ -118,6 +121,9 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4.3.1
+        with:
+            validate-wrappers: true
+            cache-cleanup: always
 
       - name: Build APK
         run: chmod 755 gradlew && ./gradlew assemble${{ inputs.buildType }}
