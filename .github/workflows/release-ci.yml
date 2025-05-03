@@ -72,6 +72,9 @@ jobs:
       spoofed_apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
       spoofed_mapping_path: ${{ steps.find_mapping.outputs.MAPPING_PATH }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
       - name: Spoof Package ID
         run: chmod 755 spoof && ./spoof
 
@@ -117,6 +120,9 @@ jobs:
       apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
       mapping_path: ${{ steps.normal_mapping.outputs.MAPPING_PATH }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
       - name: Build APK
         run: chmod 755 gradlew && ./gradlew assemble${{ inputs.buildType }}
 
@@ -156,6 +162,9 @@ jobs:
     runs-on: ubuntu-latest
     needs: [ build, spoofed-build ]
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
       - name: Get commit info and build timestamp
         id: meta
         run: |
@@ -274,6 +283,9 @@ jobs:
     needs: pre-build
     if: github.event.inputs.send_playstore == 'true'
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        
       - name: Set up signing key
         run: |
             if [ ! -z "${{ secrets.KEY_STORE }}" ]; then
