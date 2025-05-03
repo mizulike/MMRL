@@ -12,7 +12,7 @@ on:
               default: 'No message.'
               description: 'Message'
             spoof_build:
-              description: 'Spoof Build'
+              description: 'Spoof Build (Telegram only)'
               required: true
               default: false
               type: boolean 
@@ -152,9 +152,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
       - name: Create GitHub Release
-        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true' && github.ref == 'refs/heads/master'
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true' && github.event.inputs.spoof_build == 'false' && github.ref == 'refs/heads/master'
         id: create_release
         uses: actions/create-release@v1
         with:
@@ -178,7 +177,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     
       - name: Upload Release Asset (APK)
-        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true' && github.ref == 'refs/heads/master'
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true' && github.event.inputs.spoof_build == 'false' && github.ref == 'refs/heads/master'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
