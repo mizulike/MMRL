@@ -16,7 +16,7 @@ plugins {
 val baseAppName = "MMRL"
 val baseModConfName = "ModConf"
 
-val version = commitCount + 31320
+val appVersion = commitCount + 31320
 
 android {
     compileSdk = 35
@@ -24,8 +24,8 @@ android {
 
     defaultConfig {
         applicationId = namespace
-        versionName = "v$version"
-        versionCode = version
+        versionName = "v$appVersion"
+        versionCode = appVersion
 
         androidResources.localeFilters += arrayOf(
             "en",
@@ -97,6 +97,12 @@ android {
             initWith(buildTypes.getByName("release"))
             matchingFallbacks += listOf("debug", "release")
             versionNameSuffix = "-beta"
+        }
+
+        create("spoofed") {
+            initWith(buildTypes.getByName("release"))
+            matchingFallbacks += listOf("debug", "release")
+            versionNameSuffix = "-spoofed"
         }
 
         create("alpha") {
