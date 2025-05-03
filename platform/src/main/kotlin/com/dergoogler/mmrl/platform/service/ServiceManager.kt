@@ -45,7 +45,7 @@ class ServiceManager(
                 fileManager = fileManager
             )
 
-            else -> throw IllegalStateException("Unsupported platform: $seLinuxContext")
+            else -> throw IllegalStateException("Unsupported platform: ${platform.name}")
         }
     }
 
