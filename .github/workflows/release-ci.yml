@@ -41,11 +41,12 @@ on:
           - 'DebugMin'
 
 jobs:
-  pre-build:
-    name: Pre-Build
+  spoofed-build:
+    name: Build spoofed APK
     runs-on: ubuntu-latest
     outputs:
-      buildTypeCased: ${{ steps.pre-inputs.outputs.BUILD_TYPE_CASED }}
+      spoofed_apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
+      spoofed_mapping_path: ${{ steps.find_mapping.outputs.MAPPING_PATH }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
@@ -58,22 +59,6 @@ jobs:
 
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4.3.1
-
-      - name: Parse input
-        id: pre-inputs
-        run: echo "BUILD_TYPE_CASED=$(echo '${{ inputs.buildType }}' | sed 's/^\(.*\)$/\L\1/')" >> $GITHUB_OUTPUT
-
-
-  spoofed-build:
-    name: Build spoofed APK
-    runs-on: ubuntu-latest
-    needs: pre-build
-    outputs:
-      spoofed_apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
-      spoofed_mapping_path: ${{ steps.find_mapping.outputs.MAPPING_PATH }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
 
       - name: Spoof Package ID
         run: chmod 755 spoof && ./spoof
@@ -115,13 +100,21 @@ jobs:
   build:
     name: Build un-spoofed APK
     runs-on: ubuntu-latest
-    needs: pre-build
     outputs:
       apk_path: ${{ steps.find_apk.outputs.APK_PATH }}
       mapping_path: ${{ steps.normal_mapping.outputs.MAPPING_PATH }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4.7.1
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4.3.1
 
       - name: Build APK
         run: chmod 755 gradlew && ./gradlew assemble${{ inputs.buildType }}
@@ -164,6 +157,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
+      
+      - name: Set up JDK
+        uses: actions/setup-java@v4.7.1
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4.3.1
 
       - name: Get commit info and build timestamp
         id: meta
@@ -228,7 +230,7 @@ jobs:
 
             ${{ inputs.message }}
 
-            Type: ${{ env.BUILD_TYPE_CASED }}
+            Type: ${{ inputs.buildType }}
             [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -280,12 +282,11 @@ jobs:
   playstore-build:
     name: Build for Google Play Store and release
     runs-on: ubuntu-latest
-    needs: pre-build
     if: github.event.inputs.send_playstore == 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
-        
+
       - name: Set up signing key
         run: |
             if [ ! -z "${{ secrets.KEY_STORE }}" ]; then
@@ -303,14 +304,14 @@ jobs:
         id: find_aab
         run: |
           AAB_PATH=$(find app/build/outputs/bundle/playstore -name "*.aab" | head -n 1)
-          echo "AAB_PATH=$AAB_PATH" >> $GITHUB_ENV
+          echo "AAB_PATH=$AAB_PATH" >> $GITHUB_OUTPUT
 
       - name: Upload to Google Play
         uses: r0adkll/upload-google-play@v1.1.3
         with:
           serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: com.dergoogler.mmrl
-          releaseFiles: ${{ env.AAB_PATH }}
+          releaseFiles: ${{ steps.find_aab.outputs.AAB_PATH }}
           track: production
           status: completed
           inAppUpdatePriority: 5
