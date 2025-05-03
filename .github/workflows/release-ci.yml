@@ -154,8 +154,20 @@ jobs:
           API_HASH: ${{ secrets.API_HASH }}
           BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
-      - name: Create GitHub Release
+      - name: Check if release exists
         if: github.event.inputs.send_github == 'true'
+        id: check_release
+        run: |
+            if gh release view v${{ env.VERSION }} --repo ${{ github.repository }} > /dev/null 2>&1; then
+              echo "exists=true" >> $GITHUB_OUTPUT
+            else
+              echo "exists=false" >> $GITHUB_OUTPUT
+            fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         id: create_release
         uses: actions/create-release@v1
         with:
@@ -177,6 +189,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload normal APK to GitHub Release
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -187,6 +200,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload spoofed APK to GitHub Release
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -197,6 +211,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload normal mapping to GitHub Release
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -207,6 +222,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload spoofed mapping to GitHub Release
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
