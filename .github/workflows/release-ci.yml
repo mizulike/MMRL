@@ -277,11 +277,6 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.inputs.send_playstore == 'true'
     steps:
-      - name: Parse input
-        run: |
-            BUILD_TYPE_CASED=$(echo "${{ inputs.buildType }}" | sed 's/^\(.\)/\L\1/')
-            echo "BUILD_TYPE_CASED=$BUILD_TYPE_CASED" >> $GITHUB_ENV
-
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
@@ -310,7 +305,7 @@ jobs:
             cache-cleanup: always
 
       - name: Bundle with Gradle
-        run: chmod 755 ./gradlew && ./gradlew bundle${{ inputs.buildType }}
+        run: chmod 755 ./gradlew && ./gradlew bundlePlaystore
       
       - name: Find AAB
         id: find_aab
