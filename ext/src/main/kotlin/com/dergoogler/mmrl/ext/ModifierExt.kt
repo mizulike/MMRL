@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -16,7 +17,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.layout
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -128,6 +131,15 @@ fun Modifier.fadingEdge(
     }
 
 fun Modifier.applyAlpha(enabled: Boolean): Modifier = this.alpha(if (enabled) 1f else 0.5f)
+
+fun Modifier.iconSize(
+    textStyle: TextStyle,
+    scaling: Float
+) = composed {
+    val density = LocalDensity.current
+    val iconSize = with(density) { textStyle.fontSize.toDp() * scaling }
+    return@composed this.size(iconSize)
+}
 
 interface ModifierScope {
     var surface: Modifier

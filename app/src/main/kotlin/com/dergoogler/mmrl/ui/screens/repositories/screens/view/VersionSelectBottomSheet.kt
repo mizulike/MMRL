@@ -32,6 +32,7 @@ import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.VersionItemBottomSheet
 import com.dergoogler.mmrl.ext.ignoreParentPadding
+import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
@@ -124,8 +125,10 @@ private fun VersionItem(
                     if (localVersionCode < item.versionCode) {
                         LabelItem(
                             text = stringResource(id = R.string.module_new),
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
+                            style = LabelItemDefaults.style.copy(
+                                containerColor = MaterialTheme.colorScheme.error,
+                                contentColor = MaterialTheme.colorScheme.onError
+                            )
                         )
                     }
                 }

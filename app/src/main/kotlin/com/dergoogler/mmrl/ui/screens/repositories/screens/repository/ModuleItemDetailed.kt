@@ -30,6 +30,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.fadingEdge
 import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.ui.providable.LocalModule
 import com.dergoogler.mmrl.ui.providable.LocalModuleState
@@ -100,7 +101,6 @@ fun ModuleItemDetailed(
                         ),
                         iconTint = MaterialTheme.colorScheme.surfaceTint,
                         iconScaling = 1.0f,
-                        spacing = 8f,
                         rightIcon = true,
                         maxLines = 2,
                         overflow = TextOverflow.Ellipsis
@@ -161,8 +161,10 @@ fun ModuleItemDetailed(
                         LabelItem(
                             icon = R.drawable.category,
                             text = it.first(),
-                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                            contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            style = LabelItemDefaults.style.copy(
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                            )
                         )
                     }
                 }
@@ -178,9 +180,11 @@ fun ModuleItemDetailed(
                     if (it.isNotEmpty()) {
                         LabelItem(
                             icon = R.drawable.alert_triangle,
-                            containerColor = MaterialTheme.colorScheme.onTertiary,
-                            contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                            text = stringResource(id = R.string.view_module_antifeatures)
+                            text = stringResource(id = R.string.view_module_antifeatures),
+                            style = LabelItemDefaults.style.copy(
+                                containerColor = MaterialTheme.colorScheme.onTertiary,
+                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                            )
                         )
                     }
                 }
@@ -189,8 +193,10 @@ fun ModuleItemDetailed(
                     state.updatable ->
                         LabelItem(
                             text = stringResource(id = R.string.module_new),
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
+                            style = LabelItemDefaults.style.copy(
+                                containerColor = MaterialTheme.colorScheme.error,
+                                contentColor = MaterialTheme.colorScheme.onError
+                            )
                         )
 
                     state.installed ->

@@ -38,6 +38,7 @@ import com.dergoogler.mmrl.ext.fadingEdge
 import com.dergoogler.mmrl.ext.ignoreParentPadding
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 
 @Composable
 fun BulkBottomSheet(
@@ -148,8 +149,10 @@ fun BulkModuleItem(
                     module.versionItem.size.nullable {
                         LabelItem(
                             text = it.toFormattedFileSize(),
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
+                            style = LabelItemDefaults.style.copy(
+                                containerColor = MaterialTheme.colorScheme.error,
+                                contentColor = MaterialTheme.colorScheme.onError
+                            )
                         )
                     }
                 }

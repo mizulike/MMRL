@@ -3,7 +3,6 @@ package com.dergoogler.mmrl.ui.component.text
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
@@ -13,12 +12,12 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.dergoogler.mmrl.ext.iconSize
 import com.dergoogler.mmrl.ext.nullable
 
 @Composable
@@ -30,14 +29,11 @@ fun TextWithIcon(
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Center,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
 ) {
-    val density = LocalDensity.current
-    val iconSize = with(density) { style.textStyle.fontSize.toDp() * style.iconScaling }
-
     val decoratedIconContent: @Composable (() -> Unit)? =
         icon.nullable {
             {
                 Icon(
-                    modifier = Modifier.size(iconSize),
+                    modifier = Modifier.iconSize(style.textStyle, style.iconScaling),
                     painter = painterResource(id = it),
                     contentDescription = null,
                     tint = style.iconTint,
@@ -118,12 +114,15 @@ class TextWithIconStyle(
     }
 }
 
+internal const val TextWIthIconIconScaling: Float = 1.4285715f
+internal val TextWIthIconSpacing: Dp = 4.dp
+
 object TextWithIconDefaults {
     val style
         @Composable get() = TextWithIconStyle(
             textStyle = LocalTextStyle.current,
-            iconScaling = 1.4285715f,
-            spacing = 4.dp,
+            iconScaling = TextWIthIconIconScaling,
+            spacing = TextWIthIconSpacing,
             rightIcon = false,
             iconTint = LocalContentColor.current,
             maxLines = Int.MAX_VALUE,

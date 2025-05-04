@@ -50,6 +50,7 @@ import com.dergoogler.mmrl.ext.fadingEdge
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
@@ -342,8 +343,10 @@ private fun ModuleCountLabelItem(repo: RepoState) {
     } else {
         LabelItem(
             text = stringResource(id = R.string.repo_incompatible),
-            containerColor = MaterialTheme.colorScheme.error,
-            contentColor = MaterialTheme.colorScheme.onError
+            style = LabelItemDefaults.style.copy(
+                containerColor = MaterialTheme.colorScheme.error,
+                contentColor = MaterialTheme.colorScheme.onError
+            )
         )
     }
 }

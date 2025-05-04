@@ -26,6 +26,7 @@ import coil.compose.AsyncImage
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ui.component.LabelItem
+import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.Logo
 import com.dergoogler.mmrl.ui.component.text.TextWithIcon
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
@@ -91,7 +92,6 @@ fun ModuleItemCompact(
                     ),
                     iconTint = MaterialTheme.colorScheme.surfaceTint,
                     iconScaling = 1.0f,
-                    spacing = 8f,
                     rightIcon = true,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -147,9 +147,11 @@ fun ModuleItemCompact(
                         module.track.antifeatures?.let {
                             if (it.isNotEmpty()) {
                                 LabelItem(
-                                    containerColor = MaterialTheme.colorScheme.onTertiary,
-                                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                                    text = stringResource(id = R.string.view_module_antifeatures)
+                                    text = stringResource(id = R.string.view_module_antifeatures),
+                                    style = LabelItemDefaults.style.copy(
+                                        containerColor = MaterialTheme.colorScheme.onTertiary,
+                                        contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                    )
                                 )
                             }
                         }
@@ -159,8 +161,10 @@ fun ModuleItemCompact(
                         state.updatable ->
                             LabelItem(
                                 text = stringResource(id = R.string.module_new),
-                                containerColor = MaterialTheme.colorScheme.error,
-                                contentColor = MaterialTheme.colorScheme.onError
+                                style = LabelItemDefaults.style.copy(
+                                    containerColor = MaterialTheme.colorScheme.error,
+                                    contentColor = MaterialTheme.colorScheme.onError
+                                )
                             )
 
                         state.installed ->

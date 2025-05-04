@@ -473,7 +473,6 @@ fun NewViewScreen(
                                 textStyle = MaterialTheme.typography.titleLarge,
                                 iconTint = MaterialTheme.colorScheme.surfaceTint,
                                 iconScaling = 1.0f,
-                                spacing = 8f,
                                 rightIcon = true,
                                 maxLines = 2,
                                 overflow = TextOverflow.Ellipsis
