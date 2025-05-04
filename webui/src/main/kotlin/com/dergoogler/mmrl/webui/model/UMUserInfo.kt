@@ -1,7 +1,9 @@
 package com.dergoogler.mmrl.webui.model
 
 import android.webkit.JavascriptInterface
+import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class UMUserInfo(
     @get:JavascriptInterface
     val name: String,
