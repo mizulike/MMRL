@@ -14,6 +14,7 @@ import com.dergoogler.mmrl.platform.manager.APatchModuleManager
 import com.dergoogler.mmrl.platform.manager.KernelSUModuleManager
 import com.dergoogler.mmrl.platform.manager.KsuNextModuleManager
 import com.dergoogler.mmrl.platform.manager.MagiskModuleManager
+import com.dergoogler.mmrl.platform.manager.StubModuleManager
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
@@ -45,7 +46,9 @@ class ServiceManager(
                 fileManager = fileManager
             )
 
-            else -> throw IllegalStateException("Unsupported platform: ${platform.name}")
+            Platform.NonRoot -> StubModuleManager(
+                fileManager = fileManager
+            )
         }
     }
 

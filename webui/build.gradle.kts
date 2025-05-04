@@ -44,6 +44,7 @@ android {
 dependencies {
     implementation(projects.platform)
     implementation(projects.ui)
+    compileOnly(projects.hiddenApi)
     implementation(libs.libsu.core)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)

@@ -11,5 +11,8 @@ dependencyResolutionManagement {
     }
 }
 
-include(":ui")
-include(":platform")
+include(
+    ":ui",
+    ":platform",
+    ":hidden-api"
+)

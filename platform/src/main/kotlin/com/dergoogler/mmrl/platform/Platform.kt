@@ -14,6 +14,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import com.dergoogler.mmrl.platform.content.IService
 import com.dergoogler.mmrl.platform.content.Service
+import com.dergoogler.mmrl.platform.hiddenApi.HiddenPackageManager
+import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
 import com.dergoogler.mmrl.platform.model.PlatformConfig
 import com.dergoogler.mmrl.platform.model.PlatformConfigImpl
 import com.dergoogler.mmrl.platform.stub.IFileManager
@@ -101,7 +103,7 @@ enum class Platform(val id: String) {
                 throw IllegalArgumentException("Provider cannot be null")
             }
 
-            if (conf.platform?.isNotValid == true) {
+            if (conf.platform == NonRoot) {
                 Log.e(TAG, "Platform.init(...) cannot run as non-root!")
                 return false
             }
@@ -158,6 +160,34 @@ enum class Platform(val id: String) {
          * @see IFileManager
          */
         val fileManager: IFileManager get() = mService.fileManager
+
+        /**
+         *  Provides access to package management related information and operations.
+         *
+         *  This property allows interaction with the system's package manager,
+         *  allowing for querying and manipulating installed applications,
+         *  their components, permissions, and other package-related data.
+         *
+         *  @see HiddenPackageManager
+         */
+        val packageManager get(): HiddenPackageManager = HiddenPackageManager(this.mService)
+
+        /**
+         * Provides access to hidden user management functionality.
+         *
+         * This property returns an instance of [HiddenUserManager], which allows you to interact
+         * with user management features that are typically hidden from regular app use.
+         * These features may include creating, deleting, or managing users beyond the standard
+         * Android user profiles.
+         *
+         * **Warning:** Accessing and modifying hidden users can have significant impacts on the
+         * device's stability and security. Exercise extreme caution when using this feature,
+         * and ensure you fully understand the potential consequences of any actions taken
+         * through the [HiddenUserManager].
+         *
+         * @see HiddenUserManager
+         */
+        val userManager get(): HiddenUserManager = HiddenUserManager(this.mService)
 
         /**
          * The SELinux context associated with the binder service.

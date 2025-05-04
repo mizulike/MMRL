@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.ui.activity
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -123,6 +124,8 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
                     Button(
                         enabled = currentSelection != null,
                         onClick = {
+                            Log.d("SetupScreen", "Selected: $currentSelection")
+
                             setWorkingMode(currentSelection!!.workingMode)
                         },
                         modifier = Modifier

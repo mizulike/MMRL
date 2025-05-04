@@ -51,6 +51,7 @@ import kotlinx.html.title
 import kotlinx.html.ul
 import androidx.core.graphics.drawable.toDrawable
 import com.dergoogler.mmrl.webui.interfaces.ApplicationInterface
+import com.dergoogler.mmrl.webui.interfaces.UserManagerInterface
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
 import com.dergoogler.mmrl.webui.util.addJavascriptInterface
@@ -177,6 +178,7 @@ fun WebUIScreen(
                                     modId = options.modId
                                 ), insets, options
                             ),
+                            UserManagerInterface.factory()
                         )
 
                         for (i in internalInterfaces) {
