@@ -101,6 +101,11 @@ enum class Platform(val id: String) {
                 throw IllegalArgumentException("Provider cannot be null")
             }
 
+            if (conf.platform?.isNotValid == true) {
+                Log.e(TAG, "Platform.init(...) cannot run as non-root!")
+                return false
+            }
+
             return when {
                 isAlive -> true
                 else -> try {
