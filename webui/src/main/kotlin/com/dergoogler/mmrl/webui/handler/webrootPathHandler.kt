@@ -137,10 +137,6 @@ fun webrootPathHandler(
                     appendLine("<script data-internal data-internal-dont-use src=\"https://mui.kernelsu.org/internal/scripts/sufile-fetch-ext.js\" type=\"module\"></script>")
                 }
 
-                addInjection(InjectionType.BODY) {
-                    appendLine("<script data-internal src=\"https://mui.kernelsu.org/internal/assets/ext/wrapInputStream.mjs\" type=\"module\"></script>")
-                }
-
                 customJsHead.exists {
                     it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
                         addInjection(InjectionType.HEAD) {

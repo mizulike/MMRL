@@ -1,9 +1,9 @@
-const defaultFetchStreamOptions = {
+export const defaultFetchStreamOptions = {
     chunkSize: 1024 * 1024,
     signal: null,
 };
 
-window.wrapInputStream = function (inputStream, options = {}) {
+export function wrapInputStream(inputStream, options = {}) {
     // Validate required dependencies
     if (typeof inputStream.readChunk !== "function") {
         return Promise.reject(new Error("Provided InputStream cannot be used here"));

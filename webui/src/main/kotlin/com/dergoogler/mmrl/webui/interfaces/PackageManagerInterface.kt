@@ -9,13 +9,18 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.webkit.JavascriptInterface
+import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.graphics.createBitmap
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenPackageManager
-import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
 import com.dergoogler.mmrl.webui.interfaces.UMApplicationInfo.Companion.toUMApplicationInfo
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.moshi
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 
@@ -27,15 +32,18 @@ fun <T> listToJson(list: List<T>?): String? {
 }
 
 data class UMApplicationInfo(
-    // UMPackageInfo
     @get:JavascriptInterface
     val packageName: String,
     @get:JavascriptInterface
     val name: String?,
     @get:JavascriptInterface
-    val iconStream: FileInputInterfaceStream?,
-    //
-
+    val label: String?,
+    @get:JavascriptInterface
+    val versionName: String?,
+    @get:JavascriptInterface
+    val versionCode: Long,
+    @get:JavascriptInterface
+    val nonLocalizedLabel: String?,
     @get:JavascriptInterface
     var appComponentFactory: String? = null,
     @get:JavascriptInterface
@@ -100,83 +108,53 @@ data class UMApplicationInfo(
     var uid: Int = 0,
 ) {
     companion object {
+        fun PackageInfo.toUMApplicationInfo(wxOptions: WXOptions): UMApplicationInfo {
+            val spm = wxOptions.context.packageManager
 
-
-        private fun getIconBase64InputStream(
-            wxOptions: WXOptions,
-            itemInfo: PackageItemInfo
-        ): FileInputInterfaceStream? {
-            val drawable: Drawable =
-                itemInfo.loadIcon(wxOptions.context.packageManager) ?: return null
-
-            // Convert to bitmap
-            val bitmap = drawableToBitmap(drawable)
-
-            // Convert bitmap to PNG and then to Base64
-            val pngOutputStream = ByteArrayOutputStream()
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, pngOutputStream)
-            val pngByteArray = pngOutputStream.toByteArray()
-
-            // Convert Base64 string to InputStream
-            val `is` = ByteArrayInputStream(pngByteArray)
-            return FileInputInterfaceStream(`is`, wxOptions)
-        }
-
-        private fun drawableToBitmap(drawable: Drawable): Bitmap {
-            if (drawable is BitmapDrawable) {
-                return drawable.bitmap
+            return with(applicationInfo) {
+                return@with UMApplicationInfo(
+                    packageName = packageName,
+                    name = name,
+                    versionName = versionName,
+                    versionCode = PackageInfoCompat.getLongVersionCode(this@toUMApplicationInfo),
+                    label = this.loadLabel(spm).toString(),
+                    nonLocalizedLabel = nonLocalizedLabel?.toString(),
+                    appComponentFactory = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) appComponentFactory else null,
+                    backupAgentName = backupAgentName,
+                    category = category,
+                    className = className,
+                    compileSdkVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) compileSdkVersion else -1,
+                    compileSdkVersionCodename = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) compileSdkVersionCodename else null,
+                    dataDir = dataDir,
+                    deviceProtectedDataDir = deviceProtectedDataDir,
+                    enabled = enabled,
+                    flags = flags,
+                    largestWidthLimitDp = largestWidthLimitDp,
+                    manageSpaceActivityName = manageSpaceActivityName,
+                    minSdkVersion = minSdkVersion,
+                    nativeLibraryDir = nativeLibraryDir,
+                    permission = permission,
+                    processName = processName,
+                    publicSourceDir = publicSourceDir,
+                    requiresSmallestWidthDp = requiresSmallestWidthDp,
+                    // sharedLibraryFiles = listToJson(sharedLibraryFiles.toList()),
+                    sourceDir = sourceDir,
+                    storageUuid = storageUuid?.toString(),
+                    targetSdkVersion = targetSdkVersion,
+                    taskAffinity = taskAffinity,
+                    theme = theme,
+                    uiOptions = uiOptions,
+                    splitNames = listToJson(splitNames?.toList()),
+                    splitPublicSourceDirs = listToJson(splitPublicSourceDirs?.toList()),
+                    splitSourceDirs = listToJson(splitSourceDirs?.toList()),
+                )
             }
-
-            val width = drawable.intrinsicWidth.takeIf { it > 0 } ?: 1
-            val height = drawable.intrinsicHeight.takeIf { it > 0 } ?: 1
-            val bitmap = createBitmap(width, height)
-            val canvas = Canvas(bitmap)
-            drawable.setBounds(0, 0, canvas.width, canvas.height)
-            drawable.draw(canvas)
-            return bitmap
         }
-
-        fun PackageInfo.toUMApplicationInfo(wxOptions: WXOptions): UMApplicationInfo =
-            applicationInfo.toUMApplicationInfo(wxOptions)
-
-        fun ApplicationInfo.toUMApplicationInfo(wxOptions: WXOptions): UMApplicationInfo =
-            UMApplicationInfo(
-                packageName = packageName,
-                name = name,
-                iconStream = getIconBase64InputStream(wxOptions, this),
-                appComponentFactory = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) appComponentFactory else null,
-                backupAgentName = backupAgentName,
-                category = category,
-                className = className,
-                compileSdkVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) compileSdkVersion else -1,
-                compileSdkVersionCodename = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) compileSdkVersionCodename else null,
-                dataDir = dataDir,
-                deviceProtectedDataDir = deviceProtectedDataDir,
-                enabled = enabled,
-                flags = flags,
-                largestWidthLimitDp = largestWidthLimitDp,
-                manageSpaceActivityName = manageSpaceActivityName,
-                minSdkVersion = minSdkVersion,
-                nativeLibraryDir = nativeLibraryDir,
-                permission = permission,
-                processName = processName,
-                publicSourceDir = publicSourceDir,
-                requiresSmallestWidthDp = requiresSmallestWidthDp,
-                // sharedLibraryFiles = listToJson(sharedLibraryFiles.toList()),
-                sourceDir = sourceDir,
-                storageUuid = storageUuid?.toString(),
-                targetSdkVersion = targetSdkVersion,
-                taskAffinity = taskAffinity,
-                theme = theme,
-                uiOptions = uiOptions,
-                splitNames = listToJson(splitNames?.toList()),
-                splitPublicSourceDirs = listToJson(splitPublicSourceDirs?.toList()),
-                splitSourceDirs = listToJson(splitSourceDirs?.toList()),
-            )
     }
 }
 
-class PackageManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions) {
+class PackageManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions),
+    CoroutineScope by MainScope() {
     private val pm get(): HiddenPackageManager = Platform.packageManager
 
     override var name: String = "\$packageManager"
@@ -191,6 +169,18 @@ class PackageManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions) 
     }
 
     @JavascriptInterface
+    fun getApplicationIcon(
+        packageName: String,
+        flags: Int,
+        userId: Int
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, flags, userId)
+        return runBlocking {
+            return@runBlocking getIconBase64InputStream(pf)
+        }
+    }
+
+    @JavascriptInterface
     fun getInstalledPackages(flags: Int, userId: Int): String {
         val ip = pm.getInstalledPackages(flags, userId)
         val list = ip.map { it.packageName }
@@ -199,7 +189,41 @@ class PackageManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions) 
 
     @JavascriptInterface
     fun getApplicationInfo(packageName: String, flags: Int, userId: Int): UMApplicationInfo {
-        val ai = pm.getApplicationInfo(packageName, flags, userId)
-        return ai.toUMApplicationInfo(wxOptions)
+        val ai = pm.getPackageInfo(packageName, flags, userId)
+        return runBlocking {
+            return@runBlocking ai.toUMApplicationInfo(wxOptions)
+        }
     }
+
+    private suspend fun getIconBase64InputStream(
+        itemInfo: PackageItemInfo
+    ): FileInputInterfaceStream? = withContext(Dispatchers.IO) {
+        val drawable: Drawable =
+            itemInfo.loadIcon(context.packageManager) ?: return@withContext null
+
+        val bitmap = drawableToBitmap(drawable)
+
+        val pngOutputStream = ByteArrayOutputStream()
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, pngOutputStream)
+        val pngByteArray = pngOutputStream.toByteArray()
+
+        val inputStream = ByteArrayInputStream(pngByteArray)
+        FileInputInterfaceStream(inputStream, wxOptions)
+    }
+
+
+    private fun drawableToBitmap(drawable: Drawable): Bitmap {
+        if (drawable is BitmapDrawable) {
+            return drawable.bitmap
+        }
+
+        val width = drawable.intrinsicWidth.takeIf { it > 0 } ?: 1
+        val height = drawable.intrinsicHeight.takeIf { it > 0 } ?: 1
+        val bitmap = createBitmap(width, height)
+        val canvas = Canvas(bitmap)
+        drawable.setBounds(0, 0, canvas.width, canvas.height)
+        drawable.draw(canvas)
+        return bitmap
+    }
+
 }
