@@ -12,7 +12,7 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.nullable
-import com.dergoogler.mmrl.model.local.managers
+import com.dergoogler.mmrl.model.local.FeaturedManager
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
@@ -100,14 +100,14 @@ fun SettingsScreen() {
             }
         )
 
-        val manager = managers.find { userPreferences.workingMode == it.platform }
+        val manager = FeaturedManager.managers.find { userPreferences.workingMode == it.workingMode }
 
         manager.nullable { mng ->
             ListRadioCheckItem(
                 icon = mng.icon,
                 title = stringResource(id = R.string.platform),
                 desc = stringResource(mng.name),
-                options = managers.map { it.toRadioOption() },
+                options = FeaturedManager.managers.map { it.toRadioOption() },
                 onConfirm = {
                     confirm(
                         ConfirmData(
@@ -123,7 +123,7 @@ fun SettingsScreen() {
                         )
                     )
                 },
-                value = mng.platform
+                value = mng.workingMode
             )
         }
 
