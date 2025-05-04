@@ -31,16 +31,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dergoogler.mmrl.model.local.FeaturedManager
-import com.dergoogler.mmrl.model.local.managers
 import com.dergoogler.mmrl.ui.component.card.Card
-import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
-import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 
 @Composable
@@ -80,8 +76,8 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     items(
-                        items = managers,
-                        key = { it.platform.name }
+                        items = FeaturedManager.managers,
+                        key = { it.workingMode.name }
                     ) { manager ->
                         val interactionSource = remember { MutableInteractionSource() }
                         val selected =
@@ -127,7 +123,7 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
                     Button(
                         enabled = currentSelection != null,
                         onClick = {
-                            setWorkingMode(currentSelection!!.platform)
+                            setWorkingMode(currentSelection!!.workingMode)
                         },
                         modifier = Modifier
                             .fillMaxWidth()
