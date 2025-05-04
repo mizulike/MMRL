@@ -3,6 +3,9 @@ package com.dergoogler.mmrl.ui.component.text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -13,6 +16,7 @@ import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.MeasureResult
 import androidx.compose.ui.layout.MeasureScope
 import androidx.compose.ui.layout.MultiContentMeasurePolicy
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -49,15 +53,22 @@ fun TextRow(
     modifier: Modifier = Modifier,
     horizontalArrangement: Arrangement.Horizontal = Arrangement.Start,
     verticalAlignment: Alignment.Vertical = Alignment.CenterVertically,
+    contentPadding: PaddingValues = PaddingValues(start = 8.dp, end = 8.dp),
     leadingContent: (@Composable () -> Unit)? = null,
     trailingContent: (@Composable () -> Unit)? = null,
     content: @Composable () -> Unit,
 ) {
+    val layoutDirection = LocalLayoutDirection.current
+
     val decoratedLeadingContent: @Composable (() -> Unit)? =
         leadingContent.nullable {
             {
                 Box(
-                    modifier = Modifier.padding(end = LeadingContentEndPadding)
+                    modifier = Modifier.padding(
+                        end = contentPadding.calculateEndPadding(
+                            layoutDirection
+                        )
+                    )
                 ) {
                     it()
                 }
@@ -68,7 +79,11 @@ fun TextRow(
         trailingContent.nullable {
             {
                 Box(
-                    modifier = Modifier.padding(start = TrailingContentStartPadding)
+                    modifier = Modifier.padding(
+                        start = contentPadding.calculateStartPadding(
+                            layoutDirection
+                        )
+                    )
                 ) {
                     it()
                 }
@@ -109,9 +124,6 @@ private fun TextRowLayout(
     )
 }
 
-internal val LeadingContentEndPadding = 8.dp
-internal val TrailingContentStartPadding = 8.dp
-
 private class TextRowMeasurePolicy(
     private val horizontalArrangement: Arrangement.Horizontal,
     private val verticalAlignment: Alignment.Vertical
@@ -124,8 +136,10 @@ private class TextRowMeasurePolicy(
         val flattenedMeasurables = measurables.flatten()
         val placeables = flattenedMeasurables.map { it.measure(constraints) }
 
-        val totalWidth = placeables.sumOf { it.width }.coerceIn(constraints.minWidth, constraints.maxWidth)
-        val maxHeight = placeables.maxOfOrNull { it.height }?.coerceIn(constraints.minHeight, constraints.maxHeight) ?: 0
+        val totalWidth =
+            placeables.sumOf { it.width }.coerceIn(constraints.minWidth, constraints.maxWidth)
+        val maxHeight = placeables.maxOfOrNull { it.height }
+            ?.coerceIn(constraints.minHeight, constraints.maxHeight) ?: 0
 
         val outPositions = IntArray(placeables.size)
         with(horizontalArrangement) {

@@ -2,6 +2,7 @@ package com.dergoogler.mmrl.ui.component.text
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
@@ -16,6 +17,8 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.nullable
 
 @Composable
@@ -46,6 +49,7 @@ fun TextWithIcon(
         modifier = modifier,
         horizontalArrangement = horizontalArrangement,
         verticalAlignment = verticalAlignment,
+        contentPadding = PaddingValues(start = style.spacing, end = style.spacing),
         leadingContent = !style.rightIcon nullable decoratedIconContent,
         trailingContent = style.rightIcon nullable decoratedIconContent,
     ) {
@@ -62,8 +66,7 @@ fun TextWithIcon(
 class TextWithIconStyle(
     val textStyle: TextStyle,
     val iconScaling: Float,
-    @Deprecated("Deprecated")
-    val spacing: Float,
+    val spacing: Dp,
     val rightIcon: Boolean,
     val iconTint: Color,
     val overflow: TextOverflow,
@@ -88,7 +91,7 @@ class TextWithIconStyle(
     fun copy(
         textStyle: TextStyle = this.textStyle,
         iconScaling: Float = this.iconScaling,
-        spacing: Float = this.spacing,
+        spacing: Dp = this.spacing,
         rightIcon: Boolean = this.rightIcon,
         iconTint: Color = this.iconTint,
         overflow: TextOverflow = this.overflow,
@@ -120,7 +123,7 @@ object TextWithIconDefaults {
         @Composable get() = TextWithIconStyle(
             textStyle = LocalTextStyle.current,
             iconScaling = 1.4285715f,
-            spacing = 11.428572f,
+            spacing = 4.dp,
             rightIcon = false,
             iconTint = LocalContentColor.current,
             maxLines = Int.MAX_VALUE,
