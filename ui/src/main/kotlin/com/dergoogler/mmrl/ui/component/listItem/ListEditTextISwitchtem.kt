@@ -66,9 +66,10 @@ fun ListEditTextSwitchItem(
         dialogParameters = dialogParameters,
     )
 
+    val alpha = remember(enabled) { if (enabled) Modifier.alpha(1f) else Modifier.alpha(0.38f) }
+
     Row(
         modifier = modifier
-            .alpha(alpha = if (enabled) 1f else 0.5f)
             .let {
                 if (checked) {
                     it.clickable(
@@ -86,7 +87,9 @@ fun ListEditTextSwitchItem(
     ) {
         icon?.let {
             Icon(
-                modifier = Modifier.size(itemTextStyle.iconSize),
+                modifier = Modifier
+                    .size(itemTextStyle.iconSize)
+                    .then(alpha),
                 painter = painterResource(id = icon),
                 contentDescription = null
             )
@@ -97,7 +100,8 @@ fun ListEditTextSwitchItem(
         BaseListContent(
             modifier = Modifier
                 .weight(1f)
-                .padding(end = itemTextStyle.textSwitchPadding),
+                .padding(end = itemTextStyle.textSwitchPadding)
+                .then(alpha),
             title = title,
             desc = desc,
             itemTextStyle = itemTextStyle,
