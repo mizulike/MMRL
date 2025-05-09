@@ -186,6 +186,27 @@ fun WebUIScreen(
                         for (i in internalInterfaces) {
                             addJavascriptInterface(context, options.modId, i)
                         }
+
+                        if (options.config.dexFiles.isNotEmpty()) {
+                            for (dexFile in options.config.dexFiles) {
+                                val interfaceObj = dexFile.getInterface(
+                                    WXOptions(
+                                        context = context,
+                                        webView = this,
+                                        modId = options.modId
+                                    )
+                                )
+
+                                if (interfaceObj != null) {
+                                    addJavascriptInterface(
+                                        context = context,
+                                        modId = options.modId,
+                                        jsInterface = interfaceObj
+                                    )
+                                }
+                            }
+                        }
+
                     }
                 }, update = {
                     it.apply {

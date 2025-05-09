@@ -1,8 +1,14 @@
 package com.dergoogler.mmrl.webui.model
 
+import android.util.Log
+import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.webui.interfaces.WXInterface
+import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.webUiConfig
 import com.squareup.moshi.JsonClass
+import dalvik.system.InMemoryDexClassLoader
+import java.nio.ByteBuffer
 
 object WebUIPermissions {
     const val PLUGIN_DEX_LOADER = "webui.permission.PLUGIN_DEX_LOADER"
@@ -43,6 +49,62 @@ data class WebUIConfigRequire(
     val version: WebUIConfigRequireVersion = WebUIConfigRequireVersion(),
 )
 
+@JsonClass(generateAdapter = true)
+data class WebUIConfigDexFile(
+    val path: String? = null,
+    val className: String? = null,
+) {
+    private companion object {
+        const val TAG = "WebUIConfigDexFile"
+    }
+
+    fun getInterface(wxOptions: WXOptions): JavaScriptInterface<out WXInterface>? {
+        if (path == null || className == null) {
+            return null
+        }
+
+        val file = SuFile("/data/adb/modules", wxOptions.modId.id, "webroot", path)
+
+        if (!file.isFile) {
+            return null
+        }
+
+        if (file.extension != "dex") {
+            return null
+        }
+
+        try {
+            val dexFileParcel = file.readBytes()
+            val loader =
+                InMemoryDexClassLoader(
+                    ByteBuffer.wrap(dexFileParcel),
+                    wxOptions.context.classLoader
+                )
+
+            val rawClass = loader.loadClass(className)
+            if (!WXInterface::class.java.isAssignableFrom(rawClass)) {
+                Log.e(TAG, "Loaded class $className does not implement WXInterface")
+                return null
+            }
+
+            @Suppress("UNCHECKED_CAST")
+            val clazz = rawClass as Class<out WXInterface>
+            return JavaScriptInterface(clazz)
+        } catch (e: ClassNotFoundException) {
+            Log.e(TAG, "Class $className not found in dex file ${file.path}", e)
+            return null
+        } catch (e: Exception) {
+            Log.e(
+                TAG,
+                "Error instantiating class $className from dex file ${file.path}",
+                e
+            )
+            return null
+        }
+    }
+}
+
+
 /**
  * Configuration class for the WebUI.
  *
@@ -71,7 +133,8 @@ data class WebUIConfig(
     val backHandler: Boolean = true,
     val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
-    val autoStatusBarsStyle: Boolean = true
+    val autoStatusBarsStyle: Boolean = true,
+    val dexFiles: List<WebUIConfigDexFile> = emptyList(),
 ) {
     companion object {
         /**

@@ -9,10 +9,10 @@ import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.platform.model.ModId
 
 @SuppressLint("JavascriptInterface")
-internal fun <T : WXInterface> WebView.addJavascriptInterface(
+internal fun WebView.addJavascriptInterface(
     context: Context,
     modId: ModId,
-    jsInterface: JavaScriptInterface<T>,
+    jsInterface: JavaScriptInterface<out WXInterface>,
 ) {
     val js = jsInterface.createNew(WXOptions(context, this, modId))
     return addJavascriptInterface(js.instance, js.name)
