@@ -18,7 +18,6 @@ import com.dergoogler.mmrl.platform.hiddenApi.HiddenPackageManager
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
 import com.dergoogler.mmrl.platform.model.PlatformConfig
 import com.dergoogler.mmrl.platform.model.PlatformConfigImpl
-import com.dergoogler.mmrl.platform.model.PlatformState
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
@@ -52,9 +51,6 @@ enum class Platform(val id: String) {
             }
 
         var isAlive by mutableStateOf(false)
-            private set
-
-        var state by mutableStateOf(PlatformState.UNKNOWN)
             private set
 
         private val _isAliveFlow = MutableStateFlow(false)
@@ -125,11 +121,11 @@ enum class Platform(val id: String) {
                         else -> null
                     }
 
-                    state(conf)
+                    state()
                 } catch (e: Exception) {
                     mServiceOrNull = null
                     Log.e(TAG, "Failed to init service manager", e)
-                    state(conf)
+                    state()
                 }
             }
         }
@@ -225,10 +221,9 @@ enum class Platform(val id: String) {
                 Platform.from(currentPlatform())
             }
 
-        private fun state(conf: PlatformConfigImpl): Boolean {
+        private fun state(): Boolean {
             isAlive = mServiceOrNull != null
             _isAliveFlow.value = isAlive
-            state = conf.state
             return isAlive
         }
 

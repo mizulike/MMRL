@@ -32,8 +32,6 @@ interface PlatformConfig {
         provider: IProvider,
         timeoutMillis: Long = TIMEOUT_MILLIS,
     ): IServiceManager
-
-    var state: PlatformState
 }
 
 data class PlatformConfigImpl(
@@ -42,8 +40,6 @@ data class PlatformConfigImpl(
     override var debug: Boolean = false,
     override var provider: IServiceManager? = null,
 ) : PlatformConfig {
-    override var state by mutableStateOf(PlatformState.UNKNOWN)
-
     @OptIn(InternalCoroutinesApi::class)
     override suspend fun get(
         provider: IProvider,
@@ -54,7 +50,6 @@ data class PlatformConfigImpl(
                 override fun onServiceConnected(name: ComponentName, binder: IBinder) {
                     val service = IServiceManager.Stub.asInterface(binder)
                     continuation.tryResume(service)?.let {
-                        state = PlatformState.AUTHORIZED
                         continuation.completeResume(it)
                     }
                 }
@@ -88,16 +83,8 @@ data class PlatformConfigImpl(
         timeoutMillis: Long,
     ): IServiceManager = withContext(Dispatchers.Main) {
         when {
-            !provider.isAvailable() -> {
-                state = PlatformState.UNAVAILABLE
-                throw IllegalStateException("${provider.name} not available")
-            }
-
-            !provider.isAuthorized() -> {
-                state = PlatformState.UNAUTHORIZED
-                throw IllegalStateException("${provider.name} not authorized")
-            }
-
+            !provider.isAvailable() -> throw IllegalStateException("${provider.name} not available")
+            !provider.isAuthorized() -> throw IllegalStateException("${provider.name} not authorized")
             else -> get(provider, timeoutMillis)
         }
     }
