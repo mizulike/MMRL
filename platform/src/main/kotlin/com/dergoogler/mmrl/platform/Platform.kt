@@ -130,7 +130,7 @@ enum class Platform(val id: String) {
             }
         }
 
-        suspend fun PlatformConfigImpl.applyConfig(block: suspend PlatformConfig.() -> Unit): PlatformConfigImpl {
+        private suspend fun PlatformConfigImpl.applyConfig(block: suspend PlatformConfig.() -> Unit): PlatformConfigImpl {
             block()
             return this
         }
