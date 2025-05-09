@@ -55,8 +55,7 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(40.dp)
-                    .verticalScroll(rememberScrollState()),
+                    .padding(40.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
