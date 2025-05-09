@@ -7,9 +7,10 @@ import java.io.BufferedInputStream
 import java.io.InputStream
 
 class FileInputInterface(
-    wxOptions: WXOptions
+    wxOptions: WXOptions,
 ) : WebUIInterface(wxOptions) {
     override var name: String = modId.sanitizedIdWithFileInputStream
+
     companion object {
         fun factory() = JavaScriptInterface(FileInputInterface::class.java)
     }
@@ -29,9 +30,11 @@ class FileInputInterface(
 
 class FileInputInterfaceStream(
     inputStream: InputStream,
-    wxOptions: WXOptions
+    wxOptions: WXOptions,
 ) : WebUIInterface(wxOptions) {
     private val bufferedInputStream = BufferedInputStream(inputStream)
+
+    fun getStream(): InputStream = bufferedInputStream
 
     @JavascriptInterface
     fun read(): Int = runTry("Error while reading from stream", -1) {
