@@ -35,6 +35,12 @@ class UserManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions) {
         return adapter.toJson(uisMapped)
     }
 
+    @get:JavascriptInterface
+    val myUserId get(): Int = um.myUserId
+
+    @JavascriptInterface
+    fun isSameUser(uid1: Int, uid2: Int): Boolean = um.isSameUser(uid1, uid2)
+
     @JavascriptInterface
     fun getUserInfo(userId: Int): UMUserInfo {
         val ui = um.getUserInfo(userId)

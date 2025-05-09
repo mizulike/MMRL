@@ -13,6 +13,7 @@ import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.graphics.createBitmap
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenPackageManager
+import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
 import com.dergoogler.mmrl.webui.interfaces.UMApplicationInfo.Companion.toUMApplicationInfo
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.moshi
@@ -156,6 +157,7 @@ data class UMApplicationInfo(
 class PackageManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions),
     CoroutineScope by MainScope() {
     private val pm get(): HiddenPackageManager = Platform.packageManager
+    private val um get(): HiddenUserManager = Platform.userManager
 
     override var name: String = "\$packageManager"
 
@@ -172,17 +174,98 @@ class PackageManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions),
     fun getApplicationIcon(
         packageName: String,
         flags: Int,
-        userId: Int
+        userId: Int,
     ): FileInputInterfaceStream? {
         val pf = pm.getApplicationInfo(packageName, flags, userId)
         return runBlocking {
-            return@runBlocking getIconBase64InputStream(pf)
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadIcon(context.packageManager)
+            )
+        }
+    }
+
+
+    @JavascriptInterface
+    fun getApplicationIcon(
+        packageName: String,
+        flags: Int,
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, flags, 0)
+        return runBlocking {
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadIcon(context.packageManager)
+            )
+        }
+    }
+
+    @JavascriptInterface
+    fun getApplicationIcon(
+        packageName: String,
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, 0, 0)
+        return runBlocking {
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadIcon(context.packageManager)
+            )
+        }
+    }
+
+    @JavascriptInterface
+    fun getApplicationUnbadgedIcon(
+        packageName: String,
+        flags: Int,
+        userId: Int,
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, flags, userId)
+        return runBlocking {
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadUnbadgedIcon(context.packageManager)
+            )
+        }
+    }
+
+    @JavascriptInterface
+    fun getApplicationUnbadgedIcon(
+        packageName: String,
+        flags: Int,
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, flags, um.myUserId)
+        return runBlocking {
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadUnbadgedIcon(context.packageManager)
+            )
+        }
+    }
+
+    @JavascriptInterface
+    fun getApplicationUnbadgedIcon(
+        packageName: String,
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, 0, um.myUserId)
+        return runBlocking {
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadUnbadgedIcon(context.packageManager)
+            )
         }
     }
 
     @JavascriptInterface
     fun getInstalledPackages(flags: Int, userId: Int): String {
         val ip = pm.getInstalledPackages(flags, userId)
+        val list = ip.map { it.packageName }
+        return listToJson(list) ?: "[]"
+    }
+
+    @JavascriptInterface
+    fun getInstalledPackages(flags: Int): String {
+        val ip = pm.getInstalledPackages(flags, um.myUserId)
+        val list = ip.map { it.packageName }
+        return listToJson(list) ?: "[]"
+    }
+
+    @JavascriptInterface
+    fun getInstalledPackages(): String {
+        val ip = pm.getInstalledPackages(0, um.myUserId)
         val list = ip.map { it.packageName }
         return listToJson(list) ?: "[]"
     }
@@ -195,12 +278,26 @@ class PackageManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions),
         }
     }
 
-    private suspend fun getIconBase64InputStream(
-        itemInfo: PackageItemInfo
-    ): FileInputInterfaceStream? = withContext(Dispatchers.IO) {
-        val drawable: Drawable =
-            itemInfo.loadIcon(context.packageManager) ?: return@withContext null
+    @JavascriptInterface
+    fun getApplicationInfo(packageName: String, flags: Int): UMApplicationInfo {
+        val ai = pm.getPackageInfo(packageName, flags, um.myUserId)
+        return runBlocking {
+            return@runBlocking ai.toUMApplicationInfo(wxOptions)
+        }
+    }
 
+
+    @JavascriptInterface
+    fun getApplicationInfo(packageName: String): UMApplicationInfo {
+        val ai = pm.getPackageInfo(packageName, 0, um.myUserId)
+        return runBlocking {
+            return@runBlocking ai.toUMApplicationInfo(wxOptions)
+        }
+    }
+
+    private suspend fun getDrawableBase64InputStream(
+        drawable: Drawable,
+    ): FileInputInterfaceStream? = withContext(Dispatchers.IO) {
         val bitmap = drawableToBitmap(drawable)
 
         val pngOutputStream = ByteArrayOutputStream()
