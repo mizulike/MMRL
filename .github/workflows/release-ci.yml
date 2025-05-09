@@ -255,16 +255,16 @@ jobs:
         uses: xz-dev/TelegramFileUploader@v1.1.1
         with:
           to-who: '@MMRLCI'
-          message: |-
+          message: |
               ${{ inputs.title }}
               #ci_${{ env.VERSION }}
-
+              
               Build on ${{ env.BUILD_DATE }}.
 
               **What's new?**
-
+              
               ${{ inputs.message }}
-
+              
               Type: ${{ env.BUILD_TYPE_CASED }}
               [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           files: |
@@ -297,13 +297,13 @@ jobs:
           body: |
             ${{ inputs.title }}
             #ci_${{ env.VERSION }}
-        
+            
             Build on ${{ env.BUILD_DATE }}.
-        
+            
             ## What's new?
-        
+              
             ${{ inputs.message }}
-        
+              
             Type: ${{ inputs.buildType }}
             [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
         env:
