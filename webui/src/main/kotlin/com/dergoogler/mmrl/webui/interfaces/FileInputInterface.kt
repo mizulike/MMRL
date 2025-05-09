@@ -8,7 +8,7 @@ import java.io.InputStream
 
 class FileInputInterface(
     wxOptions: WXOptions,
-) : WebUIInterface(wxOptions) {
+) : WXInterface(wxOptions) {
     override var name: String = modId.sanitizedIdWithFileInputStream
 
     companion object {
@@ -31,7 +31,7 @@ class FileInputInterface(
 class FileInputInterfaceStream(
     inputStream: InputStream,
     wxOptions: WXOptions,
-) : WebUIInterface(wxOptions) {
+) : WXInterface(wxOptions) {
     private val bufferedInputStream = BufferedInputStream(inputStream)
 
     fun getStream(): InputStream = bufferedInputStream

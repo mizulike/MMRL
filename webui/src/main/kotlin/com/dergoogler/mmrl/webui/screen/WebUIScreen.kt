@@ -54,7 +54,7 @@ import com.dergoogler.mmrl.webui.interfaces.ApplicationInterface
 import com.dergoogler.mmrl.webui.interfaces.PackageManagerInterface
 import com.dergoogler.mmrl.webui.interfaces.UserManagerInterface
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
-import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
+import com.dergoogler.mmrl.webui.interfaces.WXInterface
 import com.dergoogler.mmrl.webui.util.addJavascriptInterface
 
 /**
@@ -87,7 +87,7 @@ import com.dergoogler.mmrl.webui.util.addJavascriptInterface
 fun WebUIScreen(
     webView: WebView,
     options: WebUIOptions,
-    interfaces: List<JavaScriptInterface<out WebUIInterface>> = listOf(),
+    interfaces: List<JavaScriptInterface<out WXInterface>> = listOf(),
 ) {
     val context = LocalContext.current
     val showConfirm = rememberConfirm(context)

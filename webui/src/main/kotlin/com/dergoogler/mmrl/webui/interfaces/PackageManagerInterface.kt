@@ -1,8 +1,6 @@
 package com.dergoogler.mmrl.webui.interfaces
 
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
-import android.content.pm.PackageItemInfo
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.drawable.BitmapDrawable
@@ -154,7 +152,7 @@ data class UMApplicationInfo(
     }
 }
 
-class PackageManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions),
+class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
     CoroutineScope by MainScope() {
     private val pm get(): HiddenPackageManager = Platform.packageManager
     private val um get(): HiddenUserManager = Platform.userManager

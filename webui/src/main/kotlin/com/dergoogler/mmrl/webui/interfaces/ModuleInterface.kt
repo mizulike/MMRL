@@ -36,7 +36,7 @@ class ModuleInterface(
     wxOptions: WXOptions,
     private val insets: Insets,
     private val options: WebUIOptions,
-) : WebUIInterface(wxOptions) {
+) : WXInterface(wxOptions) {
     override var name: String = "$${modId.sanitizedId}"
     companion object {
         fun factory(

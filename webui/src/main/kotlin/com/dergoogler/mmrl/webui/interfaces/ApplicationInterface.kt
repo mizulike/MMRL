@@ -8,7 +8,7 @@ import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 
 class ApplicationInterface(
     wxOptions: WXOptions,
-) : WebUIInterface(wxOptions) {
+) : WXInterface(wxOptions) {
     override var name: String = "webui"
     companion object {
         fun factory() = JavaScriptInterface(ApplicationInterface::class.java)

@@ -7,7 +7,7 @@ import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.model.UMUserInfo
 import com.dergoogler.mmrl.webui.moshi
 
-class UserManagerInterface(wxOptions: WXOptions) : WebUIInterface(wxOptions) {
+class UserManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions) {
     private val um get(): HiddenUserManager = Platform.userManager
 
     override var name: String = "\$userManager"

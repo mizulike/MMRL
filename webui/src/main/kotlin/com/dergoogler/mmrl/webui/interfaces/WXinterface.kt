@@ -7,7 +7,7 @@ import android.os.Looper
 import android.webkit.WebView
 import com.dergoogler.mmrl.platform.model.ModId
 
-interface WebUIConsole {
+interface WXConsole {
     fun error(message: String, vararg args: String?)
     fun info(message: String, vararg args: String?)
     fun log(message: String, vararg args: String?)
@@ -21,7 +21,7 @@ data class WXOptions(
 )
 
 /**
- * `WebUIInterface` is an abstract base class that provides a set of common utilities for interacting with a WebView within a web-based user interface.
+ * `WXIInterface` is an abstract base class that provides a set of common utilities for interacting with a WebView within a web-based user interface.
  *
  * It offers functionalities for running JavaScript code, handling asynchronous tasks, logging, error handling, and managing deprecation warnings.
  * This class is designed to be extended by specific WebUI interfaces, providing them with a standardized way to communicate with the web view and the underlying Android environment.
@@ -33,9 +33,9 @@ data class WXOptions(
  * @property modId A unique identifier for the module using this interface.
  * @property name The name of the entity. Must be initialized before access.
  * @property activity The [Activity] instance from context.
- * @property console An object implementing the [WebUIConsole] interface, offering logging capabilities.
+ * @property console An object implementing the [WXConsole] interface, offering logging capabilities.
  */
-open class WebUIInterface(
+open class WXInterface(
     val wxOptions: WXOptions,
 ) {
     val context = wxOptions.context
@@ -95,7 +95,7 @@ open class WebUIInterface(
         );
     }
 
-    val console = object : WebUIConsole {
+    val console = object : WXConsole {
         private val String.escape get() = this.replace("'", "\\'")
 
         private fun levelParser(level: String, message: String, vararg args: String?) =

@@ -7,7 +7,7 @@ import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 
 class FileInterface(
     wxOptions: WXOptions
-) : WebUIInterface(wxOptions) {
+) : WXInterface(wxOptions) {
     override var name: String = modId.sanitizedIdWithFile
     companion object {
         fun factory() = JavaScriptInterface(FileInterface::class.java)

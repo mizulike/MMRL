@@ -1,18 +1,15 @@
 package com.dergoogler.mmrl.ui.activity.webui.interfaces
 
-import android.content.Context
 import android.text.TextUtils
 import android.view.Window
 import android.webkit.JavascriptInterface
-import android.webkit.WebView
 import android.widget.Toast
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
-import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.utils.createRootShell
 import com.dergoogler.mmrl.utils.withNewRootShell
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
-import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
+import com.dergoogler.mmrl.webui.interfaces.WXInterface
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
@@ -24,7 +21,7 @@ import java.util.concurrent.CompletableFuture
 class KernelSUInterface(
     wxOptions: WXOptions,
     private val debug: Boolean = false,
-) : WebUIInterface(wxOptions) {
+) : WXInterface(wxOptions) {
     override var name: String = "ksu"
 
     companion object {

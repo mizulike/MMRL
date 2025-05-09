@@ -1,7 +1,7 @@
 package com.dergoogler.mmrl.webui.model
 
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
-import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
+import com.dergoogler.mmrl.webui.interfaces.WXInterface
 
 /**
  * Represents a JavaScript interface that can be exposed to a web view.
@@ -14,7 +14,7 @@ import com.dergoogler.mmrl.webui.interfaces.WebUIInterface
  * @property initargs Optional arguments to be passed to the constructor of the class. If null, the constructor taking a WXOptions object will be used.
  * @property parameterTypes Optional array of parameter types for the constructor. If null, the constructor taking a WXOptions object will be used.
  */
-data class JavaScriptInterface<T : WebUIInterface>(
+data class JavaScriptInterface<T : WXInterface>(
     val clazz: Class<T>,
     val initargs: Array<Any>? = null,
     val parameterTypes: Array<Class<*>>? = null,
@@ -37,7 +37,7 @@ data class JavaScriptInterface<T : WebUIInterface>(
             constructor.newInstance(wxOptions)
         }
 
-        val name = (newInstance as WebUIInterface).name
+        val name = (newInstance as WXInterface).name
 
         return Instance(name, newInstance)
     }
