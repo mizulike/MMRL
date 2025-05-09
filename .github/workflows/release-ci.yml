@@ -5,7 +5,7 @@ on:
     inputs:
       title:
         required: false
-        default: '**CI Manager**'
+        default: '**MMRL**'
         description: 'Title'
       message:
         required: false
