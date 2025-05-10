@@ -1,11 +1,13 @@
 package com.dergoogler.mmrl.webui.interfaces
 
 import android.webkit.JavascriptInterface
+import androidx.annotation.Keep
 import androidx.core.content.pm.PackageInfoCompat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.webui.model.App
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 
+@Keep
 class ApplicationInterface(
     wxOptions: WXOptions,
 ) : WXInterface(wxOptions) {
@@ -30,7 +32,7 @@ class ApplicationInterface(
     fun getApplication(packageName: String): App {
         val packageInfo = context.packageManager.getPackageInfo(packageName, 0)
         val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
-        val versionName = packageInfo.versionName
+        val versionName = packageInfo.versionName ?: "unknown"
 
         return App(
             packageName = packageInfo.packageName,

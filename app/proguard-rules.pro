@@ -48,7 +48,11 @@
 -dontwarn javax.lang.model.util.Types
 -dontwarn javax.tools.Diagnostic$Kind
 
-# MMRL:webui reflection
+# Tell consumers to keep all classes that extend WXInterface
+-keep class * extends com.dergoogler.mmrl.webui.interfaces.WXInterface {
+    <init>(...);
+    *;
+}
 
--keep class com.dergoogler.mmrl.webui.** { *; }
--keep class com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface { *; }
+-keep class com.dergoogler.mmrl.webui.interfaces.**
+-keep class * extends com.dergoogler.mmrl.webui.interfaces.WXInterface

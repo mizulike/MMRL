@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import android.webkit.WebView
+import androidx.annotation.Keep
 import com.dergoogler.mmrl.platform.model.ModId
 
 interface WXConsole {
@@ -35,6 +36,7 @@ data class WXOptions(
  * @property activity The [Activity] instance from context.
  * @property console An object implementing the [WXConsole] interface, offering logging capabilities.
  */
+@Keep
 open class WXInterface(
     val wxOptions: WXOptions,
 ) {

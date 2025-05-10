@@ -1,10 +1,12 @@
 package com.dergoogler.mmrl.webui.interfaces
 
 import android.webkit.JavascriptInterface
+import androidx.annotation.Keep
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 
+@Keep
 class FileInterface(
     wxOptions: WXOptions
 ) : WXInterface(wxOptions) {

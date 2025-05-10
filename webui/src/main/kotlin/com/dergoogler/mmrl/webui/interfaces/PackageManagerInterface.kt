@@ -7,6 +7,7 @@ import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.webkit.JavascriptInterface
+import androidx.annotation.Keep
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.graphics.createBitmap
 import com.dergoogler.mmrl.platform.Platform
@@ -48,13 +49,13 @@ data class UMApplicationInfo(
     @get:JavascriptInterface
     var backupAgentName: String? = null,
     @get:JavascriptInterface
-    var category: Int = -1,
+    var category: Int? = -1,
     @get:JavascriptInterface
     var className: String? = null,
     @get:JavascriptInterface
     var compatibleWidthLimitDp: Int = 0,
     @get:JavascriptInterface
-    var compileSdkVersion: Int = 0,
+    var compileSdkVersion: Int? = 0,
     @get:JavascriptInterface
     var compileSdkVersionCodename: String? = null,
     @get:JavascriptInterface
@@ -66,13 +67,13 @@ data class UMApplicationInfo(
     @get:JavascriptInterface
     var enabled: Boolean = true,
     @get:JavascriptInterface
-    var flags: Int = 0,
+    var flags: Int? = 0,
     @get:JavascriptInterface
-    var largestWidthLimitDp: Int = 0,
+    var largestWidthLimitDp: Int? = 0,
     @get:JavascriptInterface
     var manageSpaceActivityName: String? = null,
     @get:JavascriptInterface
-    var minSdkVersion: Int = 0,
+    var minSdkVersion: Int? = 0,
     @get:JavascriptInterface
     var nativeLibraryDir: String? = null,
     @get:JavascriptInterface
@@ -82,7 +83,7 @@ data class UMApplicationInfo(
     @get:JavascriptInterface
     var publicSourceDir: String? = null,
     @get:JavascriptInterface
-    var requiresSmallestWidthDp: Int = 0,
+    var requiresSmallestWidthDp: Int? = 0,
     @get:JavascriptInterface
     var sharedLibraryFiles: String? = null,
     @get:JavascriptInterface
@@ -96,13 +97,13 @@ data class UMApplicationInfo(
     @get:JavascriptInterface
     var storageUuid: String? = null,
     @get:JavascriptInterface
-    var targetSdkVersion: Int = 0,
+    var targetSdkVersion: Int? = 0,
     @get:JavascriptInterface
     var taskAffinity: String? = null,
     @get:JavascriptInterface
-    var theme: Int = 0,
+    var theme: Int? = 0,
     @get:JavascriptInterface
-    var uiOptions: Int = 0,
+    var uiOptions: Int? = 0,
     @get:JavascriptInterface
     var uid: Int = 0,
 ) {
@@ -113,45 +114,46 @@ data class UMApplicationInfo(
             return with(applicationInfo) {
                 return@with UMApplicationInfo(
                     packageName = packageName,
-                    name = name,
+                    name = this?.name,
                     versionName = versionName,
                     versionCode = PackageInfoCompat.getLongVersionCode(this@toUMApplicationInfo),
-                    label = this.loadLabel(spm).toString(),
-                    nonLocalizedLabel = nonLocalizedLabel?.toString(),
-                    appComponentFactory = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) appComponentFactory else null,
-                    backupAgentName = backupAgentName,
-                    category = category,
-                    className = className,
-                    compileSdkVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) compileSdkVersion else -1,
-                    compileSdkVersionCodename = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) compileSdkVersionCodename else null,
-                    dataDir = dataDir,
-                    deviceProtectedDataDir = deviceProtectedDataDir,
-                    enabled = enabled,
-                    flags = flags,
-                    largestWidthLimitDp = largestWidthLimitDp,
-                    manageSpaceActivityName = manageSpaceActivityName,
-                    minSdkVersion = minSdkVersion,
-                    nativeLibraryDir = nativeLibraryDir,
-                    permission = permission,
-                    processName = processName,
-                    publicSourceDir = publicSourceDir,
-                    requiresSmallestWidthDp = requiresSmallestWidthDp,
+                    label = this?.loadLabel(spm).toString(),
+                    nonLocalizedLabel = this?.nonLocalizedLabel?.toString(),
+                    appComponentFactory = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) this?.appComponentFactory else null,
+                    backupAgentName = this?.backupAgentName,
+                    category = this?.category,
+                    className = this?.className,
+                    compileSdkVersion = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) this?.compileSdkVersion else null,
+                    compileSdkVersionCodename = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) this?.compileSdkVersionCodename else null,
+                    dataDir = this?.dataDir,
+                    deviceProtectedDataDir = this?.deviceProtectedDataDir,
+                    enabled = this?.enabled == true,
+                    flags = this?.flags,
+                    largestWidthLimitDp = this?.largestWidthLimitDp,
+                    manageSpaceActivityName = this?.manageSpaceActivityName,
+                    minSdkVersion = this?.minSdkVersion,
+                    nativeLibraryDir = this?.nativeLibraryDir,
+                    permission = this?.permission,
+                    processName = this?.processName,
+                    publicSourceDir = this?.publicSourceDir,
+                    requiresSmallestWidthDp = this?.requiresSmallestWidthDp,
                     // sharedLibraryFiles = listToJson(sharedLibraryFiles.toList()),
-                    sourceDir = sourceDir,
-                    storageUuid = storageUuid?.toString(),
-                    targetSdkVersion = targetSdkVersion,
-                    taskAffinity = taskAffinity,
-                    theme = theme,
-                    uiOptions = uiOptions,
-                    splitNames = listToJson(splitNames?.toList()),
-                    splitPublicSourceDirs = listToJson(splitPublicSourceDirs?.toList()),
-                    splitSourceDirs = listToJson(splitSourceDirs?.toList()),
+                    sourceDir = this?.sourceDir,
+                    storageUuid = this?.storageUuid?.toString(),
+                    targetSdkVersion = this?.targetSdkVersion,
+                    taskAffinity = this?.taskAffinity,
+                    theme = this?.theme,
+                    uiOptions = this?.uiOptions,
+                    splitNames = listToJson(splitNames.toList()),
+                    splitPublicSourceDirs = listToJson(this?.splitPublicSourceDirs?.toList()),
+                    splitSourceDirs = listToJson(this?.splitSourceDirs?.toList()),
                 )
             }
         }
     }
 }
 
+@Keep
 class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
     CoroutineScope by MainScope() {
     private val pm get(): HiddenPackageManager = Platform.packageManager

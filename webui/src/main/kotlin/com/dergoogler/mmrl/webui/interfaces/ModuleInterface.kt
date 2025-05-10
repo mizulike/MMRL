@@ -9,6 +9,7 @@ import android.os.Build
 import android.util.Log
 import android.webkit.JavascriptInterface
 import android.widget.Toast
+import androidx.annotation.Keep
 import androidx.core.app.ShareCompat
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.view.WindowCompat
@@ -32,6 +33,7 @@ internal data class Manager(
     val versionCode: Int,
 )
 
+@Keep
 class ModuleInterface(
     wxOptions: WXOptions,
     private val insets: Insets,
@@ -93,7 +95,7 @@ class ModuleInterface(
 
             val packageInfo = context.packageManager.getPackageInfo(context.packageName, 0)
             val versionCode = PackageInfoCompat.getLongVersionCode(packageInfo)
-            val versionName = packageInfo.versionName
+            val versionName = packageInfo.versionName ?: "unknown"
 
             return managerAdapter.toJson(
                 Manager(

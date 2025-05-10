@@ -155,7 +155,7 @@ android {
     packaging.resources.excludes += setOf(
         "META-INF/**",
         "okhttp3/**",
-        "kotlin/**",
+        // "kotlin/**",
         "org/**",
         "**.properties",
         "**.bin",
@@ -172,17 +172,6 @@ android {
     }
 }
 
-//androidComponents {
-//    onVariants(selector().all()) { variant ->
-//        afterEvaluate {
-//            val capName = variant.name.capitalized()
-//            tasks.getByName<KotlinCompile>("ksp${capName}Kotlin") {
-//                setSource(tasks.getByName("generate${capName}Proto").outputs)
-//            }
-//        }
-//    }
-//}
-
 dependencies {
     implementation(libs.androidx.lifecycle.process)
     compileOnly(projects.hiddenApi)
@@ -191,6 +180,8 @@ dependencies {
     implementation(projects.ui)
     implementation(projects.ext)
     implementation(projects.datastore)
+
+    implementation(libs.kotlin.stdlib)
 
     implementation(libs.hiddenApiBypass)
     // implementation(libs.timber)
