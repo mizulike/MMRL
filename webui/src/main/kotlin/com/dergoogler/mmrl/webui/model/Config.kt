@@ -134,7 +134,7 @@ data class WebUIConfig(
     val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
     val autoStatusBarsStyle: Boolean = true,
-    val dexFiles: List<WebUIConfigDexFile> = emptyList(),
+    // val dexFiles: List<WebUIConfigDexFile> = emptyList(),
 ) {
     companion object {
         /**
