@@ -50,12 +50,13 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding),
+                .padding(innerPadding)
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(40.dp),
+                    .padding(40.dp)
+                    .verticalScroll(rememberScrollState()),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.SpaceEvenly
             ) {
@@ -73,15 +74,14 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
                     )
                 }
 
-                LazyColumn(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(
-                        items = FeaturedManager.managers,
-                        key = { it.workingMode.name }
-                    ) { manager ->
+
+                    for (manager in FeaturedManager.managers) {
                         val interactionSource = remember { MutableInteractionSource() }
                         val selected =
                             remember(currentSelection) { currentSelection == manager }
