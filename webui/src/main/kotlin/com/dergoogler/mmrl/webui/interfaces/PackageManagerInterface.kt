@@ -171,6 +171,46 @@ class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
     }
 
     @JavascriptInterface
+    fun getApplicationLogo(
+        packageName: String,
+        flags: Int,
+        userId: Int,
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, flags, userId)
+        return runBlocking {
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadLogo(context.packageManager)
+            )
+        }
+    }
+
+
+    @JavascriptInterface
+    fun getApplicationLogo(
+        packageName: String,
+        flags: Int,
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, flags, 0)
+        return runBlocking {
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadLogo(context.packageManager)
+            )
+        }
+    }
+
+    @JavascriptInterface
+    fun getApplicationLogo(
+        packageName: String,
+    ): FileInputInterfaceStream? {
+        val pf = pm.getApplicationInfo(packageName, 0, 0)
+        return runBlocking {
+            return@runBlocking getDrawableBase64InputStream(
+                drawable = pf.loadLogo(context.packageManager)
+            )
+        }
+    }
+
+    @JavascriptInterface
     fun getApplicationIcon(
         packageName: String,
         flags: Int,
