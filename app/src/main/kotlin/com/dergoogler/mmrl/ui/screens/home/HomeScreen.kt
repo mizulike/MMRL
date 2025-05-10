@@ -30,7 +30,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -53,13 +52,11 @@ import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.stub.IMMRLApiManager
-import com.dergoogler.mmrl.ui.component.CenterAlignedTopAppBar
 import com.dergoogler.mmrl.ui.component.SELinuxStatus
-import com.dergoogler.mmrl.ui.component.TextWithIcon
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
-import com.dergoogler.mmrl.ui.component.TopAppBarIcon
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
@@ -100,6 +97,10 @@ fun HomeScreen(
     if (openRebootSheet) {
         RebootBottomSheet(
             onClose = { openRebootSheet = false })
+    }
+
+    LaunchedEffect(Unit) {
+        ProviderService.init(context, userPreferences.workingMode.toPlatform())
     }
 
     Scaffold(

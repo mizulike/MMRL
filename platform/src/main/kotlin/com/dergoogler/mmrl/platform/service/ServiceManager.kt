@@ -6,6 +6,7 @@ import android.os.Parcel
 import android.os.SELinux
 import android.system.Os
 import android.util.Log
+import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.platform.BINDER_TRANSACTION
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.content.Service
@@ -14,7 +15,6 @@ import com.dergoogler.mmrl.platform.manager.APatchModuleManager
 import com.dergoogler.mmrl.platform.manager.KernelSUModuleManager
 import com.dergoogler.mmrl.platform.manager.KsuNextModuleManager
 import com.dergoogler.mmrl.platform.manager.MagiskModuleManager
-import com.dergoogler.mmrl.platform.manager.StubModuleManager
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
@@ -46,8 +46,10 @@ class ServiceManager(
                 fileManager = fileManager
             )
 
-            Platform.NonRoot -> StubModuleManager(
-                fileManager = fileManager
+            else -> throw BrickException(
+                message = "Unknown platform: $platform",
+                helpMessage = "Contact the support",
+                helpLink = "https://t.me/MMRLGroup"
             )
         }
     }

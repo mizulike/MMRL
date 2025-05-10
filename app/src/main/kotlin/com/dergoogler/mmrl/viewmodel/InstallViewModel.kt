@@ -54,12 +54,6 @@ class InstallViewModel @Inject constructor(
             return@launch
         }
 
-        if (platform.isNotValid) {
-            event = Event.FAILED
-            log(R.string.non_root_platform_is_not_supported)
-            return@launch
-        }
-
         if (moduleManager == null) {
             event = Event.FAILED
             log(R.string.module_manager_is_null)

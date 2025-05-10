@@ -60,8 +60,6 @@ class MainActivity : MMRLComponentActivity() {
 
                 modulesRepository.getBlacklist()
 
-                ProviderService.init(baseContext, preferences.workingMode.toPlatform())
-
                 NetworkUtils.setEnableDoh(preferences.useDoh)
 
                 setActivityEnabled<InstallActivity>(preferences.workingMode.isRoot)
