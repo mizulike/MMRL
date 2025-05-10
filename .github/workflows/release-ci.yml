@@ -358,11 +358,16 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event.inputs.send_playstore == 'true'
     steps:
+      - name: Parse input
+        run: |
+            BUILD_TYPE_CASED=$(echo "${{ inputs.buildType }}" | sed 's/^\(.\)/\L\1/')
+            echo "BUILD_TYPE_CASED=$BUILD_TYPE_CASED" >> $GITHUB_ENV
+
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
             fetch-depth: 0
-
+    
       - name: Set up signing key
         run: |
             if [ ! -z "${{ secrets.KEY_STORE }}" ]; then
@@ -372,6 +377,18 @@ jobs:
                 echo keyStore='${{ github.workspace }}/key.jks' >> signing.properties
                 echo ${{ secrets.KEY_STORE }} | base64 --decode > ${{ github.workspace }}/key.jks
             fi
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4.7.1
+        with:
+          distribution: 'zulu'
+          java-version: 21
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4.3.1
+        with:
+            validate-wrappers: true
+            cache-cleanup: always
 
       - name: Bundle with Gradle
         run: chmod 755 ./gradlew && ./gradlew bundlePlaystore
