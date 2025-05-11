@@ -7,8 +7,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.dergoogler.mmrl.ui.navigation.graphs.moduleScreen
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
-import com.dergoogler.mmrl.ui.screens.home.screens.AboutScreen
-import com.dergoogler.mmrl.ui.screens.home.screens.ThankYouScreen
+import com.dergoogler.mmrl.ui.screens.main.AboutScreen
+import com.dergoogler.mmrl.ui.screens.main.ThankYouScreen
 import com.dergoogler.mmrl.ui.screens.main.BottomBarMainScreen
 import com.dergoogler.mmrl.ui.screens.search.SearchScreen
 import com.dergoogler.mmrl.viewmodel.SearchViewModel

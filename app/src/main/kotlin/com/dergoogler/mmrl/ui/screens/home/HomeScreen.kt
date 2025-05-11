@@ -52,7 +52,6 @@ import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
-import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.SELinuxStatus
 import com.dergoogler.mmrl.ui.component.TopAppBar
@@ -62,7 +61,8 @@ import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListProgressBarItem
-import com.dergoogler.mmrl.ui.navigation.graphs.HomeScreen
+import com.dergoogler.mmrl.ui.navigation.MainRoute
+import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.screens.home.items.NonRootItem
@@ -82,7 +82,7 @@ fun HomeScreen(
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val context = LocalContext.current
-    val navController = LocalNavController.current
+    val navController = LocalMainNavController.current
     val userPreferences = LocalUserPreferences.current
     val browser = LocalUriHandler.current
 
@@ -105,10 +105,10 @@ fun HomeScreen(
             TopBar(
                 isProviderAlive = viewModel.isProviderAlive,
                 onInfoClick = {
-                    navController.navigateSingleTopTo(HomeScreen.About.route)
+                    navController.navigateSingleTopTo(MainRoute.About.route)
                 },
                 onHeartClick = {
-                    navController.navigateSingleTopTo(HomeScreen.ThankYou.route)
+                    navController.navigateSingleTopTo(MainRoute.ThankYou.route)
                 },
                 onRebootClick = {
                     openRebootSheet = true

@@ -1,4 +1,4 @@
-package com.dergoogler.mmrl.ui.screens.home.screens
+package com.dergoogler.mmrl.ui.screens.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +30,6 @@ import com.dergoogler.mmrl.ext.toDollars
 import com.dergoogler.mmrl.ui.component.HorizontalDividerWithText
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
-import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.items.MemberCard
 import com.dergoogler.mmrl.viewmodel.ThankYouViewModel
 

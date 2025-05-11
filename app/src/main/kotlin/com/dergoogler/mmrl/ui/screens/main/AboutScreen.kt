@@ -1,4 +1,4 @@
-package com.dergoogler.mmrl.ui.screens.home.screens
+package com.dergoogler.mmrl.ui.screens.main
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,7 +35,6 @@ import com.dergoogler.mmrl.ui.component.MarkdownText
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.component.card.OutlinedCard
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
-import com.dergoogler.mmrl.ui.providable.LocalNavController
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 
 @Composable

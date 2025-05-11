@@ -14,7 +14,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import com.dergoogler.mmrl.ext.none
-import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.ui.navigation.MainRoute
 import com.dergoogler.mmrl.ui.navigation.mainScreen
 import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
