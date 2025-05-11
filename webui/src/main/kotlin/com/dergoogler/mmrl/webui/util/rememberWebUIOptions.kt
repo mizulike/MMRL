@@ -79,8 +79,9 @@ data class WebUIOptions(
             .filter { !SuFile(it).isFile }
             .sortedWith(compareByDescending {
                 when {
-                    it.matches(Regex(".*\\.mmrl\\.(html|htm)\$")) -> 2
-                    it.matches(Regex("index\\.(html|htm)\$")) -> 1
+                    it.matches(Regex(".*\\.(wx|webuix)\\.(html|htm)$")) -> 3
+                    it.matches(Regex(".*\\.mmrl\\.(html|htm)$")) -> 2
+                    it.matches(Regex("index\\.(html|htm)$")) -> 1
                     else -> 0
                 }
             })
