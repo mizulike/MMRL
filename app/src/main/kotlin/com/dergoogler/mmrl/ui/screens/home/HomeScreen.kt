@@ -99,10 +99,6 @@ fun HomeScreen(
             onClose = { openRebootSheet = false })
     }
 
-    LaunchedEffect(Unit) {
-        ProviderService.init(context, userPreferences.workingMode.toPlatform())
-    }
-
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
