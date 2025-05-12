@@ -84,6 +84,7 @@ android {
         create("playstore") {
             initWith(buildTypes.getByName("release"))
             matchingFallbacks += listOf("debug", "release")
+            buildConfigField("Boolean", "IS_GOOGLE_PLAY_BUILD", "true")
             versionNameSuffix = "-playstore"
         }
 
