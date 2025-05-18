@@ -223,7 +223,7 @@ fun WebUIScreen(
                         }
 
 
-                        if (options.requireNewAppVersion) {
+                        if (options.requireNewAppVersion?.required == true) {
                             loadData(
                                 getRequireNewVersion(context, options), "text/html", "UTF-8"
                             )
@@ -245,6 +245,12 @@ fun getRequireNewVersion(
     context: Context,
     options: WebUIOptions,
 ) = buildString {
+    val rq = options.requireNewAppVersion
+    val supportText = rq?.supportText
+    val supportLink = rq?.supportLink
+    val requiredCode = rq?.requiredCode
+    val appName = rq?.packageInfo?.applicationInfo?.loadLabel(context.packageManager).toString()
+
     appendHTML().html {
         lang = "en"
         head {
@@ -255,15 +261,15 @@ fun getRequireNewVersion(
             }
             link {
                 rel = "stylesheet"
-                href = "${options.domain}/mmrl/insets.css"
+                href = "${options.domain}/internal/insets.css"
             }
             link {
                 rel = "stylesheet"
-                href = "${options.domain}/mmrl/colors.css"
+                href = "${options.domain}/internal/colors.css"
             }
             link {
                 rel = "stylesheet"
-                href = "${options.domain}/mmrl/assets/webui/requireNewVersion.css"
+                href = "${options.domain}/internal/assets/webui/requireNewVersion.css"
             }
             title { +"New App Version Required" }
         }
@@ -274,26 +280,28 @@ fun getRequireNewVersion(
                     div {
                         b { +options.modId.id }
                         +" "
-                        +context.getString(R.string.requireNewVersion_require_text)
+                        +context.getString(R.string.requireNewVersion_require_text, appName)
                         +" "
-                        i { +options.config.require.version.required.toString() }
+                        i { +requiredCode.toString() }
                     }
                     div(classes = "list") {
                         span { +context.getString(R.string.requireNewVersion_try_the_following) }
                         ul {
-                            li { +context.getString(R.string.requireNewVersion_try_the_following_one) }
+                            li {
+                                +context.getString(
+                                    R.string.requireNewVersion_try_the_following_one,
+                                    appName
+                                )
+                            }
                             li { +context.getString(R.string.requireNewVersion_try_the_following_two) }
                         }
                     }
-                    div(classes = "code") { +"ERR_NEW_MMRL_REQUIRED" }
+                    div(classes = "code") { +"ERR_NEW_WX_VERSION_REQUIRED" }
                     div(classes = "buttons") {
                         button(classes = "refresh") {
                             onClick = "location.reload();"
                             +context.getString(R.string.requireNewVersion_refresh)
                         }
-
-                        val supportLink = options.config.require.version.supportLink
-                        val supportText = options.config.require.version.supportText
 
                         if (supportLink != null && supportText != null) {
                             button(classes = "more") {

@@ -2,7 +2,6 @@ package com.dergoogler.mmrl.webui.util
 
 import android.content.Context
 import android.content.pm.PackageInfo
-import android.os.Build
 import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -13,6 +12,7 @@ import androidx.core.content.pm.PackageInfoCompat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.webui.model.RequireNewVersion
 import com.dergoogler.mmrl.webui.webUiConfig
 import java.net.URI
 
@@ -123,11 +123,11 @@ data class WebUIOptions(
             }
         }
 
-    val requireNewAppVersion: Boolean
+    val requireNewAppVersion: RequireNewVersion?
         get() {
             if (currentPackageInfo == null) {
                 Log.d(TAG, "currentPackageInfo is null")
-                return false
+                return null
             }
 
             val packageName = currentPackageInfo!!.packageName
@@ -139,10 +139,16 @@ data class WebUIOptions(
 
             if (findPkgFromCfg == null) {
                 Log.d(TAG, "Package $packageName not found in config")
-                return false
+                return null
             }
 
-            return versionCode < findPkgFromCfg.code
+            return RequireNewVersion(
+                required = versionCode < findPkgFromCfg.code,
+                requiredCode = findPkgFromCfg.code,
+                supportLink = findPkgFromCfg.supportLink,
+                supportText = findPkgFromCfg.supportText,
+                packageInfo = currentPackageInfo!!
+            )
         }
 
     val domainUrl
