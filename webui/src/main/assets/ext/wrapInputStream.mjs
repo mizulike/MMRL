@@ -1,6 +1,6 @@
-import { wrapToReadableStream, defaultStreamOptions } from "https://mui.kernelsu.org/internal/assets/wrapToReadableStream.mjs"
+import { wrapToReadableStream, defaultStreamOptions } from "https://mui.kernelsu.org/internal/assets/ext/wrapToReadableStream.mjs"
 
-export async function wrapInputStream(inputStream, options = {}) {
+async function wrapInputStream(inputStream, options = {}) {
     const mergedOptions = { ...defaultStreamOptions, ...options };
 
     try {
@@ -15,3 +15,5 @@ export async function wrapInputStream(inputStream, options = {}) {
         throw new Error("wrapInputStream failed: " + error.message);
     }
 }
+
+export { wrapInputStream }

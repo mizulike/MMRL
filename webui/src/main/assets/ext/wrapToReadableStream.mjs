@@ -1,9 +1,9 @@
-export const defaultStreamOptions = {
+const defaultStreamOptions = {
     chunkSize: 1024 * 1024,
     signal: null,
 };
 
-export async function wrapToReadableStream(inputStream, options = {}) {
+async function wrapToReadableStream(inputStream, options = {}) {
     const mergedOptions = { ...defaultStreamOptions, ...options };
 
     return new Promise((resolve, reject) => {
@@ -77,3 +77,5 @@ export async function wrapToReadableStream(inputStream, options = {}) {
         resolve(stream);
     });
 }
+
+export { defaultStreamOptions, wrapToReadableStream }
