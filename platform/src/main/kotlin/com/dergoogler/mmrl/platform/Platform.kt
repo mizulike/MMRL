@@ -40,6 +40,9 @@ enum class Platform(val id: String) {
     KernelSU("kernelsu"),
     KsuNext("ksunext"),
     APatch("apatch"),
+    MKSU("mksu"),
+    SukiSU("sukisu"),
+    RKSU("rksu"),
     NonRoot("");
 
     companion object {

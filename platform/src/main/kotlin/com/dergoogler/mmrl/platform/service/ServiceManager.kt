@@ -34,10 +34,13 @@ class ServiceManager(
                 fileManager = fileManager
             )
 
+            Platform.RKSU,
+            Platform.MKSU,
             Platform.KernelSU -> KernelSUModuleManager(
                 fileManager = fileManager
             )
 
+            Platform.SukiSU,
             Platform.KsuNext -> KsuNextModuleManager(
                 fileManager = fileManager
             )
