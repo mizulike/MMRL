@@ -98,6 +98,10 @@ internal class WebUIClient(
         view: WebView,
         request: WebResourceRequest?,
     ): Boolean {
+        if (!request.isForMainFrame()) {
+            return false;
+        }
+        
         val mUrl = request?.url?.toString() ?: return false
 
         return if (!options.isDomainSafe(mUrl)) {
