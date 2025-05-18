@@ -1,10 +1,15 @@
 package com.dergoogler.mmrl.webui.util
 
+import android.content.Context
+import android.content.pm.PackageInfo
+import android.os.Build
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.core.content.pm.PackageInfoCompat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
@@ -31,7 +36,9 @@ import java.net.URI
  * @property cls Optional class associated with WebUI.
  */
 data class WebUIOptions(
+    val context: Context,
     val modId: ModId,
+    @Deprecated("Not used anymore")
     val appVersionCode: Int,
     val domain: String,
     val domainSafeRegex: Regex,
@@ -44,6 +51,15 @@ data class WebUIOptions(
     val userAgentString: String,
     val cls: Class<*>?,
 ) {
+    private val packageManager
+        get() = Platform.get(null) {
+            packageManager
+        }
+    private val myUserId
+        get() = Platform.get(null) {
+            userManager.myUserId
+        }
+
     val isProviderAlive get() = Platform.isAlive
 
     val versionName: String
@@ -87,7 +103,43 @@ data class WebUIOptions(
             })
             .firstOrNull()
 
-    val requireNewAppVersion = appVersionCode < config.require.version.required
+    private val currentPackageInfo: PackageInfo?
+        get() {
+            if (packageManager == null) {
+                return null
+            }
+
+            if (myUserId == null) {
+                return null
+            }
+
+            try {
+                return packageManager!!.getPackageInfo(context.packageName, 0, myUserId!!)
+            } catch (e: Exception) {
+                Log.e("WebUIOptions", "Error getting package version code: ${e.message}")
+                return null
+            }
+        }
+
+    val requireNewAppVersion: Boolean
+        get() {
+            if (currentPackageInfo == null) {
+                return false
+            }
+
+            val packageName = currentPackageInfo!!.packageName
+            val versionCode = PackageInfoCompat.getLongVersionCode(currentPackageInfo!!)
+
+            val findPkgFromCfg =
+                config.require.version.packages.find { it.packageName == packageName }
+
+            if (findPkgFromCfg == null) {
+                return false
+            }
+
+            return versionCode < findPkgFromCfg.code
+        }
+
 
     val domainUrl
         get(): String {
@@ -139,6 +191,7 @@ data class WebUIOptions(
 @Composable
 fun rememberWebUIOptions(
     modId: ModId,
+    context: Context = Platform.context,
     appVersionCode: Int = -1,
     domain: String = "https://mui.kernelsu.org",
     domainSafeRegex: Regex = Regex("^https?://mui\\.kernelsu\\.org(/.*)?$"),
@@ -167,6 +220,7 @@ fun rememberWebUIOptions(
     cls
 ) {
     WebUIOptions(
+        context = context,
         modId = modId,
         appVersionCode = appVersionCode,
         domain = domain,

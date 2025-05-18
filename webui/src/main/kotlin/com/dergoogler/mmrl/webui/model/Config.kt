@@ -34,6 +34,15 @@ data class WebUIConfigRequireVersion(
     val required: Int = 1,
     val supportText: String? = null,
     val supportLink: String? = null,
+    val packages: List<WebUIConfigRequireVersionPackages> = emptyList()
+)
+
+@JsonClass(generateAdapter = true)
+data class WebUIConfigRequireVersionPackages(
+    val code: Int = -1,
+    val packageName: String,
+    val supportText: String? = null,
+    val supportLink: String? = null,
 )
 
 /**
