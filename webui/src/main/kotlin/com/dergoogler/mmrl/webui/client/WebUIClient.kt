@@ -98,7 +98,7 @@ internal class WebUIClient(
         view: WebView,
         request: WebResourceRequest?,
     ): Boolean {
-        if (!request.isForMainFrame()) {
+        if (!(request?.isForMainFrame() == true)) {
             return false;
         }
         
