@@ -34,16 +34,24 @@ data class WebUIConfigRequireVersion(
     val required: Int = 1,
     val supportText: String? = null,
     val supportLink: String? = null,
-    val packages: List<WebUIConfigRequireVersionPackages> = emptyList()
 )
 
 @JsonClass(generateAdapter = true)
 data class WebUIConfigRequireVersionPackages(
     val code: Int = -1,
-    val packageName: String,
+    val packageName: Any,
     val supportText: String? = null,
     val supportLink: String? = null,
-)
+) {
+    val packageNames
+        get(): List<String> {
+            return when (packageName) {
+                is String -> listOf(packageName)
+                is List<*> -> packageName.filterIsInstance<String>()
+                else -> emptyList()
+            }
+        }
+}
 
 /**
  * Represents the required configuration for the Web UI.
@@ -55,6 +63,7 @@ data class WebUIConfigRequireVersionPackages(
  */
 @JsonClass(generateAdapter = true)
 data class WebUIConfigRequire(
+    val packages: List<WebUIConfigRequireVersionPackages> = emptyList(),
     val version: WebUIConfigRequireVersion = WebUIConfigRequireVersion(),
 )
 

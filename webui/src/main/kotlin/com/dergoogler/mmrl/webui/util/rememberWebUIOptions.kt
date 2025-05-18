@@ -106,17 +106,19 @@ data class WebUIOptions(
     private val currentPackageInfo: PackageInfo?
         get() {
             if (packageManager == null) {
+                Log.d(TAG, "packageManager is null")
                 return null
             }
 
             if (myUserId == null) {
+                Log.d(TAG, "myUserId is null")
                 return null
             }
 
             try {
                 return packageManager!!.getPackageInfo(context.packageName, 0, myUserId!!)
             } catch (e: Exception) {
-                Log.e("WebUIOptions", "Error getting package version code: ${e.message}")
+                Log.e(TAG, "Error getting package version code: ${e.message}")
                 return null
             }
         }
@@ -124,22 +126,24 @@ data class WebUIOptions(
     val requireNewAppVersion: Boolean
         get() {
             if (currentPackageInfo == null) {
+                Log.d(TAG, "currentPackageInfo is null")
                 return false
             }
 
             val packageName = currentPackageInfo!!.packageName
             val versionCode = PackageInfoCompat.getLongVersionCode(currentPackageInfo!!)
 
-            val findPkgFromCfg =
-                config.require.version.packages.find { it.packageName == packageName }
+            val findPkgFromCfg = config.require.packages.find { pkg ->
+                packageName in pkg.packageNames
+            }
 
             if (findPkgFromCfg == null) {
+                Log.d(TAG, "Package $packageName not found in config")
                 return false
             }
 
             return versionCode < findPkgFromCfg.code
         }
-
 
     val domainUrl
         get(): String {
@@ -166,6 +170,9 @@ data class WebUIOptions(
         }
     }
 
+    private companion object Default {
+        const val TAG = "WebUIOptions"
+    }
 }
 
 /**
