@@ -394,5 +394,5 @@
     <string name="page_search">搜索</string>
     <string name="from_other_repositories">从其他仓库</string>
     <string name="settings_enable_toolbar_events">启用工具栏事件</string>
-    <string name="unable_to_perform_reboot_task">无法进行重新启动</string>
+    <string name="unable_to_perform_reboot_task">无法执行重启任务</string>
 </resources>
