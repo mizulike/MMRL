@@ -107,3 +107,12 @@ val notFoundResponse = WebResourceResponse(
     headers,
     null
 )
+
+val forbiddenResponse = WebResourceResponse(
+    null,
+    encoding,
+    ResponseStatus.FORBIDDEN.code,
+    ResponseStatus.FORBIDDEN.reasonPhrase,
+    headers,
+    null
+)

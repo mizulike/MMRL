@@ -3,7 +3,12 @@ package com.dergoogler.mmrl.webui.screen
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.util.Log
 import android.view.ViewGroup
+import android.webkit.ServiceWorkerClient
+import android.webkit.ServiceWorkerController
+import android.webkit.WebResourceRequest
+import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import androidx.activity.compose.BackHandler
 import androidx.compose.material3.MaterialTheme
@@ -14,25 +19,32 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
-import com.dergoogler.mmrl.webui.interfaces.FileInterface
-import com.dergoogler.mmrl.webui.LocalInsets
-import com.dergoogler.mmrl.webui.R
-import com.dergoogler.mmrl.webui.client.WebUIClient
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.ui.component.dialog.rememberPrompt
+import com.dergoogler.mmrl.webui.LocalInsets
+import com.dergoogler.mmrl.webui.R
+import com.dergoogler.mmrl.webui.client.WebUIClient
 import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.handler.suPathHandler
 import com.dergoogler.mmrl.webui.handler.webrootPathHandler
+import com.dergoogler.mmrl.webui.interfaces.ApplicationInterface
 import com.dergoogler.mmrl.webui.interfaces.FileInputInterface
+import com.dergoogler.mmrl.webui.interfaces.FileInterface
 import com.dergoogler.mmrl.webui.interfaces.ModuleInterface
+import com.dergoogler.mmrl.webui.interfaces.PackageManagerInterface
+import com.dergoogler.mmrl.webui.interfaces.UserManagerInterface
+import com.dergoogler.mmrl.webui.interfaces.WXInterface
+import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.rememberInsets
 import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
 import com.dergoogler.mmrl.webui.util.WebUIOptions
+import com.dergoogler.mmrl.webui.util.addJavascriptInterface
 import kotlinx.html.b
 import kotlinx.html.body
 import kotlinx.html.button
@@ -49,13 +61,7 @@ import kotlinx.html.span
 import kotlinx.html.stream.appendHTML
 import kotlinx.html.title
 import kotlinx.html.ul
-import androidx.core.graphics.drawable.toDrawable
-import com.dergoogler.mmrl.webui.interfaces.ApplicationInterface
-import com.dergoogler.mmrl.webui.interfaces.PackageManagerInterface
-import com.dergoogler.mmrl.webui.interfaces.UserManagerInterface
-import com.dergoogler.mmrl.webui.interfaces.WXOptions
-import com.dergoogler.mmrl.webui.interfaces.WXInterface
-import com.dergoogler.mmrl.webui.util.addJavascriptInterface
+
 
 /**
  * A Composable function that displays a WebView for a web-based UI.
@@ -124,15 +130,20 @@ fun WebUIScreen(
             LocalInsets provides insets
         ) {
             val webuiAssetsLoader = rememberWebUIAssetLoader(
-                handlers = listOf(
-                    "/mmrl/" to internalPathHandler(options),
-                    "/internal/" to internalPathHandler(options),
-                    ".${options.modId.id}/" to suPathHandler("/data/adb/modules/${options.modId.id}".toSuFile()),
-                    "/.adb/" to suPathHandler("/data/adb".toSuFile()),
-                    "/.config/" to suPathHandler("/data/adb/.config".toSuFile()),
-                    "/.local/" to suPathHandler("/data/adb/.local".toSuFile()),
-                    "/" to webrootPathHandler(options),
-                )
+                handlers = buildList {
+                    add("/mmrl/" to internalPathHandler(options))
+                    add("/internal/" to internalPathHandler(options))
+                    add(".${options.modId.id}/" to suPathHandler("/data/adb/modules/${options.modId.id}".toSuFile()))
+                    add("/.adb/" to suPathHandler("/data/adb".toSuFile()))
+                    add("/.config/" to suPathHandler("/data/adb/.config".toSuFile()))
+                    add("/.local/" to suPathHandler("/data/adb/.local".toSuFile()))
+
+                    if (options.config.hasRootPathPermission) {
+                        add("/__root__" to suPathHandler("/".toSuFile()))
+                    }
+
+                    add("/" to webrootPathHandler(options))
+                }
             )
 
             key(options.recomposeCount) {

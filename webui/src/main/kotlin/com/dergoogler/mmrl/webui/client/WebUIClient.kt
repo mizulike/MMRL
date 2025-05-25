@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.net.Uri
 import android.net.http.SslError
+import android.util.Log
 import android.webkit.JsPromptResult
 import android.webkit.JsResult
 import android.webkit.SslErrorHandler
@@ -16,6 +17,7 @@ import androidx.compose.ui.platform.UriHandler
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.PromptData
 import com.dergoogler.mmrl.webui.R
+import com.dergoogler.mmrl.webui.forbiddenResponse
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 
 internal class WebUIClient(
@@ -38,7 +40,8 @@ internal class WebUIClient(
             result: JsResult,
         ): Boolean {
             showConfirm(
-                ConfirmData(title = context.getString(R.string.says, options.modId.id),
+                ConfirmData(
+                    title = context.getString(R.string.says, options.modId.id),
                     description = message,
                     onConfirm = { result.confirm() },
                     onClose = { result.cancel() })
@@ -54,7 +57,8 @@ internal class WebUIClient(
             result: JsResult,
         ): Boolean {
             showConfirm(
-                ConfirmData(title = context.getString(R.string.says, options.modId.id),
+                ConfirmData(
+                    title = context.getString(R.string.says, options.modId.id),
                     description = message,
                     onConfirm = {
                         result.confirm()
@@ -125,7 +129,9 @@ internal class WebUIClient(
     override fun shouldInterceptRequest(
         view: WebView,
         request: WebResourceRequest,
-    ): WebResourceResponse? {
-        return webuiAssetsLoader(request.url)
+    ): WebResourceResponse? =  webuiAssetsLoader(request.url)
+
+    private companion object {
+        const val TAG = "WebUIClient"
     }
 }

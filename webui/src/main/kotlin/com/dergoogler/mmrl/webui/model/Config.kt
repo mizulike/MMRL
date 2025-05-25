@@ -13,6 +13,7 @@ import java.nio.ByteBuffer
 object WebUIPermissions {
     const val PLUGIN_DEX_LOADER = "webui.permission.PLUGIN_DEX_LOADER"
     const val DSL_DEX_LOADING = "webui.permission.DSL_DEX_LOADING"
+    const val WX_ROOT_PATH = "wx.permission.ROOT_PATH"
 }
 
 /**
@@ -154,6 +155,8 @@ data class WebUIConfig(
     val autoStatusBarsStyle: Boolean = true,
     // val dexFiles: List<WebUIConfigDexFile> = emptyList(),
 ) {
+    val hasRootPathPermission get() = WebUIPermissions.WX_ROOT_PATH in permissions
+
     companion object {
         /**
          * Converts a [ModId] to a [webUiConfig] string representation.
