@@ -22,4 +22,9 @@ data class ModId(var id: String) : Parcelable {
         }
 
     val sanitizedIdWithFileInputStream get(): String = "${sanitizedIdWithFile}InputStream"
+
+    companion object {
+        val String.asModId: ModId
+            get() = ModId(this)
+    }
 }

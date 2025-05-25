@@ -113,7 +113,7 @@ fun ModuleItem(
                     if (module.state != State.REMOVE) R.drawable.world_code else R.drawable.world_off
 
                 TextWithIcon(
-                    text = module.name,
+                    text = module.config.name ?: module.name,
                     icon = module.features.webui nullable icon,
                     style = TextWithIconDefaults.style.copy(textStyle = MaterialTheme.typography.titleSmall)
                 )
@@ -148,7 +148,7 @@ fun ModuleItem(
             modifier = Modifier
                 .alpha(alpha = alpha)
                 .padding(horizontal = 16.dp),
-            text = module.description,
+            text = module.config.description ?: module.description,
             style = MaterialTheme.typography.bodySmall,
             textDecoration = decoration,
             color = MaterialTheme.colorScheme.outline

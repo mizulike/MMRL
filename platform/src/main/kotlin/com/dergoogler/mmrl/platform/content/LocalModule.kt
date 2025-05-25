@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.platform.content
 
 import android.os.Parcelable
+import com.dergoogler.mmrl.platform.model.ModuleConfig.Companion.asModuleConfig
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
@@ -46,5 +47,8 @@ data class LocalModule(
     val features: LocalModuleFeatures,
     val lastUpdated: Long,
 ) : Parcelable {
+
+    val config get() = id.asModuleConfig
+
     companion object
 }
