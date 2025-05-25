@@ -1,6 +1,8 @@
 package com.dergoogler.mmrl.platform.model
 
+import android.content.Context
 import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.util.moshi
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -13,27 +15,36 @@ data class ModuleConfig(
     @Json(name = "description")
     val desc: Any? = null,
     @Json(name = "webui-engine")
-    val webuiEngine: String? = "wx",
+    val webuiEngine: Any? = "wx",
 ) {
-    private fun getLocale(prop: Any?, default: String = "en"): String? {
-        val locale = Locale.getDefault().language
+    val locale get() = Locale.getDefault().language
 
-        return try {
-            when (prop) {
-                is String -> prop
-                is Map<*, *> -> prop[locale] as? String ?: prop[default] as? String
-                else -> null
-            }
-        } catch (e: Exception) {
-            null
+    private fun get(prop: Any?, selector: String, default: String = "en"): String? = try {
+        when (prop) {
+            is String -> prop
+            is Map<*, *> -> prop[selector] as? String ?: prop[default] as? String
+            else -> null
         }
+    } catch (e: Exception) {
+        null
     }
 
     val description
-        get(): String? = getLocale(desc)
+        get(): String? = get(
+            prop = desc,
+            selector = locale
+        )
 
     val name
-        get(): String? = getLocale(nam)
+        get(): String? = get(
+            prop = nam,
+            selector = locale
+        )
+
+    fun getWebuiEngine(context: Context = Platform.context): String? = get(
+        prop = webuiEngine,
+        selector = context.packageName
+    )
 
     companion object {
         val ModId.asModuleConfig get(): ModuleConfig = id.asModuleConfig
