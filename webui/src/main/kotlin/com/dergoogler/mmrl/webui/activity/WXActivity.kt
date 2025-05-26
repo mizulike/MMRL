@@ -3,33 +3,33 @@ package com.dergoogler.mmrl.webui.activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.doOnAttach
-import androidx.core.view.doOnLayout
-import androidx.lifecycle.lifecycleScope
 import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.ext.nullable
-import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
+import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
+import com.dergoogler.mmrl.ui.component.dialog.confirm
+import com.dergoogler.mmrl.webui.R
+import com.dergoogler.mmrl.webui.model.Renderer
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUIConfig
+import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
+import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
-import kotlinx.coroutines.launch
 
 open class WXActivity : ComponentActivity() {
     private var isKeyboardShowing by mutableStateOf(false)
     private lateinit var rootView: View
     private var mView: WXView? = null
+    private var mOptions: WebUIOptions? = null
 
     /**
      * Lazily initializes the [ModId] from the intent extras.
@@ -72,7 +72,7 @@ open class WXActivity : ComponentActivity() {
         return@modId block(config)
     }
 
-    open fun onRender(savedInstanceState: Bundle?): WXView? {
+    open fun onRender(savedInstanceState: Bundle?): Renderer? {
         rootView = findViewById(android.R.id.content)
         return null
     }
@@ -81,11 +81,15 @@ open class WXActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-            mView = onRender(savedInstanceState)
-            if (mView == null) throw BrickException("No WXView was passed to onRender")
+        registerBackEvents()
 
-            setContentView(mView)
+        val renderer = onRender(savedInstanceState)
+        if (renderer == null) throw BrickException("No WXView was passed to onRender")
 
+        mView = renderer.view
+        mOptions = renderer.options
+
+        setContentView(mView)
 
         config {
             if (windowResize) {
@@ -110,7 +114,6 @@ open class WXActivity : ComponentActivity() {
         }
     }
 
-
     private fun adjustWebViewHeight(keypadHeight: Int) {
         mView.nullable {
             val params = it.layoutParams
@@ -127,6 +130,48 @@ open class WXActivity : ComponentActivity() {
         }
     }
 
+    private fun registerBackEvents() {
+        onBackPressedDispatcher.addCallback(
+            this,
+            object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (mOptions == null || mView == null) {
+                        finish()
+                        return
+                    }
+
+                    val view = mView!!
+                    val options = mOptions!!
+
+                    if (options.config.backHandler && view.canGoBack() == true) {
+                        view.goBack()
+                        return
+                    }
+
+                    if (options.config.backEvent) {
+                        view.postEvent(PostWindowEventMessage.ON_BACK)
+                        return
+                    }
+
+                    if (options.config.exitConfirm) {
+                        this@WXActivity.confirm(
+                            confirmData = ConfirmData(
+                                title = this@WXActivity.getString(R.string.exit),
+                                description = this@WXActivity.getString(R.string.exit_desc),
+                                onConfirm = { finish() },
+                                onClose = {}
+                            ),
+                            colorScheme = options.colorScheme
+                        )
+                        return
+                    }
+
+                    finish()
+                }
+            }
+        )
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         mView?.destroy()
@@ -136,12 +181,14 @@ open class WXActivity : ComponentActivity() {
         super.onResume()
         mView?.onResume()
         mView?.resumeTimers()
+        mView?.postEvent(PostWindowEventMessage.ON_RESUME)
     }
 
     override fun onPause() {
         super.onPause()
         mView?.onPause()
         mView?.pauseTimers()
+        mView?.postEvent(PostWindowEventMessage.ON_PAUSE)
     }
 
     private fun Intent.fromKeys(vararg keys: String): ModId? {

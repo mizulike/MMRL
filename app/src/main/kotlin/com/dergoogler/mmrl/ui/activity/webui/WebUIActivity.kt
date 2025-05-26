@@ -13,6 +13,7 @@ import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
 import com.dergoogler.mmrl.utils.initPlatform
 import com.dergoogler.mmrl.webui.activity.WXActivity
+import com.dergoogler.mmrl.webui.model.Renderer
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
 import dagger.hilt.android.AndroidEntryPoint
@@ -46,7 +47,7 @@ class WebUIActivity : WXActivity() {
             return "MMRL/$mmrlVersion (Linux; Android $osVersion; $deviceModel; $platform/$platformVersion)"
         }
 
-    override fun onRender(savedInstanceState: Bundle?): WXView? {
+    override fun onRender(savedInstanceState: Bundle?): Renderer? {
         super.onRender(savedInstanceState)
 
         lifecycleScope.launch {
@@ -78,7 +79,10 @@ class WebUIActivity : WXActivity() {
             loadDomain()
         }
 
-        return view
+        return Renderer(
+            view = view,
+            options = options
+        )
     }
 
     companion object {

@@ -213,10 +213,9 @@ open class WXView : WebView {
         }
 
         options {
-            postWebMessage(event.message, "*".toUri())
+            postWebMessage(event.message, mOptions.domain)
         }
     }
-
 
     override fun destroy() {
         super.destroy()
