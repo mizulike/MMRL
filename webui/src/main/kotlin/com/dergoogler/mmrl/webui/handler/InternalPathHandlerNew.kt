@@ -1,100 +1,127 @@
 package com.dergoogler.mmrl.webui.handler
 
+import android.content.Context
 import android.util.Log
 import android.webkit.WebResourceResponse
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.surfaceColorAtElevation
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
+import androidx.webkit.WebViewAssetLoader.AssetsPathHandler
+import androidx.webkit.WebViewAssetLoader.PathHandler
 import com.dergoogler.mmrl.ui.component.card.defaultCardColors
 import com.dergoogler.mmrl.ui.component.defaultFilledTonalButtonColors
-import com.dergoogler.mmrl.webui.PathHandler
+import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.asScriptResponse
 import com.dergoogler.mmrl.webui.asStyleResponse
-import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.notFoundResponse
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.util.toCssValue
 import java.io.IOException
 
-fun internalPathHandler(
-    options: WebUIOptions,
-    insets: Insets
-): PathHandler {
-    val colorScheme = options.colorScheme
-    val filledTonalButtonColors = colorScheme.defaultFilledTonalButtonColors
-    val cardColors = colorScheme.defaultCardColors
-
-    val assetsHandler = assetsPathHandler(options)
-
-    val appColors = buildString {
-        appendLine(":root {")
-        appendLine("\t/* App Base Colors */")
-        appendLine("\t--primary: ${colorScheme.primary.toCssValue()};")
-        appendLine("\t--onPrimary: ${colorScheme.onPrimary.toCssValue()};")
-        appendLine("\t--primaryContainer: ${colorScheme.primaryContainer.toCssValue()};")
-        appendLine("\t--onPrimaryContainer: ${colorScheme.onPrimaryContainer.toCssValue()};")
-        appendLine("\t--inversePrimary: ${colorScheme.inversePrimary.toCssValue()};")
-        appendLine("\t--secondary: ${colorScheme.secondary.toCssValue()};")
-        appendLine("\t--onSecondary: ${colorScheme.onSecondary.toCssValue()};")
-        appendLine("\t--secondaryContainer: ${colorScheme.secondaryContainer.toCssValue()};")
-        appendLine("\t--onSecondaryContainer: ${colorScheme.onSecondaryContainer.toCssValue()};")
-        appendLine("\t--tertiary: ${colorScheme.tertiary.toCssValue()};")
-        appendLine("\t--onTertiary: ${colorScheme.onTertiary.toCssValue()};")
-        appendLine("\t--tertiaryContainer: ${colorScheme.tertiaryContainer.toCssValue()};")
-        appendLine("\t--onTertiaryContainer: ${colorScheme.onTertiaryContainer.toCssValue()};")
-        appendLine("\t--background: ${colorScheme.background.toCssValue()};")
-        appendLine("\t--onBackground: ${colorScheme.onBackground.toCssValue()};")
-        appendLine("\t--surface: ${colorScheme.surface.toCssValue()};")
-        appendLine("\t--tonalSurface: ${colorScheme.surfaceColorAtElevation(1.dp).toCssValue()};")
-        appendLine("\t--onSurface: ${colorScheme.onSurface.toCssValue()};")
-        appendLine("\t--surfaceVariant: ${colorScheme.surfaceVariant.toCssValue()};")
-        appendLine("\t--onSurfaceVariant: ${colorScheme.onSurfaceVariant.toCssValue()};")
-        appendLine("\t--surfaceTint: ${colorScheme.surfaceTint.toCssValue()};")
-        appendLine("\t--inverseSurface: ${colorScheme.inverseSurface.toCssValue()};")
-        appendLine("\t--inverseOnSurface: ${colorScheme.inverseOnSurface.toCssValue()};")
-        appendLine("\t--error: ${colorScheme.error.toCssValue()};")
-        appendLine("\t--onError: ${colorScheme.onError.toCssValue()};")
-        appendLine("\t--errorContainer: ${colorScheme.errorContainer.toCssValue()};")
-        appendLine("\t--onErrorContainer: ${colorScheme.onErrorContainer.toCssValue()};")
-        appendLine("\t--outline: ${colorScheme.outline.toCssValue()};\n")
-        appendLine("\t--outlineVariant: ${colorScheme.outlineVariant.toCssValue()};")
-        appendLine("\t--scrim: ${colorScheme.scrim.toCssValue()};\n")
-        appendLine("\t--surfaceBright: ${colorScheme.surfaceBright.toCssValue()};")
-        appendLine("\t--surfaceDim: ${colorScheme.surfaceDim.toCssValue()};")
-        appendLine("\t--surfaceContainer: ${colorScheme.surfaceContainer.toCssValue()};")
-        appendLine("\t--surfaceContainerHigh: ${colorScheme.surfaceContainerHigh.toCssValue()};")
-        appendLine("\t--surfaceContainerHighest: ${colorScheme.surfaceContainerHighest.toCssValue()};")
-        appendLine("\t--surfaceContainerLow: ${colorScheme.surfaceContainerLow.toCssValue()};")
-        appendLine("\t--surfaceContainerLowest: ${colorScheme.surfaceContainerLowest.toCssValue()};")
-        appendLine("\t/* Filled Tonal Button Colors */")
-        appendLine("\t--filledTonalButtonContentColor: ${filledTonalButtonColors.contentColor.toCssValue()};")
-        appendLine("\t--filledTonalButtonContainerColor: ${filledTonalButtonColors.containerColor.toCssValue()};")
-        appendLine("\t--filledTonalButtonDisabledContentColor: ${filledTonalButtonColors.disabledContentColor.toCssValue()};")
-        appendLine("\t--filledTonalButtonDisabledContainerColor: ${filledTonalButtonColors.disabledContainerColor.toCssValue()};")
-        appendLine("\t/* Filled Card Colors */")
-        appendLine("\t--filledCardContentColor: ${cardColors.contentColor.toCssValue()};")
-        appendLine("\t--filledCardContainerColor: ${cardColors.containerColor.toCssValue()};")
-        appendLine("\t--filledCardDisabledContentColor: ${cardColors.disabledContentColor.toCssValue()};")
-        appendLine("\t--filledCardDisabledContainerColor: ${cardColors.disabledContainerColor.toCssValue()};")
-        append("}")
+class InternalPathHandler : PathHandler {
+    private companion object {
+        const val TAG = "InternalPathHandler"
     }
 
-    return handler@{ path ->
+    private val mOptions: WebUIOptions?
+    private val mAssetsPathHandler: AssetsPathHandler
+    private var mInsets: Insets
+
+    internal var insets
+        get() = mInsets
+        set(value) {
+            mInsets = value
+        }
+
+    constructor(
+        context: Context,
+        options: WebUIOptions?,
+        insets: Insets,
+    ) {
+        mOptions = options
+        mInsets = insets
+        mAssetsPathHandler = AssetsPathHandler(context)
+    }
+
+
+    val appColors
+        get() = buildString {
+            if (mOptions == null) return@buildString
+
+            val colorScheme = mOptions.colorScheme
+            val filledTonalButtonColors = colorScheme.defaultFilledTonalButtonColors
+            val cardColors = colorScheme.defaultCardColors
+
+            appendLine(":root {")
+            appendLine("\t/* App Base Colors */")
+            appendLine("\t--primary: ${colorScheme.primary.toCssValue()};")
+            appendLine("\t--onPrimary: ${colorScheme.onPrimary.toCssValue()};")
+            appendLine("\t--primaryContainer: ${colorScheme.primaryContainer.toCssValue()};")
+            appendLine("\t--onPrimaryContainer: ${colorScheme.onPrimaryContainer.toCssValue()};")
+            appendLine("\t--inversePrimary: ${colorScheme.inversePrimary.toCssValue()};")
+            appendLine("\t--secondary: ${colorScheme.secondary.toCssValue()};")
+            appendLine("\t--onSecondary: ${colorScheme.onSecondary.toCssValue()};")
+            appendLine("\t--secondaryContainer: ${colorScheme.secondaryContainer.toCssValue()};")
+            appendLine("\t--onSecondaryContainer: ${colorScheme.onSecondaryContainer.toCssValue()};")
+            appendLine("\t--tertiary: ${colorScheme.tertiary.toCssValue()};")
+            appendLine("\t--onTertiary: ${colorScheme.onTertiary.toCssValue()};")
+            appendLine("\t--tertiaryContainer: ${colorScheme.tertiaryContainer.toCssValue()};")
+            appendLine("\t--onTertiaryContainer: ${colorScheme.onTertiaryContainer.toCssValue()};")
+            appendLine("\t--background: ${colorScheme.background.toCssValue()};")
+            appendLine("\t--onBackground: ${colorScheme.onBackground.toCssValue()};")
+            appendLine("\t--surface: ${colorScheme.surface.toCssValue()};")
+            appendLine(
+                "\t--tonalSurface: ${
+                    colorScheme.surfaceColorAtElevation(1.dp).toCssValue()
+                };"
+            )
+            appendLine("\t--onSurface: ${colorScheme.onSurface.toCssValue()};")
+            appendLine("\t--surfaceVariant: ${colorScheme.surfaceVariant.toCssValue()};")
+            appendLine("\t--onSurfaceVariant: ${colorScheme.onSurfaceVariant.toCssValue()};")
+            appendLine("\t--surfaceTint: ${colorScheme.surfaceTint.toCssValue()};")
+            appendLine("\t--inverseSurface: ${colorScheme.inverseSurface.toCssValue()};")
+            appendLine("\t--inverseOnSurface: ${colorScheme.inverseOnSurface.toCssValue()};")
+            appendLine("\t--error: ${colorScheme.error.toCssValue()};")
+            appendLine("\t--onError: ${colorScheme.onError.toCssValue()};")
+            appendLine("\t--errorContainer: ${colorScheme.errorContainer.toCssValue()};")
+            appendLine("\t--onErrorContainer: ${colorScheme.onErrorContainer.toCssValue()};")
+            appendLine("\t--outline: ${colorScheme.outline.toCssValue()};\n")
+            appendLine("\t--outlineVariant: ${colorScheme.outlineVariant.toCssValue()};")
+            appendLine("\t--scrim: ${colorScheme.scrim.toCssValue()};\n")
+            appendLine("\t--surfaceBright: ${colorScheme.surfaceBright.toCssValue()};")
+            appendLine("\t--surfaceDim: ${colorScheme.surfaceDim.toCssValue()};")
+            appendLine("\t--surfaceContainer: ${colorScheme.surfaceContainer.toCssValue()};")
+            appendLine("\t--surfaceContainerHigh: ${colorScheme.surfaceContainerHigh.toCssValue()};")
+            appendLine("\t--surfaceContainerHighest: ${colorScheme.surfaceContainerHighest.toCssValue()};")
+            appendLine("\t--surfaceContainerLow: ${colorScheme.surfaceContainerLow.toCssValue()};")
+            appendLine("\t--surfaceContainerLowest: ${colorScheme.surfaceContainerLowest.toCssValue()};")
+            appendLine("\t/* Filled Tonal Button Colors */")
+            appendLine("\t--filledTonalButtonContentColor: ${filledTonalButtonColors.contentColor.toCssValue()};")
+            appendLine("\t--filledTonalButtonContainerColor: ${filledTonalButtonColors.containerColor.toCssValue()};")
+            appendLine("\t--filledTonalButtonDisabledContentColor: ${filledTonalButtonColors.disabledContentColor.toCssValue()};")
+            appendLine("\t--filledTonalButtonDisabledContainerColor: ${filledTonalButtonColors.disabledContainerColor.toCssValue()};")
+            appendLine("\t/* Filled Card Colors */")
+            appendLine("\t--filledCardContentColor: ${cardColors.contentColor.toCssValue()};")
+            appendLine("\t--filledCardContainerColor: ${cardColors.containerColor.toCssValue()};")
+            appendLine("\t--filledCardDisabledContentColor: ${cardColors.disabledContentColor.toCssValue()};")
+            appendLine("\t--filledCardDisabledContainerColor: ${cardColors.disabledContainerColor.toCssValue()};")
+            append("}")
+        }
+
+    override fun handle(path: String): WebResourceResponse? {
+        if (mOptions?.debug == true) Log.d(TAG, "handle: $path")
+
         try {
             if (path.matches(Regex("^assets(/.*)?$"))) {
-                return@handler assetsHandler(path.removePrefix("assets/"))
+                return mAssetsPathHandler.handle(path.removePrefix("assets/"))
             }
 
-            val inputStream = options.modId.sanitizedIdWithFileInputStream
+            val inputStream = mOptions?.modId?.sanitizedIdWithFileInputStream ?: "undefined"
 
-            if (path.matches(Regex("scripts/require\\.js"))) {
-                return@handler """(function() {
+            if (mOptions != null && path.matches(Regex("scripts/require\\.js"))) {
+                return """(function() {
     // Configuration
     var BASE_MODULE_PATH = '/data/adb/modules';
-    var CURRENT_MODULE_ID = '${options.modId.id}';
+    var CURRENT_MODULE_ID = '${mOptions.modId.id}';
     
     // Module cache
     var moduleCache = {};
@@ -289,17 +316,18 @@ fun internalPathHandler(
             }
 
             if (path.matches(Regex("insets\\.css"))) {
-                return@handler insets.cssResponse
+                return mInsets.cssResponse
             }
 
             if (path.matches(Regex("colors\\.css"))) {
-                return@handler appColors.asStyleResponse()
+                return appColors.asStyleResponse()
             }
 
-            return@handler notFoundResponse
+            return notFoundResponse
         } catch (e: IOException) {
-            Log.e("mmrlPathHandler", "Error opening mmrl asset path: $path", e)
-            return@handler notFoundResponse
+            Log.e(TAG, "Error opening mmrl asset path: $path", e)
+            return notFoundResponse
         }
     }
 }
+

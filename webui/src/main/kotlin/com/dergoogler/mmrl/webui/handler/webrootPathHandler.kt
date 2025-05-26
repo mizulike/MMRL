@@ -1,27 +1,21 @@
 package com.dergoogler.mmrl.webui.handler
 
 import android.util.Log
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.webui.InjectionType
-import com.dergoogler.mmrl.webui.LocalInsets
 import com.dergoogler.mmrl.webui.PathHandler
 import com.dergoogler.mmrl.webui.addInjection
 import com.dergoogler.mmrl.webui.asResponse
+import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.notFoundResponse
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import java.io.IOException
 
-@Composable
 fun webrootPathHandler(
     options: WebUIOptions,
+    insets: Insets,
 ): PathHandler {
-    val insets = LocalInsets.current
 
     val configBase =
         SuFile("/data/adb/.config/${options.modId.id}")
@@ -34,18 +28,20 @@ fun webrootPathHandler(
     val customJsBody = SuFile(configJsBase, "body")
     val customJsFile = SuFile(customJsBody, "custom.js")
 
-    val directory by remember {
-        mutableStateOf(
-            SuFile(options.webRoot).getCanonicalDirPath().toSuFile()
-        )
-    }
+    val directory = SuFile(options.webRoot).getCanonicalDirPath().toSuFile()
 
-    LaunchedEffect(Unit) {
-        SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
-    }
+    SuFile.createDirectories(customJsHead, customJsBody, configStyleBase)
 
     val reversedPaths =
-        listOf("mmrl/", "internal/", ".adb/", ".local/", ".config/", ".${options.modId.id}/")
+        listOf(
+            "mmrl/",
+            "internal/",
+            ".adb/",
+            ".local/",
+            ".config/",
+            ".${options.modId.id}/",
+            "__root__/"
+        )
 
     return handler@{ path ->
         reversedPaths.forEach {

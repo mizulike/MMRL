@@ -3,10 +3,7 @@ package com.dergoogler.mmrl.webui.screen
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.util.Log
 import android.view.ViewGroup
-import android.webkit.ServiceWorkerClient
-import android.webkit.ServiceWorkerController
 import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
@@ -21,17 +18,10 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
-import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
-import com.dergoogler.mmrl.ui.component.dialog.rememberPrompt
-import com.dergoogler.mmrl.webui.LocalInsets
 import com.dergoogler.mmrl.webui.R
-import com.dergoogler.mmrl.webui.client.WebUIClient
-import com.dergoogler.mmrl.webui.handler.internalPathHandler
-import com.dergoogler.mmrl.webui.handler.suPathHandler
-import com.dergoogler.mmrl.webui.handler.webrootPathHandler
 import com.dergoogler.mmrl.webui.interfaces.ApplicationInterface
 import com.dergoogler.mmrl.webui.interfaces.FileInputInterface
 import com.dergoogler.mmrl.webui.interfaces.FileInterface
@@ -39,12 +29,10 @@ import com.dergoogler.mmrl.webui.interfaces.ModuleInterface
 import com.dergoogler.mmrl.webui.interfaces.PackageManagerInterface
 import com.dergoogler.mmrl.webui.interfaces.UserManagerInterface
 import com.dergoogler.mmrl.webui.interfaces.WXInterface
-import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
-import com.dergoogler.mmrl.webui.rememberInsets
-import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
+import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
 import com.dergoogler.mmrl.webui.util.WebUIOptions
-import com.dergoogler.mmrl.webui.util.addJavascriptInterface
+import com.dergoogler.mmrl.webui.view.WXView
 import kotlinx.html.b
 import kotlinx.html.body
 import kotlinx.html.button
@@ -85,20 +73,16 @@ import kotlinx.html.ul
  * @see CompositionLocalProvider
  * @see LocalInsets
  * @see ViewCompat
- * @see WebUIClient
- *
  */
 @SuppressLint("SetJavaScriptEnabled", "JavascriptInterface")
 @Composable
 fun WebUIScreen(
-    webView: WebView,
+    webView: WXView,
     options: WebUIOptions,
     interfaces: List<JavaScriptInterface<out WXInterface>> = listOf(),
 ) {
     val context = LocalContext.current
     val showConfirm = rememberConfirm(context)
-    val showPrompt = rememberPrompt(context)
-    val uriHandler = LocalUriHandler.current
     val colorScheme = MaterialTheme.colorScheme
 
     WebView.setWebContentsDebuggingEnabled(options.debug)
@@ -106,6 +90,11 @@ fun WebUIScreen(
     BackHandler {
         if (options.config.backHandler && webView.canGoBack()) {
             webView.goBack()
+            return@BackHandler
+        }
+
+        if (options.config.backEvent) {
+            webView.postEvent(PostWindowEventMessage.ON_BACK)
             return@BackHandler
         }
 
@@ -123,28 +112,28 @@ fun WebUIScreen(
         (context as Activity).finish()
     }
 
-    val insets = rememberInsets()
+    //val insets = rememberInsets()
 
-    if (insets != null) {
+   // if (insets != null) {
         CompositionLocalProvider(
-            LocalInsets provides insets
+       //     LocalInsets provides insets
         ) {
-            val webuiAssetsLoader = rememberWebUIAssetLoader(
-                handlers = buildList {
-                    add("/mmrl/" to internalPathHandler(options))
-                    add("/internal/" to internalPathHandler(options))
-                    add(".${options.modId.id}/" to suPathHandler("/data/adb/modules/${options.modId.id}".toSuFile()))
-                    add("/.adb/" to suPathHandler("/data/adb".toSuFile()))
-                    add("/.config/" to suPathHandler("/data/adb/.config".toSuFile()))
-                    add("/.local/" to suPathHandler("/data/adb/.local".toSuFile()))
-
-                    if (options.config.hasRootPathPermission) {
-                        add("/__root__" to suPathHandler("/".toSuFile()))
-                    }
-
-                    add("/" to webrootPathHandler(options))
-                }
-            )
+//            val webuiAssetsLoader = rememberWebUIAssetLoader(
+//                handlers = buildList {
+//                    add("/mmrl/" to internalPathHandler(options))
+//                    add("/internal/" to internalPathHandler(options))
+//                    add(".${options.modId.id}/" to suPathHandler("/data/adb/modules/${options.modId.id}".toSuFile()))
+//                    add("/.adb/" to suPathHandler("/data/adb".toSuFile()))
+//                    add("/.config/" to suPathHandler("/data/adb/.config".toSuFile()))
+//                    add("/.local/" to suPathHandler("/data/adb/.local".toSuFile()))
+//
+//                    if (options.config.hasRootPathPermission) {
+//                        add("/__root__" to suPathHandler("/".toSuFile()))
+//                    }
+//
+//                    add("/" to webrootPathHandler(options))
+//                }
+//            )
 
             key(options.recomposeCount) {
                 AndroidView(factory = {
@@ -156,46 +145,34 @@ fun WebUIScreen(
                             ViewGroup.LayoutParams.MATCH_PARENT
                         )
 
-                        ViewCompat.setOnApplyWindowInsetsListener(this) { _, o ->
-                            o.inset(insets.top, insets.bottom, insets.left, insets.right)
-                        }
+//                        ViewCompat.setOnApplyWindowInsetsListener(this) { _, o ->
+//                            o.inset(insets.top, insets.bottom, insets.left, insets.right)
+//                        }
 
-                        webViewClient = WebUIClient(
-                            context = context,
-                            uriHandler = uriHandler,
-                            webuiAssetsLoader = webuiAssetsLoader,
-                            debug = options.debug,
-                            options = options,
-                        )
-
-                        webChromeClient = WebUIClient.ChromeClient(
-                            context = context,
-                            options = options,
-                            showPrompt = showPrompt,
-                            showConfirm = showConfirm,
-                        )
+//                        webViewClient = object : WXClient(options) {
+//                            override fun shouldInterceptRequest(
+//                                view: WebView?,
+//                                request: WebResourceRequest
+//                            ): WebResourceResponse? {
+//                                return webuiAssetsLoader(request.url)
+//                            }
+//                        }
 
                         for (i in interfaces) {
-                            addJavascriptInterface(context, options.modId, i)
+                            addJavascriptInterface(i)
                         }
 
                         val internalInterfaces = listOf(
                             FileInputInterface.factory(),
                             ApplicationInterface.factory(),
                             FileInterface.factory(),
-                            ModuleInterface.factory(
-                                WXOptions(
-                                    context = context,
-                                    webView = this,
-                                    modId = options.modId
-                                ), insets, options
-                            ),
+                            ModuleInterface.factory(),
                             UserManagerInterface.factory(),
                             PackageManagerInterface.factory(),
                         )
 
                         for (i in internalInterfaces) {
-                            addJavascriptInterface(context, options.modId, i)
+                            addJavascriptInterface(i)
                         }
 
                         /* if (options.config.dexFiles.isNotEmpty()) {
@@ -221,19 +198,6 @@ fun WebUIScreen(
                     }
                 }, update = {
                     it.apply {
-                        settings.apply {
-                            javaScriptEnabled = true
-                            domStorageEnabled = true
-                            allowFileAccess = false
-                            if (options.debug && options.remoteDebug) {
-                                mixedContentMode =
-                                    android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
-
-                            }
-                            userAgentString = options.userAgentString
-                        }
-
-
                         if (options.requireNewAppVersion?.required == true) {
                             loadData(
                                 getRequireNewVersion(context, options), "text/html", "UTF-8"
@@ -247,9 +211,9 @@ fun WebUIScreen(
                 })
             }
         }
-    } else {
-        Loading()
-    }
+   // } else {
+ //       Loading()
+  //  }
 }
 
 fun getRequireNewVersion(

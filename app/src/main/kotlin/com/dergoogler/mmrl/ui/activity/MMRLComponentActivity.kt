@@ -17,6 +17,7 @@ import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.compose.rememberNavController
@@ -62,8 +63,6 @@ open class MMRLComponentActivity : ComponentActivity() {
      * The window flags to apply to the activity window. These flags will be cleared once the activity is destroyed.
      */
     open val windowFlags: Int = 0
-
-    internal val settingsViewModel by viewModels<SettingsViewModel>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -165,7 +164,7 @@ open class MMRLComponentActivity : ComponentActivity() {
     }
 
 
-    inline fun <reified A : MMRLComponentActivity> setActivityEnabled(enable: Boolean) {
+    inline fun <reified A : ComponentActivity> setActivityEnabled(enable: Boolean) {
         val component = ComponentName(
             this, A::class.java
         )
@@ -184,11 +183,11 @@ open class MMRLComponentActivity : ComponentActivity() {
     }
 }
 
-fun MMRLComponentActivity.setBaseContent(
-    parent: CompositionContext? = null,
+@Composable
+fun BaseContent(
+    activity: ComponentActivity,
+    userPreferencesRepository: UserPreferencesRepository,
     content: @Composable () -> Unit,
-) = this.setContent(
-    parent = parent,
 ) {
     val userPreferences by userPreferencesRepository.data.collectAsStateWithLifecycle(
         initialValue = null
@@ -197,7 +196,7 @@ fun MMRLComponentActivity.setBaseContent(
     val mainNavController = rememberNavController()
 
     val preferences = if (userPreferences == null) {
-        return@setContent
+        return
     } else {
         checkNotNull(userPreferences)
     }
@@ -211,18 +210,31 @@ fun MMRLComponentActivity.setBaseContent(
         navController = navController,
         themeColor = preferences.themeColor,
         providerValues = arrayOf(
-            LocalSettings provides settingsViewModel,
+            LocalSettings provides hiltViewModel<SettingsViewModel>(activity),
             LocalUserPreferences provides preferences,
             dev.dergoogler.mmrl.compat.core.LocalUriHandler provides MMRLUriHandlerImpl(
                 context,
                 toolbarColor
             ),
-            LocalLifecycleScope provides lifecycleScope,
-            LocalLifecycle provides lifecycle,
+            LocalLifecycleScope provides activity.lifecycleScope,
+            LocalLifecycle provides activity.lifecycle,
             LocalUriHandler provides MMRLUriHandlerImpl(context, toolbarColor),
             LocalNavController provides navController,
             LocalMainNavController provides mainNavController
         ),
         content = content
+    )
+}
+
+fun MMRLComponentActivity.setBaseContent(
+    parent: CompositionContext? = null,
+    content: @Composable () -> Unit,
+) = this.setContent(
+    parent = parent,
+) {
+    BaseContent(
+        this,
+        userPreferencesRepository,
+        content
     )
 }

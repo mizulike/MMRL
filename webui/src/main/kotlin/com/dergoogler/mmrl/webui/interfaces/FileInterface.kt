@@ -38,7 +38,7 @@ class FileInterface(
     @JavascriptInterface
     fun readAsBase64(path: String): String? =
         runTryJsWith(file, "Error while reading \\'$path\\' as base64") {
-            return@runTryJsWith readAsBase64(path)
+            return@runTryJsWith null
         }
 
     @JavascriptInterface

@@ -1,11 +1,13 @@
 package com.dergoogler.mmrl.webui.model
 
+import android.content.Context
 import android.util.Log
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.webui.interfaces.WXInterface
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.webUiConfig
+import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 import dalvik.system.InMemoryDexClassLoader
 import java.nio.ByteBuffer
@@ -77,12 +79,12 @@ data class WebUIConfigDexFile(
         const val TAG = "WebUIConfigDexFile"
     }
 
-    fun getInterface(wxOptions: WXOptions): JavaScriptInterface<out WXInterface>? {
+    fun getInterface(context: Context, modId: ModId): JavaScriptInterface<out WXInterface>? {
         if (path == null || className == null) {
             return null
         }
 
-        val file = SuFile("/data/adb/modules", wxOptions.modId.id, "webroot", path)
+        val file = SuFile("/data/adb/modules", modId.id, "webroot", path)
 
         if (!file.isFile) {
             return null
@@ -97,7 +99,7 @@ data class WebUIConfigDexFile(
             val loader =
                 InMemoryDexClassLoader(
                     ByteBuffer.wrap(dexFileParcel),
-                    wxOptions.context.classLoader
+                    context.classLoader
                 )
 
             val rawClass = loader.loadClass(className)
@@ -137,7 +139,8 @@ data class WebUIConfigDexFile(
  * @property title The title of the WebUI window. If null, the default title of the underlying platform will be used. Defaults to `null`.
  * @property icon The path or URL to the icon of the WebUI. If null, the default icon of the underlying platform will be used. Defaults to `null`.
  * @property windowResize Whether the WebUI window should be resizable. Defaults to `true`.
- * @property backHandler Whether the WebUI should handle the back button/gesture events. Defaults to `true`.
+ * @property backHandler Whether the WebUI should handle the back button/gesture events. Requires [backEvent] to be `false`. Defaults to `true`.
+ * @property backEvent Whether the WebUI should handle the back button/gesture events via JavaScript. Requires [backHandler] to be `false`. Defaults to `false`.
  * @property exitConfirm Whether the WebUI should show a confirmation dialog when the user tries to exit. Defaults to `true`.
  * @property historyFallbackFile The file to use as a fallback when `historyFallback` is enabled. Defaults to "index.html".
  */
@@ -149,13 +152,19 @@ data class WebUIConfig(
     val title: String? = null,
     val icon: String? = null,
     val windowResize: Boolean = true,
-    val backHandler: Boolean = true,
+    @Json(name = "backHandler")
+    val backHandler0: Boolean = true,
+    @Json(name = "backEvent")
+    val backEvent0: Boolean = false,
     val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
     val autoStatusBarsStyle: Boolean = true,
-    // val dexFiles: List<WebUIConfigDexFile> = emptyList(),
+    val dexFiles: List<WebUIConfigDexFile> = emptyList(),
 ) {
     val hasRootPathPermission get() = WebUIPermissions.WX_ROOT_PATH in permissions
+
+    val backEvent get() = backEvent0 && !backHandler0
+    val backHandler get() = !backEvent0 && backHandler0
 
     companion object {
         /**

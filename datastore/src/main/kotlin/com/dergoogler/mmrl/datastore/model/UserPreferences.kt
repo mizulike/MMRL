@@ -1,10 +1,14 @@
 package com.dergoogler.mmrl.datastore.model
 
+import android.content.Context
+import android.content.res.Configuration
+import android.content.res.Resources
 import android.os.Build
 import android.os.Environment
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import com.dergoogler.mmrl.ui.theme.Colors
+import com.dergoogler.mmrl.ui.theme.Colors.Companion.getColorScheme
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromByteArray
@@ -63,11 +67,17 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     @ProtoNumber(35) val enableErudaConsole: Boolean = false,
     @ProtoNumber(36) val enableToolbarEvents: Boolean = true,
 ) {
-    @Composable
     fun isDarkMode() = when (darkMode) {
         DarkMode.AlwaysOff -> false
         DarkMode.AlwaysOn -> true
         DarkMode.FollowSystem -> isSystemInDarkTheme()
+    }
+
+    fun colorScheme(context: Context) = context.getColorScheme(themeColor, isDarkMode())
+
+    private fun isSystemInDarkTheme(): Boolean {
+        val uiMode = Resources.getSystem().configuration.uiMode
+        return (uiMode and Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES
     }
 
     @OptIn(ExperimentalSerializationApi::class)

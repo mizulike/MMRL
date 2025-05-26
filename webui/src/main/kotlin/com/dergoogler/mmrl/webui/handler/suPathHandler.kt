@@ -4,6 +4,7 @@ import android.util.Log
 import android.webkit.WebResourceResponse
 import androidx.compose.runtime.Composable
 import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.webui.PathHandler
 import com.dergoogler.mmrl.webui.asResponse
 import java.io.IOException
 
@@ -39,10 +40,9 @@ import java.io.IOException
  * val response2 = myHandler("images/logo.png") // Attempts to open 'rootDirectory/images/logo.png'
  * ```
  */
-@Composable
 fun suPathHandler(
     directory: SuFile,
-): (String) -> WebResourceResponse? {
+): PathHandler {
     return handler@{ path ->
         return@handler try {
             SuFile(directory, path).asResponse()

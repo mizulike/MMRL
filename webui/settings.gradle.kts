@@ -13,6 +13,7 @@ dependencyResolutionManagement {
 
 include(
     ":ui",
+    ":ext",
     ":platform",
     ":hidden-api"
 )

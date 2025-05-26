@@ -1,20 +1,31 @@
 package com.dergoogler.mmrl.webui.util
 
+import android.app.Activity
+import android.app.ActivityThread
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.pm.PackageInfo
+import android.net.Uri
 import android.util.Log
+import androidx.compose.material3.ColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.pm.PackageInfoCompat
+import androidx.core.net.toUri
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.ui.theme.Colors
+import com.dergoogler.mmrl.ui.theme.Colors.Companion.getColorScheme
+import com.dergoogler.mmrl.ui.theme.Colors.Dynamic
 import com.dergoogler.mmrl.webui.model.RequireNewVersion
 import com.dergoogler.mmrl.webui.webUiConfig
 import java.net.URI
+
 
 /**
  * Configuration options for the WebUI.
@@ -24,33 +35,52 @@ import java.net.URI
  * and file paths related to the WebUI.
  *
  * @property modId The unique identifier of the module associated with this WebUI.
- * @property appVersionCode The version code of the application.
- * @property domain The base domain used for the WebUI (e.g., "example.com").
- * @property domainSafeRegex A regular expression used to validate if a domain is safe.
- * @property remoteDebug Indicates whether remote debugging is enabled.
- * @property debugDomainSafeRegex A regular expression used to validate if a debug domain is safe, typically used for local network checks.
- * @property debug Indicates whether debug mode is enabled.
- * @property enableEruda Indicates whether the Eruda console is enabled for debugging.
- * @property debugDomain The domain used for debugging, often a local network address.
- * @property isDarkMode Indicates whether the dark mode is enabled in the UI.
- * @property cls Optional class associated with WebUI.
+ * @property context The Android [Context] used for accessing application-specific resources and classes.
+ * @property appVersionCode The version code of the application. **Deprecated: Not used anymore.**
+ * @property domain The base domain used for the WebUI (e.g., "https://mui.kernelsu.org").
+ * @property domainSafeRegex A regular expression used to validate if a domain is safe for production use.
+ * @property debugDomainSafeRegex A regular expression used to validate if a debug domain is safe, typically used for local network checks (e.g., localhost, local IP addresses).
+ * @property debug Indicates whether debug mode is enabled. This might enable additional logging or development features.
+ * @property remoteDebug Indicates whether remote debugging is enabled. This is often used with tools like Chrome DevTools.
+ * @property enableEruda Indicates whether the Eruda console is enabled for debugging in the WebView.
+ * @property debugDomain The domain used for debugging, often a local network address (e.g., "https://127.0.0.1:8080").
+ * @property onUnsafeDomainRequest An optional callback function that is invoked when an attempt is made to load content from an unsafe domain.
+ * @property isDarkMode Indicates whether the dark mode is enabled in the UI. This can be used to signal the WebView to use a dark theme.
+ * @property userAgentString The custom user agent string to be used by the WebView.
+ * @property colorScheme The [ColorScheme] to be applied to the WebUI, derived from the current theme and dark mode status.
+ * @property cls An optional [Class] object, which can be used for context-specific operations or logging.
  */
+@Immutable
 data class WebUIOptions(
+    val modId: ModId = ModId.EMPTY,
     val context: Context,
-    val modId: ModId,
     @Deprecated("Not used anymore")
-    val appVersionCode: Int,
-    val domain: String,
-    val domainSafeRegex: Regex,
-    val remoteDebug: Boolean,
-    val debugDomainSafeRegex: Regex,
-    val debug: Boolean,
-    val enableEruda: Boolean,
-    val debugDomain: String,
-    val isDarkMode: Boolean,
-    val userAgentString: String,
-    val cls: Class<*>?,
-) {
+    val appVersionCode: Int = -1,
+    val domain: Uri = "https://mui.kernelsu.org".toUri(),
+    val domainSafeRegex: Regex = Regex("^https?://mui\\.kernelsu\\.org(/.*)?$"),
+    val debugDomainSafeRegex: Regex = Regex(
+        "^(https?://)?(localhost|127\\.0\\.0\\.1|::1|10(?:\\.\\d{1,3}){3}|172\\.(?:1[6-9]|2\\d|3[01])(?:\\.\\d{1,3}){2}|192\\.168(?:\\.\\d{1,3}){2})(?::([0-9]{1,5}))?$"
+    ),
+    val debug: Boolean = false,
+    val remoteDebug: Boolean = false,
+    val enableEruda: Boolean = false,
+    val debugDomain: String = "https://127.0.0.1:8080",
+    val onUnsafeDomainRequest: (() -> Unit)? = null,
+    val isDarkMode: Boolean = false,
+    val userAgentString: String = "DON'T TRACK ME DOWN MOTHERFUCKER!",
+    val colorScheme: ColorScheme = context.getColorScheme(id = 0, darkMode = isDarkMode),
+    val cls: Class<*>? = null,
+) : ContextWrapper(context) {
+    fun findActivity(): Activity? {
+        var ctx = baseContext
+        while (ctx is ContextWrapper) {
+            if (ctx is Activity) return ctx
+            ctx = ctx.baseContext
+        }
+
+        return null
+    }
+
     private val packageManager
         get() = Platform.get(null) {
             packageManager
@@ -179,6 +209,80 @@ data class WebUIOptions(
     private companion object Default {
         const val TAG = "WebUIOptions"
     }
+
+    @Suppress("RedundantIf")
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || other !is WebUIOptions) return false
+
+        if (context != other.context) return false
+        if (modId != other.modId) return false
+        if (appVersionCode != other.appVersionCode) return false
+        if (domain != other.domain) return false
+        if (domainSafeRegex != other.domainSafeRegex) return false
+        if (remoteDebug != other.remoteDebug) return false
+        if (debugDomainSafeRegex != other.debugDomainSafeRegex) return false
+        if (debug != other.debug) return false
+        if (enableEruda != other.enableEruda) return false
+        if (debugDomain != other.debugDomain) return false
+        if (isDarkMode != other.isDarkMode) return false
+        if (userAgentString != other.userAgentString) return false
+        if (cls != other.cls) return false
+        if (colorScheme != other.colorScheme) return false
+        if (onUnsafeDomainRequest != other.onUnsafeDomainRequest) return false
+
+        return true
+    }
+
+    fun copy(
+        modId: ModId = this.modId,
+        domain: Uri = this.domain,
+        domainSafeRegex: Regex = this.domainSafeRegex,
+        remoteDebug: Boolean = this.remoteDebug,
+        debugDomainSafeRegex: Regex = this.debugDomainSafeRegex,
+        debug: Boolean = this.debug,
+        enableEruda: Boolean = this.enableEruda,
+        debugDomain: String = this.debugDomain,
+        isDarkMode: Boolean = this.isDarkMode,
+        userAgentString: String = this.userAgentString,
+        colorScheme: ColorScheme = this.colorScheme,
+        onUnsafeDomainRequest: (() -> Unit)? = this.onUnsafeDomainRequest,
+        cls: Class<*>? = this.cls,
+    ): WebUIOptions = WebUIOptions(
+        context = context,
+        modId = modId,
+        appVersionCode = appVersionCode,
+        domain = domain,
+        domainSafeRegex = domainSafeRegex,
+        remoteDebug = remoteDebug,
+        debugDomainSafeRegex = debugDomainSafeRegex,
+        debug = debug,
+        enableEruda = enableEruda,
+        debugDomain = debugDomain,
+        isDarkMode = isDarkMode,
+        colorScheme = colorScheme,
+        onUnsafeDomainRequest = onUnsafeDomainRequest,
+        userAgentString = userAgentString,
+        cls = cls,
+    )
+
+    override fun hashCode(): Int {
+        var result = context.hashCode()
+        result = 31 * result + modId.hashCode()
+        result = 31 * result + appVersionCode
+        result = 31 * result + domain.hashCode()
+        result = 31 * result + domainSafeRegex.hashCode()
+        result = 31 * result + remoteDebug.hashCode()
+        result = 31 * result + debugDomainSafeRegex.hashCode()
+        result = 31 * result + debug.hashCode()
+        result = 31 * result + enableEruda.hashCode()
+        result = 31 * result + debugDomain.hashCode()
+        result = 31 * result + isDarkMode.hashCode()
+        result = 31 * result + userAgentString.hashCode()
+        result = 31 * result + (cls?.hashCode() ?: 0)
+        result = 31 * result + colorScheme.hashCode()
+        return result
+    }
 }
 
 /**
@@ -201,12 +305,13 @@ data class WebUIOptions(
  * @param cls An optional Class object representing the caller class. Defaults to `null`. Primarily for internal logging/debugging and creating WebUI shortcuts.
  * @return A [WebUIOptions] instance configured with the provided parameters.
  */
+@Deprecated("Use WebUIOptions(...) instead")
 @Composable
 fun rememberWebUIOptions(
     modId: ModId,
     context: Context = Platform.context,
     appVersionCode: Int = -1,
-    domain: String = "https://mui.kernelsu.org",
+    domain: Uri = "https://mui.kernelsu.org".toUri(),
     domainSafeRegex: Regex = Regex("^https?://mui\\.kernelsu\\.org(/.*)?$"),
     debugDomainSafeRegex: Regex = Regex(
         "^(https?://)?(localhost|127\\.0\\.0\\.1|::1|10(?:\\.\\d{1,3}){3}|172\\.(?:1[6-9]|2\\d|3[01])(?:\\.\\d{1,3}){2}|192\\.168(?:\\.\\d{1,3}){2})(?::([0-9]{1,5}))?$"

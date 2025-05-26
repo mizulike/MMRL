@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets
 import java.util.zip.GZIPInputStream
 
 typealias PathHandler = (String) -> WebResourceResponse?
+typealias WXAssetLoader = (Uri) -> WebResourceResponse?
 
 data class PathHandleData(
     val authority: String,
@@ -54,41 +55,33 @@ data class PathHandleData(
 }
 
 @WorkerThread
-@Composable
-fun rememberWebUIAssetLoader(
+fun wxAssetLoader(
     domain: String = "mui.kernelsu.org",
     httpEnabled: Boolean = false,
     handlers: List<Pair<String, PathHandler>> = emptyList(),
-): (Uri) -> WebResourceResponse? {
-    val matchers by remember {
-        derivedStateOf {
-            handlers.map { (path, handler) ->
-                PathHandleData(
-                    authority = domain,
-                    path = path,
-                    httpEnabled = httpEnabled,
-                    handle = handler
-                )
-            }
-        }
+): WXAssetLoader {
+    val matchers = handlers.map { (path, handler) ->
+        PathHandleData(
+            authority = domain,
+            path = path,
+            httpEnabled = httpEnabled,
+            handle = handler
+        )
     }
 
-
-    return remember {
-        @WorkerThread HOLY_FUCK_MAN@{ uri: Uri ->
-            for (matcher in matchers) {
-                val handler = matcher.match(uri) ?: continue
-                // The requested URL doesn't match the URL where this handler has been registered.
-                val suffixPath = matcher.getSuffixPath(uri.path!!)
-                val response = handler(suffixPath) ?: continue
-                // Handler doesn't want to intercept this request, try next handler.
-
-                return@HOLY_FUCK_MAN response
-            }
-
-            return@HOLY_FUCK_MAN null
+    return HOLY_FUCK_MAN@ @WorkerThread { uri: Uri ->
+        for (matcher in matchers) {
+            val handler = matcher.match(uri) ?: continue
+            // The requested URL doesn't match the URL where this handler has been registered.
+            val suffixPath = matcher.getSuffixPath(uri.path!!)
+            val response = handler(suffixPath) ?: continue
+            // Handler doesn't want to intercept this request, try next handler.
+            return@HOLY_FUCK_MAN response
         }
+
+        return@HOLY_FUCK_MAN null
     }
+
 }
 
 fun InputStream.inject(fromTag: (ByteArray) -> Int, code: String): InputStream {

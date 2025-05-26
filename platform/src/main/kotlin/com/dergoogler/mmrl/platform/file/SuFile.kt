@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.platform.file
 
+import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
 import com.dergoogler.mmrl.platform.Platform
@@ -46,6 +47,7 @@ class SuFile(
             when (it) {
                 is File -> it.path
                 is String -> it
+                is Uri -> it.toString()
                 else -> throw IllegalArgumentException("Unsupported type: ${it::class}")
             }
         }.toTypedArray())

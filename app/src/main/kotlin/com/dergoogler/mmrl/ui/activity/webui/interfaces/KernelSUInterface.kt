@@ -8,34 +8,23 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.utils.createRootShell
 import com.dergoogler.mmrl.utils.withNewRootShell
-import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.interfaces.WXInterface
+import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
-import com.topjohnwu.superuser.internal.UiThreadHandler
+import com.topjohnwu.superuser.internal.WaitRunnable
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.CompletableFuture
 
 class KernelSUInterface(
     wxOptions: WXOptions,
-    private val debug: Boolean = false,
 ) : WXInterface(wxOptions) {
     override var name: String = "ksu"
 
     companion object {
-        fun factory(wxOptions: WXOptions, debug: Boolean = false) = JavaScriptInterface(
-            clazz = KernelSUInterface::class.java,
-            initargs = arrayOf(
-                wxOptions,
-                debug
-            ),
-            parameterTypes = arrayOf(
-                WXOptions::class.java,
-                Boolean::class.java
-            )
-        )
+        fun factory() = JavaScriptInterface(KernelSUInterface::class.java)
     }
 
     @JavascriptInterface
@@ -54,9 +43,9 @@ class KernelSUInterface(
     fun fullScreen(enable: Boolean) {
         runMainLooperPost {
             if (enable) {
-                hideSystemUI(activity.window)
+                hideSystemUI(window)
             } else {
-                showSystemUI(activity.window)
+                showSystemUI(window)
             }
         }
     }
@@ -70,12 +59,11 @@ class KernelSUInterface(
         return currentModuleInfo.toString()
     }
 
-
     @JavascriptInterface
     fun exec(cmd: String): String {
         return withNewRootShell(
             globalMnt = true,
-            debug = debug
+            debug = options.debug
         ) { ShellUtils.fastCmd(this, cmd) }
     }
 
@@ -113,7 +101,7 @@ class KernelSUInterface(
 
         val result = withNewRootShell(
             globalMnt = true,
-            debug = debug
+            debug = this@KernelSUInterface.options.debug
         ) {
             newJob().add(finalCommand.toString()).to(ArrayList(), ArrayList()).exec()
         }
@@ -128,6 +116,17 @@ class KernelSUInterface(
             }, ${JSONObject.quote(stderr)}); } catch(e) { console.error(e); } })();"
 
         runJs(jsCode)
+    }
+
+    // ensure it really runs on the ui thread
+    private fun runAndWait(r: Runnable) {
+        if (ShellUtils.onMainThread()) {
+            r.run()
+        } else {
+            val wr = WaitRunnable(r)
+            runMainLooperPost(wr)
+            wr.waitUntilDone()
+        }
     }
 
     @JavascriptInterface
@@ -150,7 +149,7 @@ class KernelSUInterface(
 
         val shell = createRootShell(
             globalMnt = true,
-            debug = debug
+            debug = this@KernelSUInterface.options.debug
         )
 
         val emitData = fun(name: String, data: String) {
@@ -164,13 +163,13 @@ class KernelSUInterface(
             runJs(jsCode)
         }
 
-        val stdout = object : CallbackList<String>(UiThreadHandler::runAndWait) {
+        val stdout = object : CallbackList<String>(::runAndWait) {
             override fun onAddElement(s: String) {
                 emitData("stdout", s)
             }
         }
 
-        val stderr = object : CallbackList<String>(UiThreadHandler::runAndWait) {
+        val stderr = object : CallbackList<String>(::runAndWait) {
             override fun onAddElement(s: String) {
                 emitData("stderr", s)
             }

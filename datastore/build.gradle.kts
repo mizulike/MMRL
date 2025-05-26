@@ -51,6 +51,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.protobuf.kotlin.lite)
     implementation(libs.androidx.foundation)
+    implementation(libs.androidx.material3.android)
     implementation(libs.androidx.hilt.navigation.compose)
     implementation(libs.hilt.android)
     implementation(libs.hilt.compiler)

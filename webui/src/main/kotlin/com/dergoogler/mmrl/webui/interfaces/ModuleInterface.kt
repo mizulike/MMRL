@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.webui.interfaces
 
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.ShortcutInfo
 import android.content.pm.ShortcutManager
@@ -16,12 +17,11 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
-import com.dergoogler.mmrl.webui.Insets
+import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.R
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUIConfig
 import com.dergoogler.mmrl.webui.moshi
-import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
 import java.io.BufferedInputStream
@@ -36,40 +36,26 @@ internal data class Manager(
 @Keep
 class ModuleInterface(
     wxOptions: WXOptions,
-    private val insets: Insets,
-    private val options: WebUIOptions,
 ) : WXInterface(wxOptions) {
     override var name: String = "$${modId.sanitizedId}"
+
     companion object {
-        fun factory(
-            wxOptions: WXOptions,
-            insets: Insets,
-            options: WebUIOptions,
-        ) = JavaScriptInterface(
-            clazz = ModuleInterface::class.java,
-            initargs = arrayOf(
-                wxOptions,
-                insets,
-                options,
-            ),
-            parameterTypes = arrayOf(
-                WXOptions::class.java,
-                Insets::class.java,
-                WebUIOptions::class.java,
-            )
-        )
+        fun factory() = JavaScriptInterface(ModuleInterface::class.java)
     }
 
-    private var windowInsetsController: WindowInsetsControllerCompat =
+    private fun getWindowInsetsController(activity: Activity): WindowInsetsControllerCompat =
         WindowCompat.getInsetsController(
             activity.window,
             webView
         )
 
     init {
-        WindowCompat.setDecorFitsSystemWindows(activity.window, false)
-        windowInsetsController.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        activity<Unit> {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
+            getWindowInsetsController(this).systemBarsBehavior =
+                WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+
     }
 
     private var managerAdapter: JsonAdapter<Manager> = moshi.adapter(Manager::class.java)
@@ -109,36 +95,66 @@ class ModuleInterface(
     @get:JavascriptInterface
     val hasAccessToFileSystem: Boolean
         get() {
-            deprecated("getHasAccessToFileSystem()")
+            deprecated("$name.getHasAccessToFileSystem()")
             return true
         }
 
     @get:JavascriptInterface
     val hasAccessToAdvancedKernelSuAPI: Boolean
         get() {
-            deprecated("getHasAccessToAdvancedKernelSuAPI()")
+            deprecated("$name.getHasAccessToAdvancedKernelSuAPI()")
             return true
         }
 
+    @Deprecated("Use window.getComputedStyle(document.body).getPropertyValue('--window-inset-top') instead")
     @get:JavascriptInterface
     val windowTopInset: Int
-        get() = insets.top
+        get() {
+            deprecated(
+                "$name.getWindowTopInset()",
+                "window.getComputedStyle(document.body).getPropertyValue('--window-inset-top')"
+            )
+            return -1
+        }
 
+    @Deprecated("Use window.getComputedStyle(document.body).getPropertyValue('--window-inset-bottom') instead")
     @get:JavascriptInterface
     val windowBottomInset: Int
-        get() = insets.bottom
+        get() {
+            deprecated(
+                "$name.getWindowBottomInset()",
+                "window.getComputedStyle(document.body).getPropertyValue('--window-inset-bottom')"
+            )
+            return -1
+        }
 
+    @Deprecated("Use window.getComputedStyle(document.body).getPropertyValue('--window-inset-left') instead")
     @get:JavascriptInterface
     val windowLeftInset: Int
-        get() = insets.left
+        get() {
+            deprecated(
+                "$name.getWindowLeftInset()",
+                "window.getComputedStyle(document.body).getPropertyValue('--window-inset-left')"
+            )
+            return -1
+        }
 
+    @Deprecated("Use window.getComputedStyle(document.body).getPropertyValue('--window-inset-right') instead")
     @get:JavascriptInterface
     val windowRightInset: Int
-        get() = insets.right
+        get() {
+            deprecated(
+                "$name.getWindowRightInset()",
+                "window.getComputedStyle(document.body).getPropertyValue('--window-inset-right')"
+            )
+            return -1
+        }
 
     @get:JavascriptInterface
-    val isLightNavigationBars: Boolean
-        get() = windowInsetsController.isAppearanceLightNavigationBars
+    val isLightNavigationBars: Boolean?
+        get() = activity<Boolean> {
+            getWindowInsetsController(this).isAppearanceLightNavigationBars
+        }
 
     @get:JavascriptInterface
     val isDarkMode: Boolean
@@ -146,16 +162,18 @@ class ModuleInterface(
 
     @JavascriptInterface
     fun setLightNavigationBars(isLight: Boolean) = runOnUiThread {
-        windowInsetsController.isAppearanceLightNavigationBars = isLight
+        getWindowInsetsController(this).isAppearanceLightNavigationBars = isLight
     }
 
     @get:JavascriptInterface
-    val isLightStatusBars: Boolean
-        get() = windowInsetsController.isAppearanceLightStatusBars
+    val isLightStatusBars: Boolean?
+        get() = activity {
+            getWindowInsetsController(this).isAppearanceLightStatusBars
+        }
 
     @JavascriptInterface
     fun setLightStatusBars(isLight: Boolean) = runOnUiThread {
-        windowInsetsController.isAppearanceLightStatusBars = isLight
+        getWindowInsetsController(this).isAppearanceLightStatusBars = isLight
     }
 
     @get:JavascriptInterface
@@ -185,12 +203,12 @@ class ModuleInterface(
 
     @JavascriptInterface
     fun requestAdvancedKernelSUAPI() {
-        deprecated("requestAdvancedKernelSUAPI()")
+        deprecated("$name.requestAdvancedKernelSUAPI()")
     }
 
     @JavascriptInterface
     fun requestFileSystemAPI() {
-        deprecated("requestFileSystemAPI()")
+        deprecated("$name.requestFileSystemAPI()")
     }
 
     @JavascriptInterface

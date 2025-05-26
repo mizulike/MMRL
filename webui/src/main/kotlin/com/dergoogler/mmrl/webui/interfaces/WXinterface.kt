@@ -2,11 +2,16 @@ package com.dergoogler.mmrl.webui.interfaces
 
 import android.app.Activity
 import android.content.Context
+import android.content.ContextWrapper
 import android.os.Handler
-import android.os.Looper
 import android.webkit.WebView
 import androidx.annotation.Keep
+import androidx.annotation.UiThread
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.webui.model.WebUIConfig
+import com.dergoogler.mmrl.webui.util.WebUIOptions
+import com.dergoogler.mmrl.webui.view.WXView
+import kotlinx.coroutines.Runnable
 
 interface WXConsole {
     fun error(message: String, vararg args: String?)
@@ -16,9 +21,8 @@ interface WXConsole {
 }
 
 data class WXOptions(
-    val context: Context,
-    val webView: WebView,
-    val modId: ModId,
+    val webView: WXView,
+    val options: WebUIOptions,
 )
 
 /**
@@ -30,7 +34,7 @@ data class WXOptions(
  * @param wxOptions An instance of [WXOptions] containing essential configuration details such as the application context, WebView instance, and module identifier.
  *
  * @property context The Android context associated with the web UI. Typically, this is an instance of [Activity].
- * @property webView The [WebView] instance used for displaying web content.
+ * @property webView The [WXView] instance used for displaying web content.
  * @property modId A unique identifier for the module using this interface.
  * @property name The name of the entity. Must be initialized before access.
  * @property activity The [Activity] instance from context.
@@ -39,10 +43,22 @@ data class WXOptions(
 @Keep
 open class WXInterface(
     val wxOptions: WXOptions,
-) {
-    val context = wxOptions.context
-    val webView = wxOptions.webView
-    val modId = wxOptions.modId
+) : ContextWrapper(wxOptions.options.context) {
+    val webView: WXView = wxOptions.webView
+    val options: WebUIOptions = wxOptions.options
+    val context: Context = applicationContext
+    val activity: Activity? = options.findActivity()
+    val modId: ModId = options.modId
+    val config: WebUIConfig = options.config
+
+    fun <R> activity(block: Activity.() -> R): R? {
+        if (activity == null) {
+            throwJsError(Exception("Activity not found"))
+            return null
+        }
+
+        return block(activity)
+    }
 
     /**
      * The name of the entity.
@@ -52,25 +68,117 @@ open class WXInterface(
      * Attempting to access it before initialization will result in a [kotlin.UninitializedPropertyAccessException].
      */
     open lateinit var name: String
-    val activity = context as Activity
-    fun runOnUiThread(block: () -> Unit) = (context as Activity).runOnUiThread(block)
-    fun runJs(script: String) = runOnUiThread { webView.evaluateJavascript(script, null) }
-    fun runPost(action: WebView.() -> Unit) {
-        webView.post { action(webView) }
-    }
 
-    fun runJsCatching(block: () -> Unit) {
-        try {
-            block()
-        } catch (e: Throwable) {
-            runJs("new Error('${e.message}', { cause: '${e.message}' })")
+    /**
+     * Executes the given [block] of code on the UI thread.
+     *
+     * This function ensures that the provided lambda [block] is run on the main UI thread,
+     * which is necessary for any operations that modify or interact with the user interface.
+     * It delegates the execution to the `runOnUiThread` method of the underlying [webView].
+     *
+     * The [block] is a lambda expression that takes an [Activity] as its receiver, allowing
+     * direct access to the Activity's properties and methods within the lambda.
+     *
+     * @param block A lambda expression with an [Activity] receiver that contains the code to be executed on the UI thread.
+     * @see WXView.runOnUiThread
+     * @see UiThread
+     */
+    @UiThread
+    fun runOnUiThread(block: Activity.() -> Unit) = webView.runOnUiThread(block)
+
+    /**
+     * Executes the given JavaScript script within the WebView.
+     *
+     * This function provides a straightforward way to inject and run JavaScript code in the web content displayed by the WebView.
+     * It ensures that the script is executed on the UI thread, which is necessary for interacting with WebView components.
+     *
+     * @param script A string containing the JavaScript code to be executed.
+     *
+     * @sample
+     * // Example: Changing the background color of the body element in the WebView.
+     * runJs("document.body.style.backgroundColor = 'blue';")
+     *
+     * // Example: Calling a JavaScript function defined in the web page.
+     * runJs("myJavaScriptFunction('someArgument');")
+     */
+    @UiThread
+    fun runJs(script: String) = webView.runJs(script)
+
+    /**
+     * Executes the given [action] on the WebView's UI thread after the current message queue processing.
+     *
+     * This method is useful for performing actions that need to interact with the WebView's UI elements
+     * or state, ensuring that these operations are executed safely on the main UI thread.
+     * The [action] is a lambda function that receives the [WebView] instance as its receiver,
+     * allowing direct access to its methods and properties.
+     *
+     * @param action A lambda function to be executed on the WebView's UI thread.
+     *               The lambda has the [WebView] instance as its receiver (`this`).
+     *
+     * @see WebView.post
+     */
+    @UiThread
+    fun runPost(action: WebView.() -> Unit) = webView.runPost(action)
+
+    @UiThread
+    fun runJsCatching(block: () -> Unit) = webView.runJsCatching(block)
+
+    /**
+     * Throws a JavaScript error in the WebView.
+     *
+     * This function allows you to propagate an [Exception] from Kotlin code to the JavaScript environment
+     * within the WebView, causing a JavaScript error to be thrown. This is useful for signaling errors
+     * that originate in native code but need to be handled or displayed in the web UI.
+     *
+     * This method must be called on the UI thread.
+     *
+     * @param e The [Exception] to be thrown as a JavaScript error. The exception's message
+     *          will typically be used as the error message in JavaScript.
+     */
+    @UiThread
+    fun throwJsError(e: Exception) = webView.throwJsError(e)
+
+    /**
+     * Executes a given action on the main UI thread, using the context of the current [Activity].
+     *
+     * This function is useful for performing UI-related operations that need to be synchronized with the main event loop.
+     * It posts the action to the main looper's message queue, ensuring that it will be executed on the UI thread.
+     *
+     * If the `activity` is `null` (e.g., if the activity has been destroyed or is not available),
+     * this function will throw a JavaScript error via [throwJsError] and the action will not be executed.
+     *
+     * @param action A lambda expression that takes the current [Activity] as its receiver and performs some operations.
+     *               This lambda will be executed on the main UI thread.
+     * @throws Exception If the `activity` is `null`, a JavaScript error with the message "Activity not found" is thrown.
+     *
+     * @sample
+     * // Example of using runMainLooperPost to update a TextView in an Activity:
+     * runMainLooperPost {
+     *     // 'this' refers to the Activity instance
+     *     val textView = findViewById<TextView>(R.id.my_textview)
+     *     textView.text = "Updated from runMainLooperPost"
+     * }
+     */
+    @UiThread
+    fun runMainLooperPost(action: Activity.() -> Unit) {
+        if (activity == null) {
+            throwJsError(Exception("Activity not found"))
+            return
+        }
+
+        Handler(mainLooper).post {
+            action(activity)
         }
     }
 
-    fun runMainLooperPost(action: () -> Unit) {
-        if (context is Activity) {
-            Handler(Looper.getMainLooper()).post(action)
+    @UiThread
+    fun runMainLooperPost(r: Runnable) {
+        if (activity == null) {
+            throwJsError(Exception("Activity not found"))
+            return
         }
+
+        Handler(mainLooper).post(r)
     }
 
     /**

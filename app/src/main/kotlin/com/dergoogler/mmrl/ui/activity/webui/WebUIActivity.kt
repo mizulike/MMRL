@@ -2,46 +2,31 @@ package com.dergoogler.mmrl.ui.activity.webui
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
-import android.view.View
-import android.webkit.WebView
-import android.widget.LinearLayout
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.lifecycleScope
 import com.dergoogler.mmrl.BuildConfig
-import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.model.ModId.Companion.isNullOrEmpty
+import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
-import com.dergoogler.mmrl.ui.component.Failed
-import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.utils.initPlatform
-import com.dergoogler.mmrl.webui.interfaces.WXOptions
-import com.dergoogler.mmrl.platform.model.ModId
-import com.dergoogler.mmrl.webui.screen.WebUIScreen
-import com.dergoogler.mmrl.webui.util.rememberWebUIOptions
-import com.dergoogler.mmrl.webui.webUiConfig
-import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
-import com.dergoogler.mmrl.ui.activity.setBaseContent
-import kotlinx.coroutines.delay
+import com.dergoogler.mmrl.webui.activity.WXActivity
+import com.dergoogler.mmrl.webui.util.WebUIOptions
+import com.dergoogler.mmrl.webui.view.WXView
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import timber.log.Timber
+import javax.inject.Inject
 
-class WebUIActivity : MMRLComponentActivity() {
+@AndroidEntryPoint
+class WebUIActivity : WXActivity() {
+    @Inject
+    internal lateinit var userPreferencesRepository: UserPreferencesRepository
+
     private val userPrefs get() = runBlocking { userPreferencesRepository.data.first() }
-    private lateinit var webView: WebView
-    private var isKeyboardShowing by mutableStateOf(false)
-    private lateinit var rootView: View
 
     private val userAgent
         get(): String {
@@ -61,113 +46,39 @@ class WebUIActivity : MMRLComponentActivity() {
             return "MMRL/$mmrlVersion (Linux; Android $osVersion; $deviceModel; $platform/$platformVersion)"
         }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d("WebUIActivity onCreate")
-        super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-
-        webView = WebView(this)
-        rootView = findViewById(android.R.id.content)
+    override fun onRender(savedInstanceState: Bundle?): WXView? {
+        super.onRender(savedInstanceState)
 
         lifecycleScope.launch {
             initPlatform(baseContext, userPrefs.workingMode.toPlatform())
         }
 
-        val mModId = intent.getStringExtra("MOD_ID")
-
-        if (mModId.isNullOrEmpty()) {
-            setBaseContent {
-                Failed(
-                    message = stringResource(id = R.string.missing_mod_id),
-                )
-            }
-
-            return
+        if (modId.isNullOrEmpty()) {
+            return null
         }
 
-        val modId = ModId(mModId)
-
-        setBaseContent {
-            var isLoading by remember { mutableStateOf(true) }
-
-            LaunchedEffect(Platform.isAlive) {
-                while (!Platform.isAlive) {
-                    delay(1000)
-                }
-
-                isLoading = false
-            }
-
-            if (isLoading) {
-                Loading()
-
-                return@setBaseContent
-            }
-
-            val config = webUiConfig(modId)
-
-            if (config.windowResize) {
-                rootView.getViewTreeObserver().addOnGlobalLayoutListener {
-                    val r = Rect()
-                    rootView.getWindowVisibleDisplayFrame(r)
-                    val screenHeight: Int = rootView.getRootView().height
-                    val keypadHeight: Int = screenHeight - r.bottom
-                    if (keypadHeight > screenHeight * 0.15) {
-                        if (!isKeyboardShowing) {
-                            isKeyboardShowing = true
-                            adjustWebViewHeight(keypadHeight)
-                        }
-                    } else {
-                        if (isKeyboardShowing) {
-                            isKeyboardShowing = false
-                            resetWebViewHeight()
-                        }
-                    }
-                }
-            }
-            val isDarkMode = userPrefs.isDarkMode()
-
-
-            val options = rememberWebUIOptions(
-                modId = modId,
+        val options by lazy {
+            WebUIOptions(
+                modId = modId!!,
+                context = this,
                 debug = userPrefs.developerMode,
                 appVersionCode = BuildConfig.VERSION_CODE,
                 remoteDebug = userPrefs.useWebUiDevUrl,
                 enableEruda = userPrefs.enableErudaConsole,
                 debugDomain = userPrefs.webUiDevUrl,
-                isDarkMode = isDarkMode,
                 userAgentString = userAgent,
+                isDarkMode = userPrefs.isDarkMode(),
+                colorScheme = userPrefs.colorScheme(this),
                 cls = WebUIActivity::class.java
             )
-
-            WebUIScreen(
-                webView = webView,
-                options = options,
-                interfaces = listOf(
-                    KernelSUInterface.factory(
-                        WXOptions(this@WebUIActivity, webView, modId),
-                        userPrefs.developerMode
-                    ),
-                )
-            )
         }
-    }
 
-    private fun adjustWebViewHeight(keypadHeight: Int) {
-        val params = webView.layoutParams
-        params.height = rootView.height - keypadHeight
-        webView.layoutParams = params
-    }
+        val view = WXView(options).apply {
+            addJavascriptInterface(KernelSUInterface.factory())
+            loadDomain()
+        }
 
-    private fun resetWebViewHeight() {
-        val params = webView.layoutParams
-        params.height = LinearLayout.LayoutParams.MATCH_PARENT
-        webView.layoutParams = params
-    }
-
-    override fun onDestroy() {
-        Timber.d("WebUIActivity onDestroy")
-        super.onDestroy()
+        return view
     }
 
     companion object {

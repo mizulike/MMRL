@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.ui.component.dialog
 import android.app.Activity
 import android.content.Context
 import android.view.ViewGroup
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -20,8 +21,58 @@ data class ConfirmData(
     val onConfirm: () -> Unit,
     val onClose: () -> Unit,
     val confirmText: String? = null,
-    val closeText: String? = null
+    val closeText: String? = null,
 )
+
+/**
+ * Displays a confirmation dialog using Jetpack Compose.
+ *
+ * This function is an extension function for `Context` and is intended to be used
+ * within an Activity. It adds a `ComposeView` to the Activity's content view
+ * to display the confirmation dialog.
+ *
+ * @param confirmData An object containing the data for the confirmation dialog,
+ *                    including title, description, and callbacks for confirm/close actions.
+ * @param colorScheme The MaterialTheme ColorScheme to be applied to the dialog.
+ */
+fun Context.confirm(confirmData: ConfirmData, colorScheme: ColorScheme) {
+    (this as? Activity)?.addContentView(
+        ComposeView(this).apply {
+            setContent {
+                var showDialog by remember { mutableStateOf(true) }
+
+                if (showDialog) {
+                    MaterialTheme(colorScheme = colorScheme) {
+                        ConfirmDialog(
+                            onDismissRequest = {
+                                showDialog = false
+                                confirmData.onClose()
+                            },
+                            closeText = confirmData.closeText
+                                ?: stringResource(id = R.string.cancel),
+                            confirmText = confirmData.confirmText
+                                ?: stringResource(id = R.string.confirm),
+                            title = confirmData.title,
+                            description = confirmData.description,
+                            onClose = {
+                                showDialog = false
+                                confirmData.onClose()
+                            },
+                            onConfirm = {
+                                showDialog = false
+                                confirmData.onConfirm()
+                            }
+                        )
+                    }
+                }
+            }
+        },
+        ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.MATCH_PARENT
+        )
+    )
+}
 
 @Composable
 fun rememberConfirm(
@@ -31,40 +82,7 @@ fun rememberConfirm(
 
     val confirm: (ConfirmData) -> Unit = remember {
         { confirm ->
-            (context as? Activity)?.addContentView(
-                ComposeView(context).apply {
-                    setContent {
-                        var showDialog by remember { mutableStateOf(true) }
-
-                        if (showDialog) {
-                            MaterialTheme(colorScheme = theme) {
-                                ConfirmDialog(
-                                    onDismissRequest = {
-                                        showDialog = false
-                                        confirm.onClose()
-                                    },
-                                    closeText = confirm.closeText ?: stringResource(id = R.string.cancel),
-                                    confirmText = confirm.confirmText ?: stringResource(id = R.string.confirm),
-                                    title = confirm.title,
-                                    description = confirm.description,
-                                    onClose = {
-                                        showDialog = false
-                                        confirm.onClose()
-                                    },
-                                    onConfirm = {
-                                        showDialog = false
-                                        confirm.onConfirm()
-                                    }
-                                )
-                            }
-                        }
-                    }
-                },
-                ViewGroup.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT
-                )
-            )
+            context.confirm(confirm, theme)
         }
     }
 

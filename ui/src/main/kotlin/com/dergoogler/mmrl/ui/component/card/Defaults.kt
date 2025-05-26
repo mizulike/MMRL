@@ -2,7 +2,6 @@ package com.dergoogler.mmrl.ui.component.card
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -15,8 +14,11 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -25,7 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.graphics.compositeOver
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.ModifierScope
@@ -37,6 +39,8 @@ import com.dergoogler.mmrl.ext.isNotNull
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ui.component.card.CardDefaults.cardStyle
+import com.dergoogler.mmrl.ui.theme.fromToken
+import com.dergoogler.mmrl.ui.token.FilledCardTokens
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -201,3 +205,22 @@ object CardDefaults {
                 )
         )
 }
+
+
+internal var defaultCardColorsCached: CardColors? = null
+val ColorScheme.defaultCardColors: CardColors
+    get() {
+        return defaultCardColorsCached
+            ?: CardColors(
+                containerColor = fromToken(FilledCardTokens.ContainerColor),
+                contentColor = contentColorFor(fromToken(FilledCardTokens.ContainerColor)),
+                disabledContainerColor =
+                    fromToken(FilledCardTokens.DisabledContainerColor)
+                        .copy(alpha = FilledCardTokens.DisabledContainerOpacity)
+                        .compositeOver(fromToken(FilledCardTokens.ContainerColor)),
+                disabledContentColor =
+                    contentColorFor(fromToken(FilledCardTokens.ContainerColor))
+                        .copy(FilledCardTokens.DisabledContainerOpacity),
+            )
+                .also { defaultCardColorsCached = it }
+    }

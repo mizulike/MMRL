@@ -46,13 +46,8 @@ import com.dergoogler.mmrl.network.compose.requestString
 import com.dergoogler.mmrl.ui.component.Failed
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.TopAppBar
-import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
-import com.dergoogler.mmrl.webui.Insets
-import com.dergoogler.mmrl.webui.LocalInsets
-import com.dergoogler.mmrl.webui.handler.internalPathHandler
-import com.dergoogler.mmrl.webui.rememberWebUIAssetLoader
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 import androidx.core.graphics.drawable.toDrawable
 import androidx.navigation.NavHostController
@@ -77,13 +72,13 @@ fun ViewDescriptionScreen(
     )
 
     CompositionLocalProvider(
-        LocalInsets provides Insets.None
+        //LocalInsets provides Insets.None
     ) {
-        val webUiAssetLoader = rememberWebUIAssetLoader(
-            handlers = listOf(
-                "/internal/" to internalPathHandler(),
-            )
-        )
+//        val webUiAssetLoader = rememberWebUIAssetLoader(
+//            handlers = listOf(
+//                "/internal/" to internalPathHandler(),
+//            )
+//        )
 
         Scaffold(
             modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
@@ -161,7 +156,7 @@ fun ViewDescriptionScreen(
                                         view: WebView,
                                         request: WebResourceRequest,
                                     ): WebResourceResponse? {
-                                        return webUiAssetLoader(request.url)
+                                        return null
                                     }
                                 }
 

@@ -1,7 +1,7 @@
 package com.dergoogler.mmrl.webui.client
 
 import android.annotation.SuppressLint
-import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.net.http.SslError
 import android.util.Log
@@ -13,88 +13,145 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.compose.ui.platform.UriHandler
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.webkit.WebViewAssetLoader
+import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.PromptData
+import com.dergoogler.mmrl.ui.component.dialog.confirm
+import com.dergoogler.mmrl.ui.component.dialog.prompt
+import com.dergoogler.mmrl.webui.PathHandler
 import com.dergoogler.mmrl.webui.R
-import com.dergoogler.mmrl.webui.forbiddenResponse
+import com.dergoogler.mmrl.webui.WXAssetLoader
+import com.dergoogler.mmrl.webui.handler.InternalPathHandler
+import com.dergoogler.mmrl.webui.handler.SuFilePathHandler
+import com.dergoogler.mmrl.webui.handler.internalPathHandler
+import com.dergoogler.mmrl.webui.handler.suPathHandler
+import com.dergoogler.mmrl.webui.handler.webrootPathHandler
+import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.util.WebUIOptions
+import com.dergoogler.mmrl.webui.view.WXView
+import com.dergoogler.mmrl.webui.wxAssetLoader
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
-internal class WebUIClient(
-    private val context: Context,
-    private val options: WebUIOptions,
-    private val uriHandler: UriHandler,
-    private val debug: Boolean,
-    private val webuiAssetsLoader: (Uri) -> WebResourceResponse?,
-) : WebViewClient() {
-    class ChromeClient(
-        private val context: Context,
-        private val showConfirm: (ConfirmData) -> Unit,
-        private val showPrompt: (PromptData) -> Unit,
-        private val options: WebUIOptions,
-    ) : WebChromeClient() {
-        override fun onJsAlert(
-            view: WebView?,
-            url: String,
-            message: String,
-            result: JsResult,
-        ): Boolean {
-            showConfirm(
-                ConfirmData(
-                    title = context.getString(R.string.says, options.modId.id),
-                    description = message,
-                    onConfirm = { result.confirm() },
-                    onClose = { result.cancel() })
-            )
+open class WXChromeClient(
+    private val options: WebUIOptions?,
+) : WebChromeClient() {
+    private companion object {
+        const val TAG = "WXChromeClient"
+    }
 
-            return true
+    @OptIn(ExperimentalContracts::class)
+    private inline fun checkOptions(
+        view: WXView,
+        result: JsResult,
+        options: WebUIOptions?,
+        block: WebUIOptions.() -> Unit,
+    ): Boolean {
+        contract {
+            callsInPlace(block, InvocationKind.AT_MOST_ONCE)
         }
 
-        override fun onJsConfirm(
-            view: WebView,
-            url: String,
-            message: String,
-            result: JsResult,
-        ): Boolean {
-            showConfirm(
-                ConfirmData(
-                    title = context.getString(R.string.says, options.modId.id),
-                    description = message,
-                    onConfirm = {
-                        result.confirm()
-                    },
-                    onClose = {
-                        result.cancel()
-                    })
-            )
-
-            return true
+        if (options == null) {
+            val errMessage = "Failed to get options. Received: null"
+            Log.e(TAG, errMessage)
+            view.throwJsError(Exception(errMessage))
+            result.cancel()
+            return false
         }
 
-        override fun onJsPrompt(
-            view: WebView,
-            url: String?,
-            message: String?,
-            defaultValue: String?,
-            result: JsPromptResult,
-        ): Boolean {
-            showPrompt(
-                PromptData(
-                    title = message ?: context.getString(
-                        R.string.says,
-                        options.modId.id
-                    ),
-                    value = defaultValue ?: "",
-                    onConfirm = {
-                        result.confirm(it)
-                    },
-                    onClose = {
-                        result.cancel()
-                    }
-                )
-            )
+        block(options)
+        return true
+    }
 
-            return true
+    override fun onJsAlert(
+        view: WebView?,
+        url: String,
+        message: String,
+        result: JsResult,
+    ): Boolean = checkOptions(view as WXView, result, options) {
+        context.confirm(
+            confirmData = ConfirmData(
+                title = context.getString(R.string.says, modId.id),
+                description = message,
+                onConfirm = { result.confirm() },
+                onClose = { result.cancel() }
+            ),
+            colorScheme = colorScheme
+        )
+    }
+
+    override fun onJsConfirm(
+        view: WebView,
+        url: String,
+        message: String,
+        result: JsResult,
+    ): Boolean = checkOptions(view as WXView, result, options) {
+        context.confirm(
+            confirmData = ConfirmData(
+                title = context.getString(R.string.says, modId.id),
+                description = message,
+                onConfirm = { result.confirm() },
+                onClose = { result.cancel() }
+            ),
+            colorScheme = colorScheme
+        )
+    }
+
+    override fun onJsPrompt(
+        view: WebView,
+        url: String?,
+        message: String?,
+        defaultValue: String?,
+        result: JsPromptResult,
+    ): Boolean = checkOptions(view as WXView, result, options) {
+        context.prompt(
+            promptData = PromptData(
+                title = message ?: context.getString(R.string.says, modId.id),
+                value = defaultValue ?: "",
+                onConfirm = { result.confirm(it) },
+                onClose = { result.cancel() }
+            ),
+            colorScheme = colorScheme
+        )
+    }
+}
+
+open class WXClient : WebViewClient {
+    private val mOptions: WebUIOptions
+    private val mWxAssetsLoader: WXAssetLoader
+
+    constructor(options: WebUIOptions, insets: Insets) {
+        mOptions = options
+        mWxAssetsLoader =  wxAssetLoader(
+            handlers = buildList {
+                add("/mmrl/" to internalPathHandler(mOptions, insets))
+                add("/internal/" to internalPathHandler(mOptions, insets))
+                add(".${mOptions.modId}/" to suPathHandler("/data/adb/modules/${mOptions.modId}".toSuFile()))
+                add("/.adb/" to suPathHandler("/data/adb".toSuFile()))
+                add("/.config/" to suPathHandler("/data/adb/.config".toSuFile()))
+                add("/.local/" to suPathHandler("/data/adb/.local".toSuFile()))
+
+                if (mOptions.config.hasRootPathPermission) {
+                    add("/__root__" to suPathHandler("/".toSuFile()))
+                }
+
+                add("/" to webrootPathHandler(mOptions, insets))
+            }
+        )
+    }
+
+    private fun openUri(uri: Uri) {
+
+        try {
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+            mOptions.context.startActivity(intent)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error opening URI: $uri", e)
         }
     }
 
@@ -102,10 +159,14 @@ internal class WebUIClient(
         view: WebView,
         request: WebResourceRequest?,
     ): Boolean {
-        val mUrl = request?.url?.toString() ?: return false
+        val mUri = request?.url ?: return false
+        val mUrl = mUri.toString()
 
-        return if (!options.isDomainSafe(mUrl)) {
-            uriHandler.openUri(uri = mUrl)
+        val isUnsafe = !mOptions.isDomainSafe(mUrl)
+
+        return if (isUnsafe) {
+            mOptions.onUnsafeDomainRequest?.invoke()
+                ?: openUri(mUri)
             true
         } else {
             view.loadUrl(mUrl)
@@ -119,7 +180,7 @@ internal class WebUIClient(
         handler: SslErrorHandler?,
         error: SslError?,
     ) {
-        if (debug) {
+        if (mOptions.debug) {
             handler?.proceed()
         } else {
             handler?.cancel()
@@ -127,9 +188,12 @@ internal class WebUIClient(
     }
 
     override fun shouldInterceptRequest(
-        view: WebView,
+        view: WebView?,
         request: WebResourceRequest,
-    ): WebResourceResponse? =  webuiAssetsLoader(request.url)
+    ): WebResourceResponse? {
+        if (mOptions.debug) Log.d(TAG, "shouldInterceptRequest: ${request.url}")
+        return mWxAssetsLoader(request.url)
+    }
 
     private companion object {
         const val TAG = "WebUIClient"

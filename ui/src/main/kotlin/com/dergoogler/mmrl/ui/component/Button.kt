@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
@@ -19,6 +21,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ui.R
+import com.dergoogler.mmrl.ui.theme.fromToken
+import com.dergoogler.mmrl.ui.token.FilledTonalButtonTokens
 
 @Composable
 fun DoubleButton(
@@ -80,3 +84,20 @@ fun DoubleButton(
         }
     }
 }
+
+internal var defaultFilledTonalButtonColorsCached: ButtonColors? = null
+val ColorScheme.defaultFilledTonalButtonColors: ButtonColors
+    get() {
+        return defaultFilledTonalButtonColorsCached
+            ?: ButtonColors(
+                containerColor = fromToken(FilledTonalButtonTokens.ContainerColor),
+                contentColor = fromToken(FilledTonalButtonTokens.LabelTextColor),
+                disabledContainerColor =
+                    fromToken(FilledTonalButtonTokens.DisabledContainerColor)
+                        .copy(alpha = FilledTonalButtonTokens.DisabledContainerOpacity),
+                disabledContentColor =
+                    fromToken(FilledTonalButtonTokens.DisabledLabelTextColor)
+                        .copy(alpha = FilledTonalButtonTokens.DisabledLabelTextOpacity)
+            )
+                .also { defaultFilledTonalButtonColorsCached = it }
+    }

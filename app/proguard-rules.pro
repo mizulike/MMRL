@@ -53,6 +53,6 @@
     <init>(...);
     *;
 }
-
+-keep class com.dergoogler.mmrl.webui.util.WebUIOptions
 -keep class com.dergoogler.mmrl.webui.interfaces.**
 -keep class * extends com.dergoogler.mmrl.webui.interfaces.WXInterface

@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.webui.interfaces
 
+import android.content.Context
 import android.content.pm.PackageInfo
 import android.graphics.Bitmap
 import android.graphics.Canvas
@@ -108,8 +109,8 @@ data class UMApplicationInfo(
     var uid: Int = 0,
 ) {
     companion object {
-        fun PackageInfo.toUMApplicationInfo(wxOptions: WXOptions): UMApplicationInfo {
-            val spm = wxOptions.context.packageManager
+        fun PackageInfo.toUMApplicationInfo(context: Context): UMApplicationInfo {
+            val spm = context.packageManager
 
             return with(applicationInfo) {
                 return@with UMApplicationInfo(
@@ -314,7 +315,7 @@ class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
     fun getApplicationInfo(packageName: String, flags: Int, userId: Int): UMApplicationInfo {
         val ai = pm.getPackageInfo(packageName, flags, userId)
         return runBlocking {
-            return@runBlocking ai.toUMApplicationInfo(wxOptions)
+            return@runBlocking ai.toUMApplicationInfo(context)
         }
     }
 
@@ -322,7 +323,7 @@ class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
     fun getApplicationInfo(packageName: String, flags: Int): UMApplicationInfo {
         val ai = pm.getPackageInfo(packageName, flags, um.myUserId)
         return runBlocking {
-            return@runBlocking ai.toUMApplicationInfo(wxOptions)
+            return@runBlocking ai.toUMApplicationInfo(context)
         }
     }
 
@@ -331,7 +332,7 @@ class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
     fun getApplicationInfo(packageName: String): UMApplicationInfo {
         val ai = pm.getPackageInfo(packageName, 0, um.myUserId)
         return runBlocking {
-            return@runBlocking ai.toUMApplicationInfo(wxOptions)
+            return@runBlocking ai.toUMApplicationInfo(context)
         }
     }
 
