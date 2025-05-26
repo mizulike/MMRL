@@ -118,6 +118,9 @@ enum class Platform(val id: String) {
                         Magisk,
                         KsuNext,
                         KernelSU,
+                        SukiSU,
+                        RKSU,
+                        MKSU,
                         APatch,
                             -> conf.provider
 
