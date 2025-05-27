@@ -9,6 +9,25 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import com.dergoogler.mmrl.webui.model.Insets
 
+/**
+ * A Composable function that remembers the system bar insets.
+ *
+ * This function uses `produceState` to asynchronously load the insets and update
+ * the UI when they become available. It retrieves the top, bottom, left, and right
+ * insets of the system bars (like status bar and navigation bar) and converts them
+ * from density-independent pixels (dp) to integers.
+ *
+ * If any of the insets (top, bottom, left, or right) are greater than 0, it means
+ * there are system bars present, and an `Insets` object containing these values is returned.
+ * Otherwise, if all insets are 0 (meaning no system bars are significantly obscuring the content),
+ * it returns `null`.
+ *
+ * This is useful for adjusting the layout of your UI elements to avoid being overlapped
+ * by system bars, ensuring that critical content remains visible.
+ *
+ * @return An [Insets] object containing the top, bottom, left, and right system bar insets in pixels,
+ *         or `null` if no significant system bar insets are detected.
+ */
 @Composable
 fun rememberInsets(): Insets? {
     val layoutDirection = LocalLayoutDirection.current

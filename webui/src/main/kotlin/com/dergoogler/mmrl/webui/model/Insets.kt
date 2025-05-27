@@ -2,6 +2,18 @@ package com.dergoogler.mmrl.webui.model
 
 import com.dergoogler.mmrl.webui.asStyleResponse
 
+/**
+ * Data class representing insets (top, bottom, left, right) for a view.
+ *
+ * This class provides methods to generate CSS code that can be injected into a WebView
+ * to apply these insets as CSS variables. This is useful for adapting web content
+ * to the safe areas of a device screen, considering notches, status bars, and navigation bars.
+ *
+ * @property top The top inset value in pixels.
+ * @property bottom The bottom inset value in pixels.
+ * @property left The left inset value in pixels.
+ * @property right The right inset value in pixels.
+ */
 data class Insets(
     val top: Int,
     val bottom: Int,
