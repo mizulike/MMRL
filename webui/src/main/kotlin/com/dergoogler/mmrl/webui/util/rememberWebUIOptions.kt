@@ -22,6 +22,8 @@ import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.ui.theme.Colors
 import com.dergoogler.mmrl.ui.theme.Colors.Companion.getColorScheme
 import com.dergoogler.mmrl.ui.theme.Colors.Dynamic
+import com.dergoogler.mmrl.webui.client.WXClient
+import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.model.RequireNewVersion
 import com.dergoogler.mmrl.webui.webUiConfig
 import java.net.URI
@@ -47,6 +49,7 @@ import java.net.URI
  * @property onUnsafeDomainRequest An optional callback function that is invoked when an attempt is made to load content from an unsafe domain.
  * @property isDarkMode Indicates whether the dark mode is enabled in the UI. This can be used to signal the WebView to use a dark theme.
  * @property userAgentString The custom user agent string to be used by the WebView.
+ * @property client An optional [WXClient] that can be used to customize the behavior of the WebView.
  * @property colorScheme The [ColorScheme] to be applied to the WebUI, derived from the current theme and dark mode status.
  * @property cls An optional [Class] object, which can be used for context-specific operations or logging.
  */
@@ -69,6 +72,7 @@ data class WebUIOptions(
     val isDarkMode: Boolean = false,
     val userAgentString: String = "DON'T TRACK ME DOWN MOTHERFUCKER!",
     val colorScheme: ColorScheme = context.getColorScheme(id = 0, darkMode = isDarkMode),
+    val client: ((WebUIOptions, Insets) -> WXClient)? = null,
     val cls: Class<*>? = null,
 ) : ContextWrapper(context) {
     fun findActivity(): Activity? {

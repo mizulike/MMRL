@@ -1,12 +1,13 @@
 package com.dergoogler.mmrl.webui.util
 
-import android.webkit.WebMessage
+import com.dergoogler.mmrl.webui.model.WXEventHandler
 
-enum class PostWindowEventMessage(val message: WebMessage) {
-    ON_BACK(WebMessage("wxBack")),
-    ON_RESUME(WebMessage("wxResume")),
-    ON_VIEW_RESUME(WebMessage("wxViewResume")),
-    ON_VIEW_PAUSE(WebMessage("wxViewPause")),
-    ON_PAUSE(WebMessage("wxPause")),
-    ON_DESTROY(WebMessage("wxDestroy"))
+enum class PostWindowEventMessage {
+    WX_ON_BACK,
+    WX_ON_RESUME,
+    WX_ON_PAUSE;
+
+    companion object {
+        val PostWindowEventMessage.asEvent: WXEventHandler get() = WXEventHandler(this)
+    }
 }

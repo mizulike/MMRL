@@ -120,7 +120,7 @@ open class WXClient : WebViewClient {
 
     constructor(options: WebUIOptions, insets: Insets) {
         mOptions = options
-        mWxAssetsLoader =  wxAssetLoader(
+        mWxAssetsLoader = wxAssetLoader(
             handlers = buildList {
                 add("/mmrl/" to internalPathHandler(mOptions, insets))
                 add("/internal/" to internalPathHandler(mOptions, insets))
@@ -138,8 +138,12 @@ open class WXClient : WebViewClient {
         )
     }
 
-    private fun openUri(uri: Uri) {
+    constructor(options: WebUIOptions, assetsLoader: WXAssetLoader) {
+        mOptions = options
+        mWxAssetsLoader = assetsLoader
+    }
 
+    private fun openUri(uri: Uri) {
         try {
             val intent = Intent(Intent.ACTION_VIEW, uri)
             mOptions.context.startActivity(intent)

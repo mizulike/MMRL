@@ -152,19 +152,13 @@ data class WebUIConfig(
     val title: String? = null,
     val icon: String? = null,
     val windowResize: Boolean = true,
-    @Json(name = "backHandler")
-    val backHandler0: Boolean = true,
-    @Json(name = "backEvent")
-    val backEvent0: Boolean = false,
+    val backHandler: Any? = true,
     val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
     val autoStatusBarsStyle: Boolean = true,
     val dexFiles: List<WebUIConfigDexFile> = emptyList(),
 ) {
     val hasRootPathPermission get() = WebUIPermissions.WX_ROOT_PATH in permissions
-
-    val backEvent get() = backEvent0 && !backHandler0
-    val backHandler get() = !backEvent0 && backHandler0
 
     companion object {
         /**

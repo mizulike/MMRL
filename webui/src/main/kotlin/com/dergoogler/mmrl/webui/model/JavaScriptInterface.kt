@@ -26,13 +26,13 @@ data class JavaScriptInterface<T : WXInterface>(
 
     fun createNew(wxOptions: WXOptions): Instance {
         val constructor = if (parameterTypes != null) {
-            clazz.getDeclaredConstructor(*parameterTypes)
+            clazz.getDeclaredConstructor(WXOptions::class.java, *parameterTypes)
         } else {
             clazz.getDeclaredConstructor(WXOptions::class.java)
         }
 
         val newInstance = if (initargs != null) {
-            constructor.newInstance(*initargs)
+            constructor.newInstance(wxOptions, *initargs)
         } else {
             constructor.newInstance(wxOptions)
         }

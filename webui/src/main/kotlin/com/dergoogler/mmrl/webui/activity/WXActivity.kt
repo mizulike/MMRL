@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.webui.activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
@@ -22,6 +23,7 @@ import com.dergoogler.mmrl.webui.model.Renderer
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUIConfig
 import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
+import com.dergoogler.mmrl.webui.util.PostWindowEventMessage.Companion.asEvent
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
 
@@ -131,64 +133,81 @@ open class WXActivity : ComponentActivity() {
     }
 
     private fun registerBackEvents() {
-        onBackPressedDispatcher.addCallback(
-            this,
-            object : OnBackPressedCallback(true) {
-                override fun handleOnBackPressed() {
-                    if (mOptions == null || mView == null) {
-                        finish()
-                        return
-                    }
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                val view = mView
+                val options = mOptions
 
-                    val view = mView!!
-                    val options = mOptions!!
-
-                    if (options.config.backHandler && view.canGoBack() == true) {
-                        view.goBack()
-                        return
-                    }
-
-                    if (options.config.backEvent) {
-                        view.postEvent(PostWindowEventMessage.ON_BACK)
-                        return
-                    }
-
-                    if (options.config.exitConfirm) {
-                        this@WXActivity.confirm(
-                            confirmData = ConfirmData(
-                                title = this@WXActivity.getString(R.string.exit),
-                                description = this@WXActivity.getString(R.string.exit_desc),
-                                onConfirm = { finish() },
-                                onClose = {}
-                            ),
-                            colorScheme = options.colorScheme
-                        )
-                        return
-                    }
-
+                if (view == null || options == null) {
+                    Log.d(TAG, "Back pressed: view or options is null, finishing.")
                     finish()
+                    return
+                }
+
+                when (val backHandler = options.config.backHandler) {
+                    is String -> when (backHandler) {
+                        "native" -> handleNativeBack(view, options)
+                        "javascript" -> view.postEventHandler(PostWindowEventMessage.WX_ON_BACK.asEvent)
+                        else -> finish()
+                    }
+
+                    true -> handleNativeBack(view, options)
+                    false, null -> finish()
+                    else -> finish()
                 }
             }
-        )
+        })
     }
+
+    private fun handleNativeBack(view: WXView, options: WebUIOptions) {
+        if (view.canGoBack()) {
+            view.goBack()
+            return
+        }
+
+        if (options.config.exitConfirm) {
+            confirm(
+                confirmData = ConfirmData(
+                    title = getString(R.string.exit),
+                    description = getString(R.string.exit_desc),
+                    onConfirm = { finish() },
+                    onClose = {}
+                ),
+                colorScheme = options.colorScheme
+            )
+            return
+        }
+
+        finish()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
-        mView?.destroy()
+
+        mView.nullable {
+            it.destroy()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        mView?.onResume()
-        mView?.resumeTimers()
-        mView?.postEvent(PostWindowEventMessage.ON_RESUME)
+
+        mView.nullable {
+            it.onResume()
+            it.resumeTimers()
+            it.postEventHandler(PostWindowEventMessage.WX_ON_RESUME.asEvent)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        mView?.onPause()
-        mView?.pauseTimers()
-        mView?.postEvent(PostWindowEventMessage.ON_PAUSE)
+
+        mView.nullable {
+            it.onPause()
+            it.pauseTimers()
+            it.postEventHandler(PostWindowEventMessage.WX_ON_PAUSE.asEvent)
+        }
     }
 
     private fun Intent.fromKeys(vararg keys: String): ModId? {

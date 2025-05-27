@@ -7,17 +7,23 @@ import android.util.AttributeSet
 import android.util.Log
 import android.view.ViewGroup.LayoutParams
 import android.view.WindowInsetsController
+import android.webkit.WebMessage
 import android.webkit.WebView
+import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import androidx.annotation.UiThread
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.drawable.toDrawable
-import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
+import androidx.webkit.WebMessageCompat
+import androidx.webkit.WebViewCompat
+import androidx.webkit.WebViewFeature
 import com.dergoogler.mmrl.ext.BuildCompat
+import com.dergoogler.mmrl.ext.exception.BrickException
+import com.dergoogler.mmrl.ext.moshi.moshi
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.webui.client.WXChromeClient
 import com.dergoogler.mmrl.webui.client.WXClient
@@ -31,8 +37,9 @@ import com.dergoogler.mmrl.webui.interfaces.WXInterface
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
-import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
+import com.dergoogler.mmrl.webui.model.WXEventHandler
 import com.dergoogler.mmrl.webui.util.WebUIOptions
+import com.dergoogler.mmrl.webui.util.getRequireNewVersion
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -47,16 +54,19 @@ open class WXView : WebView {
     private val scope = CoroutineScope(Dispatchers.Main)
     private var initJob: Job? = null
     private var isInitialized = false
+    private val mDefaultWxOptions: WXOptions
 
-    private var storedInterfaces: MutableList<JavaScriptInterface.Instance> = mutableListOf()
+    private val interfaces = hashSetOf<String>()
 
     constructor(options: WebUIOptions) : super(options.context) {
         this.mOptions = options
+        this.mDefaultWxOptions = createDefaultWxOptions(options)
         initWhenReady()
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
         this.mOptions = createDefaultOptions() as WebUIOptions
+        this.mDefaultWxOptions = createDefaultWxOptions(mOptions)
         initWhenReady()
     }
 
@@ -66,8 +76,17 @@ open class WXView : WebView {
         defStyleAttr
     ) {
         this.mOptions = createDefaultOptions() as WebUIOptions
+        this.mDefaultWxOptions = createDefaultWxOptions(mOptions)
         initWhenReady()
     }
+
+    val defaultWxOptions: WXOptions get() = mDefaultWxOptions
+
+    @Throws(UnsupportedOperationException::class)
+    private fun createDefaultWxOptions(options: WebUIOptions): WXOptions = WXOptions(
+        webView = this,
+        options = options
+    )
 
     @Throws(UnsupportedOperationException::class)
     private fun createDefaultOptions(): Any {
@@ -139,7 +158,13 @@ open class WXView : WebView {
             )
 
             if (mOptions.debug) Log.d(TAG, "Insets: $newInsets")
-            webViewClient = WXClient(mOptions, newInsets)
+
+            super.webViewClient = if (mOptions.client != null) {
+                mOptions.client(mOptions, newInsets) as WebViewClient
+            } else {
+                WXClient(mOptions, newInsets)
+            }
+
             insets
         }
 
@@ -147,7 +172,7 @@ open class WXView : WebView {
         post {
             addJavascriptInterfaces()
             isInitialized = true
-            Log.d(TAG, "WebView fully initialized")
+            Log.d(TAG, "WebUI X fully initialized")
         }
     }
 
@@ -172,28 +197,28 @@ open class WXView : WebView {
     }
 
     override fun onDetachedFromWindow() {
-        super.onDetachedFromWindow()
         cleanup()
+        super.onDetachedFromWindow()
     }
 
     private fun cleanup() {
         initJob?.cancel()
 
         // remove all interfaces
-        for (jsInterface in storedInterfaces) {
-            removeJavascriptInterface(jsInterface.name)
+        for (obj in interfaces) {
+            removeJavascriptInterface(obj)
         }
 
+        stopLoading()
         webChromeClient = null
-        Log.d(TAG, "WebView cleaned up")
+        removeView(this)
+        webChromeClient = null
+
+        Log.d(TAG, "WebUI X cleaned up")
     }
 
     private val Int.asPx: Int
         get() = (this / context.resources.displayMetrics.density).toInt()
-
-    companion object {
-        private const val TAG = "WXView"
-    }
 
     fun <R> options(block: WebUIOptions.() -> R): R? {
         return try {
@@ -204,36 +229,61 @@ open class WXView : WebView {
         }
     }
 
-    fun postEvent(event: PostWindowEventMessage) {
+    fun postMessage(message: String) {
+        val uri = mOptions.domain
+
+        if (WebViewFeature.isFeatureSupported(WebViewFeature.POST_WEB_MESSAGE)) {
+            val compatMessage = WebMessageCompat(message)
+            WebViewCompat.postWebMessage(
+                this,
+                compatMessage,
+                uri
+            )
+        } else {
+            val baseMessage = WebMessage(message)
+            super.postWebMessage(baseMessage, uri)
+        }
+    }
+
+    fun postEventHandler(event: WXEventHandler) {
         if (activity == null) {
-            val err = Exception("Activity not available for postEvent")
+            val err = BrickException("Activity not available for postEvent")
             Log.e(TAG, err.toString())
             throwJsError(err)
             return
         }
 
+        val adapter = moshi.adapter(WXEventHandler::class.java)
+
         options {
-            postWebMessage(event.message, mOptions.domain)
+            postMessage(
+                adapter.toJson(event)
+            )
         }
     }
 
     override fun destroy() {
-        super.destroy()
         cleanup()
+        super.destroy()
     }
 
-    override fun onResume() {
-        super.onResume()
-        postEvent(PostWindowEventMessage.ON_VIEW_RESUME)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        postEvent(PostWindowEventMessage.ON_VIEW_PAUSE)
-    }
-
+    /**
+     * Loads the domain URL specified in the [WebUIOptions].
+     *
+     * This function checks if a new app version is required. If it is,
+     * it loads a "require new version" page. Otherwise, it loads the
+     * `domainUrl` from the options.
+     */
     fun loadDomain() {
         options {
+            if (requireNewAppVersion?.required == true) {
+                loadData(
+                    getRequireNewVersion(context), "text/html", "UTF-8"
+                )
+
+                return@options
+            }
+
             loadUrl(domainUrl)
         }
     }
@@ -265,19 +315,65 @@ open class WXView : WebView {
         }
     }
 
+    /**
+     * Adds a JavaScript interface to this WebView.
+     *
+     * **Warning:** This method is deprecated for direct use on `WXView`.
+     * You should use the overload `addJavascriptInterface(JavaScriptInterface)` instead,
+     * which provides better type safety and integration with the **WebUI X Engine**.
+     *
+     * @param obj The Java object to inject into the WebView's JavaScript context.
+     * @param name The name used to expose the object in JavaScript.
+     * @see [android.webkit.WebView.addJavascriptInterface]
+     * @see addJavascriptInterface
+     */
     @SuppressLint("JavascriptInterface")
-    fun addJavascriptInterface(jsInterface: JavaScriptInterface<out WXInterface>) {
-        val js = jsInterface.createNew(
-            wxOptions = WXOptions(
-                webView = this,
-                options = mOptions
-            )
-        )
-        storedInterfaces += js
-        addJavascriptInterface(js.instance, js.name)
+    override fun addJavascriptInterface(obj: Any, name: String) {
+        interfaces += name
+        super.addJavascriptInterface(obj, name)
     }
 
-    fun addJavascriptInterface(vararg jsInterfaces: JavaScriptInterface<out WXInterface>) {
-        jsInterfaces.forEach { addJavascriptInterface(it) }
+    /**
+     * Adds a JavaScript interface to this WebView.
+     * This method allows Java objects to be exposed to JavaScript in the WebView.
+     *
+     * @param obj The JavaScript interface object to add.
+     *            This object must be an instance of [JavaScriptInterface].
+     * @throws BrickException if there is an error adding the JavaScript interface.
+     *
+     * @see [android.webkit.WebView.addJavascriptInterface]
+     */
+    @Throws(BrickException::class)
+    @SuppressLint("JavascriptInterface")
+    fun addJavascriptInterface(obj: JavaScriptInterface<out WXInterface>) {
+        try {
+            val js = obj.createNew(mDefaultWxOptions)
+            addJavascriptInterface(js.instance, js.name)
+        } catch (e: Exception) {
+            throw BrickException(
+                message = "Couldn't add a new JavaScript interface.",
+                cause = e,
+            )
+        }
+    }
+
+    /**
+     * Adds multiple JavaScript interfaces to the WebView.
+     *
+     * This method iterates over the provided JavaScript interfaces and adds each one individually
+     * using the [addJavascriptInterface] method that accepts a single interface.
+     *
+     * @param obj A vararg of [JavaScriptInterface] objects to be added.
+     * @throws BrickException if any error occurs during the addition of interfaces,
+     *                        though this specific overload doesn't directly throw it but
+     *                        the underlying single-interface method might.
+     */
+    @Throws(BrickException::class)
+    fun addJavascriptInterface(vararg obj: JavaScriptInterface<out WXInterface>) {
+        obj.forEach { addJavascriptInterface(it) }
+    }
+
+    companion object {
+        private const val TAG = "WXView"
     }
 }
