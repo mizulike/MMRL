@@ -152,7 +152,9 @@ data class WebUIConfig(
     val title: String? = null,
     val icon: String? = null,
     val windowResize: Boolean = true,
-    val backHandler: Any? = true,
+    @Deprecated("Use backInterceptor instead")
+    val backHandler: Boolean? = true,
+    val backInterceptor: Any? = null,
     val exitConfirm: Boolean = true,
     val historyFallbackFile: String = "index.html",
     val autoStatusBarsStyle: Boolean = true,

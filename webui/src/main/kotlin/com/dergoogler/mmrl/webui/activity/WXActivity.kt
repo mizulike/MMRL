@@ -144,7 +144,9 @@ open class WXActivity : ComponentActivity() {
                     return
                 }
 
-                when (val backHandler = options.config.backHandler) {
+                val handler: Any? = options.config.backInterceptor ?: options.config.backHandler
+
+                when (val backHandler = handler) {
                     is String -> when (backHandler) {
                         "native" -> handleNativeBack(view, options)
                         "javascript" -> view.postEventHandler(PostWindowEventMessage.WX_ON_BACK.asEvent)
