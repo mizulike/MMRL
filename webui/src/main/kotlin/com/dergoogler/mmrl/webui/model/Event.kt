@@ -4,6 +4,6 @@ import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-open class WXEventHandler(
+data class WXEventHandler(
     val type: PostWindowEventMessage
 )
