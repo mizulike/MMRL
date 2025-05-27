@@ -8,6 +8,6 @@ enum class PostWindowEventMessage {
     WX_ON_PAUSE;
 
     companion object {
-        val PostWindowEventMessage.asEvent: WXEventHandler get() = WXEventHandler(this)
+        val PostWindowEventMessage.asEvent: WXEventHandler get() = WXEventHandler(this.name)
     }
 }
