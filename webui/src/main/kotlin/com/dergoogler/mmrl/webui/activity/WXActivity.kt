@@ -3,14 +3,27 @@ package com.dergoogler.mmrl.webui.activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.unit.dp
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.dergoogler.mmrl.ext.nullply
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
@@ -23,11 +36,33 @@ import com.dergoogler.mmrl.webui.util.PostWindowEventMessage.Companion.asEvent
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
 
-open class WXActivity : ComponentActivity() {
+/**
+ * Base activity class for displaying web content using [WXView].
+ *
+ * This activity handles the basic lifecycle of a web view, including:
+ * - Edge-to-edge display.
+ * - Swipe-to-refresh functionality.
+ * - Keyboard visibility adjustments.
+ * - Back press handling with customizable behavior (native, JavaScript, or custom).
+ * - Loading indicators.
+ * - Configuration through [WebUIOptions] and [WebUIConfig].
+ *
+ * Subclasses should typically override [onRender] to set up their specific UI
+ * and potentially provide custom loading renderers or back press handling.
+ *
+ * The activity expects a [ModId] to be passed via intent extras with the key "MOD_ID" or "id".
+ * This [ModId] is used to load module-specific configurations.
+ *
+ * @property view The [WXView] instance used to display web content. Must be initialized.
+ * @property options The [WebUIOptions] used to configure the web UI. Must be initialized.
+ * @property modId Lazily initialized [ModId] from intent extras.
+ */
+open class WXActivity : ComponentActivity(), SwipeRefreshLayout.OnRefreshListener {
     private var isKeyboardShowing by mutableStateOf(false)
     private lateinit var rootView: View
     private var mView: WXView? = null
     private var mOptions: WebUIOptions? = null
+    private var mSwipeView: SwipeRefreshLayout? = null
 
     var view
         get() = checkNotNull(mView) {
@@ -98,6 +133,8 @@ open class WXActivity : ComponentActivity() {
      */
     open fun onRender(savedInstanceState: Bundle?) {
         rootView = findViewById(android.R.id.content)
+        // There is currently no way to set this to null. Keep it there.
+        mSwipeView = SwipeRefreshLayout(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,6 +143,10 @@ open class WXActivity : ComponentActivity() {
 
         onRender(savedInstanceState)
         registerBackEvents()
+
+        if (options.config.pullToRefresh) {
+            view.mSwipeView = mSwipeView
+        }
 
         config {
             if (windowResize) {
@@ -214,6 +255,94 @@ open class WXActivity : ComponentActivity() {
 
         return null
     }
+
+    override fun onRefresh() {
+        // view.reload() somehow doesn't work
+        view.loadDomain()
+    }
+
+    /**
+     * Creates and configures the main view for the activity.
+     *
+     * If `options.config.pullToRefresh` is true, this function initializes a [SwipeRefreshLayout] (`mSwipeView`).
+     * The swipe refresh layout is configured with:
+     * - A background color for the progress indicator derived from the surface color at 1.dp elevation.
+     * - Color scheme for the progress indicator using primary and secondary colors from `options.colorScheme`.
+     * - An initial offset for the progress circle, which is adjusted when window insets (status bar height) are available.
+     *   This adjustment ensures the progress circle is positioned correctly below the status bar.
+     * - `this@WXActivity` as the `OnRefreshListener`.
+     * - The main `view` ([WXView]) is added as a child to the swipe refresh layout.
+     *
+     * If `options.config.pullToRefresh` is false, this function returns the main `view` ([WXView]) directly.
+     *
+     * @return The configured [View] to be used as the main content view. This will be a [SwipeRefreshLayout]
+     *         if pull-to-refresh is enabled, otherwise it will be the [WXView] itself.
+     */
+    protected fun createMainView(): View? {
+        if (options.config.pullToRefresh) {
+            return mSwipeView.nullply {
+                with(options.colorScheme) {
+                    setProgressBackgroundColorSchemeColor(surfaceColorAtElevation(1.dp).toArgb())
+                    setColorSchemeColors(
+                        primary.toArgb(),
+                        secondary.toArgb(),
+                    )
+                }
+
+                // Set up initial offset (can be updated later when insets arrive)
+                var initialOffsetSet = false
+
+                // Observe insets changes
+                view.doOnAttach { attachedView ->
+                    ViewCompat.setOnApplyWindowInsetsListener(attachedView) { v, insets ->
+                        val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+
+                        if (!initialOffsetSet && topInset > 0) {
+                            // Update the progress circle offset once we have insets
+                            setProgressViewOffset(false, 0, topInset + 32)
+                            initialOffsetSet = true
+                            Log.d("INSETS", "Applied top inset: $topInset")
+                        }
+
+                        insets
+                    }
+                }
+
+                setOnRefreshListener(this@WXActivity)
+
+                addView(view)
+            }
+        }
+
+        return view
+    }
+
+    /**
+     * Creates and returns a [View] to be used as a loading indicator.
+     *
+     * This function constructs a [FrameLayout] that fills its parent.
+     * It sets the background color based on the `options.colorScheme.background`.
+     * Inside the [FrameLayout], a [ProgressBar] is added and centered.
+     * The indeterminate drawable of the [ProgressBar] is tinted with the `options.colorScheme.primary` color.
+     *
+     * @return A [View] instance representing the loading indicator.
+     */
+    protected fun createLoadingRenderer(): View =
+        FrameLayout(baseContext).apply {
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT
+            )
+            setBackgroundColor(options.colorScheme.background.toArgb())
+            addView(ProgressBar(context).apply {
+                layoutParams = FrameLayout.LayoutParams(
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    FrameLayout.LayoutParams.WRAP_CONTENT,
+                    Gravity.CENTER
+                )
+                indeterminateDrawable.setTint(options.colorScheme.primary.toArgb())
+            })
+        }
 
     private companion object {
         const val TAG = "WXActivity"

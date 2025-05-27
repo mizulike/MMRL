@@ -140,7 +140,8 @@ data class WebUIConfigDexFile(
  * @property icon The path or URL to the icon of the WebUI. If null, the default icon of the underlying platform will be used. Defaults to `null`.
  * @property windowResize Whether the WebUI window should be resizable. Defaults to `true`.
  * @property backHandler Whether the WebUI should handle the back button/gesture events. Requires [backEvent] to be `false`. Defaults to `true`.
- * @property backEvent Whether the WebUI should handle the back button/gesture events via JavaScript. Requires [backHandler] to be `false`. Defaults to `false`.
+ * @property backInterceptor The interceptor to use for the back button/gesture events. Defaults to `null`.
+ * @property pullToRefresh Whether the WebUI should support pull-to-refresh functionality. Defaults to `true`.
  * @property exitConfirm Whether the WebUI should show a confirmation dialog when the user tries to exit. Defaults to `true`.
  * @property historyFallbackFile The file to use as a fallback when `historyFallback` is enabled. Defaults to "index.html".
  */
@@ -156,6 +157,7 @@ data class WebUIConfig(
     val backHandler: Boolean? = true,
     val backInterceptor: Any? = null,
     val exitConfirm: Boolean = true,
+    val pullToRefresh: Boolean = true,
     val historyFallbackFile: String = "index.html",
     val autoStatusBarsStyle: Boolean = true,
     val dexFiles: List<WebUIConfigDexFile> = emptyList(),

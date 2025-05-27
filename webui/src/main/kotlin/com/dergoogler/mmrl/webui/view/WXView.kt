@@ -9,7 +9,6 @@ import android.view.ViewGroup.LayoutParams
 import android.view.WindowInsetsController
 import android.webkit.WebMessage
 import android.webkit.WebView
-import android.webkit.WebViewClient
 import android.widget.FrameLayout
 import androidx.annotation.UiThread
 import androidx.compose.ui.graphics.toArgb
@@ -18,6 +17,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
@@ -47,6 +47,38 @@ import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+/**
+ * WXView is a custom [WebView] component designed for the **WebUI X Engine**.
+ * It provides enhanced functionality for web-based user interfaces within Android applications.
+ *
+ * This class handles the initialization of the WebView, including setting up JavaScript interfaces,
+ * managing window insets, and configuring various WebView settings. It also provides helper
+ * methods for interacting with the WebView from native code, such as posting messages,
+ * handling events, and executing JavaScript.
+ *
+ * **Key Features:**
+ * - **Simplified Initialization:**  Handles common WebView setup tasks automatically.
+ * - **JavaScript Interface Management:**  Provides a structured way to add and manage JavaScript interfaces.
+ * - **Window Inset Handling:**  Adjusts WebView content based on system window insets.
+ * - **Event Handling:**  Facilitates communication between the WebView and native code through events.
+ * - **Helper Methods:**  Offers convenient methods for common WebView operations.
+ *
+ * **Constructors:**
+ * - `WXView(options: WebUIOptions)`: Initializes the WXView with the specified [WebUIOptions].
+ *   This is the recommended constructor for creating a WXView instance.
+ * - `WXView(context: Context, attrs: AttributeSet?)`:  Used for inflating WXView from XML layouts.
+ *   **Note:** This constructor will throw an [UnsupportedOperationException] as default options are not supported.
+ *   You must use the constructor with [WebUIOptions].
+ * - `WXView(context: Context, attrs: AttributeSet?, defStyleAttr: Int)`: Used for inflating WXView from XML layouts
+ *   with a default style attribute.
+ *   **Note:** This constructor will throw an [UnsupportedOperationException] as default options are not supported.
+ *   You must use the constructor with [WebUIOptions].
+ *
+ * @property mOptions The [WebUIOptions] used to configure this WXView.
+ * @property activity The [Activity] hosting this WXView, lazily initialized.
+ * @property defaultWxOptions The default [WXOptions] created for this WXView.
+ * @property mSwipeView An optional [SwipeRefreshLayout] that can be associated with this WXView.
+ */
 @SuppressLint("SetJavaScriptEnabled")
 open class WXView : WebView {
     private val mOptions: WebUIOptions
@@ -55,6 +87,7 @@ open class WXView : WebView {
     private var initJob: Job? = null
     private var isInitialized = false
     private val mDefaultWxOptions: WXOptions
+    internal var mSwipeView: SwipeRefreshLayout? = null
 
     private val interfaces = hashSetOf<String>()
 
@@ -159,11 +192,15 @@ open class WXView : WebView {
 
             if (mOptions.debug) Log.d(TAG, "Insets: $newInsets")
 
-            super.webViewClient = if (mOptions.client != null) {
-                mOptions.client(mOptions, newInsets) as WebViewClient
+            val client = if (mOptions.client != null) {
+                mOptions.client(mOptions, newInsets)
             } else {
                 WXClient(mOptions, newInsets)
             }
+
+            client.mSwipeView = mSwipeView
+
+            super.webViewClient = client
 
             insets
         }
