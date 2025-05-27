@@ -253,3 +253,7 @@ dependencies {
     implementation(libs.square.moshi)
     ksp(libs.square.moshi.kotlin)
 }
+
+tasks.register("version") {
+    println(appVersion)
+}

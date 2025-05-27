@@ -103,7 +103,7 @@ fun ViewDescriptionScreen(
                     factory = {
                         val options = WebUIOptions(
                             context = context,
-                          /*  client = { o, i ->
+                            client = { o, i ->
                                 val assetsLoader = wxAssetLoader(
                                     handlers = buildList {
                                         add("/internal/" to internalPathHandler(o, i))
@@ -111,15 +111,13 @@ fun ViewDescriptionScreen(
                                 )
 
                                 return@WebUIOptions WXClient(o, assetsLoader)
-                            }*/
+                            }
                         )
 
                         WXView(options).apply {
                             addJavascriptInterface(MarkdownInterface.factory(readme))
+                            loadUrl(launchUrl)
                         }
-                    },
-                    update = {
-                        it.loadUrl(launchUrl)
                     }
                 )
             }
