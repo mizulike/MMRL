@@ -36,6 +36,15 @@ data class ModId(var id: String) : Parcelable {
 
         val EMPTY = ModId("")
 
+        /**
+         * Checks if the [ModId] is null or its underlying [id] string is empty.
+         *
+         * This function uses contracts to provide smart casting benefits to the caller.
+         * If this function returns `false`, the compiler will know that the `ModId` instance
+         * is not null.
+         *
+         * @return `true` if the [ModId] is null or its [id] is empty, `false` otherwise.
+         */
         @OptIn(ExperimentalContracts::class)
         fun ModId?.isNullOrEmpty(): Boolean {
             contract {

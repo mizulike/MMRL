@@ -3,7 +3,6 @@ package com.dergoogler.mmrl.webui.activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.activity.ComponentActivity
@@ -12,14 +11,11 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import com.dergoogler.mmrl.ext.exception.BrickException
-import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.confirm
 import com.dergoogler.mmrl.webui.R
-import com.dergoogler.mmrl.webui.model.Renderer
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUIConfig
 import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
@@ -32,6 +28,22 @@ open class WXActivity : ComponentActivity() {
     private lateinit var rootView: View
     private var mView: WXView? = null
     private var mOptions: WebUIOptions? = null
+
+    var view
+        get() = checkNotNull(mView) {
+            "mView cannot be null"
+        }
+        set(value) {
+            mView = value
+        }
+
+    var options
+        get() = checkNotNull(mOptions) {
+            "mOptions cannot be null"
+        }
+        set(value) {
+            mOptions = value
+        }
 
     /**
      * Lazily initializes the [ModId] from the intent extras.
@@ -54,7 +66,7 @@ open class WXActivity : ComponentActivity() {
      * @return The result of executing the [block] if a [ModId] is found, otherwise `null`.
      */
     fun <R> modId(block: ModId.() -> R): R? {
-        val id = intent.fromKeys("MOD_ID", "id")
+        val id = modId
         if (id == null) return null
         return block(id)
     }
@@ -74,24 +86,26 @@ open class WXActivity : ComponentActivity() {
         return@modId block(config)
     }
 
-    open fun onRender(savedInstanceState: Bundle?): Renderer? {
+    /**
+     * Called when the activity is ready to render its content.
+     *
+     * This method is responsible for initializing the `rootView` by finding it in the layout.
+     * Subclasses can override this method to perform additional setup before the UI is displayed.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *     previously being shut down then this Bundle contains the data it most
+     *     recently supplied in [onSaveInstanceState].  **Note: Otherwise it is null.**
+     */
+    open fun onRender(savedInstanceState: Bundle?) {
         rootView = findViewById(android.R.id.content)
-        return null
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
+        onRender(savedInstanceState)
         registerBackEvents()
-
-        val renderer = onRender(savedInstanceState)
-        if (renderer == null) throw BrickException("No WXView was passed to onRender")
-
-        mView = renderer.view
-        mOptions = renderer.options
-
-        setContentView(mView)
 
         config {
             if (windowResize) {
@@ -117,43 +131,30 @@ open class WXActivity : ComponentActivity() {
     }
 
     private fun adjustWebViewHeight(keypadHeight: Int) {
-        mView.nullable {
-            val params = it.layoutParams
-            params.height = rootView.height - keypadHeight
-            it.layoutParams = params
-        }
+        val params = view.layoutParams
+        params.height = rootView.height - keypadHeight
+        view.layoutParams = params
     }
 
     private fun resetWebViewHeight() {
-        mView.nullable {
-            val params = it.layoutParams
-            params.height = LinearLayout.LayoutParams.MATCH_PARENT
-            it.layoutParams = params
-        }
+        val params = view.layoutParams
+        params.height = LinearLayout.LayoutParams.MATCH_PARENT
+        view.layoutParams = params
     }
 
     private fun registerBackEvents() {
         onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
-                val view = mView
-                val options = mOptions
-
-                if (view == null || options == null) {
-                    Log.d(TAG, "Back pressed: view or options is null, finishing.")
-                    finish()
-                    return
-                }
-
                 val handler: Any? = options.config.backInterceptor ?: options.config.backHandler
 
                 when (val backHandler = handler) {
                     is String -> when (backHandler) {
-                        "native" -> handleNativeBack(view, options)
+                        "native" -> handleNativeBack()
                         "javascript" -> view.postEventHandler(PostWindowEventMessage.WX_ON_BACK.asEvent)
                         else -> finish()
                     }
 
-                    true -> handleNativeBack(view, options)
+                    true -> handleNativeBack()
                     false, null -> finish()
                     else -> finish()
                 }
@@ -161,7 +162,7 @@ open class WXActivity : ComponentActivity() {
         })
     }
 
-    private fun handleNativeBack(view: WXView, options: WebUIOptions) {
+    private fun handleNativeBack() {
         if (view.canGoBack()) {
             view.goBack()
             return
@@ -183,33 +184,24 @@ open class WXActivity : ComponentActivity() {
         finish()
     }
 
-
     override fun onDestroy() {
+        view.destroy()
         super.onDestroy()
 
-        mView.nullable {
-            it.destroy()
-        }
     }
 
     override fun onResume() {
+        view.onResume()
+        view.resumeTimers()
+        view.postEventHandler(PostWindowEventMessage.WX_ON_RESUME.asEvent)
         super.onResume()
-
-        mView.nullable {
-            it.onResume()
-            it.resumeTimers()
-            it.postEventHandler(PostWindowEventMessage.WX_ON_RESUME.asEvent)
-        }
     }
 
     override fun onPause() {
+        view.onPause()
+        view.pauseTimers()
+        view.postEventHandler(PostWindowEventMessage.WX_ON_PAUSE.asEvent)
         super.onPause()
-
-        mView.nullable {
-            it.onPause()
-            it.pauseTimers()
-            it.postEventHandler(PostWindowEventMessage.WX_ON_PAUSE.asEvent)
-        }
     }
 
     private fun Intent.fromKeys(vararg keys: String): ModId? {

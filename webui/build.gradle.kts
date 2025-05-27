@@ -76,5 +76,6 @@ dependencies {
     implementation(libs.androidx.navigation.compose)
     implementation(libs.androidx.foundation)
     implementation(libs.androidx.material3.android)
+    implementation(libs.androidx.swiperefreshlayout)
     ksp(libs.square.moshi.kotlin)
 }

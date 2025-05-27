@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.ext
 
+import android.view.View
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -33,6 +34,26 @@ inline fun <T, R> T?.nullable(block: (T) -> R): R? {
     }
 
     return if (this != null) block(this) else null
+}
+
+/**
+ * Applies the given [block] to the receiver if it is not null, and returns the receiver itself.
+ * If the receiver is null, returns null. This is similar to the standard library's `apply`
+ * function, but specifically for nullable types.
+ *
+ * @param block A function literal with a receiver of type [T] that performs some operations on it.
+ * @return The receiver [T] if it's not null and the block was applied, or null otherwise.
+ */
+@OptIn(ExperimentalContracts::class)
+inline fun <T> T?.nullply(block: T.() -> Unit): T? {
+    contract {
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return if (this != null) {
+        block()
+        this
+    } else null
 }
 
 /**
