@@ -26,4 +26,6 @@
     <string name="ads_name">Anúncio</string>
     <string name="nonfreedep_desc">Este módulo depende de outros módulos não livres.</string>
     <string name="llm_desc">O módulo pode ser escrito parcial ou totalmente por um LLM</string>
+    <string name="closedsource_name">Código fechado</string>
+    <string name="closedsource_desc">O módulo não é de código aberto, e seu código não é acessível ao público para revisão, modificação, ou redistribuição</string>
 </resources>
