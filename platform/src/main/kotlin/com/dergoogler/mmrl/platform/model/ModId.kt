@@ -13,6 +13,17 @@ import kotlin.contracts.contract
 @JsonClass(generateAdapter = true)
 data class ModId(var id: String) : Parcelable {
     /**
+     * Represents the root directory of a module.
+     *
+     * This property constructs a [SuFile] object pointing to the path
+     * `/data/adb/modules/<module_id>`. This is the base directory where
+     * a Magisk module's files are typically located.
+     *
+     * @return A [SuFile] instance representing the module's root directory.
+     */
+    val root get() = SuFile("/data/adb/modules/$id")
+
+    /**
      * Represents the webroot directory for a module.
      *
      * This property constructs a [SuFile] object pointing to the path
@@ -21,7 +32,7 @@ data class ModId(var id: String) : Parcelable {
      *
      * @return A [SuFile] instance representing the module's webroot directory.
      */
-    val webroot get() = SuFile("/data/adb/modules/$id/webroot")
+    val webroot get() = SuFile(root, "webroot")
 
     val sanitizedId: String
         get() {

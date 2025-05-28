@@ -45,8 +45,8 @@ import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
-import com.dergoogler.mmrl.ui.component.Cover
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
+import com.dergoogler.mmrl.ui.component.LocalCover
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
@@ -98,25 +98,25 @@ fun ModuleItem(
         },
         onClick = clicker
     ) {
-//        module.config.cover.nullable(menu.showCover) {
-//            val wr = module.id.webroot
-//
-//            if (it.isNotEmpty()) {
-//                Cover(
-//                    modifier = Modifier.fadingEdge(
-//                        brush = Brush.verticalGradient(
-//                            colors = listOf(
-//                                Color.Transparent,
-//                                Color.Black,
-//                            ),
-//                            startY = Float.POSITIVE_INFINITY,
-//                            endY = 0f
-//                        ),
-//                    ),
-//                    inputStream = SuFile(wr, it).newInputStream(),
-//                )
-//            }
-//        }
+        module.config.cover.nullable(menu.showCover) {
+            val file = SuFile(module.id.root, it)
+
+            file.exists {
+                LocalCover(
+                    modifier = Modifier.fadingEdge(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color.Transparent,
+                                Color.Black,
+                            ),
+                            startY = Float.POSITIVE_INFINITY,
+                            endY = 0f
+                        ),
+                    ),
+                    inputStream = it.newInputStream(),
+                )
+            }
+        }
 
         Row(
             modifier = Modifier.padding(all = 16.dp),

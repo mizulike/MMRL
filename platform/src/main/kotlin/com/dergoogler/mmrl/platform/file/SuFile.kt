@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.platform.file
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
+import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import java.io.File
@@ -14,6 +15,9 @@ import java.io.OutputStream
 import java.nio.ByteBuffer
 import java.nio.charset.StandardCharsets
 import java.util.Locale
+import kotlin.contracts.ExperimentalContracts
+import kotlin.contracts.InvocationKind
+import kotlin.contracts.contract
 
 /**
  * `SuFile` is a wrapper class around `java.io.File` that provides enhanced file system operations,
@@ -112,8 +116,13 @@ class SuFile(
         return fileManager.exists(this.path)
     }
 
-    fun exists(block: (SuFile) -> Unit) {
-        if (exists()) block(this)
+    @OptIn(ExperimentalContracts::class)
+    inline fun <R> exists(block: (SuFile) -> R): R? {
+        contract {
+            callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+        }
+
+        return if (exists()) block(this) else null
     }
 
     override fun isDirectory(): Boolean {

@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.ui.component
 
+import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -13,48 +14,36 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImagePainter
 import coil.compose.rememberAsyncImagePainter
+import androidx.compose.ui.graphics.painter.BitmapPainter
+import androidx.compose.ui.graphics.asImageBitmap
 import coil.request.CachePolicy
 import coil.request.ImageRequest
 import com.dergoogler.mmrl.ui.R
-import java.io.File
 import java.io.InputStream
+
+private const val DefaultAspectRatio = 2.048f
+private val DefaultShape: RoundedCornerShape = RoundedCornerShape(0.dp)
 
 @Composable
 fun Cover(
     modifier: Modifier = Modifier,
-    url: String? = null,
-    inputStream: InputStream? = null,
-    shape: RoundedCornerShape = RoundedCornerShape(0.dp),
-    aspectRatio: Float = 2.048f,
+    url: String,
+    shape: RoundedCornerShape = DefaultShape,
+    aspectRatio: Float = DefaultAspectRatio,
 ) {
     val context = LocalContext.current
 
-    val model = when {
-        !url.isNullOrEmpty() -> url
-        inputStream != null -> remember(inputStream) { inputStream }
-        else -> null
-    }
-
     val painter = rememberAsyncImagePainter(
-        model = model?.let {
-            ImageRequest.Builder(context)
-                .data(it)
-                .apply {
-                    if (it is InputStream) {
-                        diskCachePolicy(CachePolicy.DISABLED)
-                        memoryCachePolicy(CachePolicy.DISABLED)
-                    } else {
-                        memoryCacheKey(it.toString())
-                        diskCacheKey(it.toString())
-                        diskCachePolicy(CachePolicy.ENABLED)
-                        memoryCachePolicy(CachePolicy.ENABLED)
-                    }
-                }
-                .build()
-        } ?: R.drawable.alert_triangle
+        model = ImageRequest.Builder(context)
+            .data(url)
+            .memoryCacheKey(url)
+            .diskCacheKey(url)
+            .diskCachePolicy(CachePolicy.ENABLED)
+            .memoryCachePolicy(CachePolicy.ENABLED)
+            .build(),
     )
 
-    if (painter.state !is AsyncImagePainter.State.Error && model != null) {
+    if (painter.state !is AsyncImagePainter.State.Error) {
         Image(
             painter = painter,
             contentDescription = null,
@@ -75,4 +64,29 @@ fun Cover(
                 .then(modifier)
         )
     }
+}
+
+@Composable
+fun LocalCover(
+    modifier: Modifier = Modifier,
+    inputStream: InputStream,
+    shape: RoundedCornerShape = DefaultShape,
+    aspectRatio: Float = DefaultAspectRatio,
+) {
+    val bitmap = remember {
+        inputStream.use { input ->
+            BitmapFactory.decodeStream(input).asImageBitmap()
+        }
+    }
+
+    Image(
+        painter = BitmapPainter(bitmap),
+        contentDescription = null,
+        contentScale = ContentScale.Crop,
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(shape)
+            .aspectRatio(aspectRatio)
+            .then(modifier)
+    )
 }
