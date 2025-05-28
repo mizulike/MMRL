@@ -400,4 +400,5 @@
     <string name="architecture">Architecture</string>
     <string name="view_module_no_description">No description provided.</string>
     <string name="create_webui_shortcut">Create WebUI Shortcut</string>
+    <string name="remove_webui_shortcut">Remove WebUI Shortcut</string>
 </resources>

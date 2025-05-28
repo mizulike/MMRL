@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.platform.model
 import android.content.Intent
 import android.os.Build
 import android.os.Parcelable
+import com.dergoogler.mmrl.platform.file.SuFile
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import kotlin.contracts.ExperimentalContracts
@@ -11,6 +12,17 @@ import kotlin.contracts.contract
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class ModId(var id: String) : Parcelable {
+    /**
+     * Represents the webroot directory for a module.
+     *
+     * This property constructs a [SuFile] object pointing to the path
+     * `/data/adb/modules/<module_id>/webroot`. This directory is typically
+     * used by Magisk modules to store web-accessible files.
+     *
+     * @return A [SuFile] instance representing the module's webroot directory.
+     */
+    val webroot get() = SuFile("/data/adb/modules/$id/webroot")
+
     val sanitizedId: String
         get() {
             return id.replace(Regex("[^a-zA-Z0-9_]"), "_")
@@ -73,7 +85,7 @@ data class ModId(var id: String) : Parcelable {
          * @return The [ModId] found in the Intent, or `null` if no ModId is found
          * using any of the supported keys.
          */
-        fun Intent.getModId(): ModId?  {
+        fun Intent.getModId(): ModId? {
             val modId = getStringExtra(INTENT_MOD_ID)
             val id = getStringExtra(INTENT_ID)
 

@@ -11,5 +11,6 @@ data class ModulesMenu @OptIn(ExperimentalSerializationApi::class) constructor(
     @ProtoNumber(3) val pinEnabled: Boolean = true,
     @ProtoNumber(4) val pinAction: Boolean = false,
     @ProtoNumber(5) val pinWebUI: Boolean = false,
-    @ProtoNumber(6) val showUpdatedTime: Boolean = true
+    @ProtoNumber(6) val showUpdatedTime: Boolean = true,
+    @ProtoNumber(7) val showCover: Boolean = true
 )

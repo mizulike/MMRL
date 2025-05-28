@@ -16,6 +16,7 @@ data class ModuleConfig(
     val desc: Any? = null,
     @Json(name = "webui-engine")
     val webuiEngine: Any? = "wx",
+    val cover: String? = null,
 ) {
     val locale get() = Locale.getDefault().language
 

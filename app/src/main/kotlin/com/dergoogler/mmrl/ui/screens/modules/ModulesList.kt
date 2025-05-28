@@ -44,10 +44,12 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.ModulesViewModel
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.platform.model.ModuleConfig
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.component.DropdownMenu
 import com.dergoogler.mmrl.ui.component.button.FilledTonalDoubleButton
+import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.webUiConfig
 
 @Composable
@@ -275,22 +277,50 @@ private fun RemoveOrRestore(
             offset = offsets,
             onDismissRequest = { expanded = false }
         ) {
-            // First section
-            DropdownMenuItem(
-                text = { Text(stringResource(R.string.create_webui_shortcut)) },
-                leadingIcon = {
-                    Icon(
-                        painter = painterResource(R.drawable.link),
-                        contentDescription = null
-                    )
-                },
-                enabled = config.canAddWebUIShortcut && !config.hasWebUIShortcut(context),
-                onClick = {
-                    config.createShortcut(context, WebUIActivity::class.java)
-                }
-            )
+            when {
+                config.hasWebUIShortcut(context) -> RemoveShortcut(config)
+                module.state == State.REMOVE -> RemoveShortcut(config)
+                else -> CreateShortcut(config)
+            }
         }
     }
+}
+
+@Composable
+private fun CreateShortcut(config: WebUIConfig) {
+    val context = LocalContext.current
+
+    DropdownMenuItem(
+        text = { Text(stringResource(R.string.create_webui_shortcut)) },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(R.drawable.link),
+                contentDescription = null
+            )
+        },
+        enabled = config.canAddWebUIShortcut(),
+        onClick = {
+            config.createShortcut(context, WebUIActivity::class.java)
+        }
+    )
+}
+
+@Composable
+private fun RemoveShortcut(config: WebUIConfig) {
+    val context = LocalContext.current
+
+    DropdownMenuItem(
+        text = { Text(stringResource(R.string.remove_webui_shortcut)) },
+        leadingIcon = {
+            Icon(
+                painter = painterResource(R.drawable.unlink),
+                contentDescription = null
+            )
+        },
+        onClick = {
+            config.removeShortcut(context)
+        }
+    )
 }
 
 @Composable

@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.StrokeCap
@@ -30,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.fadingEdge
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.local.versionDisplay
@@ -41,7 +43,9 @@ import com.dergoogler.mmrl.ui.component.card.CardDefaults.cardStyle
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.ui.component.Cover
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
@@ -94,6 +98,26 @@ fun ModuleItem(
         },
         onClick = clicker
     ) {
+//        module.config.cover.nullable(menu.showCover) {
+//            val wr = module.id.webroot
+//
+//            if (it.isNotEmpty()) {
+//                Cover(
+//                    modifier = Modifier.fadingEdge(
+//                        brush = Brush.verticalGradient(
+//                            colors = listOf(
+//                                Color.Transparent,
+//                                Color.Black,
+//                            ),
+//                            startY = Float.POSITIVE_INFINITY,
+//                            endY = 0f
+//                        ),
+//                    ),
+//                    inputStream = SuFile(wr, it).newInputStream(),
+//                )
+//            }
+//        }
+
         Row(
             modifier = Modifier.padding(all = 16.dp),
             verticalAlignment = Alignment.CenterVertically
