@@ -29,6 +29,7 @@ import com.dergoogler.mmrl.webui.handler.suPathHandler
 import com.dergoogler.mmrl.webui.handler.webrootPathHandler
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.util.WebUIOptions
+import com.dergoogler.mmrl.webui.view.WXSwipeRefresh
 import com.dergoogler.mmrl.webui.view.WXView
 import com.dergoogler.mmrl.webui.wxAssetLoader
 import kotlin.contracts.ExperimentalContracts
@@ -121,7 +122,7 @@ open class WXChromeClient(
 open class WXClient : WebViewClient {
     private val mOptions: WebUIOptions
     private val mWxAssetsLoader: WXAssetLoader
-    internal var mSwipeView: SwipeRefreshLayout? = null
+    internal var mSwipeView: WXSwipeRefresh? = null
 
     constructor(options: WebUIOptions, insets: Insets) {
         mOptions = options

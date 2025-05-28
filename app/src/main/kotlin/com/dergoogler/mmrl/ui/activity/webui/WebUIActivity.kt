@@ -17,6 +17,7 @@ import com.dergoogler.mmrl.utils.initPlatform
 import com.dergoogler.mmrl.webui.activity.WXActivity
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
+import com.dergoogler.mmrl.webui.view.WebUIXView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
@@ -69,9 +70,9 @@ class WebUIActivity : WXActivity() {
             cls = WebUIActivity::class.java
         )
 
-        val view = WXView(options).apply {
-            addJavascriptInterface(KernelSUInterface.factory())
-            loadDomain()
+        val view = WebUIXView(options).apply {
+            wx.addJavascriptInterface(KernelSUInterface.factory())
+            wx.loadDomain()
         }
 
         this.options = options
@@ -88,9 +89,7 @@ class WebUIActivity : WXActivity() {
 
             if (!isReady) throw BrickException("Platform failed to initialize")
 
-            val mainView = createMainView() ?: throw BrickException("Failed to create main view")
-
-            setContentView(mainView)
+            setContentView(view)
         }
     }
 

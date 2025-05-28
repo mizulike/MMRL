@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.webui.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.Log
 import android.view.ViewGroup.LayoutParams
@@ -87,7 +88,7 @@ open class WXView : WebView {
     private var initJob: Job? = null
     private var isInitialized = false
     private val mDefaultWxOptions: WXOptions
-    internal var mSwipeView: SwipeRefreshLayout? = null
+    internal var mSwipeView: WXSwipeRefresh? = null
 
     private val interfaces = hashSetOf<String>()
 
@@ -124,6 +125,10 @@ open class WXView : WebView {
     @Throws(UnsupportedOperationException::class)
     private fun createDefaultOptions(): Any {
         throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
     }
 
     private fun initWhenReady() {

@@ -3,7 +3,6 @@ package com.dergoogler.mmrl.webui.activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
-import android.util.Log
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
@@ -13,17 +12,10 @@ import android.widget.ProgressBar
 import androidx.activity.ComponentActivity
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.unit.dp
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.doOnAttach
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.dergoogler.mmrl.ext.nullply
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
@@ -35,6 +27,7 @@ import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
 import com.dergoogler.mmrl.webui.util.PostWindowEventMessage.Companion.asEvent
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
+import com.dergoogler.mmrl.webui.view.WebUIXView
 
 /**
  * Base activity class for displaying web content using [WXView].
@@ -57,12 +50,11 @@ import com.dergoogler.mmrl.webui.view.WXView
  * @property options The [WebUIOptions] used to configure the web UI. Must be initialized.
  * @property modId Lazily initialized [ModId] from intent extras.
  */
-open class WXActivity : ComponentActivity(), SwipeRefreshLayout.OnRefreshListener {
+open class WXActivity : ComponentActivity() {
     private var isKeyboardShowing by mutableStateOf(false)
     private lateinit var rootView: View
-    private var mView: WXView? = null
+    private var mView: WebUIXView? = null
     private var mOptions: WebUIOptions? = null
-    private var mSwipeView: SwipeRefreshLayout? = null
 
     var view
         get() = checkNotNull(mView) {
@@ -133,8 +125,6 @@ open class WXActivity : ComponentActivity(), SwipeRefreshLayout.OnRefreshListene
      */
     open fun onRender(savedInstanceState: Bundle?) {
         rootView = findViewById(android.R.id.content)
-        // There is currently no way to set this to null. Keep it there.
-        mSwipeView = SwipeRefreshLayout(this)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -143,10 +133,6 @@ open class WXActivity : ComponentActivity(), SwipeRefreshLayout.OnRefreshListene
 
         onRender(savedInstanceState)
         registerBackEvents()
-
-        if (options.config.pullToRefresh) {
-            view.mSwipeView = mSwipeView
-        }
 
         config {
             if (windowResize) {
@@ -191,7 +177,7 @@ open class WXActivity : ComponentActivity(), SwipeRefreshLayout.OnRefreshListene
                 when (val backHandler = handler) {
                     is String -> when (backHandler) {
                         "native" -> handleNativeBack()
-                        "javascript" -> view.postEventHandler(PostWindowEventMessage.WX_ON_BACK.asEvent)
+                        "javascript" -> view.wx.postEventHandler(PostWindowEventMessage.WX_ON_BACK.asEvent)
                         else -> finish()
                     }
 
@@ -204,8 +190,8 @@ open class WXActivity : ComponentActivity(), SwipeRefreshLayout.OnRefreshListene
     }
 
     private fun handleNativeBack() {
-        if (view.canGoBack()) {
-            view.goBack()
+        if (view.wx.canGoBack()) {
+            view.wx.goBack()
             return
         }
 
@@ -226,22 +212,28 @@ open class WXActivity : ComponentActivity(), SwipeRefreshLayout.OnRefreshListene
     }
 
     override fun onDestroy() {
-        view.destroy()
+        view.wx.destroy()
         super.onDestroy()
 
     }
 
     override fun onResume() {
-        view.onResume()
-        view.resumeTimers()
-        view.postEventHandler(PostWindowEventMessage.WX_ON_RESUME.asEvent)
+        with(view.wx) {
+            this.onResume()
+            resumeTimers()
+            postEventHandler(PostWindowEventMessage.WX_ON_RESUME.asEvent)
+        }
+
         super.onResume()
     }
 
     override fun onPause() {
-        view.onPause()
-        view.pauseTimers()
-        view.postEventHandler(PostWindowEventMessage.WX_ON_PAUSE.asEvent)
+        with(view.wx) {
+            this.onPause()
+            pauseTimers()
+            postEventHandler(PostWindowEventMessage.WX_ON_PAUSE.asEvent)
+        }
+
         super.onPause()
     }
 
@@ -254,67 +246,6 @@ open class WXActivity : ComponentActivity(), SwipeRefreshLayout.OnRefreshListene
         }
 
         return null
-    }
-
-    override fun onRefresh() {
-        // view.reload() somehow doesn't work
-        view.loadDomain()
-    }
-
-    /**
-     * Creates and configures the main view for the activity.
-     *
-     * If `options.config.pullToRefresh` is true, this function initializes a [SwipeRefreshLayout] (`mSwipeView`).
-     * The swipe refresh layout is configured with:
-     * - A background color for the progress indicator derived from the surface color at 1.dp elevation.
-     * - Color scheme for the progress indicator using primary and secondary colors from `options.colorScheme`.
-     * - An initial offset for the progress circle, which is adjusted when window insets (status bar height) are available.
-     *   This adjustment ensures the progress circle is positioned correctly below the status bar.
-     * - `this@WXActivity` as the `OnRefreshListener`.
-     * - The main `view` ([WXView]) is added as a child to the swipe refresh layout.
-     *
-     * If `options.config.pullToRefresh` is false, this function returns the main `view` ([WXView]) directly.
-     *
-     * @return The configured [View] to be used as the main content view. This will be a [SwipeRefreshLayout]
-     *         if pull-to-refresh is enabled, otherwise it will be the [WXView] itself.
-     */
-    protected fun createMainView(): View? {
-        if (options.config.pullToRefresh) {
-            return mSwipeView.nullply {
-                with(options.colorScheme) {
-                    setProgressBackgroundColorSchemeColor(surfaceColorAtElevation(1.dp).toArgb())
-                    setColorSchemeColors(
-                        primary.toArgb(),
-                        secondary.toArgb(),
-                    )
-                }
-
-                // Set up initial offset (can be updated later when insets arrive)
-                var initialOffsetSet = false
-
-                // Observe insets changes
-                view.doOnAttach { attachedView ->
-                    ViewCompat.setOnApplyWindowInsetsListener(attachedView) { v, insets ->
-                        val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-
-                        if (!initialOffsetSet && topInset > 0) {
-                            // Update the progress circle offset once we have insets
-                            setProgressViewOffset(false, 0, topInset + 32)
-                            initialOffsetSet = true
-                            Log.d("INSETS", "Applied top inset: $topInset")
-                        }
-
-                        insets
-                    }
-                }
-
-                setOnRefreshListener(this@WXActivity)
-
-                addView(view)
-            }
-        }
-
-        return view
     }
 
     /**

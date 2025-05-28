@@ -156,6 +156,7 @@ data class WebUIConfig(
     @Deprecated("Use backInterceptor instead")
     val backHandler: Boolean? = true,
     val backInterceptor: Any? = null,
+    val refreshInterceptor: String? = null,
     val exitConfirm: Boolean = true,
     val pullToRefresh: Boolean = true,
     val historyFallbackFile: String = "index.html",
@@ -163,6 +164,9 @@ data class WebUIConfig(
     val dexFiles: List<WebUIConfigDexFile> = emptyList(),
 ) {
     val hasRootPathPermission get() = WebUIPermissions.WX_ROOT_PATH in permissions
+
+    val useJavaScriptRefreshInterceptor get() = refreshInterceptor == "javascript"
+    val useNativeRefreshInterceptor get() = refreshInterceptor == "native"
 
     companion object {
         /**
