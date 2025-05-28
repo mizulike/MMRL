@@ -148,6 +148,12 @@ private fun MenuBottomSheet(
                 onClick = { setMenu(menu.copy(showUpdatedTime = !menu.showUpdatedTime)) },
                 label = { Text(text = stringResource(id = R.string.menu_show_updated)) }
             )
+
+            MenuChip(
+                selected = menu.showCover,
+                onClick = { setMenu(menu.copy(showCover = !menu.showCover)) },
+                label = { Text(text = stringResource(id = R.string.menu_show_cover)) }
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
