@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.platform.content
 
 import android.os.Parcelable
+import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModuleConfig.Companion.asModuleConfig
 import kotlinx.parcelize.Parcelize
 
@@ -35,7 +36,7 @@ data class LocalModuleFeatures(
 
 @Parcelize
 data class LocalModule(
-    val id: String,
+    val id: ModId,
     val name: String,
     val version: String,
     val versionCode: Int,

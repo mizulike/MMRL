@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
@@ -21,11 +22,16 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.pointer.pointerInteropFilter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.local.LocalModule
@@ -38,6 +44,11 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.ModulesViewModel
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
+import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
+import com.dergoogler.mmrl.ui.component.DropdownMenu
+import com.dergoogler.mmrl.ui.component.button.FilledTonalDoubleButton
+import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.webUiConfig
 
 @Composable
 fun ModulesList(
@@ -89,7 +100,7 @@ fun ModuleItem(
         }
     }
 
-    val blacklist = viewModel.getBlacklist(module.id)
+    val blacklist = viewModel.getBlacklist(module.id.toString())
     val isBlacklisted = Blacklist.isBlacklisted(blacklist)
 
     val context = LocalContext.current
@@ -117,7 +128,6 @@ fun ModuleItem(
         module = module,
         progress = progress,
         indeterminate = ops.isOpsRunning,
-        createWebUIShortcut = viewModel::createShortcut,
         alpha = when (module.state) {
             State.DISABLE, State.REMOVE -> 0.5f
             else -> 1f
@@ -201,38 +211,86 @@ private fun UpdateButton(
     )
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun RemoveOrRestore(
     module: LocalModule,
     enabled: Boolean,
     onClick: () -> Unit,
-) = FilledTonalButton(
-    onClick = onClick,
-    enabled = enabled,
-    contentPadding = PaddingValues(horizontal = 12.dp)
 ) {
-    Icon(
-        modifier = Modifier.size(20.dp),
-        painter = painterResource(
-            id = if (module.state == State.REMOVE) {
-                R.drawable.rotate
-            } else {
-                R.drawable.trash
-            }
-        ),
-        contentDescription = null
-    )
+    val context = LocalContext.current
+    val density = LocalDensity.current
+    var offset = Offset.Zero
+    val config = module.webUiConfig
 
-    Spacer(modifier = Modifier.width(6.dp))
-    Text(
-        text = stringResource(
-            id = if (module.state == State.REMOVE) {
-                R.string.module_restore
-            } else {
-                R.string.module_remove
-            }
-        )
-    )
+    var expanded by remember { mutableStateOf(false) }
+    Box {
+        FilledTonalDoubleButton(
+            onClick = onClick,
+            onDropdownClick = {
+                expanded = !expanded
+            },
+            dropdownBtnModifier = Modifier
+                .pointerInteropFilter {
+                    offset = Offset(it.x, it.y)
+                    false
+                },
+            enabled = enabled,
+            dropdownIcon = R.drawable.dots_vertical,
+            contentPadding = PaddingValues(horizontal = 12.dp)
+        ) {
+            Icon(
+                modifier = Modifier.size(20.dp),
+                painter = painterResource(
+                    id = if (module.state == State.REMOVE) {
+                        R.drawable.rotate
+                    } else {
+                        R.drawable.trash
+                    }
+                ),
+                contentDescription = null
+            )
+
+            Spacer(modifier = Modifier.width(6.dp))
+            Text(
+                text = stringResource(
+                    id = if (module.state == State.REMOVE) {
+                        R.string.module_restore
+                    } else {
+                        R.string.module_remove
+                    }
+                )
+            )
+        }
+
+        val offsets = with(density) {
+            DpOffset(
+                offset.x.toDp(),
+                offset.y.toDp()
+            )
+        }
+
+        DropdownMenu(
+            expanded = expanded,
+            offset = offsets,
+            onDismissRequest = { expanded = false }
+        ) {
+            // First section
+            DropdownMenuItem(
+                text = { Text(stringResource(R.string.create_webui_shortcut)) },
+                leadingIcon = {
+                    Icon(
+                        painter = painterResource(R.drawable.link),
+                        contentDescription = null
+                    )
+                },
+                enabled = config.canAddWebUIShortcut && !config.hasWebUIShortcut(context),
+                onClick = {
+                    config.createShortcut(context, WebUIActivity::class.java)
+                }
+            )
+        }
+    }
 }
 
 @Composable

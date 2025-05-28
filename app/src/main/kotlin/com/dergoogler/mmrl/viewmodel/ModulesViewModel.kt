@@ -2,11 +2,6 @@ package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
 import android.content.Context
-import android.content.Intent
-import android.content.pm.ShortcutInfo
-import android.content.pm.ShortcutManager
-import android.graphics.BitmapFactory
-import android.graphics.drawable.Icon
 import android.widget.Toast
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -28,16 +23,13 @@ import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.VersionItem
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
-import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.service.DownloadService
-import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.utils.Utils
 import com.dergoogler.mmrl.platform.model.ModId
-import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUIConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -77,7 +69,7 @@ class ModulesViewModel @Inject constructor(
     val isProviderAlive get() = Platform.isAlive
     val platform get() = Platform.platform
 
-    val moduleCompatibility
+    val moduleCompatibility: ModuleCompatibility
         get() = Platform.get(
             ModuleCompatibility(
                 hasMagicMount = false,
@@ -113,18 +105,18 @@ class ModulesViewModel @Inject constructor(
         isLoadingFlow.update { false }
     }
 
-    private val versionItemCache = mutableStateMapOf<String, VersionItem?>()
+    private val versionItemCache = mutableStateMapOf<ModId, VersionItem?>()
 
-    private val opsTasks = mutableStateListOf<String>()
+    private val opsTasks = mutableStateListOf<ModId>()
     private val opsCallback = object : IModuleOpsCallback.Stub() {
-        override fun onSuccess(id: String) {
+        override fun onSuccess(id: ModId) {
             viewModelScope.launch {
-                modulesRepository.getLocal(id)
+                modulesRepository.getLocal(id.toString())
                 opsTasks.remove(id)
             }
         }
 
-        override fun onFailure(id: String, msg: String?) {
+        override fun onFailure(id: ModId, msg: String?) {
             opsTasks.remove(id)
             Timber.w("$id: $msg")
         }
@@ -319,7 +311,7 @@ class ModulesViewModel @Inject constructor(
         }
 
         LaunchedEffect(key1 = module) {
-            if (!localRepository.hasUpdatableTag(module.id)) {
+            if (!localRepository.hasUpdatableTag(module.id.toString())) {
                 versionItemCache.remove(module.id)
                 return@LaunchedEffect
             }
@@ -329,7 +321,7 @@ class ModulesViewModel @Inject constructor(
             val versionItem = if (module.updateJson.isNotBlank()) {
                 UpdateJson.loadToVersionItem(module.updateJson)
             } else {
-                localRepository.getVersionById(module.id)
+                localRepository.getVersionById(module.id.toString())
                     .firstOrNull()
             }
 
@@ -396,58 +388,6 @@ class ModulesViewModel @Inject constructor(
             .collectAsStateWithLifecycle(initialValue = 0f)
 
         return progress
-    }
-
-    fun createShortcut(id: String) {
-        val modId = ModId(id)
-        val shortcutId = "shortcut_${modId.id}"
-        val config = modId.toWebUIConfig()
-        if (config.title == null && config.icon == null) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.title_or_icon_not_found), Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
-        val webRoot = SuFile("/data/adb/modules/${modId.id}/webroot")
-        val iconFile = SuFile(webRoot, config.icon!!)
-        if (!iconFile.exists()) {
-            Timber.d("Icon not found: $iconFile")
-            Toast.makeText(context, context.getString(R.string.icon_not_found), Toast.LENGTH_SHORT)
-                .show()
-            return
-        }
-
-        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
-
-        if (shortcutManager.isRequestPinShortcutSupported) {
-            if (shortcutManager.pinnedShortcuts.any { it.id == shortcutId }) {
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.shortcut_already_exists),
-                    Toast.LENGTH_SHORT
-                ).show()
-                return
-            }
-
-            val shortcutIntent = Intent(context, WebUIActivity::class.java).apply {
-                putExtra("MOD_ID", modId.id)
-            }
-            shortcutIntent.action = Intent.ACTION_VIEW
-
-            val bis = BufferedInputStream(iconFile.newInputStream())
-            val bitmap = BitmapFactory.decodeStream(bis)
-
-            val shortcut = ShortcutInfo.Builder(context, shortcutId)
-                .setShortLabel(config.title!!)
-                .setLongLabel(config.title!!)
-                .setIcon(Icon.createWithAdaptiveBitmap(bitmap))
-                .setIntent(shortcutIntent)
-                .build()
-
-            shortcutManager.requestPinShortcut(shortcut, null)
-        }
     }
 
     data class ModuleOps(

@@ -1,15 +1,25 @@
 package com.dergoogler.mmrl.webui.model
 
 import android.content.Context
+import android.content.Intent
+import android.content.pm.ShortcutInfo
+import android.content.pm.ShortcutManager
+import android.graphics.BitmapFactory
+import android.graphics.drawable.Icon
 import android.util.Log
+import android.widget.Toast
+import androidx.compose.runtime.Immutable
+import com.dergoogler.mmrl.platform.content.LocalModule
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
+import com.dergoogler.mmrl.webui.R
+import com.dergoogler.mmrl.webui.activity.WXActivity
 import com.dergoogler.mmrl.webui.interfaces.WXInterface
-import com.dergoogler.mmrl.webui.interfaces.WXOptions
-import com.dergoogler.mmrl.webui.webUiConfig
-import com.squareup.moshi.Json
+import com.dergoogler.mmrl.webui.moshi
 import com.squareup.moshi.JsonClass
 import dalvik.system.InMemoryDexClassLoader
+import okio.BufferedSource
 import java.nio.ByteBuffer
 
 object WebUIPermissions {
@@ -70,6 +80,9 @@ data class WebUIConfigRequire(
     val version: WebUIConfigRequireVersion = WebUIConfigRequireVersion(),
 )
 
+private val interfaceCache =
+    mutableMapOf<String, JavaScriptInterface<out WXInterface>>()
+
 @JsonClass(generateAdapter = true)
 data class WebUIConfigDexFile(
     val path: String? = null,
@@ -80,6 +93,10 @@ data class WebUIConfigDexFile(
     }
 
     fun getInterface(context: Context, modId: ModId): JavaScriptInterface<out WXInterface>? {
+        if (className in interfaceCache) {
+            return interfaceCache[className]
+        }
+
         if (path == null || className == null) {
             return null
         }
@@ -110,7 +127,10 @@ data class WebUIConfigDexFile(
 
             @Suppress("UNCHECKED_CAST")
             val clazz = rawClass as Class<out WXInterface>
-            return JavaScriptInterface(clazz)
+            val instance = JavaScriptInterface(clazz)
+
+            interfaceCache[className] = instance
+            return instance
         } catch (e: ClassNotFoundException) {
             Log.e(TAG, "Class $className not found in dex file ${file.path}", e)
             return null
@@ -139,14 +159,17 @@ data class WebUIConfigDexFile(
  * @property title The title of the WebUI window. If null, the default title of the underlying platform will be used. Defaults to `null`.
  * @property icon The path or URL to the icon of the WebUI. If null, the default icon of the underlying platform will be used. Defaults to `null`.
  * @property windowResize Whether the WebUI window should be resizable. Defaults to `true`.
- * @property backHandler Whether the WebUI should handle the back button/gesture events. Requires [backEvent] to be `false`. Defaults to `true`.
+ * @property backHandler Whether the WebUI should handle the back button/gesture events. Defaults to `true`.
  * @property backInterceptor The interceptor to use for the back button/gesture events. Defaults to `null`.
  * @property pullToRefresh Whether the WebUI should support pull-to-refresh functionality. Defaults to `true`.
  * @property exitConfirm Whether the WebUI should show a confirmation dialog when the user tries to exit. Defaults to `true`.
  * @property historyFallbackFile The file to use as a fallback when `historyFallback` is enabled. Defaults to "index.html".
  */
+@Immutable
 @JsonClass(generateAdapter = true)
 data class WebUIConfig(
+    @Transient
+    val modId: ModId = ModId.EMPTY,
     val require: WebUIConfigRequire = WebUIConfigRequire(),
     val permissions: List<String> = emptyList(),
     val historyFallback: Boolean = false,
@@ -168,25 +191,94 @@ data class WebUIConfig(
     val useJavaScriptRefreshInterceptor get() = refreshInterceptor == "javascript"
     val useNativeRefreshInterceptor get() = refreshInterceptor == "native"
 
+    internal val webRoot = SuFile("/data/adb/modules/${modId.id}/webroot")
+    internal val iconFile = if (icon != null) SuFile(webRoot, icon) else null
+    internal val shortcutId = "shortcut_$modId"
+
+    val canAddWebUIShortcut: Boolean
+        get() =
+            title != null && iconFile != null && iconFile.exists() && iconFile.isFile
+
+    fun hasWebUIShortcut(context: Context): Boolean {
+        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+        return shortcutManager.pinnedShortcuts.any { it.id == shortcutId }
+    }
+
+    fun createShortcut(
+        context: Context,
+        cls: Class<out WXActivity>,
+    ) {
+        val shortcutManager = context.getSystemService(ShortcutManager::class.java)
+
+        if (!canAddWebUIShortcut) {
+            return
+        }
+
+        if (shortcutManager.isRequestPinShortcutSupported) {
+            if (shortcutManager.pinnedShortcuts.any { it.id == shortcutId }) {
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.shortcut_already_exists),
+                    Toast.LENGTH_SHORT
+                ).show()
+                return
+            }
+
+            val shortcutIntent = Intent(context, cls::class.java).apply {
+                putModId(modId.toString())
+            }
+
+            shortcutIntent.action = Intent.ACTION_VIEW
+
+            val bitmap =
+                iconFile!!.newInputStream().buffered().use { BitmapFactory.decodeStream(it) }
+
+            val shortcut = ShortcutInfo.Builder(context, shortcutId)
+                .setShortLabel(title!!)
+                .setLongLabel(title)
+                .setIcon(Icon.createWithAdaptiveBitmap(bitmap))
+                .setIntent(shortcutIntent)
+                .build()
+
+            shortcutManager.requestPinShortcut(shortcut, null)
+        }
+    }
+
     companion object {
+        const val TAG = "WebUIConfig"
+
         /**
-         * Converts a [ModId] to a [webUiConfig] string representation.
+         * Extension property for [ModId] to retrieve its associated [WebUIConfig].
          *
-         * This function takes a [ModId] and returns a string that represents the
-         * configuration for the web UI, specifically utilizing the provided Mod ID.
-         * It's a concise way to generate the configuration based solely on the Mod ID.
+         * This property attempts to load and parse a `config.json` or `config.mmrl.json`
+         * file from the module's `webroot` directory.
+         * - It first constructs the path to the module's directory (`/data/adb/modules/<module_id>`).
+         * - Then, it looks for `config.json` or `config.mmrl.json` within the `webroot` subdirectory.
+         * - If a configuration file is found, its content is read and parsed into a [WebUIConfig] object.
+         * - If no configuration file is found or if parsing fails, a default [WebUIConfig]
+         *   instance is returned, initialized with the current [ModId].
          *
-         * @receiver The [ModId] to convert.
-         * @return A string representing the web UI configuration for the given [ModId].
-         * @see webUiConfig
-         *
-         * @sample
-         * ```kotlin
-         * val modId = ModId("my-mod")
-         * val webUiConfigString = modId.toWebUIConfig()
-         * println(webUiConfigString) // Output will be "webUiConfig(ModId(id=my-mod))"
-         * ```
+         * @return The parsed [WebUIConfig] if a configuration file is found and valid,
+         *         otherwise a default [WebUIConfig] for the given [ModId].
          */
-        fun ModId.toWebUIConfig() = webUiConfig(this)
+        val ModId.asWebUIConfig: WebUIConfig
+            get() {
+                val moduleDir = SuFile("/data/adb/modules", this.id)
+                val webRoot = SuFile(moduleDir, "webroot")
+
+                val config = WebUIConfig(this)
+
+                val configFile =
+                    webRoot.fromPaths("config.json", "config.mmrl.json") ?: return config
+
+                val jsonString = configFile.readText()
+                val jsonAdapter = moshi.adapter(WebUIConfig::class.java)
+
+                val json = jsonAdapter.fromJson(jsonString)
+
+               return (json ?: config).copy(modId = this)
+            }
+
+        val LocalModule.webUiConfig get() = id.asWebUIConfig
     }
 }

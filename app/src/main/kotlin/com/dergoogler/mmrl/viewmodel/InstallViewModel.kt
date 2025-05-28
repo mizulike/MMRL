@@ -89,7 +89,7 @@ class InstallViewModel @Inject constructor(
                 return@mapNotNull null
             }
 
-            val blacklist = getBlacklistById(info.id)
+            val blacklist = getBlacklistById(info.id.toString())
             val isBlacklisted = Blacklist.isBlacklisted(userPreferences.blacklistAlerts, blacklist)
             if (isBlacklisted) {
                 event = Event.FAILED
@@ -99,7 +99,7 @@ class InstallViewModel @Inject constructor(
             }
 
             BulkModule(
-                id = info.id,
+                id = info.id.toString(),
                 name = info.name
             )
         }

@@ -11,6 +11,8 @@ import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.TIMEOUT_MILLIS
+import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
 import com.dergoogler.mmrl.utils.initPlatform
@@ -94,11 +96,11 @@ class WebUIActivity : WXActivity() {
     }
 
     companion object {
-        fun start(context: Context, modId: String) {
+        fun start(context: Context, modId: ModId) {
             val intent = Intent(context, WebUIActivity::class.java)
                 .apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-                    putExtra("MOD_ID", modId)
+                    putModId(modId)
                 }
 
             context.startActivity(intent)

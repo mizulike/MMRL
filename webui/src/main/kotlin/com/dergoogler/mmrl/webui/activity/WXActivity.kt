@@ -18,11 +18,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.getModId
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.confirm
 import com.dergoogler.mmrl.webui.R
 import com.dergoogler.mmrl.webui.model.WebUIConfig
-import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUIConfig
+import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.asWebUIConfig
 import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
 import com.dergoogler.mmrl.webui.util.PostWindowEventMessage.Companion.asEvent
 import com.dergoogler.mmrl.webui.util.WebUIOptions
@@ -79,7 +80,7 @@ open class WXActivity : ComponentActivity() {
      * @return The [ModId] if found, otherwise `null`.
      */
     val modId by lazy {
-        intent.fromKeys("MOD_ID", "id")
+        intent.fromKeys("MOD_ID", "id") ?: intent.getModId()
     }
 
     /**
@@ -109,8 +110,7 @@ open class WXActivity : ComponentActivity() {
      * @return The result of executing the [block], or `null` if [modId] is `null`.
      */
     fun <R> config(block: WebUIConfig.() -> R): R? = modId {
-        val config = toWebUIConfig()
-        return@modId block(config)
+        return@modId block(asWebUIConfig)
     }
 
     /**

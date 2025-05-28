@@ -25,6 +25,8 @@ import com.dergoogler.mmrl.model.online.TrackJson
 import com.dergoogler.mmrl.model.online.VersionItem
 import com.dergoogler.mmrl.model.state.OnlineState.Companion.createState
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
@@ -229,16 +231,16 @@ class ModuleViewModel @AssistedInject constructor(
         return progress
     }
 
-    private val opsTasks = mutableStateListOf<String>()
+    private val opsTasks = mutableStateListOf<ModId>()
     private val opsCallback = object : IModuleOpsCallback.Stub() {
-        override fun onSuccess(id: String) {
+        override fun onSuccess(id: ModId) {
             viewModelScope.launch {
-                modulesRepository.getLocal(id)
+                modulesRepository.getLocal(id.toString())
                 opsTasks.remove(id)
             }
         }
 
-        override fun onFailure(id: String, msg: String?) {
+        override fun onFailure(id: ModId, msg: String?) {
             opsTasks.remove(id)
             Timber.w("$id: $msg")
         }

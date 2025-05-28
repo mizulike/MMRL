@@ -9,7 +9,7 @@ import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ui.component.card.defaultCardColors
-import com.dergoogler.mmrl.ui.component.defaultFilledTonalButtonColors
+import com.dergoogler.mmrl.ui.component.button.defaultFilledTonalButtonColors
 import com.dergoogler.mmrl.webui.PathHandler
 import com.dergoogler.mmrl.webui.asScriptResponse
 import com.dergoogler.mmrl.webui.asStyleResponse

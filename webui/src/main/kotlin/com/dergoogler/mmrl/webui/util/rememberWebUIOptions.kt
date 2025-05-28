@@ -1,31 +1,27 @@
 package com.dergoogler.mmrl.webui.util
 
 import android.app.Activity
-import android.app.ActivityThread
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.pm.PackageInfo
 import android.net.Uri
 import android.util.Log
 import androidx.compose.material3.ColorScheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
-import com.dergoogler.mmrl.ui.theme.Colors
 import com.dergoogler.mmrl.ui.theme.Colors.Companion.getColorScheme
-import com.dergoogler.mmrl.ui.theme.Colors.Dynamic
+import com.dergoogler.mmrl.webui.activity.WXActivity
 import com.dergoogler.mmrl.webui.client.WXClient
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.model.RequireNewVersion
-import com.dergoogler.mmrl.webui.webUiConfig
+import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.asWebUIConfig
 import java.net.URI
 
 
@@ -73,7 +69,7 @@ data class WebUIOptions(
     val userAgentString: String = "DON'T TRACK ME DOWN MOTHERFUCKER!",
     val colorScheme: ColorScheme = context.getColorScheme(id = 0, darkMode = isDarkMode),
     val client: ((WebUIOptions, Insets) -> WXClient)? = null,
-    val cls: Class<*>? = null,
+    val cls: Class<out WXActivity>? = null,
 ) : ContextWrapper(context) {
     fun findActivity(): Activity? {
         var ctx = baseContext
@@ -122,7 +118,7 @@ data class WebUIOptions(
         return domainSafeRegex.matches(domain)
     }
 
-    val config = webUiConfig(modId)
+    val config = modId.asWebUIConfig
 
     val indexFile
         get() = webRoot.list()
@@ -251,7 +247,7 @@ data class WebUIOptions(
         userAgentString: String = this.userAgentString,
         colorScheme: ColorScheme = this.colorScheme,
         onUnsafeDomainRequest: (() -> Unit)? = this.onUnsafeDomainRequest,
-        cls: Class<*>? = this.cls,
+        cls: Class<out WXActivity>? = this.cls,
     ): WebUIOptions = WebUIOptions(
         context = context,
         modId = modId,
@@ -287,73 +283,4 @@ data class WebUIOptions(
         result = 31 * result + colorScheme.hashCode()
         return result
     }
-}
-
-/**
- * Creates and remembers a [WebUIOptions] instance within a Composable function.
- *
- * This function is used to configure the settings for a web-based UI. It leverages Compose's
- * `remember` to cache the [WebUIOptions] instance across recompositions as long as the input
- * parameters remain the same.
- *
- * @param modId A unique identifier for the module using the web UI. This is a crucial parameter to track the origin.
- * @param appVersionCode The version code of the application. Defaults to -1 if not specified.
- * @param domain The base URL for the production web UI. Defaults to "https://mui.kernelsu.org".
- * @param domainSafeRegex A regular expression used to validate the production domain. Defaults to a regex matching "https://mui.kernelsu.org" and its subpaths.
- * @param debugDomainSafeRegex A regular expression used to validate debug domains (e.g., localhost, local IPs). Defaults to a regex matching common local development addresses.
- * @param debug A boolean flag indicating whether to enable debug mode. Defaults to `false`.
- * @param remoteDebug A boolean flag indicating whether to enable remote debugging. Defaults to `false`.
- * @param enableEruda A boolean flag indicating whether to enable the Eruda developer tool. Defaults to `false`.
- * @param debugDomain The base URL for the debug web UI. Defaults to "https://127.0.0.1:8080".
- * @param isDarkMode A boolean flag indicating whether to enable dark mode in the web UI. Defaults to `false`.
- * @param cls An optional Class object representing the caller class. Defaults to `null`. Primarily for internal logging/debugging and creating WebUI shortcuts.
- * @return A [WebUIOptions] instance configured with the provided parameters.
- */
-@Deprecated("Use WebUIOptions(...) instead")
-@Composable
-fun rememberWebUIOptions(
-    modId: ModId,
-    context: Context = Platform.context,
-    appVersionCode: Int = -1,
-    domain: Uri = "https://mui.kernelsu.org".toUri(),
-    domainSafeRegex: Regex = Regex("^https?://mui\\.kernelsu\\.org(/.*)?$"),
-    debugDomainSafeRegex: Regex = Regex(
-        "^(https?://)?(localhost|127\\.0\\.0\\.1|::1|10(?:\\.\\d{1,3}){3}|172\\.(?:1[6-9]|2\\d|3[01])(?:\\.\\d{1,3}){2}|192\\.168(?:\\.\\d{1,3}){2})(?::([0-9]{1,5}))?$"
-    ),
-    debug: Boolean = false,
-    remoteDebug: Boolean = false,
-    enableEruda: Boolean = false,
-    debugDomain: String = "https://127.0.0.1:8080",
-    isDarkMode: Boolean = false,
-    userAgentString: String = "DON'T TRACK ME DOWN MOTHERFUCKER!",
-    cls: Class<*>? = null,
-) = remember(
-    modId,
-    appVersionCode,
-    domain,
-    domainSafeRegex,
-    debugDomainSafeRegex,
-    debug,
-    remoteDebug,
-    enableEruda,
-    debugDomain,
-    isDarkMode,
-    userAgentString,
-    cls
-) {
-    WebUIOptions(
-        context = context,
-        modId = modId,
-        appVersionCode = appVersionCode,
-        domain = domain,
-        domainSafeRegex = domainSafeRegex,
-        debugDomainSafeRegex = debugDomainSafeRegex,
-        debug = debug,
-        remoteDebug = remoteDebug,
-        enableEruda = enableEruda,
-        debugDomain = debugDomain,
-        isDarkMode = isDarkMode,
-        userAgentString = userAgentString,
-        cls = cls,
-    )
 }

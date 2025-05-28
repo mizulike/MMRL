@@ -85,7 +85,7 @@ class LocalRepository @Inject constructor(
     }
 
     suspend fun hasUpdatableTag(id: String) = withContext(Dispatchers.IO) {
-        localDao.hasUpdatableTagOrNull(id)?.updatable ?: true
+        localDao.hasUpdatableTagOrNull(id)?.updatable != false
     }
 
     suspend fun clearUpdatableTag(new: List<String>) = withContext(Dispatchers.IO) {

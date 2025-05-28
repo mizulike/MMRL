@@ -15,7 +15,7 @@ data class OnlineState(
             local: LocalModule?,
             hasUpdatableTag: Boolean,
         ): OnlineState {
-            val installed = local != null && local.id == id
+            val installed = local != null && local.id.equals(id)
                     && local.author == author
 
             val updatable = if (installed && hasUpdatableTag) {

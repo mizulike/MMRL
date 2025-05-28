@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.model.local
 import com.dergoogler.mmrl.utils.Utils
 import com.dergoogler.mmrl.platform.content.LocalModule
 import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
+import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 
 typealias LocalModule = com.dergoogler.mmrl.platform.content.LocalModule
 typealias LocalModuleFeatures = com.dergoogler.mmrl.platform.content.LocalModuleFeatures
@@ -24,7 +25,7 @@ val com.dergoogler.mmrl.platform.content.LocalModuleFeatures.hasFeatures
 
 fun com.dergoogler.mmrl.platform.content.LocalModule.Companion.example() =
     com.dergoogler.mmrl.platform.content.LocalModule(
-        id = "local_example",
+        id = "local_example".asModId,
         name = "Example",
         version = "2022.08.16",
         versionCode = 1703,

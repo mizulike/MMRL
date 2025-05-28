@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.platform.manager
 import com.dergoogler.mmrl.platform.content.LocalModule
 import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 import com.dergoogler.mmrl.platform.content.State
+import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.util.Shell.exec
@@ -142,7 +143,7 @@ abstract class BaseModuleManager(
         size: Long = 0L,
         features: LocalModuleFeatures = LocalModuleFeatures.EMPTY,
     ) = LocalModule(
-        id = getOrDefault("id", path),
+        id = ModId(getOrDefault("id", path)),
         name = getOrDefault("name", path),
         version = getOrDefault("version", ""),
         versionCode = getOrDefault("versionCode", "-1").toIntOr(-1),

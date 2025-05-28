@@ -19,7 +19,7 @@ class ModulesRepository @Inject constructor(
         with(Platform.moduleManager.modules) {
             localRepository.deleteLocalAll()
             localRepository.insertLocal(this)
-            localRepository.clearUpdatableTag(map { it.id })
+            localRepository.clearUpdatableTag(map { it.id.id })
         }
     }
 

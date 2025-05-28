@@ -16,9 +16,9 @@ interface IModuleManager {
     LocalModule getModuleById(String id);
     LocalModule getModuleInfo(String zipPath);
     oneway void reboot(String reason);
-    oneway void enable(String id, boolean useShell, IModuleOpsCallback callback);
-    oneway void disable(String id, boolean useShell, IModuleOpsCallback callback);
-    oneway void remove(String id, boolean useShell, IModuleOpsCallback callback);
+    oneway void enable(in ModId id, boolean useShell, IModuleOpsCallback callback);
+    oneway void disable(in ModId id, boolean useShell, IModuleOpsCallback callback);
+    oneway void remove(in ModId id, boolean useShell, IModuleOpsCallback callback);
     String getInstallCommand(String path);
     String getActionCommand(in ModId id);
     List<String> getActionEnvironment();

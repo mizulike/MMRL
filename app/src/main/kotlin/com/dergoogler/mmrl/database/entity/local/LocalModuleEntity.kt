@@ -7,6 +7,7 @@ import androidx.room.TypeConverters
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
+import com.dergoogler.mmrl.platform.model.ModId
 
 
 @Entity(tableName = "localModules")
@@ -25,7 +26,7 @@ data class LocalModuleEntity(
     val lastUpdated: Long,
 ) {
     constructor(original: LocalModule) : this(
-        id = original.id,
+        id = original.id.id,
         name = original.name,
         version = original.version,
         versionCode = original.versionCode,
@@ -39,7 +40,7 @@ data class LocalModuleEntity(
     )
 
     fun toModule() = LocalModule(
-        id = id,
+        id = ModId(id),
         name = name,
         version = version,
         versionCode = versionCode,

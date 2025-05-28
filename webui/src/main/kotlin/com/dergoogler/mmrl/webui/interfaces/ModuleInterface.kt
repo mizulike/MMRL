@@ -17,10 +17,8 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
-import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.R
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
-import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.toWebUIConfig
 import com.dergoogler.mmrl.webui.moshi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
@@ -213,98 +211,20 @@ class ModuleInterface(
 
     @JavascriptInterface
     fun createShortcut(title: String?, icon: String?) {
-        if (title == null || icon == null) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.title_or_icon_not_found),
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-        createShortcutInternal(title, icon)
+        deprecated("$name.createShortcut($title, $icon)", "Use $name.createShortcut() instead")
     }
 
     @JavascriptInterface
     fun createShortcut() {
-        val config = modId.toWebUIConfig()
-        val title = config.title
-        val icon = config.icon
-
-        if (title == null || icon == null) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.title_or_icon_not_found),
-                Toast.LENGTH_SHORT
-            ).show()
+        if (options.cls == null) {
+            throwJsError(Exception("No class were defined for shortcuts"))
             return
         }
-        createShortcutInternal(title, icon)
+
+        config.createShortcut(context, options.cls)
     }
 
-    private val shortcutManager = context.getSystemService(ShortcutManager::class.java)
 
     @JavascriptInterface
-    fun hasShortcut(): Boolean {
-        val id = modId.id
-        val shortcutId = "shortcut_$id"
-        return shortcutManager.pinnedShortcuts.any { it.id == shortcutId }
-    }
-
-    private fun createShortcutInternal(title: String, icon: String) {
-
-        if (options.cls == null) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.class_not_found),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        val id = modId.id
-        val shortcutId = "shortcut_$id"
-        val webRoot = SuFile("/data/adb/modules/$id/webroot")
-        val iconFile = SuFile(webRoot, icon)
-
-        if (!iconFile.exists()) {
-            Log.d("createShortcutInternal", "Icon not found: $iconFile")
-            Toast.makeText(context, context.getString(R.string.icon_not_found), Toast.LENGTH_SHORT)
-                .show()
-            return
-        }
-
-
-        if (!shortcutManager.isRequestPinShortcutSupported) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.shortcut_not_supported),
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-
-        if (hasShortcut()) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.shortcut_already_exists),
-                Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
-        val shortcutIntent = Intent(context, options.cls).apply {
-            action = Intent.ACTION_VIEW
-            putExtra("MOD_ID", id)
-        }
-
-        val bis = BufferedInputStream(iconFile.newInputStream())
-        val bitmap = BitmapFactory.decodeStream(bis)
-
-        val shortcut = ShortcutInfo.Builder(context, shortcutId)
-            .setShortLabel(title)
-            .setLongLabel(title)
-            .setIcon(Icon.createWithAdaptiveBitmap(bitmap))
-            .setIntent(shortcutIntent)
-            .build()
-
-        shortcutManager.requestPinShortcut(shortcut, null)
-    }
+    fun hasShortcut(): Boolean = config.hasWebUIShortcut(context)
 }

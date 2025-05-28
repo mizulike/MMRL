@@ -1084,7 +1084,7 @@ fun NewViewScreen(
                         userPreferences.developerMode.takeTrue {
                             ModuleInfoListItem(
                                 title = R.string.view_module_module_id,
-                                desc = loc.id
+                                desc = loc.id.toString()
                             )
                         }
 
