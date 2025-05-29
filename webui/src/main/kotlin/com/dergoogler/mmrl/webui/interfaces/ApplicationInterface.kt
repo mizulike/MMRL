@@ -20,7 +20,7 @@ class ApplicationInterface(
 
     @JavascriptInterface
     fun exit() {
-        activity<Unit> {
+        withActivity<Unit> {
             finish()
         }
     }
@@ -28,23 +28,27 @@ class ApplicationInterface(
     @JavascriptInterface
     fun setRefreshing(state: Boolean) {
         if (!config.pullToRefresh) {
-            throwJsError(Exception("Pull-To-Refresh needs to be enable in order to use $name.setRefreshing(boolean)"))
+            console.error(
+                Exception("Pull-To-Refresh needs to be enable in order to use $name.setRefreshing(boolean)")
+            )
             return
         }
 
         if (!config.useJavaScriptRefreshInterceptor) {
-            throwJsError(Exception("$name.setRefreshing(boolean) is not supported with native refresh interceptor"))
+            console.error(
+                Exception("$name.setRefreshing(boolean) is not supported with native refresh interceptor")
+            )
             return
         }
 
         val swipeLayout = webView.mSwipeView
 
         if (swipeLayout == null) {
-            throwJsError(Exception("WXSwipeRefresh not found"))
+            console.error(Exception("WXSwipeRefresh not found"))
             return
         }
 
-        runOnUiThread {
+        post {
             swipeLayout.isRefreshing = state
         }
     }

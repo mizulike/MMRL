@@ -40,6 +40,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.android.awaitFrame
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlin.text.replace
 
 /**
  * A custom WebView class that provides additional functionality for WebUI.
@@ -175,34 +176,8 @@ open class WebUIView(
     }
 
     @UiThread
-    fun runOnUiThread(block: Activity.() -> Unit) {
-        val activity = context.findActivity()
-        if (activity == null) {
-            console.error("[$TAG] Activity not found")
-            return
-        }
-
-        block(activity)
-    }
-
-    @UiThread
-    fun runJs(script: String) = runPost { evaluateJavascript(script, null) }
-
-    @UiThread
-    fun runPost(action: WebUIView.() -> Unit) {
-        post { action(this) }
-    }
-
-    @UiThread
-    fun throwJsError(e: Exception) = runJs("new Error('${e.message}', { cause: '${e.cause}' })")
-
-    @UiThread
-    fun runJsCatching(block: () -> Unit) {
-        try {
-            block()
-        } catch (e: Exception) {
-            throwJsError(e)
-        }
+    fun runJs(script: String) {
+        post { evaluateJavascript(script, null) }
     }
 
     override fun onDetachedFromWindow() {
@@ -277,11 +252,11 @@ open class WebUIView(
      * Adds multiple JavaScript interfaces to this WebView.
      *
      * This function iterates over the provided JavaScript interfaces and adds each one
-     * to the WebView using the [WXOptions.addJavascriptInterface] method.
+     * to the WebView using the [addJavascriptInterface] method.
      *
      * @param obj A vararg of [JavaScriptInterface] objects to be added.
      * @throws BrickException If an error occurs while adding any of the JavaScript interfaces.
-     * @see WXOptions.addJavascriptInterface
+     * @see addJavascriptInterface
      */
     @Throws(BrickException::class)
     fun addJavascriptInterface(vararg obj: JavaScriptInterface<out WXInterface>) {
@@ -306,6 +281,18 @@ open class WebUIView(
                         separator = ", "
                     ) { "'${it?.escape}'" }
                 })")
+
+        override fun error(throwable: Throwable) {
+            val errorString = "Error('${throwable.message?.replace("'", "\\'")}', { cause: '${
+                throwable.cause.toString().replace("'", "\\'")
+            }' })"
+
+            runJs("console.error($errorString)")
+        }
+
+        override fun trace(message: String) {
+            if (options.debug) levelParser("trace", message)
+        }
 
         override fun error(message: String, vararg args: String?) =
             levelParser("error", message, *args)

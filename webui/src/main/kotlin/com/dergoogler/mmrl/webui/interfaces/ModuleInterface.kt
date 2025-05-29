@@ -49,7 +49,7 @@ class ModuleInterface(
         )
 
     init {
-        activity<Unit> {
+        withActivity<Unit> {
             WindowCompat.setDecorFitsSystemWindows(window, false)
             getWindowInsetsController(this).systemBarsBehavior =
                 WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -151,7 +151,7 @@ class ModuleInterface(
 
     @get:JavascriptInterface
     val isLightNavigationBars: Boolean?
-        get() = activity<Boolean> {
+        get() = withActivity<Boolean> {
             getWindowInsetsController(this).isAppearanceLightNavigationBars
         }
 
@@ -160,19 +160,23 @@ class ModuleInterface(
         get() = options.isDarkMode
 
     @JavascriptInterface
-    fun setLightNavigationBars(isLight: Boolean) = runOnUiThread {
-        getWindowInsetsController(this).isAppearanceLightNavigationBars = isLight
+    fun setLightNavigationBars(isLight: Boolean) = post {
+        withActivity {
+            getWindowInsetsController(this).isAppearanceLightNavigationBars = isLight
+        }
     }
 
     @get:JavascriptInterface
     val isLightStatusBars: Boolean?
-        get() = activity {
+        get() = withActivity {
             getWindowInsetsController(this).isAppearanceLightStatusBars
         }
 
     @JavascriptInterface
-    fun setLightStatusBars(isLight: Boolean) = runOnUiThread {
-        getWindowInsetsController(this).isAppearanceLightStatusBars = isLight
+    fun setLightStatusBars(isLight: Boolean) = post {
+        withActivity {
+            getWindowInsetsController(this).isAppearanceLightStatusBars = isLight
+        }
     }
 
     @get:JavascriptInterface
@@ -218,7 +222,7 @@ class ModuleInterface(
     @JavascriptInterface
     fun createShortcut() {
         if (options.cls == null) {
-            throwJsError(Exception("No class were defined for shortcuts"))
+            console.error(Exception("No class were defined for shortcuts"))
             return
         }
 

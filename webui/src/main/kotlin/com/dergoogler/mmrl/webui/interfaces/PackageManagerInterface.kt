@@ -217,15 +217,14 @@ class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
         packageName: String,
         flags: Int,
         userId: Int,
-    ): FileInputInterfaceStream? {
+    ): FileInputInterfaceStream? = runJsCatching {
         val pf = pm.getApplicationInfo(packageName, flags, userId)
-        return runBlocking {
+        return@runJsCatching runBlocking {
             return@runBlocking getDrawableBase64InputStream(
                 drawable = pf.loadIcon(context.packageManager)
             )
         }
     }
-
 
     @JavascriptInterface
     fun getApplicationIcon(

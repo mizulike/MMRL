@@ -13,14 +13,9 @@ import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
 import com.dergoogler.mmrl.webui.view.WebUIView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Runnable
-
-interface WXConsole {
-    fun error(message: String, vararg args: String?)
-    fun info(message: String, vararg args: String?)
-    fun log(message: String, vararg args: String?)
-    fun warn(message: String, vararg args: String?)
-}
 
 data class WXOptions(
     val webView: WebUIView,
@@ -46,21 +41,13 @@ data class WXOptions(
 open class WXInterface(
     val wxOptions: WXOptions,
 ) : ContextWrapper(wxOptions.options.context) {
+    val scope = CoroutineScope(Dispatchers.Main)
     val webView: WebUIView = wxOptions.webView
     val options: WebUIOptions = wxOptions.options
-    val context: Context = applicationContext
+    val context: Context = wxOptions.options.context
     val modId: ModId = options.modId
     val config: WebUIConfig = options.config
     val activity: Activity? = context.findActivity()
-
-    fun <R> activity(block: Activity.() -> R): R? {
-        if (activity == null) {
-            console.error("[$tag->activity] Activity not found")
-            return null
-        }
-
-        return block(activity)
-    }
 
     /**
      * The name of the entity.
@@ -79,23 +66,6 @@ open class WXInterface(
      * in subclasses to provide more specific identification.
      */
     open var tag: String = "WXInterface"
-
-    /**
-     * Executes the given [block] of code on the UI thread.
-     *
-     * This function ensures that the provided lambda [block] is run on the main UI thread,
-     * which is necessary for any operations that modify or interact with the user interface.
-     * It delegates the execution to the `runOnUiThread` method of the underlying [webView].
-     *
-     * The [block] is a lambda expression that takes an [Activity] as its receiver, allowing
-     * direct access to the Activity's properties and methods within the lambda.
-     *
-     * @param block A lambda expression with an [Activity] receiver that contains the code to be executed on the UI thread.
-     * @see WXView.runOnUiThread
-     * @see UiThread
-     */
-    @UiThread
-    fun runOnUiThread(block: Activity.() -> Unit) = webView.runOnUiThread(block)
 
     /**
      * Executes the given JavaScript script within the WebView.
@@ -129,47 +99,58 @@ open class WXInterface(
      * @see WebView.post
      */
     @UiThread
-    fun runPost(action: WebUIView.() -> Unit) = webView.runPost(action)
-
-    @UiThread
-    fun runJsCatching(block: () -> Unit) = webView.runJsCatching(block)
+    fun post(action: WebUIView.() -> Unit) = webView.post { action(webView) }
 
     /**
-     * Throws a JavaScript error in the WebView.
+     * Executes a block of code on the UI thread and catches any exceptions that occur.
      *
-     * This function allows you to propagate an [Exception] from Kotlin code to the JavaScript environment
-     * within the WebView, causing a JavaScript error to be thrown. This is useful for signaling errors
-     * that originate in native code but need to be handled or displayed in the web UI.
+     * This extension function is designed to safely execute operations that might throw exceptions,
+     * particularly those interacting with JavaScript or the WebView. If an exception occurs,
+     * it logs the error to the console and returns `null`. Otherwise, it returns the result
+     * of the executed block.
      *
-     * This method must be called on the UI thread.
+     * This function ensures that the block is executed on the UI thread, which is crucial for
+     * operations that interact with UI components like WebViews.
      *
-     * @param e The [Exception] to be thrown as a JavaScript error. The exception's message
-     *          will typically be used as the error message in JavaScript.
-     */
-    @UiThread
-    fun throwJsError(e: Exception) = webView.throwJsError(e)
-
-    /**
-     * Executes a given action on the main UI thread, using the context of the current [Activity].
-     *
-     * This function is useful for performing UI-related operations that need to be synchronized with the main event loop.
-     * It posts the action to the main looper's message queue, ensuring that it will be executed on the UI thread.
-     *
-     * If the `activity` is `null` (e.g., if the activity has been destroyed or is not available),
-     * this function will throw a JavaScript error via [throwJsError] and the action will not be executed.
-     *
-     * @param action A lambda expression that takes the current [Activity] as its receiver and performs some operations.
-     *               This lambda will be executed on the main UI thread.
-     * @throws Exception If the `activity` is `null`, a JavaScript error with the message "Activity not found" is thrown.
+     * @param T The type of the receiver object on which the block is executed.
+     * @param R The return type of the block.
+     * @param block A lambda function to be executed. It receives the `T` instance as its receiver.
+     * @return The result of the `block` if execution is successful, or `null` if an exception occurs.
      *
      * @sample
-     * // Example of using runMainLooperPost to update a TextView in an Activity:
-     * runMainLooperPost {
-     *     // 'this' refers to the Activity instance
-     *     val textView = findViewById<TextView>(R.id.my_textview)
-     *     textView.text = "Updated from runMainLooperPost"
+     * ```kotlin
+     * // Example: Safely accessing a property of a JavaScript object
+     * val result = webView.runJsCatching {
+     *     // This might throw an exception if 'someObject' or 'someProperty' doesn't exist
+     *     evaluateJavascript("someObject.someProperty", null)
      * }
+     * if (result != null) {
+     *     // Process the result
+     * } else {
+     *     // Handle the error, e.g., show a message to the user
+     * }
+     * ```
      */
+    @UiThread
+    inline fun <T, R> T.runJsCatching(block: T.() -> R): R? {
+        try {
+            return block()
+        } catch (e: Exception) {
+            console.error(e)
+            return null
+        }
+    }
+
+    fun <R> withActivity(block: Activity.() -> R): R? {
+        if (activity == null) {
+            console.trace("withActivity -> activity == null")
+            console.error("[$tag->withActivity] Activity not found")
+            return null
+        }
+
+        return block(activity)
+    }
+
     @UiThread
     fun runMainLooperPost(action: Activity.() -> Unit) {
         if (activity == null) {
@@ -249,7 +230,7 @@ open class WXInterface(
         return try {
             with(with, block)
         } catch (e: Throwable) {
-            runJs("new Error('$message', { cause: \"${e.message}\" })")
+            console.error(e)
             return default
         }
     }

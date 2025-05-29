@@ -14,6 +14,8 @@ import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.topjohnwu.superuser.CallbackList
 import com.topjohnwu.superuser.ShellUtils
 import com.topjohnwu.superuser.internal.WaitRunnable
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.concurrent.CompletableFuture
@@ -34,7 +36,7 @@ class KernelSUInterface(
 
     @JavascriptInterface
     fun toast(msg: String) {
-        runPost {
+        post {
             Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
         }
     }
@@ -99,23 +101,25 @@ class KernelSUInterface(
         processOptions(finalCommand, options)
         finalCommand.append(cmd)
 
-        val result = withNewRootShell(
-            globalMnt = true,
-            debug = this@KernelSUInterface.options.debug
-        ) {
-            newJob().add(finalCommand.toString()).to(ArrayList(), ArrayList()).exec()
+        scope.launch(Dispatchers.IO) {
+            val result = withNewRootShell(
+                globalMnt = true,
+                debug = this@KernelSUInterface.options.debug
+            ) {
+                newJob().add(finalCommand.toString()).to(ArrayList(), ArrayList()).exec()
+            }
+            val stdout = result.out.joinToString(separator = "\n")
+            val stderr = result.err.joinToString(separator = "\n")
+
+            val jsCode =
+                "(function() { try { ${callbackFunc}(${result.code}, ${
+                    JSONObject.quote(
+                        stdout
+                    )
+                }, ${JSONObject.quote(stderr)}); } catch(e) { console.error(e); } })();"
+
+            runJs(jsCode)
         }
-        val stdout = result.out.joinToString(separator = "\n")
-        val stderr = result.err.joinToString(separator = "\n")
-
-        val jsCode =
-            "(function() { try { ${callbackFunc}(${result.code}, ${
-                JSONObject.quote(
-                    stdout
-                )
-            }, ${JSONObject.quote(stderr)}); } catch(e) { console.error(e); } })();"
-
-        runJs(jsCode)
     }
 
     // ensure it really runs on the ui thread
@@ -175,30 +179,32 @@ class KernelSUInterface(
             }
         }
 
-        val future = shell.newJob().add(finalCommand.toString()).to(stdout, stderr).enqueue()
-        val completableFuture = CompletableFuture.supplyAsync {
-            future.get()
-        }
-
-        completableFuture.thenAccept { result ->
-            val emitExitCode =
-                "(function() { try { ${callbackFunc}.emit('exit', ${result.code}); } catch(e) { console.error(`emitExit error: \${e}`); } })();"
-            runJs(emitExitCode)
-
-
-            if (result.code != 0) {
-                val emitErrCode =
-                    "(function() { try { var err = new Error(); err.exitCode = ${result.code}; err.message = ${
-                        JSONObject.quote(
-                            result.err.joinToString(
-                                "\n"
-                            )
-                        )
-                    };${callbackFunc}.emit('error', err); } catch(e) { console.error('emitErr', e); } })();"
-                runJs(emitErrCode)
+        scope.launch(Dispatchers.IO) {
+            val future = shell.newJob().add(finalCommand.toString()).to(stdout, stderr).enqueue()
+            val completableFuture = CompletableFuture.supplyAsync {
+                future.get()
             }
-        }.whenComplete { _, _ ->
-            runJsCatching { shell.close() }
+
+            completableFuture.thenAccept { result ->
+                val emitExitCode =
+                    "(function() { try { ${callbackFunc}.emit('exit', ${result.code}); } catch(e) { console.error(`emitExit error: \${e}`); } })();"
+                runJs(emitExitCode)
+
+
+                if (result.code != 0) {
+                    val emitErrCode =
+                        "(function() { try { var err = new Error(); err.exitCode = ${result.code}; err.message = ${
+                            JSONObject.quote(
+                                result.err.joinToString(
+                                    "\n"
+                                )
+                            )
+                        };${callbackFunc}.emit('error', err); } catch(e) { console.error('emitErr', e); } })();"
+                    runJs(emitErrCode)
+                }
+            }.whenComplete { _, _ ->
+                runJsCatching { shell.close() }
+            }
         }
     }
 }

@@ -37,29 +37,20 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 open class WXChromeClient(
-    private val options: WebUIOptions?,
+    private val options: WebUIOptions,
 ) : WebChromeClient() {
     private companion object {
         const val TAG = "WXChromeClient"
     }
 
     @OptIn(ExperimentalContracts::class)
-    private inline fun checkOptions(
-        view: WXView,
+    private inline fun options(
         result: JsResult,
-        options: WebUIOptions?,
+        options: WebUIOptions,
         block: WebUIOptions.() -> Unit,
     ): Boolean {
         contract {
             callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-        }
-
-        if (options == null) {
-            val errMessage = "Failed to get options. Received: null"
-            Log.e(TAG, errMessage)
-            view.throwJsError(Exception(errMessage))
-            result.cancel()
-            return false
         }
 
         block(options)
@@ -71,7 +62,7 @@ open class WXChromeClient(
         url: String,
         message: String,
         result: JsResult,
-    ): Boolean = checkOptions(view as WXView, result, options) {
+    ): Boolean = options(result, options) {
         context.confirm(
             confirmData = ConfirmData(
                 title = context.getString(R.string.says, modId.id),
@@ -88,7 +79,7 @@ open class WXChromeClient(
         url: String,
         message: String,
         result: JsResult,
-    ): Boolean = checkOptions(view as WXView, result, options) {
+    ): Boolean = options(result, options) {
         context.confirm(
             confirmData = ConfirmData(
                 title = context.getString(R.string.says, modId.id),
@@ -106,7 +97,7 @@ open class WXChromeClient(
         message: String?,
         defaultValue: String?,
         result: JsPromptResult,
-    ): Boolean = checkOptions(view as WXView, result, options) {
+    ): Boolean = options(result, options) {
         context.prompt(
             promptData = PromptData(
                 title = message ?: context.getString(R.string.says, modId.id),
