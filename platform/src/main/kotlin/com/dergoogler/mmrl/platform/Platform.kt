@@ -9,6 +9,7 @@ import android.os.IInterface
 import android.os.Parcel
 import android.os.ServiceManager
 import android.util.Log
+import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -21,8 +22,13 @@ import com.dergoogler.mmrl.platform.model.PlatformConfigImpl
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
 import org.lsposed.hiddenapibypass.HiddenApiBypass
 import java.io.FileDescriptor
 
@@ -228,10 +234,19 @@ enum class Platform(val id: String) {
                 Platform.from(currentPlatform())
             }
 
-        private fun state(): Boolean {
+        /**
+         * Checks the current state of the platform service.
+         *
+         * This function updates the `isAlive` property and the `_isAliveFlow` based on whether
+         * the internal service manager (`mServiceOrNull`) is currently available (not null).
+         * It operates within the `Dispatchers.IO` context to avoid blocking the main thread.
+         *
+         * @return `true` if the service is alive (i.e., `mServiceOrNull` is not null), `false` otherwise.
+         */
+        suspend fun state(): Boolean = withContext(Dispatchers.IO) {
             isAlive = mServiceOrNull != null
             _isAliveFlow.value = isAlive
-            return isAlive
+            isAlive
         }
 
         /**
@@ -252,6 +267,34 @@ enum class Platform(val id: String) {
             return when {
                 isAlive -> block(this)
                 else -> fallback
+            }
+        }
+
+        /**
+         * Asynchronously retrieves a value from a block if the object is alive, otherwise returns a fallback value.
+         *
+         * This function provides a safe way to asynchronously access properties or perform suspendable actions
+         * within a block only when the object associated with this companion object is considered "alive".
+         * If the object is not alive, the function gracefully returns a [Deferred] containing the pre-defined fallback value.
+         *
+         * The operation is launched within the provided [CoroutineScope].
+         *
+         * @param scope The [CoroutineScope] in which to launch the asynchronous operation.
+         * @param fallback The value to return in the [Deferred] if the object is not alive.
+         * @param block A suspendable lambda function that takes the Companion object as its receiver and returns a value of type T.
+         *              This block is executed only if `isAlive` is true.
+         * @return A [Deferred] that will eventually hold the value returned by the block if the object is alive,
+         *         otherwise it will hold the fallback value.
+         * @param T The type of the value being retrieved.
+         * @throws Any exceptions that the provided `block` may throw during its execution.
+         */
+        inline fun <T> getAsyncDeferred(
+            scope: CoroutineScope,
+            fallback: T,
+            crossinline block: @DisallowComposableCalls suspend Companion.() -> T,
+        ): Deferred<T> {
+            return scope.async {
+                if (isAlive) block(this@Companion) else fallback
             }
         }
 

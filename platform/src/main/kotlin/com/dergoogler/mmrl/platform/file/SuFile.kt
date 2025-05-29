@@ -3,9 +3,14 @@ package com.dergoogler.mmrl.platform.file
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
+import android.system.ErrnoException
+import android.system.Os
+import android.system.OsConstants
 import android.util.LruCache
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.stub.IFileManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileFilter
 import java.io.FileInputStream
@@ -93,19 +98,33 @@ class SuFile(
     )
 
     private fun getOwnPrimitiveLength(): Long {
-        return 0L
-
-//        return fallback(
-//            root = {
-//                this.length(this@SuFile.path)
-//            },
-//            nonRoot = {
-//                length()
-//            }
-//        )
+        return fallback(
+            root = {
+                this.length(this@SuFile.path)
+            },
+            nonRoot = {
+                length()
+            }
+        )
     }
 
     override fun length(): Long = this.length(recursive = false)
+
+    suspend fun lengthAsync(): Long = withContext<Long>(Dispatchers.IO) {
+        this@SuFile.length(recursive = false)
+    }
+
+    suspend fun lengthAsync(
+        recursive: Boolean = false,
+        skipPaths: List<String> = emptyList(),
+        skipSymLinks: Boolean = true,
+    ): Long = withContext<Long>(Dispatchers.IO) {
+        this@SuFile.length(
+            recursive = recursive,
+            skipPaths = skipPaths,
+            skipSymLinks = skipSymLinks,
+        )
+    }
 
     fun length(
         recursive: Boolean = false,
@@ -121,18 +140,16 @@ class SuFile(
         skipPaths: List<String>,
         skipSymLinks: Boolean,
     ): Long {
-        return 0L
-
-//        if (recursive) {
-//            if (!this.isDirectory()) {
-//                if (skipSymLinks && this.isSymlink()) return 0L
-//                return this.getOwnPrimitiveLength()
-//            }
-//            return doRecursiveScan(this, skipPaths, skipSymLinks)
-//        } else {
-//            if (skipSymLinks && this.isSymlink()) return 0L
-//            return this.getOwnPrimitiveLength()
-//        }
+        if (recursive) {
+            if (!this.isDirectory()) {
+                if (skipSymLinks && this.isSymlink()) return 0L
+                return this.getOwnPrimitiveLength()
+            }
+            return doRecursiveScan(this, skipPaths, skipSymLinks)
+        } else {
+            if (skipSymLinks && this.isSymlink()) return 0L
+            return this.getOwnPrimitiveLength()
+        }
     }
 
     private fun doRecursiveScan(
@@ -140,34 +157,35 @@ class SuFile(
         skipPaths: List<String>,
         skipSymLinks: Boolean,
     ): Long {
-        return 0L
-//        val items = currentDirSuFile.list()
-//
-//        var totalSize = 0L
-//        for (itemName in items) {
-//            val itemFullPath = "${currentDirSuFile.path}/$itemName"
-//            val itemSuFile = SuFile(itemFullPath)
-//
-//            if (skipPaths.contains(itemFullPath)) {
-//                continue
-//            }
-//
-//            if (skipSymLinks && itemSuFile.isSymlink()) {
-//                continue
-//            }
-//
-//            totalSize += if (itemSuFile.isDirectory()) {
-//                itemSuFile.length(
-//                    recursive = true,
-//                    skipPaths = skipPaths,
-//                    skipSymLinks = skipSymLinks
-//                )
-//            } else {
-//                itemSuFile.getOwnPrimitiveLength()
-//            }
-//        }
-//
-//        return totalSize
+        val items = currentDirSuFile.list()
+
+        if (items == null) return 0L
+
+        var totalSize = 0L
+        for (itemName in items) {
+            val itemFullPath = "${currentDirSuFile.path}/$itemName"
+            val itemSuFile = SuFile(itemFullPath)
+
+            if (skipPaths.contains(itemFullPath)) {
+                continue
+            }
+
+            if (skipSymLinks && itemSuFile.isSymlink()) {
+                continue
+            }
+
+            totalSize += if (itemSuFile.isDirectory()) {
+                itemSuFile.length(
+                    recursive = true,
+                    skipPaths = skipPaths,
+                    skipSymLinks = skipSymLinks
+                )
+            } else {
+                itemSuFile.getOwnPrimitiveLength()
+            }
+        }
+
+        return totalSize
     }
 
     fun stat(): Long {
@@ -205,27 +223,37 @@ class SuFile(
 
     fun isBlock(): Boolean = fallback(
         root = { this.isBlock(this@SuFile.path) },
-        nonRoot = { isBlock() }
+        nonRoot = {
+            OsConstants.S_ISBLK(getMode(this@SuFile.path))
+        }
     )
 
     fun isCharacter(): Boolean = fallback(
         root = { this.isCharacter(this@SuFile.path) },
-        nonRoot = { isCharacter() }
+        nonRoot = {
+            OsConstants.S_ISCHR(getMode(this@SuFile.path))
+        }
     )
 
     fun isSymlink(): Boolean = fallback(
         root = { this.isSymlink(this@SuFile.path) },
-        nonRoot = { isSymlink() }
+        nonRoot = {
+            OsConstants.S_ISLNK(getMode(this@SuFile.path))
+        }
     )
 
     fun isNamedPipe(): Boolean = fallback(
         root = { this.isNamedPipe(this@SuFile.path) },
-        nonRoot = { isNamedPipe() }
+        nonRoot = {
+            OsConstants.S_ISFIFO(getMode(this@SuFile.path))
+        }
     )
 
     fun isSocket(): Boolean = fallback(
         root = { this.isSocket(this@SuFile.path) },
-        nonRoot = { isSocket() }
+        nonRoot = {
+            OsConstants.S_ISSOCK(getMode(this@SuFile.path))
+        }
     )
 
     override fun mkdir(): Boolean = fallback(
@@ -380,6 +408,13 @@ class SuFile(
         return null
     }
 
+    private fun getMode(path: String?): Int {
+        return try {
+            Os.lstat(path).st_mode
+        } catch (e: ErrnoException) {
+            0
+        }
+    }
 
     companion object {
         const val PIPE_CAPACITY = 16 * 4096

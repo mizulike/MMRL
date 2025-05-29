@@ -9,20 +9,24 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -31,6 +35,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -52,6 +57,7 @@ import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.platform.util.waitOfPlatform
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.SELinuxStatus
 import com.dergoogler.mmrl.ui.component.TopAppBar
@@ -63,7 +69,6 @@ import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListProgressBarItem
 import com.dergoogler.mmrl.ui.navigation.MainRoute
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
-import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.screens.home.items.NonRootItem
 import com.dergoogler.mmrl.ui.screens.home.items.RebootBottomSheet
@@ -97,6 +102,10 @@ fun HomeScreen(
     if (openRebootSheet) {
         RebootBottomSheet(
             onClose = { openRebootSheet = false })
+    }
+
+    val analytics by waitOfPlatform {
+        viewModel.getAnalytics()
     }
 
     Scaffold(
@@ -280,67 +289,87 @@ fun HomeScreen(
                     }
                 }
 
-                viewModel.analytics(context).nullable {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Card(
-                            modifier = compressedCardModifierRow
+                if (viewModel.platform.isValid) {
+                    analytics.let {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            ListItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                desc = stringResource(R.string.home_installed_modules),
-                                title = it.totalModules.toString()
-                            )
+                            Card(
+                                modifier = compressedCardModifierRow
+                            ) {
+                                if (it != null) {
+                                    ListItem(
+                                        contentPaddingValues = listItemContentPaddingValues,
+                                        desc = stringResource(R.string.home_installed_modules),
+                                        title = it.totalModules.toString()
+                                    )
+                                } else {
+                                    Loading()
+                                }
+                            }
+                            Card(
+                                modifier = compressedCardModifierRow
+                            ) {
+                                if (it != null) {
+                                    ListItem(
+                                        contentPaddingValues = listItemContentPaddingValues,
+                                        desc = stringResource(R.string.home_updated_modules),
+                                        title = it.totalUpdated.toString()
+                                    )
+                                } else {
+                                    Loading()
+                                }
+                            }
                         }
 
                         Card(
-                            modifier = compressedCardModifierRow
+                            modifier = compressedCardModifier
                         ) {
-                            ListItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                desc = stringResource(R.string.home_updated_modules),
-                                title = it.totalUpdated.toString()
-                            )
-                        }
-                    }
-
-                    Card(
-                        modifier = compressedCardModifier
-                    ) {
-                        ListProgressBarItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            progressBarModifier = Modifier
-                                .weight(1f),
-                            startDesc = it.totalModulesUsageBytes.toFormattedFileSize(),
-                            endDesc = it.totalDeviceStorageBytes.toFormattedFileSize(),
-                            title = stringResource(id = R.string.home_storage_usage),
-                            progress = it.totalStorageUsage,
-                        )
-                    }
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Card(
-                            modifier = compressedCardModifierRow
-                        ) {
-                            ListItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                desc = stringResource(R.string.home_enabled_modules),
-                                title = it.totalEnabled.toString()
-                            )
-
+                            if (it != null) {
+                                ListProgressBarItem(
+                                    contentPaddingValues = listItemContentPaddingValues,
+                                    progressBarModifier = Modifier
+                                        .weight(1f),
+                                    startDesc = it.totalModulesUsage.toFormattedFileSize(),
+                                    endDesc = it.totalDeviceStorage.toFormattedFileSize(),
+                                    title = stringResource(id = R.string.home_storage_usage),
+                                    progress = it.totalStorageUsage,
+                                )
+                            } else {
+                                Loading()
+                            }
                         }
 
-                        Card(
-                            modifier = compressedCardModifierRow
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            ListItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                desc = stringResource(R.string.home_disabled_modules),
-                                title = it.totalDisabled.toString()
-                            )
+                            Card(
+                                modifier = compressedCardModifierRow
+                            ) {
+                                if (it != null) {
+                                    ListItem(
+                                        contentPaddingValues = listItemContentPaddingValues,
+                                        desc = stringResource(R.string.home_enabled_modules),
+                                        title = it.totalEnabled.toString()
+                                    )
+                                } else {
+                                    Loading()
+                                }
+                            }
+
+                            Card(
+                                modifier = compressedCardModifierRow
+                            ) {
+                                if (it != null) {
+                                    ListItem(
+                                        contentPaddingValues = listItemContentPaddingValues,
+                                        desc = stringResource(R.string.home_disabled_modules),
+                                        title = it.totalDisabled.toString()
+                                    )
+                                } else {
+                                    Loading()
+                                }
+                            }
                         }
                     }
                 }
@@ -406,4 +435,14 @@ private fun TopBar(
             }
         }
     )
+}
+
+@Composable
+private fun Loading() {
+    Box(
+        modifier = Modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator()
+    }
 }

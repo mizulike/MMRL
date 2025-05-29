@@ -4,6 +4,7 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
@@ -60,6 +61,12 @@ class ListItemTextStyle(
     }
 }
 
+data class ListItemModifiers(
+    val title: Modifier,
+    val desc: Modifier,
+    val icon: Modifier,
+)
+
 object ListItemDefaults {
     val itemStyle
         @Composable get() = ListItemTextStyle(
@@ -70,4 +77,10 @@ object ListItemDefaults {
             iconSize = 24.dp,
             textSwitchPadding = 16.dp
         )
+
+    val modifiers get() = ListItemModifiers(
+        title = Modifier,
+        desc = Modifier,
+        icon = Modifier
+    )
 }

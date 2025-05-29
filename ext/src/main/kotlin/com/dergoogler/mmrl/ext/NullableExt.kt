@@ -73,6 +73,23 @@ inline fun <T, R> T?.nullable(default: R, block: (T) -> R): R {
 }
 
 /**
+ * Runs the block if the receiver is non-null and returns its result;
+ * otherwise, returns the result of the default function.
+ *
+ * @param default The function to run if the receiver is null.
+ * @param block The function to run if the receiver is non-null.
+ * @return The result of the block or the result of the default function.
+ */
+@OptIn(ExperimentalContracts::class)
+inline fun <T, R> T?.nullable(default: () -> R, block: (T) -> R): R {
+    contract {
+        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
+    }
+
+    return if (this != null) block(this) else default()
+}
+
+/**
  * Runs the block if the receiver is non-null and the condition is true; otherwise, returns null.
  *
  * @param condition A condition that must be true for the block to run.

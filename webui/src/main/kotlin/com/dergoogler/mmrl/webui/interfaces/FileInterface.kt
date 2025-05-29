@@ -60,6 +60,11 @@ class FileInterface(
             "Error while getting size of \\'$path\\'. RECURSIVE: $recursive",
             0L
         ) {
+            if (recursive) {
+                console.warn("Recursive size calculation cannot be used here.")
+                0L
+            }
+
             size(path, recursive)
         }
 
