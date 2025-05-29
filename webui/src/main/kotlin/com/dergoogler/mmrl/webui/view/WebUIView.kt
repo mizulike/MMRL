@@ -57,6 +57,11 @@ open class WebUIView(
         throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
 
+    protected fun createDefaultWxOptions(options: WebUIOptions): WXOptions = WXOptions(
+        webView = this,
+        options = options
+    )
+
     protected val interfaces = hashSetOf<String>()
 
     fun <R> options(block: WebUIOptions.() -> R): R? {
@@ -144,6 +149,15 @@ open class WebUIView(
         this.loadUrl("${options.domain}/index.html")
     }
 
+    /**
+     * Adds a JavaScript interface to this WebView.
+     *
+     * This method overrides the default `addJavascriptInterface` method to keep track of added interfaces
+     * and prevent duplicate additions.
+     *
+     * @param obj The object to be exposed as a JavaScript interface.
+     * @param name The name of the JavaScript interface.
+     */
     @SuppressLint("JavascriptInterface")
     override fun addJavascriptInterface(obj: Any, name: String) {
         if (name in interfaces) {
@@ -158,11 +172,21 @@ open class WebUIView(
         super.addJavascriptInterface(obj, name)
     }
 
+    /**
+     * Adds a JavaScript interface to the WebView.
+     *
+     * This function takes a [JavaScriptInterface] object, creates a new instance of it
+     * using the provided [WXOptions], and then adds it to the WebView using the
+     * [addJavascriptInterface] method.
+     *
+     * @param obj The [JavaScriptInterface] object to add.
+     * @throws BrickException if an error occurs while adding the interface.
+     */
     @Throws(BrickException::class)
     @SuppressLint("JavascriptInterface")
-    fun WXOptions.addJavascriptInterface(obj: JavaScriptInterface<out WXInterface>) {
+    fun addJavascriptInterface(obj: JavaScriptInterface<out WXInterface>) {
         try {
-            val js = obj.createNew(this)
+            val js = obj.createNew(createDefaultWxOptions(options))
             addJavascriptInterface(js.instance, js.name)
         } catch (e: Exception) {
             throw BrickException(
@@ -172,6 +196,28 @@ open class WebUIView(
         }
     }
 
+    /**
+     * Adds multiple JavaScript interfaces to this WebView.
+     *
+     * This function iterates over the provided JavaScript interfaces and adds each one
+     * to the WebView using the [WXOptions.addJavascriptInterface] method.
+     *
+     * @param obj A vararg of [JavaScriptInterface] objects to be added.
+     * @throws BrickException If an error occurs while adding any of the JavaScript interfaces.
+     * @see WXOptions.addJavascriptInterface
+     */
+    @Throws(BrickException::class)
+    fun addJavascriptInterface(vararg obj: JavaScriptInterface<out WXInterface>) {
+        obj.forEach { addJavascriptInterface(it) }
+    }
+
+    /**
+     * A [WXConsole] implementation for logging messages from the WebView.
+     *
+     * This object provides methods for logging messages at different levels (error, info, log, warn)
+     * by executing corresponding JavaScript `console` commands in the WebView.
+     * It also handles escaping special characters in messages and arguments to prevent JavaScript errors.
+     */
     val console = object : WXConsole {
         private val String.escape get() = this.replace("'", "\\'")
 

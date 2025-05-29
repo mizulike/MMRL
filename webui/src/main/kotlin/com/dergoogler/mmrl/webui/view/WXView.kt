@@ -60,17 +60,18 @@ import kotlinx.coroutines.withContext
  * **Constructors:**
  * - `WXView(options: WebUIOptions)`: Initializes the WXView with the specified [WebUIOptions].
  *   This is the recommended constructor for creating a WXView instance.
- * - `WXView(context: Context, attrs: AttributeSet?)`:  Used for inflating WXView from XML layouts.
+ * - `WXView(context: Context)`: Constructor for creating WXView programmatically.
  *   **Note:** This constructor will throw an [UnsupportedOperationException] as default options are not supported.
  *   You must use the constructor with [WebUIOptions].
- * - `WXView(context: Context, attrs: AttributeSet?, defStyleAttr: Int)`: Used for inflating WXView from XML layouts
+ * - `WXView(context: Context, attrs: AttributeSet)`:  Used for inflating WXView from XML layouts.
+ *   **Note:** This constructor will throw an [UnsupportedOperationException] as default options are not supported.
+ *   You must use the constructor with [WebUIOptions].
+ * - `WXView(context: Context, attrs: AttributeSet, defStyle: Int)`: Used for inflating WXView from XML layouts
  *   with a default style attribute.
  *   **Note:** This constructor will throw an [UnsupportedOperationException] as default options are not supported.
  *   You must use the constructor with [WebUIOptions].
  *
- * @property mOptions The [WebUIOptions] used to configure this WXView.
- * @property defaultWxOptions The default [WXOptions] created for this WXView.
- * @property mSwipeView An optional [SwipeRefreshLayout] that can be associated with this WXView.
+ * @param options The [WebUIOptions] used to configure this WXView.
  */
 @SuppressLint("SetJavaScriptEnabled")
 open class WXView(
@@ -79,7 +80,6 @@ open class WXView(
     private val scope = CoroutineScope(Dispatchers.Main)
     private var initJob: Job? = null
     private var isInitialized = false
-    private val mDefaultWxOptions: WXOptions = createDefaultWxOptions(options)
 
     init {
         initWhenReady()
@@ -100,14 +100,6 @@ open class WXView(
     ) : this(WebUIOptions(context = context)) {
         throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
-
-    val defaultWxOptions: WXOptions get() = mDefaultWxOptions
-
-    @Throws(UnsupportedOperationException::class)
-    private fun createDefaultWxOptions(options: WebUIOptions): WXOptions = WXOptions(
-        webView = this,
-        options = options
-    )
 
     private fun initWhenReady() {
         // Basic setup that can run immediately
@@ -261,42 +253,6 @@ open class WXView(
             }
 
             loadUrl(domainUrl)
-        }
-    }
-
-    /**
-     * Adds a JavaScript interface to this WebView.
-     * This method allows Java objects to be exposed to JavaScript in the WebView.
-     *
-     * @param obj The JavaScript interface object to add.
-     *            This object must be an instance of [JavaScriptInterface].
-     * @throws BrickException if there is an error adding the JavaScript interface.
-     *
-     * @see [android.webkit.WebView.addJavascriptInterface]
-     */
-    @Throws(BrickException::class)
-    @SuppressLint("JavascriptInterface")
-    fun addJavascriptInterface(obj: JavaScriptInterface<out WXInterface>) {
-        with(mDefaultWxOptions) {
-            this.addJavascriptInterface(obj)
-        }
-    }
-
-    /**
-     * Adds multiple JavaScript interfaces to the WebView.
-     *
-     * This method iterates over the provided JavaScript interfaces and adds each one individually
-     * using the [addJavascriptInterface] method that accepts a single interface.
-     *
-     * @param obj A vararg of [JavaScriptInterface] objects to be added.
-     * @throws BrickException if any error occurs during the addition of interfaces,
-     *                        though this specific overload doesn't directly throw it but
-     *                        the underlying single-interface method might.
-     */
-    @Throws(BrickException::class)
-    fun addJavascriptInterface(vararg obj: JavaScriptInterface<out WXInterface>) {
-        with(mDefaultWxOptions) {
-            obj.forEach { addJavascriptInterface(it) }
         }
     }
 
