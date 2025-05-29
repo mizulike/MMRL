@@ -31,36 +31,37 @@ import com.dergoogler.mmrl.webui.util.WebUIOptions
  * - Utility functions for running JavaScript code and handling errors.
  * - Console logging integration.
  *
- * @property mOptions The options for this WebUIView.
+ * @property options The options for this WebUIView.
  * @property interfaces A set of JavaScript interface names that have been added to this WebView.
  * @property console A [WXConsole] implementation for logging messages from the WebView.
  */
-open class WebUIView : WebView {
-    protected val mOptions: WebUIOptions
+@SuppressLint("ViewConstructor")
+open class WebUIView(
+    protected val options: WebUIOptions,
+) : WebView(options.context) {
     internal var mSwipeView: WXSwipeRefresh? = null
 
-    constructor(options: WebUIOptions) : super(options) {
-        this.mOptions = options
+    constructor(context: Context) : this(WebUIOptions(context = context)) {
+        throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        this.mOptions = createDefaultOptions() as WebUIOptions
+    constructor(context: Context, attrs: AttributeSet) : this(WebUIOptions(context = context)) {
+        throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        this.mOptions = createDefaultOptions() as WebUIOptions
+    constructor(
+        context: Context,
+        attrs: AttributeSet,
+        defStyle: Int,
+    ) : this(WebUIOptions(context = context)) {
+        throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
 
     protected val interfaces = hashSetOf<String>()
 
-
     fun <R> options(block: WebUIOptions.() -> R): R? {
         return try {
-            block(mOptions)
+            block(options)
         } catch (e: Exception) {
             Log.e(TAG, "Failed to get options:", e)
             null
@@ -68,7 +69,7 @@ open class WebUIView : WebView {
     }
 
     fun postMessage(message: String) {
-        val uri = mOptions.domain
+        val uri = options.domain
 
         if (WebViewFeature.isFeatureSupported(WebViewFeature.POST_WEB_MESSAGE)) {
             val compatMessage = WebMessageCompat(message)
@@ -86,7 +87,7 @@ open class WebUIView : WebView {
     fun postEventHandler(event: WXEventHandler) {
         val activity = context.findActivity()
         if (activity == null) {
-            console.error("Activity not available for postEvent")
+            console.error("[$TAG] Activity not available for postEvent")
             return
         }
 
@@ -97,11 +98,6 @@ open class WebUIView : WebView {
                 adapter.toJson(event)
             )
         }
-    }
-
-    @Throws(UnsupportedOperationException::class)
-    protected fun createDefaultOptions(): Any {
-        throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
 
     @UiThread
@@ -116,7 +112,7 @@ open class WebUIView : WebView {
     }
 
     @UiThread
-    fun runJs(script: String) = runOnUiThread { evaluateJavascript(script, null) }
+    fun runJs(script: String) = runPost { evaluateJavascript(script, null) }
 
     @UiThread
     fun runPost(action: WebUIView.() -> Unit) {
@@ -145,7 +141,7 @@ open class WebUIView : WebView {
     }
 
     open fun loadDomain() {
-        this.loadUrl("${mOptions.domain}/index.html")
+        this.loadUrl("${options.domain}/index.html")
     }
 
     @SuppressLint("JavascriptInterface")

@@ -112,7 +112,7 @@ data class WebUIOptions(
 
     val indexFile: String
         get() {
-            val files = webRoot.listFiles { !it.isFile() }
+            val files = webRoot.listFiles { it.isFile() }
 
             if (files == null) return "index.html"
 

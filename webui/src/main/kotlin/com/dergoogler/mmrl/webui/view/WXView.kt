@@ -1,7 +1,6 @@
 package com.dergoogler.mmrl.webui.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
@@ -19,7 +18,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dergoogler.mmrl.ext.BuildCompat
 import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.ext.findActivity
-import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.nullply
 import com.dergoogler.mmrl.webui.client.WXChromeClient
 import com.dergoogler.mmrl.webui.client.WXClient
@@ -35,6 +33,7 @@ import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.util.getRequireNewVersion
+import com.dergoogler.mmrl.webui.view.WebUIView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -74,29 +73,32 @@ import kotlinx.coroutines.withContext
  * @property mSwipeView An optional [SwipeRefreshLayout] that can be associated with this WXView.
  */
 @SuppressLint("SetJavaScriptEnabled")
-open class WXView : WebUIView {
+open class WXView(
+    options: WebUIOptions,
+) : WebUIView(options) {
     private val scope = CoroutineScope(Dispatchers.Main)
     private var initJob: Job? = null
     private var isInitialized = false
-    private val mDefaultWxOptions: WXOptions
+    private val mDefaultWxOptions: WXOptions = createDefaultWxOptions(options)
 
-    constructor(options: WebUIOptions) : super(options) {
-        this.mDefaultWxOptions = createDefaultWxOptions(options)
+    init {
         initWhenReady()
     }
 
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        this.mDefaultWxOptions = createDefaultWxOptions(mOptions)
-        initWhenReady()
+    constructor(context: Context) : this(WebUIOptions(context = context)) {
+        throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
-        context,
-        attrs,
-        defStyleAttr
-    ) {
-        this.mDefaultWxOptions = createDefaultWxOptions(mOptions)
-        initWhenReady()
+    constructor(context: Context, attrs: AttributeSet) : this(WebUIOptions(context = context)) {
+        throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
+    }
+
+    constructor(
+        context: Context,
+        attrs: AttributeSet,
+        defStyle: Int,
+    ) : this(WebUIOptions(context = context)) {
+        throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
 
     val defaultWxOptions: WXOptions get() = mDefaultWxOptions
@@ -139,7 +141,7 @@ open class WXView : WebUIView {
         }
 
         // WebView clients and settings
-        webChromeClient = WXChromeClient(mOptions)
+        webChromeClient = WXChromeClient(options)
 
         settings.apply {
             javaScriptEnabled = true
@@ -154,7 +156,7 @@ open class WXView : WebUIView {
         }
 
         // Background and styling
-        with(mOptions) {
+        with(options) {
             setBackgroundColor(colorScheme.background.toArgb())
             background = colorScheme.background.toArgb().toDrawable()
         }
@@ -173,12 +175,12 @@ open class WXView : WebUIView {
                 right = right.asPx
             )
 
-            if (mOptions.debug) Log.d(TAG, "Insets: $newInsets")
+            if (options.debug) Log.d(TAG, "Insets: $newInsets")
 
-            val client = if (mOptions.client != null) {
-                mOptions.client(mOptions, newInsets)
+            val client = if (options.client != null) {
+                options.client(options, newInsets)
             } else {
-                WXClient(mOptions, newInsets)
+                WXClient(options, newInsets)
             }
 
             client.mSwipeView = mSwipeView
@@ -201,14 +203,14 @@ open class WXView : WebUIView {
             FileInputInterface.factory(),
             ApplicationInterface.factory(),
             FileInterface.factory(),
-            //ModuleInterface.factory(),
+            ModuleInterface.factory(),
             UserManagerInterface.factory(),
             PackageManagerInterface.factory(),
         )
 
-        if (mOptions.config.dexFiles.isNotEmpty()) {
-            for (dexFile in mOptions.config.dexFiles) {
-                val interfaceObj = dexFile.getInterface(context, mOptions.modId)
+        if (options.config.dexFiles.isNotEmpty()) {
+            for (dexFile in options.config.dexFiles) {
+                val interfaceObj = dexFile.getInterface(context, options.modId)
                 if (interfaceObj != null) {
                     addJavascriptInterface(interfaceObj)
                 }
