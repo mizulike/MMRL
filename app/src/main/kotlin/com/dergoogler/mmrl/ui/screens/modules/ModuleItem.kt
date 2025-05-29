@@ -50,6 +50,7 @@ import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.LocalCover
+import com.dergoogler.mmrl.webui.activity.WXActivity.Companion.launchWebUIX
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
@@ -73,10 +74,7 @@ fun ModuleItem(
 
     val canWenUIAccessed = isProviderAlive && module.hasWebUI && module.state != State.REMOVE
     val clicker: (() -> Unit)? = canWenUIAccessed nullable {
-        WebUIActivity.start(
-            context = context,
-            modId = module.id
-        )
+        context.launchWebUIX<WebUIActivity>(module.id)
     }
 
     Card(

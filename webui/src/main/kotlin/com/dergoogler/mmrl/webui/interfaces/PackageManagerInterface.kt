@@ -161,6 +161,7 @@ class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
     private val um get(): HiddenUserManager = Platform.userManager
 
     override var name: String = "\$packageManager"
+    override var tag: String = "PackageManagerInterface"
 
     companion object {
         fun factory() = JavaScriptInterface(PackageManagerInterface::class.java)

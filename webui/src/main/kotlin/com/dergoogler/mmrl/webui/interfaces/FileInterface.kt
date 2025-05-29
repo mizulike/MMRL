@@ -11,6 +11,8 @@ class FileInterface(
     wxOptions: WXOptions
 ) : WXInterface(wxOptions) {
     override var name: String = modId.sanitizedIdWithFile
+    override var tag: String = "FileInterface"
+
     companion object {
         fun factory() = JavaScriptInterface(FileInterface::class.java)
     }

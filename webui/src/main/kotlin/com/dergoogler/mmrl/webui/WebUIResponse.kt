@@ -55,7 +55,7 @@ data class Injection(
 )
 
 @Throws(IOException::class)
-fun com.dergoogler.mmrl.platform.file.SuFile.asResponse(injects: List<Injection>? = null): WebResourceResponse {
+fun SuFile.asResponse(injects: List<Injection>? = null): WebResourceResponse {
     val mimeType = MimeUtil.getMimeFromFileName(path)
     val status = checkStatus()
 

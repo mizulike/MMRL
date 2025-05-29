@@ -13,6 +13,7 @@ class UserManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions) {
     private val um get(): HiddenUserManager = Platform.userManager
 
     override var name: String = "\$userManager"
+    override var tag: String = "UserManagerInterface"
 
     companion object {
         fun factory() = JavaScriptInterface(UserManagerInterface::class.java)

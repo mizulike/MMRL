@@ -36,6 +36,7 @@ class ModuleInterface(
     wxOptions: WXOptions,
 ) : WXInterface(wxOptions) {
     override var name: String = "$${modId.sanitizedId}"
+    override var tag: String = "ModuleInterface"
 
     companion object {
         fun factory() = JavaScriptInterface(ModuleInterface::class.java)

@@ -3,15 +3,12 @@ package com.dergoogler.mmrl.webui.view
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.Canvas
 import android.util.AttributeSet
 import android.util.Log
 import android.view.ViewGroup.LayoutParams
 import android.view.WindowInsetsController
-import android.webkit.WebMessage
 import android.webkit.WebView
 import android.widget.FrameLayout
-import androidx.annotation.UiThread
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.ViewCompat
@@ -19,13 +16,11 @@ import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import androidx.webkit.WebMessageCompat
-import androidx.webkit.WebViewCompat
-import androidx.webkit.WebViewFeature
 import com.dergoogler.mmrl.ext.BuildCompat
 import com.dergoogler.mmrl.ext.exception.BrickException
-import com.dergoogler.mmrl.ext.moshi.moshi
+import com.dergoogler.mmrl.ext.findActivity
 import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.nullply
 import com.dergoogler.mmrl.webui.client.WXChromeClient
 import com.dergoogler.mmrl.webui.client.WXClient
 import com.dergoogler.mmrl.webui.interfaces.ApplicationInterface
@@ -38,7 +33,6 @@ import com.dergoogler.mmrl.webui.interfaces.WXInterface
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
-import com.dergoogler.mmrl.webui.model.WXEventHandler
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.util.getRequireNewVersion
 import kotlinx.coroutines.CoroutineScope
@@ -76,30 +70,22 @@ import kotlinx.coroutines.withContext
  *   You must use the constructor with [WebUIOptions].
  *
  * @property mOptions The [WebUIOptions] used to configure this WXView.
- * @property activity The [Activity] hosting this WXView, lazily initialized.
  * @property defaultWxOptions The default [WXOptions] created for this WXView.
  * @property mSwipeView An optional [SwipeRefreshLayout] that can be associated with this WXView.
  */
 @SuppressLint("SetJavaScriptEnabled")
-open class WXView : WebView {
-    private val mOptions: WebUIOptions
-    private val activity: Activity? by lazy { mOptions.findActivity() }
+open class WXView : WebUIView {
     private val scope = CoroutineScope(Dispatchers.Main)
     private var initJob: Job? = null
     private var isInitialized = false
     private val mDefaultWxOptions: WXOptions
-    internal var mSwipeView: WXSwipeRefresh? = null
 
-    private val interfaces = hashSetOf<String>()
-
-    constructor(options: WebUIOptions) : super(options.context) {
-        this.mOptions = options
+    constructor(options: WebUIOptions) : super(options) {
         this.mDefaultWxOptions = createDefaultWxOptions(options)
         initWhenReady()
     }
 
     constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {
-        this.mOptions = createDefaultOptions() as WebUIOptions
         this.mDefaultWxOptions = createDefaultWxOptions(mOptions)
         initWhenReady()
     }
@@ -109,7 +95,6 @@ open class WXView : WebView {
         attrs,
         defStyleAttr
     ) {
-        this.mOptions = createDefaultOptions() as WebUIOptions
         this.mDefaultWxOptions = createDefaultWxOptions(mOptions)
         initWhenReady()
     }
@@ -121,15 +106,6 @@ open class WXView : WebView {
         webView = this,
         options = options
     )
-
-    @Throws(UnsupportedOperationException::class)
-    private fun createDefaultOptions(): Any {
-        throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
-    }
-
-    override fun onDraw(canvas: Canvas) {
-        super.onDraw(canvas)
-    }
 
     private fun initWhenReady() {
         // Basic setup that can run immediately
@@ -151,9 +127,11 @@ open class WXView : WebView {
     private fun initView() {
         if (isInitialized) return
 
+        val activity = context.findActivity()
+
         // Window configuration
-        activity.nullable {
-            WindowCompat.setDecorFitsSystemWindows(it.window, false)
+        activity.nullply {
+            WindowCompat.setDecorFitsSystemWindows(window, false)
             if (BuildCompat.atLeastT) {
                 windowInsetsController?.systemBarsBehavior =
                     WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
@@ -223,7 +201,7 @@ open class WXView : WebView {
             FileInputInterface.factory(),
             ApplicationInterface.factory(),
             FileInterface.factory(),
-            ModuleInterface.factory(),
+            //ModuleInterface.factory(),
             UserManagerInterface.factory(),
             PackageManagerInterface.factory(),
         )
@@ -246,11 +224,6 @@ open class WXView : WebView {
     private fun cleanup() {
         initJob?.cancel()
 
-        // remove all interfaces
-        for (obj in interfaces) {
-            removeJavascriptInterface(obj)
-        }
-
         stopLoading()
         webChromeClient = null
         removeView(this)
@@ -262,47 +235,6 @@ open class WXView : WebView {
     private val Int.asPx: Int
         get() = (this / context.resources.displayMetrics.density).toInt()
 
-    fun <R> options(block: WebUIOptions.() -> R): R? {
-        return try {
-            block(mOptions)
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to get options:", e)
-            null
-        }
-    }
-
-    fun postMessage(message: String) {
-        val uri = mOptions.domain
-
-        if (WebViewFeature.isFeatureSupported(WebViewFeature.POST_WEB_MESSAGE)) {
-            val compatMessage = WebMessageCompat(message)
-            WebViewCompat.postWebMessage(
-                this,
-                compatMessage,
-                uri
-            )
-        } else {
-            val baseMessage = WebMessage(message)
-            super.postWebMessage(baseMessage, uri)
-        }
-    }
-
-    fun postEventHandler(event: WXEventHandler) {
-        if (activity == null) {
-            val err = BrickException("Activity not available for postEvent")
-            Log.e(TAG, err.toString())
-            throwJsError(err)
-            return
-        }
-
-        val adapter = moshi.adapter(WXEventHandler::class.java)
-
-        options {
-            postMessage(
-                adapter.toJson(event)
-            )
-        }
-    }
 
     override fun destroy() {
         cleanup()
@@ -316,7 +248,7 @@ open class WXView : WebView {
      * it loads a "require new version" page. Otherwise, it loads the
      * `domainUrl` from the options.
      */
-    fun loadDomain() {
+    override fun loadDomain() {
         options {
             if (requireNewAppVersion?.required == true) {
                 loadData(
@@ -328,51 +260,6 @@ open class WXView : WebView {
 
             loadUrl(domainUrl)
         }
-    }
-
-    @UiThread
-    fun runOnUiThread(block: Activity.() -> Unit) {
-        activity?.runOnUiThread {
-            block(activity!!)
-        } ?: throwJsError(Exception("Activity not found"))
-    }
-
-    @UiThread
-    fun runJs(script: String) = runOnUiThread { evaluateJavascript(script, null) }
-
-    @UiThread
-    fun runPost(action: WXView.() -> Unit) {
-        post { action(this) }
-    }
-
-    @UiThread
-    fun throwJsError(e: Exception) = runJs("new Error('${e.message}', { cause: '${e.cause}' })")
-
-    @UiThread
-    fun runJsCatching(block: () -> Unit) {
-        try {
-            block()
-        } catch (e: Exception) {
-            throwJsError(e)
-        }
-    }
-
-    /**
-     * Adds a JavaScript interface to this WebView.
-     *
-     * **Warning:** This method is deprecated for direct use on `WXView`.
-     * You should use the overload `addJavascriptInterface(JavaScriptInterface)` instead,
-     * which provides better type safety and integration with the **WebUI X Engine**.
-     *
-     * @param obj The Java object to inject into the WebView's JavaScript context.
-     * @param name The name used to expose the object in JavaScript.
-     * @see [android.webkit.WebView.addJavascriptInterface]
-     * @see addJavascriptInterface
-     */
-    @SuppressLint("JavascriptInterface")
-    override fun addJavascriptInterface(obj: Any, name: String) {
-        interfaces += name
-        super.addJavascriptInterface(obj, name)
     }
 
     /**
@@ -388,14 +275,8 @@ open class WXView : WebView {
     @Throws(BrickException::class)
     @SuppressLint("JavascriptInterface")
     fun addJavascriptInterface(obj: JavaScriptInterface<out WXInterface>) {
-        try {
-            val js = obj.createNew(mDefaultWxOptions)
-            addJavascriptInterface(js.instance, js.name)
-        } catch (e: Exception) {
-            throw BrickException(
-                message = "Couldn't add a new JavaScript interface.",
-                cause = e,
-            )
+        with(mDefaultWxOptions) {
+            this.addJavascriptInterface(obj)
         }
     }
 
@@ -412,7 +293,9 @@ open class WXView : WebView {
      */
     @Throws(BrickException::class)
     fun addJavascriptInterface(vararg obj: JavaScriptInterface<out WXInterface>) {
-        obj.forEach { addJavascriptInterface(it) }
+        with(mDefaultWxOptions) {
+            obj.forEach { addJavascriptInterface(it) }
+        }
     }
 
     companion object {

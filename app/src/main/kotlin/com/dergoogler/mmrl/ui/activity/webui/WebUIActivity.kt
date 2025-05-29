@@ -5,7 +5,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import androidx.lifecycle.lifecycleScope
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.ext.managerVersion
@@ -18,7 +17,6 @@ import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
 import com.dergoogler.mmrl.utils.initPlatform
 import com.dergoogler.mmrl.webui.activity.WXActivity
 import com.dergoogler.mmrl.webui.util.WebUIOptions
-import com.dergoogler.mmrl.webui.view.WXView
 import com.dergoogler.mmrl.webui.view.WebUIXView
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -91,26 +89,11 @@ class WebUIActivity : WXActivity() {
         setContentView(loading)
 
         lifecycleScope.launch {
-            val isReady = withTimeoutOrNull(TIMEOUT_MILLIS) {
-                while (!Platform.isAlive) delay(500)
-                initPlatform(baseContext, userPrefs.workingMode.toPlatform())
-            } ?: throw BrickException("Platform initialization timed out")
+            val deferred = Platform.getAsyncDeferred(this, null) {
+                view
+            }
 
-            if (!isReady) throw BrickException("Platform failed to initialize")
-
-            setContentView(view)
-        }
-    }
-
-    companion object {
-        fun start(context: Context, modId: ModId) {
-            val intent = Intent(context, WebUIActivity::class.java)
-                .apply {
-                    addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
-                    putModId(modId)
-                }
-
-            context.startActivity(intent)
+            setContentView(deferred.await())
         }
     }
 }

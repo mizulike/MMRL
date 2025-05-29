@@ -7,10 +7,12 @@ import android.os.Handler
 import android.webkit.WebView
 import androidx.annotation.Keep
 import androidx.annotation.UiThread
+import com.dergoogler.mmrl.ext.findActivity
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
+import com.dergoogler.mmrl.webui.view.WebUIView
 import kotlinx.coroutines.Runnable
 
 interface WXConsole {
@@ -21,7 +23,7 @@ interface WXConsole {
 }
 
 data class WXOptions(
-    val webView: WXView,
+    val webView: WebUIView,
     val options: WebUIOptions,
 )
 
@@ -44,16 +46,16 @@ data class WXOptions(
 open class WXInterface(
     val wxOptions: WXOptions,
 ) : ContextWrapper(wxOptions.options.context) {
-    val webView: WXView = wxOptions.webView
+    val webView: WebUIView = wxOptions.webView
     val options: WebUIOptions = wxOptions.options
     val context: Context = applicationContext
-    val activity: Activity? = options.findActivity()
     val modId: ModId = options.modId
     val config: WebUIConfig = options.config
+    val activity: Activity? = context.findActivity()
 
     fun <R> activity(block: Activity.() -> R): R? {
         if (activity == null) {
-            throwJsError(Exception("Activity not found"))
+            console.error("[$tag->activity] Activity not found")
             return null
         }
 
@@ -68,6 +70,15 @@ open class WXInterface(
      * Attempting to access it before initialization will result in a [kotlin.UninitializedPropertyAccessException].
      */
     open lateinit var name: String
+
+    /**
+     * A string tag used for logging and identification purposes.
+     *
+     * This tag helps in categorizing log messages and can be useful for debugging.
+     * By default, it is initialized to "WXInterface", but it can be overridden
+     * in subclasses to provide more specific identification.
+     */
+    open var tag: String = "WXInterface"
 
     /**
      * Executes the given [block] of code on the UI thread.
@@ -118,7 +129,7 @@ open class WXInterface(
      * @see WebView.post
      */
     @UiThread
-    fun runPost(action: WebView.() -> Unit) = webView.runPost(action)
+    fun runPost(action: WebUIView.() -> Unit) = webView.runPost(action)
 
     @UiThread
     fun runJsCatching(block: () -> Unit) = webView.runJsCatching(block)
@@ -162,7 +173,7 @@ open class WXInterface(
     @UiThread
     fun runMainLooperPost(action: Activity.() -> Unit) {
         if (activity == null) {
-            throwJsError(Exception("Activity not found"))
+            console.error("[$tag->runMainLooperPost] Activity not found")
             return
         }
 
@@ -174,7 +185,7 @@ open class WXInterface(
     @UiThread
     fun runMainLooperPost(r: Runnable) {
         if (activity == null) {
-            throwJsError(Exception("Activity not found"))
+            console.error("[$tag->runMainLooperPost/Runnable] Activity not found")
             return
         }
 
@@ -205,30 +216,7 @@ open class WXInterface(
         );
     }
 
-    val console = object : WXConsole {
-        private val String.escape get() = this.replace("'", "\\'")
-
-        private fun levelParser(level: String, message: String, vararg args: String?) =
-            runJs(
-                "console.$level('${message.escape}'${
-                    args.joinToString(
-                        prefix = if (args.isNotEmpty()) ", " else "",
-                        separator = ", "
-                    ) { "'${it?.escape}'" }
-                })")
-
-        override fun error(message: String, vararg args: String?) =
-            levelParser("error", message, *args)
-
-        override fun info(message: String, vararg args: String?) =
-            levelParser("info", message, *args)
-
-        override fun log(message: String, vararg args: String?) =
-            levelParser("log", message, *args)
-
-        override fun warn(message: String, vararg args: String?) =
-            levelParser("warn", message, *args)
-    }
+    val console = webView.console
 
     fun <R> runTry(
         message: String = "Unknown Error",
@@ -237,7 +225,7 @@ open class WXInterface(
     ): R = try {
         block()
     } catch (e: Throwable) {
-        runJs("new Error('$message', { cause: \"${e.message}\" })")
+        runJs("new Error('$message', { cause: \"${e.cause}\" })")
         default
     }
 

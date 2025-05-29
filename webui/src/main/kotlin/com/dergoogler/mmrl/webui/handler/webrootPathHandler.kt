@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.webui.handler
 
 import android.util.Log
+import android.webkit.WebResourceResponse
 import com.dergoogler.mmrl.ext.isNull
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
@@ -11,6 +12,7 @@ import com.dergoogler.mmrl.webui.asResponse
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.notFoundResponse
 import com.dergoogler.mmrl.webui.util.WebUIOptions
+import java.io.ByteArrayOutputStream
 import java.io.IOException
 
 fun webrootPathHandler(

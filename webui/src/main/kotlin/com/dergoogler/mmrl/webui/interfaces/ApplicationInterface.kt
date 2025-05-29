@@ -12,6 +12,7 @@ class ApplicationInterface(
     wxOptions: WXOptions,
 ) : WXInterface(wxOptions) {
     override var name: String = "webui"
+    override var tag: String = "ApplicationInterface"
 
     companion object {
         fun factory() = JavaScriptInterface(ApplicationInterface::class.java)

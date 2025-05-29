@@ -72,16 +72,6 @@ data class WebUIOptions(
     val client: ((WebUIOptions, Insets) -> WXClient)? = null,
     val cls: Class<out WXActivity>? = null,
 ) : ContextWrapper(context) {
-    fun findActivity(): Activity? {
-        var ctx = baseContext
-        while (ctx is ContextWrapper) {
-            if (ctx is Activity) return ctx
-            ctx = ctx.baseContext
-        }
-
-        return null
-    }
-
     private val packageManager
         get() = Platform.get(null) {
             packageManager

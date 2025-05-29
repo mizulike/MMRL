@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.webui.activity
 
 import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -18,9 +19,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
 import com.dergoogler.mmrl.ext.BuildCompat
+import com.dergoogler.mmrl.ext.nullply
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.getModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.confirm
 import com.dergoogler.mmrl.webui.R
@@ -302,7 +305,64 @@ open class WXActivity : ComponentActivity() {
         }
     }
 
-    private companion object {
-        const val TAG = "WXActivity"
+    companion object {
+        private const val TAG = "WXActivity"
+
+        /**
+         * Launches a [WXActivity] of the specified type [T].
+         *
+         * This extension function simplifies the process of starting a [WXActivity].
+         * It creates an [Intent] for the given [WXActivity] subclass [T],
+         * adds the `FLAG_ACTIVITY_NEW_DOCUMENT` and `FLAG_ACTIVITY_MULTIPLE_TASK` flags,
+         * puts the provided [modId] into the intent extras, and optionally allows
+         * further configuration of the [Intent] via the [intentConfig] lambda.
+         *
+         * @param T The specific subclass of [WXActivity] to launch.
+         * @param modId The [ModId] to be passed to the activity.
+         * @param intentConfig An optional lambda to configure the [Intent] before starting the activity.
+         */
+        inline fun <reified T : WXActivity> Context.launchWebUIX(
+            modId: ModId,
+            noinline intentConfig: (Intent.() -> Unit)? = null,
+        ) {
+            val intent = Intent(this, T::class.java)
+                .apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                    putModId(modId)
+                    intentConfig.nullply { this() }
+                }
+
+            this.startActivity(intent)
+        }
+
+        /**
+         * Launches a new instance of the specified [ComponentActivity] (`T`) as a Web UI.
+         *
+         * This function creates an [Intent] to start the activity `T`. It applies the following configurations
+         * to the intent:
+         * - Adds `Intent.FLAG_ACTIVITY_NEW_DOCUMENT` and `Intent.FLAG_ACTIVITY_MULTIPLE_TASK` flags.
+         * - Puts the provided `id` (as a [ModId]) into the intent's extras.
+         * - Allows for additional intent configuration via the optional `intentConfig` lambda.
+         *
+         * After configuring the intent, it starts the activity.
+         *
+         * @param T The type of the [ComponentActivity] to launch. Must be a subclass of [ComponentActivity].
+         * @param id The identifier string for the module, which will be converted to a [ModId].
+         * @param intentConfig An optional lambda function to further configure the [Intent] before launching the activity.
+         *                     This lambda will be executed with the [Intent] as its receiver.
+         */
+        inline fun <reified T : ComponentActivity> Context.launchWebUI(
+            id: String,
+            noinline intentConfig: (Intent.() -> Unit)? = null,
+        ) {
+            val intent = Intent(this, T::class.java)
+                .apply {
+                    addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
+                    putModId(id)
+                    intentConfig.nullply { this() }
+                }
+
+            this.startActivity(intent)
+        }
     }
 }

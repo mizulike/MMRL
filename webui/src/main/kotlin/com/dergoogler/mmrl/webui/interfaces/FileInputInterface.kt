@@ -12,6 +12,7 @@ class FileInputInterface(
     wxOptions: WXOptions,
 ) : WXInterface(wxOptions) {
     override var name: String = modId.sanitizedIdWithFileInputStream
+    override var tag: String = "FileInputInterface"
 
     companion object {
         fun factory() = JavaScriptInterface(FileInputInterface::class.java)

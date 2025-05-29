@@ -356,7 +356,6 @@ class SuFile(
         return files.toArray(arrayOfNulls<SuFile>(files.size))
     }
 
-
     @Throws(IOException::class)
     fun newInputStream(): InputStream = fallback(
         root = {
