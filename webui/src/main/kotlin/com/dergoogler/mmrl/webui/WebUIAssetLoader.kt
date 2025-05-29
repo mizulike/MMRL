@@ -133,7 +133,7 @@ private fun findBodyTag(htmlBytes: ByteArray): Int {
 }
 
 @Throws(IOException::class)
-fun com.dergoogler.mmrl.platform.file.SuFile.handleSvgzStream(
+fun SuFile.handleSvgzStream(
     stream: InputStream,
 ): InputStream {
     return if (extension === "svgz") GZIPInputStream(stream) else stream
