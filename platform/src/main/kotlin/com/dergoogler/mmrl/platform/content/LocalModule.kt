@@ -2,37 +2,21 @@ package com.dergoogler.mmrl.platform.content
 
 import android.os.Parcelable
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.actionFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.bootCompletedFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.disableFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.postFsDataFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.postMountFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.removeFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.sepolicyFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.serviceFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.systemDir
+import com.dergoogler.mmrl.platform.model.ModId.Companion.systemPropFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.uninstallFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.updateFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.webrootDir
 import com.dergoogler.mmrl.platform.model.ModuleConfig.Companion.asModuleConfig
 import kotlinx.parcelize.Parcelize
-
-@Parcelize
-data class LocalModuleFeatures(
-    val webui: Boolean,
-    val action: Boolean,
-    val service: Boolean,
-    val postFsData: Boolean,
-    val resetprop: Boolean,
-    val sepolicy: Boolean,
-    val zygisk: Boolean,
-    val apks: Boolean,
-    val postMount: Boolean,
-    val bootCompleted: Boolean,
-) : Parcelable {
-    companion object {
-        val EMPTY = LocalModuleFeatures(
-            webui = false,
-            action = false,
-            service = false,
-            postFsData = false,
-            resetprop = false,
-            sepolicy = false,
-            zygisk = false,
-            apks = false,
-            postMount = false,
-            bootCompleted = false,
-        )
-    }
-}
 
 @Parcelize
 data class LocalModule(
@@ -45,11 +29,22 @@ data class LocalModule(
     val updateJson: String,
     val state: State,
     val size: Long,
-    val features: LocalModuleFeatures,
     val lastUpdated: Long,
 ) : Parcelable {
-
-    val config get() = id.asModuleConfig
-
-    companion object
+    companion object {
+        val LocalModule.config get() = id.asModuleConfig
+        val LocalModule.hasWebUI get() = id.webrootDir.exists()
+        val LocalModule.hasAction get() = id.actionFile.exists()
+        val LocalModule.hasService get() = id.serviceFile.exists()
+        val LocalModule.hasPostFsData get() = id.postFsDataFile.exists()
+        val LocalModule.hasPostMount get() = id.postMountFile.exists()
+        val LocalModule.hasSystemProp get() = id.systemPropFile.exists()
+        val LocalModule.hasBootCompleted get() = id.bootCompletedFile.exists()
+        val LocalModule.hasSepolicy get() = id.sepolicyFile.exists()
+        val LocalModule.hasUninstall get() = id.uninstallFile.exists()
+        val LocalModule.hasSystem get() = id.systemDir.exists()
+        val LocalModule.hasDisable get() = id.disableFile.exists()
+        val LocalModule.hasRemove get() = id.removeFile.exists()
+        val LocalModule.hasUpdate get() = id.updateFile.exists()
+    }
 }

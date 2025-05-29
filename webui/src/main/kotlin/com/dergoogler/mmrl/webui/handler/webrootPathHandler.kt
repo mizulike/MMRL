@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.webui.handler
 
 import android.util.Log
+import com.dergoogler.mmrl.ext.isNull
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.webui.InjectionType
@@ -118,7 +119,11 @@ fun webrootPathHandler(
                 }
 
                 configStyleBase.exists {
-                    it.listFiles { f -> f.exists() && f.extension == "css" }.forEach {
+                    val files = it.listFiles { f -> f.exists() && f.extension == "css" }
+
+                    if (files == null) return@exists
+
+                    files.forEach {
                         addInjection {
                             appendLine("<link data-internal rel=\"stylesheet\" href=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/style/${it.name}\" type=\"text/css\" />")
                         }
@@ -134,7 +139,11 @@ fun webrootPathHandler(
                 }
 
                 customJsHead.exists {
-                    it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
+                    val files = it.listFiles { f -> f.exists() && f.extension == "js" }
+
+                    if (files == null) return@exists
+
+                    files.forEach {
                         addInjection(InjectionType.HEAD) {
                             appendLine("<script data-internal src=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/js/head/${it.name}\" type=\"module\"></script>")
                         }
@@ -142,7 +151,11 @@ fun webrootPathHandler(
                 }
 
                 customJsBody.exists {
-                    it.listFiles { f -> f.exists() && f.extension == "js" }.forEach {
+                    val files = it.listFiles { f -> f.exists() && f.extension == "js" }
+
+                    if (files == null) return@exists
+
+                    files.forEach {
                         addInjection(InjectionType.BODY) {
                             appendLine("<script data-internal src=\"https://mui.kernelsu.org/.adb/.config/${options.modId.id}/js/body/${it.name}\" type=\"module\"></script>")
                         }

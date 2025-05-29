@@ -3,37 +3,17 @@ package com.dergoogler.mmrl.platform.model
 import android.content.Intent
 import android.os.Build
 import android.os.Parcelable
+import androidx.annotation.Keep
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
+@Keep
 @Parcelize
 @JsonClass(generateAdapter = true)
 data class ModId(var id: String) : Parcelable {
-    /**
-     * Represents the root directory of a module.
-     *
-     * This property constructs a [SuFile] object pointing to the path
-     * `/data/adb/modules/<module_id>`. This is the base directory where
-     * a Magisk module's files are typically located.
-     *
-     * @return A [SuFile] instance representing the module's root directory.
-     */
-    val root get() = SuFile("/data/adb/modules/$id")
-
-    /**
-     * Represents the webroot directory for a module.
-     *
-     * This property constructs a [SuFile] object pointing to the path
-     * `/data/adb/modules/<module_id>/webroot`. This directory is typically
-     * used by Magisk modules to store web-accessible files.
-     *
-     * @return A [SuFile] instance representing the module's webroot directory.
-     */
-    val webroot get() = SuFile(root, "webroot")
-
     val sanitizedId: String
         get() {
             return id.replace(Regex("[^a-zA-Z0-9_]"), "_")
@@ -78,6 +58,7 @@ data class ModId(var id: String) : Parcelable {
         const val INTENT_MOD_ID = "MOD_ID"
         const val INTENT_ID = "id"
 
+        @get:Keep
         val String.asModId: ModId
             get() = ModId(this)
 
@@ -155,5 +136,89 @@ data class ModId(var id: String) : Parcelable {
 
             return this == null || this.id.isEmpty()
         }
+
+        /**
+         * A list of all service-related files associated with this Magisk module.
+         * These files are typically shell scripts or directories that are executed
+         * or utilized by the Magisk framework during different stages of the boot process
+         * or when specific actions are triggered.
+         *
+         * The list includes:
+         * - [actionFile]: Script executed when the module is enabled/disabled.
+         * - [serviceFile]: Script executed during the late_start service mode.
+         * - [postFsDataFile]: Script executed after the /data partition is mounted.
+         * - [postMountFile]: Script executed after all partitions are mounted.
+         * - [webrootDir]: Directory for web content served by the module.
+         * - [bootCompletedFile]: Script executed after the boot process is fully completed.
+         * - [sepolicyFile]: File containing SEPolicy rules for the module.
+         */
+        @get:Keep
+        val ModId.serviceFiles
+            get() = listOf(
+                actionFile,
+                serviceFile,
+                postFsDataFile,
+                postMountFile,
+                webrootDir,
+                bootCompletedFile,
+                sepolicyFile
+            )
+
+        /**
+         * A list of all essential files associated with this Magisk module.
+         * This includes service-related files, the uninstall script, the system directory,
+         * and the module properties file.
+         */
+        @get:Keep
+        val ModId.files
+            get() = listOf(
+                *serviceFiles.toTypedArray(),
+                uninstallFile,
+                systemPropFile,
+                systemDir,
+                propFile,
+                disableFile,
+                removeFile,
+                updateFile
+            )
+
+        val ModId.adbDir get() = SuFile(ADB_DIR)
+        val ModId.modulesDir get() = SuFile(adbDir, MODULES_DIR)
+        val ModId.moduleDir get() = SuFile(modulesDir, id)
+        val ModId.webrootDir get() = SuFile(moduleDir, WEBROOT_DIR)
+        val ModId.propFile get() = SuFile(moduleDir, PROP_FILE)
+        val ModId.actionFile get() = SuFile(moduleDir, ACTION_FILE)
+        val ModId.serviceFile get() = SuFile(moduleDir, SERVICE_FILE)
+        val ModId.postFsDataFile get() = SuFile(moduleDir, POST_FS_DATA_FILE)
+        val ModId.postMountFile get() = SuFile(moduleDir, POST_MOUNT_FILE)
+        val ModId.systemPropFile get() = SuFile(moduleDir, SYSTEM_PROP_FILE)
+        val ModId.bootCompletedFile get() = SuFile(moduleDir, BOOT_COMPLETED_FILE)
+        val ModId.sepolicyFile get() = SuFile(moduleDir, SE_POLICY_FILE)
+        val ModId.uninstallFile get() = SuFile(moduleDir, UNINSTALL_FILE)
+        val ModId.systemDir get() = SuFile(moduleDir, SYSTEM_DIR)
+        val ModId.disableFile get() = SuFile(moduleDir, DISABLE_FILE)
+        val ModId.removeFile get() = SuFile(moduleDir, REMOVE_FILE)
+        val ModId.updateFile get() = SuFile(moduleDir, UPDATE_FILE)
+
+        const val ADB_DIR = "/data/adb"
+        const val WEBROOT_DIR = "webroot"
+        const val MODULES_DIR = "modules"
+
+        const val PROP_FILE = "module.prop"
+
+        const val ACTION_FILE = "action.sh"
+        const val BOOT_COMPLETED_FILE = "boot-completed.sh"
+        const val SERVICE_FILE = "service.sh"
+        const val POST_FS_DATA_FILE = "post-fs-data.sh"
+        const val POST_MOUNT_FILE = "post-mount.sh"
+        const val SYSTEM_PROP_FILE = "system.prop"
+        const val SE_POLICY_FILE = "sepolicy.rule"
+        const val UNINSTALL_FILE = "uninstall.sh"
+        const val SYSTEM_DIR = "system"
+
+        // State files
+        const val DISABLE_FILE = "disable"
+        const val REMOVE_FILE = "remove"
+        const val UPDATE_FILE = "update"
     }
 }

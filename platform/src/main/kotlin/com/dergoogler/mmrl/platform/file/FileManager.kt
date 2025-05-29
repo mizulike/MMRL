@@ -43,38 +43,7 @@ class FileManager : IFileManager.Stub() {
 
     override fun list(path: String): Array<String>? = mCache.get(path).list()
 
-    override fun size(
-        path: String,
-        recursive: Boolean,
-        skipPaths: List<String>,
-        skipSymLinks: Boolean,
-    ): Long {
-        return if (recursive) {
-            sizeRecursive(path, skipPaths, skipSymLinks)
-        } else {
-            mCache.get(path).length()
-        }
-    }
-
-    private fun sizeRecursive(
-        path: String,
-        skipPaths: List<String>,
-        skipSymLinks: Boolean,
-    ): Long {
-        val items = list(path) ?: return 0
-
-        return items.sumOf { item ->
-            val file = "$path/$item"
-
-            if (skipPaths.contains(file)) return@sumOf 0L
-
-            if (skipSymLinks && isSymlink(file)) return@sumOf 0L
-
-            if (isDirectory(file)) return@sumOf sizeRecursive(file, skipPaths, skipSymLinks)
-
-            return@sumOf mCache.get(file).length()
-        }
-    }
+    override fun length(path: String): Long = mCache.get(path).length()
 
     override fun stat(path: String): Long = mCache.get(path).lastModified()
     override fun delete(path: String): Boolean {

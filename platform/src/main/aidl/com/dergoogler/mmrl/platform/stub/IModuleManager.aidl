@@ -13,7 +13,7 @@ interface IModuleManager {
     int getVersionCode();
     List<LocalModule> getModules();
     ModuleCompatibility getModuleCompatibility();
-    LocalModule getModuleById(String id);
+    LocalModule getModuleById(in ModId id);
     LocalModule getModuleInfo(String zipPath);
     oneway void reboot(String reason);
     oneway void enable(in ModId id, boolean useShell, IModuleOpsCallback callback);

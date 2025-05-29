@@ -1,22 +1,21 @@
 package com.dergoogler.mmrl.platform.manager
 
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
-import com.dergoogler.mmrl.platform.file.FileManager
+import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.disableFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
+import com.dergoogler.mmrl.platform.model.ModId.Companion.removeFile
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.util.Shell.submit
 
-open class KsuNextModuleManager(
-    fileManager: FileManager,
-) : KernelSUModuleManager(
-    fileManager = fileManager
-) {
+open class KsuNextModuleManager() : KernelSUModuleManager() {
     override fun getModuleCompatibility() = ModuleCompatibility(
         hasMagicMount = false,
         canRestoreModules = true
     )
 
-    override fun enable(id: String, useShell: Boolean, callback: IModuleOpsCallback) {
-        val dir = modulesDir.resolve(id)
+    override fun enable(id: ModId, useShell: Boolean, callback: IModuleOpsCallback) {
+        val dir = id.moduleDir
         if (!dir.exists()) callback.onFailure(id, null)
 
         if (useShell) {
@@ -29,8 +28,8 @@ open class KsuNextModuleManager(
             }
         } else {
             runCatching {
-                dir.resolve("remove").apply { if (exists()) delete() }
-                dir.resolve("disable").apply { if (exists()) delete() }
+                id.removeFile.apply { if (exists()) delete() }
+                id.disableFile.apply { if (exists()) delete() }
             }.onSuccess {
                 callback.onSuccess(id)
             }.onFailure {

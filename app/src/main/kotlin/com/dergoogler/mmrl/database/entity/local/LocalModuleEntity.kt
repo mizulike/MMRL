@@ -1,14 +1,11 @@
 package com.dergoogler.mmrl.database.entity.local
 
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import androidx.room.TypeConverters
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
-import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 import com.dergoogler.mmrl.platform.model.ModId
-
 
 @Entity(tableName = "localModules")
 @TypeConverters
@@ -21,7 +18,6 @@ data class LocalModuleEntity(
     val description: String,
     val state: String,
     val size: Long,
-    @Embedded val features: com.dergoogler.mmrl.platform.content.LocalModuleFeatures,
     val updateJson: String,
     val lastUpdated: Long,
 ) {
@@ -33,7 +29,6 @@ data class LocalModuleEntity(
         author = original.author,
         description = original.description,
         state = original.state.name,
-        features = original.features,
         size = original.size,
         updateJson = original.updateJson,
         lastUpdated = original.lastUpdated,
@@ -48,7 +43,6 @@ data class LocalModuleEntity(
         description = description,
         updateJson = updateJson,
         state = State.valueOf(state),
-        features = features,
         size = size,
         lastUpdated = lastUpdated,
     )

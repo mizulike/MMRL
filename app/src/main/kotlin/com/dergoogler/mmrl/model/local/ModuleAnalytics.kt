@@ -23,7 +23,7 @@ data class ModuleAnalytics(
     private val modulesImg = "/data/adb/ksu/modules.img"
 
     val totalModulesUsageBytes =
-        SuFile("/data/adb/modules").size(true, listOf(modulesImg))
+        SuFile("/data/adb/modules").length(recursive = true, skipPaths = listOf(modulesImg))
     val totalDeviceStorageBytes: Long
         get() {
             val storageManager = context.getSystemService(Context.STORAGE_SERVICE) as StorageManager

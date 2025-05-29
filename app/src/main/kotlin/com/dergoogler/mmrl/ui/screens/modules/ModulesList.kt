@@ -44,6 +44,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.ModulesViewModel
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.platform.model.ModuleConfig
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
@@ -160,7 +161,7 @@ fun ModuleItem(
             }
         },
         startTrailingButton = {
-            module.features.action.takeTrue {
+            module.hasAction.takeTrue {
                 ActionButton(
                     enabled = isProviderAlive && module.state != State.REMOVE && module.state != State.DISABLE,
                     onClick = {

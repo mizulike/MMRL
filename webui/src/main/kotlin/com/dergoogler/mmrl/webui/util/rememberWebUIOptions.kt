@@ -16,6 +16,7 @@ import androidx.core.net.toUri
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
 import com.dergoogler.mmrl.ui.theme.Colors.Companion.getColorScheme
 import com.dergoogler.mmrl.webui.activity.WXActivity
 import com.dergoogler.mmrl.webui.client.WXClient
@@ -107,8 +108,7 @@ data class WebUIOptions(
             platform
         }
 
-    val moduleDir = SuFile("/data/adb/modules", modId.id)
-    val webRoot = SuFile(moduleDir, "webroot")
+    val webRoot = SuFile(modId.moduleDir, "webroot")
 
     fun isDomainSafe(domain: String): Boolean {
         if (debug) {
@@ -120,18 +120,30 @@ data class WebUIOptions(
 
     val config = modId.asWebUIConfig
 
-    val indexFile
-        get() = webRoot.list()
-            .filter { !SuFile(it).isFile }
-            .sortedWith(compareByDescending {
-                when {
-                    it.matches(Regex(".*\\.(wx|webuix)\\.(html|htm)$")) -> 3
-                    it.matches(Regex(".*\\.mmrl\\.(html|htm)$")) -> 2
-                    it.matches(Regex("index\\.(html|htm)$")) -> 1
-                    else -> 0
-                }
-            })
-            .firstOrNull()
+    val indexFile: String
+        get() {
+            val files = webRoot.listFiles { !it.isFile() }
+
+            if (files == null) return "index.html"
+
+            val indexFiles = files.map { it.name }
+
+            val foundFile = indexFiles
+                .sortedWith(compareByDescending {
+                    when {
+                        it.matches(Regex(".*\\.(wx|webuix)\\.(html|htm)$")) -> 3
+                        it.matches(Regex(".*\\.mmrl\\.(html|htm)$")) -> 2
+                        it.matches(Regex("index\\.(html|htm)$")) -> 1
+                        else -> 0
+                    }
+                }).firstOrNull()
+
+            if (foundFile != null) {
+                return foundFile
+            }
+
+            return "index.html"
+        }
 
     private val currentPackageInfo: PackageInfo?
         get() {

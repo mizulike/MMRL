@@ -166,6 +166,7 @@ enum class Platform(val id: String) {
          * @see IFileManager
          */
         val fileManager: IFileManager get() = mService.fileManager
+        internal val fileManagerOrNull: IFileManager? get() = mServiceOrNull?.fileManager
 
         /**
          *  Provides access to package management related information and operations.

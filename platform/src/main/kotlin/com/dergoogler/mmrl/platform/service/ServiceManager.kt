@@ -30,24 +30,16 @@ class ServiceManager(
 
     private val moduleManager by lazy {
         when (platform) {
-            Platform.Magisk -> MagiskModuleManager(
-                fileManager = fileManager
-            )
+            Platform.Magisk -> MagiskModuleManager()
 
             Platform.RKSU,
             Platform.MKSU,
-            Platform.KernelSU -> KernelSUModuleManager(
-                fileManager = fileManager
-            )
+            Platform.KernelSU -> KernelSUModuleManager()
 
             Platform.SukiSU,
-            Platform.KsuNext -> KsuNextModuleManager(
-                fileManager = fileManager
-            )
+            Platform.KsuNext -> KsuNextModuleManager()
 
-            Platform.APatch -> APatchModuleManager(
-                fileManager = fileManager
-            )
+            Platform.APatch -> APatchModuleManager()
 
             else -> throw BrickException(
                 message = "Unknown platform: $platform",

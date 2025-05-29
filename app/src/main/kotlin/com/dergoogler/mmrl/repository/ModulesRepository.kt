@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.repository
 import com.dergoogler.mmrl.database.entity.Repo
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.stub.IRepoManager
 import kotlinx.coroutines.Dispatchers
@@ -23,7 +24,7 @@ class ModulesRepository @Inject constructor(
         }
     }
 
-    suspend fun getLocal(id: String) = withContext(Dispatchers.IO) {
+    suspend fun getLocal(id: ModId) = withContext(Dispatchers.IO) {
         val module = Platform.moduleManager.getModuleById(id)
         localRepository.insertLocal(module)
     }

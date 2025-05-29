@@ -47,7 +47,7 @@ class FileInterface(
     @JavascriptInterface
     fun list(path: String, delimiter: String): String? =
         runTryJsWith(SuFile(path), "Error while listing \\'$path\\'") {
-            return@runTryJsWith list().joinToString(delimiter)
+            return@runTryJsWith list()?.joinToString(delimiter)
         }
 
     @JavascriptInterface

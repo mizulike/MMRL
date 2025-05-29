@@ -2,16 +2,15 @@ package com.dergoogler.mmrl.platform.manager
 
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.content.NullableBoolean
-import com.dergoogler.mmrl.platform.file.FileManager
+import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.disableFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
+import com.dergoogler.mmrl.platform.model.ModId.Companion.removeFile
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.platform.util.Shell.submit
 
-open class APatchModuleManager(
-    val fileManager: FileManager,
-) : BaseModuleManager(
-    fileManager = fileManager
-) {
+open class APatchModuleManager() : BaseModuleManager() {
     override fun getManagerName(): String = "APatch"
 
     override fun getVersion(): String = mVersion
@@ -29,14 +28,14 @@ open class APatchModuleManager(
     override fun uidShouldUmount(uid: Int): Boolean = false
 
     override fun getModuleCompatibility() = ModuleCompatibility(
-        hasMagicMount = fileManager.exists("/data/adb/.bind_mount_enable") && (versionCode >= 11011 && !fileManager.exists(
+        hasMagicMount = SuFile("/data/adb/.bind_mount_enable").exists() && (versionCode >= 11011 && !SuFile(
             "/data/adb/.overlay_enable"
-        )),
+        ).exists()),
         canRestoreModules = false
     )
 
-    override fun enable(id: String, useShell: Boolean, callback: IModuleOpsCallback) {
-        val dir = modulesDir.resolve(id)
+    override fun enable(id: ModId, useShell: Boolean, callback: IModuleOpsCallback) {
+        val dir = id.moduleDir
         if (!dir.exists()) callback.onFailure(id, null)
 
         if (useShell) {
@@ -59,8 +58,8 @@ open class APatchModuleManager(
         }
     }
 
-    override fun disable(id: String, useShell: Boolean, callback: IModuleOpsCallback) {
-        val dir = modulesDir.resolve(id)
+    override fun disable(id: ModId, useShell: Boolean, callback: IModuleOpsCallback) {
+        val dir = id.moduleDir
         if (!dir.exists()) return callback.onFailure(id, null)
 
         if (useShell) {
@@ -73,8 +72,8 @@ open class APatchModuleManager(
             }
         } else {
             runCatching {
-                dir.resolve("remove").apply { if (exists()) delete() }
-                dir.resolve("disable").createNewFile()
+                id.removeFile.apply { if (exists()) delete() }
+                id.disableFile.createNewFile()
             }.onSuccess {
                 callback.onSuccess(id)
             }.onFailure {
@@ -83,8 +82,8 @@ open class APatchModuleManager(
         }
     }
 
-    override fun remove(id: String, useShell: Boolean, callback: IModuleOpsCallback) {
-        val dir = modulesDir.resolve(id)
+    override fun remove(id: ModId, useShell: Boolean, callback: IModuleOpsCallback) {
+        val dir = id.moduleDir
         if (!dir.exists()) return callback.onFailure(id, null)
 
         if (useShell) {
@@ -97,8 +96,8 @@ open class APatchModuleManager(
             }
         } else {
             runCatching {
-                dir.resolve("disable").apply { if (exists()) delete() }
-                dir.resolve("remove").createNewFile()
+                id.disableFile.apply { if (exists()) delete() }
+                id.removeFile.createNewFile()
             }.onSuccess {
                 callback.onSuccess(id)
             }.onFailure {

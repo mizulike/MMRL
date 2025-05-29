@@ -3,12 +3,13 @@ package com.dergoogler.mmrl.platform.file
 import android.net.Uri
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
-import com.dergoogler.mmrl.ext.nullable
+import android.util.LruCache
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import java.io.File
 import java.io.FileFilter
 import java.io.FileInputStream
+import java.io.FileOutputStream
 import java.io.IOException
 import java.io.InputStream
 import java.io.OutputStream
@@ -19,26 +20,9 @@ import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
-/**
- * `SuFile` is a wrapper class around `java.io.File` that provides enhanced file system operations,
- * including support for managing files and directories through an `IFileManager` interface.
- * It facilitates platform-specific file management, offering a consistent API across different
- * environments.
- *
- * This class provides a range of functions for interacting with files and directories, such as reading,
- * writing, creating, deleting, and managing permissions. It also introduces functionalities
- * for working with streams and handling exceptions.
- *
- * @param path The path to the file or directory represented by this `SuFile` instance.
- *
- * @property fileManager The `IFileManager` instance used to perform file system operations. Defaults to
- *                       `Platform.fileManager`.
- */
 class SuFile(
     path: String,
 ) : File(path) {
-    var fileManager: IFileManager = Platform.fileManager
-
     constructor(
         path: String,
         parent: SuFile,
@@ -56,6 +40,27 @@ class SuFile(
             }
         }.toTypedArray())
     )
+
+    private val mCache: LruCache<String, File> = object : LruCache<String, File>(100) {
+        override fun create(key: String): File {
+            return File(key)
+        }
+    }
+
+    private fun <R> fallback(
+        root: IFileManager.() -> R,
+        nonRoot: File.() -> R,
+    ): R {
+        val fileManager = Platform.fileManagerOrNull
+        try {
+            if (fileManager != null) {
+                return root(fileManager)
+            }
+            return nonRoot(mCache.get(this.path))
+        } catch (e: Exception) {
+            return nonRoot(mCache.get(this.path))
+        }
+    }
 
     fun readText(): String {
         val bytes = newInputStream().use { it.readBytes() }
@@ -76,45 +81,108 @@ class SuFile(
         return null
     }
 
-    fun parcelStream(): FileInputStream {
-        val fd = fileManager.parcelFile(this.path)
-        return FileInputStream(fd.fileDescriptor)
-    }
-
     fun readBytes(): ByteArray = newInputStream().use { it.readBytes() }
 
     fun writeText(data: String) = newOutputStream(false).use { it.write(data.toByteArray()) }
 
     fun writeBytes(data: ByteArray) = newOutputStream(false).use { it.write(data) }
 
-    override fun list(): Array<String> {
-        return fileManager.list(this.path)
+    override fun list(): Array<String>? = fallback(
+        root = { this.list(this@SuFile.path) },
+        nonRoot = { list() }
+    )
+
+    private fun getOwnPrimitiveLength(): Long {
+        return 0L
+
+//        return fallback(
+//            root = {
+//                this.length(this@SuFile.path)
+//            },
+//            nonRoot = {
+//                length()
+//            }
+//        )
     }
 
-    override fun length(): Long {
-        return this.size(false)
+    override fun length(): Long = this.length(recursive = false)
+
+    fun length(
+        recursive: Boolean = false,
+        skipPaths: List<String> = emptyList(),
+        skipSymLinks: Boolean = true,
+    ): Long = fallback(
+        root = { calculateSizeInContext(recursive, skipPaths, skipSymLinks) },
+        nonRoot = { calculateSizeInContext(recursive, skipPaths, skipSymLinks) }
+    )
+
+    private fun calculateSizeInContext(
+        recursive: Boolean,
+        skipPaths: List<String>,
+        skipSymLinks: Boolean,
+    ): Long {
+        return 0L
+
+//        if (recursive) {
+//            if (!this.isDirectory()) {
+//                if (skipSymLinks && this.isSymlink()) return 0L
+//                return this.getOwnPrimitiveLength()
+//            }
+//            return doRecursiveScan(this, skipPaths, skipSymLinks)
+//        } else {
+//            if (skipSymLinks && this.isSymlink()) return 0L
+//            return this.getOwnPrimitiveLength()
+//        }
     }
 
-    fun size(recursively: Boolean = false): Long =
-        fileManager.size(this.path, recursively, emptyList(), true)
-
-    fun size(recursively: Boolean = false, skipPaths: List<String>): Long =
-        fileManager.size(this.path, recursively, skipPaths, true)
-
-    fun size(recursively: Boolean = false, skipPaths: List<String>, skipSymLinks: Boolean): Long =
-        fileManager.size(this.path, recursively, skipPaths, skipSymLinks)
+    private fun doRecursiveScan(
+        currentDirSuFile: SuFile,
+        skipPaths: List<String>,
+        skipSymLinks: Boolean,
+    ): Long {
+        return 0L
+//        val items = currentDirSuFile.list()
+//
+//        var totalSize = 0L
+//        for (itemName in items) {
+//            val itemFullPath = "${currentDirSuFile.path}/$itemName"
+//            val itemSuFile = SuFile(itemFullPath)
+//
+//            if (skipPaths.contains(itemFullPath)) {
+//                continue
+//            }
+//
+//            if (skipSymLinks && itemSuFile.isSymlink()) {
+//                continue
+//            }
+//
+//            totalSize += if (itemSuFile.isDirectory()) {
+//                itemSuFile.length(
+//                    recursive = true,
+//                    skipPaths = skipPaths,
+//                    skipSymLinks = skipSymLinks
+//                )
+//            } else {
+//                itemSuFile.getOwnPrimitiveLength()
+//            }
+//        }
+//
+//        return totalSize
+    }
 
     fun stat(): Long {
         return this.lastModified()
     }
 
-    override fun lastModified(): Long {
-        return fileManager.stat(this.path)
-    }
+    override fun lastModified(): Long = fallback(
+        root = { this.stat(this@SuFile.path) },
+        nonRoot = { lastModified() }
+    )
 
-    override fun exists(): Boolean {
-        return fileManager.exists(this.path)
-    }
+    override fun exists(): Boolean = fallback(
+        root = { this.exists(this@SuFile.path) },
+        nonRoot = { exists() }
+    )
 
     @OptIn(ExperimentalContracts::class)
     inline fun <R> exists(block: (SuFile) -> R): R? {
@@ -125,67 +193,97 @@ class SuFile(
         return if (exists()) block(this) else null
     }
 
-    override fun isDirectory(): Boolean {
-        return fileManager.isDirectory(this.path)
-    }
+    override fun isDirectory(): Boolean = fallback(
+        root = { this.isDirectory(this@SuFile.path) },
+        nonRoot = { isDirectory }
+    )
 
-    override fun isFile(): Boolean {
-        return fileManager.isFile(this.path)
-    }
+    override fun isFile(): Boolean = fallback(
+        root = { this.isFile(this@SuFile.path) },
+        nonRoot = { isFile }
+    )
 
-    fun isBlock(): Boolean = fileManager.isBlock(this.path)
+    fun isBlock(): Boolean = fallback(
+        root = { this.isBlock(this@SuFile.path) },
+        nonRoot = { isBlock() }
+    )
 
-    fun isCharacter(): Boolean = fileManager.isCharacter(this.path)
+    fun isCharacter(): Boolean = fallback(
+        root = { this.isCharacter(this@SuFile.path) },
+        nonRoot = { isCharacter() }
+    )
 
-    fun isSymlink(): Boolean = fileManager.isSymlink(this.path)
+    fun isSymlink(): Boolean = fallback(
+        root = { this.isSymlink(this@SuFile.path) },
+        nonRoot = { isSymlink() }
+    )
 
-    fun isNamedPipe(): Boolean = fileManager.isNamedPipe(this.path)
+    fun isNamedPipe(): Boolean = fallback(
+        root = { this.isNamedPipe(this@SuFile.path) },
+        nonRoot = { isNamedPipe() }
+    )
 
-    fun isSocket(): Boolean = fileManager.isSocket(this.path)
+    fun isSocket(): Boolean = fallback(
+        root = { this.isSocket(this@SuFile.path) },
+        nonRoot = { isSocket() }
+    )
 
-    override fun mkdir(): Boolean {
-        return fileManager.mkdir(this.path)
-    }
+    override fun mkdir(): Boolean = fallback(
+        root = { this.mkdir(this@SuFile.path) },
+        nonRoot = { mkdir() }
+    )
 
-    override fun mkdirs(): Boolean {
-        return fileManager.mkdirs(this.path)
-    }
+    override fun mkdirs(): Boolean = fallback(
+        root = { this.mkdirs(this@SuFile.path) },
+        nonRoot = { mkdirs() }
+    )
 
-    override fun createNewFile(): Boolean {
-        return fileManager.createNewFile(this.path)
-    }
+    override fun createNewFile(): Boolean = fallback(
+        root = { this.createNewFile(this@SuFile.path) },
+        nonRoot = { createNewFile() }
+    )
 
-    override fun renameTo(dest: File): Boolean {
-        return fileManager.renameTo(this.path, dest.path)
-    }
+    override fun renameTo(dest: File): Boolean = fallback(
+        root = { this.renameTo(this@SuFile.path, dest.path) },
+        nonRoot = { renameTo(dest) }
+    )
 
-    fun copyTo(dest: File, overwrite: Boolean = false) {
-        return fileManager.copyTo(this.path, dest.path, overwrite)
-    }
+    fun copyTo(dest: File, overwrite: Boolean = false) = fallback(
+        root = { this.copyTo(this@SuFile.path, dest.path, overwrite) },
+        nonRoot = { copyTo(dest, overwrite) }
+    )
 
-    override fun canExecute(): Boolean {
-        return fileManager.canExecute(this.path)
-    }
+    override fun canExecute(): Boolean = fallback(
+        root = { this.canExecute(this@SuFile.path) },
+        nonRoot = { canExecute() }
+    )
 
-    override fun canRead(): Boolean {
-        return fileManager.canRead(this.path)
-    }
+    override fun canRead(): Boolean = fallback(
+        root = { this.canRead(this@SuFile.path) },
+        nonRoot = { canRead() }
+    )
 
-    override fun canWrite(): Boolean {
-        return fileManager.canWrite(this.path)
-    }
+    override fun canWrite(): Boolean = fallback(
+        root = { this.canWrite(this@SuFile.path) },
+        nonRoot = { canWrite() }
+    )
 
-    override fun delete(): Boolean {
-        return fileManager.delete(this.path)
-    }
+    override fun delete(): Boolean = fallback(
+        root = { this.delete(this@SuFile.path) },
+        nonRoot = { delete() }
+    )
 
     override fun deleteOnExit() {
-        fileManager.deleteOnExit(this.path)
+        fallback(
+            root = { this.deleteOnExit(this@SuFile.path) },
+            nonRoot = { deleteOnExit() }
+        )
     }
 
-    override fun isHidden(): Boolean {
-        return fileManager.isHidden(this.path)
-    }
+    override fun isHidden(): Boolean = fallback(
+        root = { this.isHidden(this@SuFile.path) },
+        nonRoot = { isHidden }
+    )
 
     override fun setReadOnly(): Boolean {
         return setPermissions(
@@ -202,24 +300,27 @@ class SuFile(
     }
 
     fun setPermissions(permissions: SuFilePermissions): Boolean {
-        return fileManager.setPermissions(this.path, permissions.value)
+        return this.setPermissions(permissions.value)
     }
 
-    fun setPermissions(permissions: Int): Boolean {
-        return fileManager.setPermissions(this.path, permissions)
+    fun setPermissions(permissions: Int): Boolean = fallback(
+        root = { this.setPermissions(this@SuFile.path, permissions) },
+        nonRoot = { false }
+    )
+
+    fun setOwner(uid: Int, gid: Int): Boolean = fallback(
+        root = { this.setOwner(this@SuFile.path, uid, gid) },
+        nonRoot = { false }
+    )
+
+    override fun listFiles(): Array<SuFile>? {
+        return this.list()?.map { SuFile(it, this) }?.toTypedArray()
     }
 
-    fun setOwner(uid: Int, gid: Int): Boolean {
-        return fileManager.setOwner(this.path, uid, gid)
-    }
-
-    override fun listFiles(): Array<SuFile> {
-        return this.list().map { SuFile(it, this) }.toTypedArray()
-    }
-
-    override fun listFiles(filter: FileFilter?): Array<SuFile> {
+    override fun listFiles(filter: FileFilter?): Array<SuFile>? {
         val ss = list()
         val files = ArrayList<SuFile>()
+        if (ss == null) return null;
         for (s in ss) {
             val f = SuFile(s, this)
             if ((filter == null) || filter.accept(f)) files.add(f)
@@ -229,32 +330,38 @@ class SuFile(
 
 
     @Throws(IOException::class)
-    fun newInputStream(): InputStream {
-        val pipe = ParcelFileDescriptor.createPipe()
-        try {
-            fileManager.openReadStream(this.path, pipe[1]).checkException()
-        } catch (e: RemoteException) {
-            pipe[0].close()
-            throw IOException(e)
-        } finally {
-            pipe[1].close()
-        }
-        return ParcelFileDescriptor.AutoCloseInputStream(pipe[0])
-    }
+    fun newInputStream(): InputStream = fallback(
+        root = {
+            val pipe = ParcelFileDescriptor.createPipe()
+            try {
+                this.openReadStream(this@SuFile.path, pipe[1]).checkException()
+            } catch (e: RemoteException) {
+                pipe[0].close()
+                throw IOException(e)
+            } finally {
+                pipe[1].close()
+            }
+            return@fallback ParcelFileDescriptor.AutoCloseInputStream(pipe[0])
+        },
+        nonRoot = { FileInputStream(this@fallback) }
+    )
 
     @Throws(IOException::class)
-    fun newOutputStream(append: Boolean): OutputStream {
-        val pipe = ParcelFileDescriptor.createPipe()
-        try {
-            fileManager.openWriteStream(this.path, pipe[0], append).checkException()
-        } catch (e: RemoteException) {
-            pipe[1].close()
-            throw IOException(e)
-        } finally {
-            pipe[0].close()
-        }
-        return ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])
-    }
+    fun newOutputStream(append: Boolean): OutputStream = fallback(
+        root = {
+            val pipe = ParcelFileDescriptor.createPipe()
+            try {
+                this.openWriteStream(this@SuFile.path, pipe[0], append).checkException()
+            } catch (e: RemoteException) {
+                pipe[1].close()
+                throw IOException(e)
+            } finally {
+                pipe[0].close()
+            }
+            return@fallback ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])
+        },
+        nonRoot = { FileOutputStream(this@fallback, append) }
+    )
 
     @Throws(IOException::class)
     fun getCanonicalDirPath(): String {

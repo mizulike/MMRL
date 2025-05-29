@@ -43,8 +43,11 @@ import com.dergoogler.mmrl.ui.component.card.CardDefaults.cardStyle
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.platform.content.LocalModule.Companion.config
+import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasWebUI
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.LocalCover
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
@@ -68,7 +71,7 @@ fun ModuleItem(
     val menu = userPreferences.modulesMenu
     val context = LocalContext.current
 
-    val canWenUIAccessed = isProviderAlive && module.features.webui && module.state != State.REMOVE
+    val canWenUIAccessed = isProviderAlive && module.hasWebUI && module.state != State.REMOVE
     val clicker: (() -> Unit)? = canWenUIAccessed nullable {
         WebUIActivity.start(
             context = context,
@@ -99,7 +102,7 @@ fun ModuleItem(
         onClick = clicker
     ) {
         module.config.cover.nullable(menu.showCover) {
-            val file = SuFile(module.id.root, it)
+            val file = SuFile(module.id.moduleDir, it)
 
             file.exists {
                 LocalCover(
@@ -134,7 +137,7 @@ fun ModuleItem(
 
                 TextWithIcon(
                     text = module.config.name ?: module.name,
-                    icon = module.features.webui nullable icon,
+                    icon = module.hasWebUI nullable icon,
                     style = TextWithIconDefaults.style.copy(textStyle = MaterialTheme.typography.titleSmall)
                 )
 

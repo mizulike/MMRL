@@ -235,7 +235,7 @@ class ModuleViewModel @AssistedInject constructor(
     private val opsCallback = object : IModuleOpsCallback.Stub() {
         override fun onSuccess(id: ModId) {
             viewModelScope.launch {
-                modulesRepository.getLocal(id.toString())
+                modulesRepository.getLocal(id)
                 opsTasks.remove(id)
             }
         }

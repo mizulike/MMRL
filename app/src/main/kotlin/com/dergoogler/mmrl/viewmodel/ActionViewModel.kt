@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
+import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -73,7 +74,7 @@ class ActionViewModel @Inject constructor(
                 return@launch
             }
 
-            if (!module.features.action) {
+            if (!module.hasAction) {
                 event = Event.FAILED
                 log(R.string.this_module_don_t_have_an_action)
                 return@launch

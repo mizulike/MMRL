@@ -13,6 +13,7 @@ import com.dergoogler.mmrl.platform.content.LocalModule
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.webrootDir
 import com.dergoogler.mmrl.webui.R
 import com.dergoogler.mmrl.webui.activity.WXActivity
 import com.dergoogler.mmrl.webui.interfaces.WXInterface
@@ -100,7 +101,7 @@ data class WebUIConfigDexFile(
             return null
         }
 
-        val file = SuFile(modId.webroot, path)
+        val file = SuFile(modId.webrootDir, path)
 
         if (!file.isFile) {
             return null
@@ -163,7 +164,7 @@ data class WebUIConfig(
     val useJavaScriptRefreshInterceptor get() = refreshInterceptor == "javascript"
     val useNativeRefreshInterceptor get() = refreshInterceptor == "native"
 
-    private fun getIconFile() = if (icon != null) SuFile(modId.webroot, icon) else null
+    private fun getIconFile() = if (icon != null) SuFile(modId.webrootDir, icon) else null
     private fun getShortcutId() = "shortcut_$modId"
 
     fun canAddWebUIShortcut(): Boolean {
@@ -252,7 +253,7 @@ data class WebUIConfig(
                 val config = WebUIConfig(this)
 
                 val configFile =
-                    webroot.fromPaths("config.json", "config.mmrl.json") ?: return config
+                    webrootDir.fromPaths("config.json", "config.mmrl.json") ?: return config
 
                 val jsonString = configFile.readText()
                 val jsonAdapter = moshi.adapter(WebUIConfig::class.java)

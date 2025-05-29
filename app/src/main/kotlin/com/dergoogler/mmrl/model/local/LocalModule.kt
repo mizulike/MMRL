@@ -1,27 +1,11 @@
 package com.dergoogler.mmrl.model.local
 
 import com.dergoogler.mmrl.utils.Utils
-import com.dergoogler.mmrl.platform.content.LocalModule
-import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 
 typealias LocalModule = com.dergoogler.mmrl.platform.content.LocalModule
-typealias LocalModuleFeatures = com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 
 val com.dergoogler.mmrl.platform.content.LocalModule.versionDisplay get() = Utils.getVersionDisplay(version, versionCode)
-
-val com.dergoogler.mmrl.platform.content.LocalModuleFeatures.hasFeatures
-    get() = webui ||
-            action ||
-            service ||
-            postFsData ||
-            resetprop ||
-            sepolicy ||
-            zygisk ||
-            apks ||
-            postMount ||
-            bootCompleted
-
 
 fun com.dergoogler.mmrl.platform.content.LocalModule.Companion.example() =
     com.dergoogler.mmrl.platform.content.LocalModule(
@@ -33,7 +17,6 @@ fun com.dergoogler.mmrl.platform.content.LocalModule.Companion.example() =
         description = "This is an example!",
         updateJson = "",
         state = State.ENABLE,
-        features = com.dergoogler.mmrl.platform.content.LocalModuleFeatures.EMPTY,
         size = 0,
         lastUpdated = 0L,
     )

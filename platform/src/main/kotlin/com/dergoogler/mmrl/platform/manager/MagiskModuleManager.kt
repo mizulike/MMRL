@@ -4,13 +4,13 @@ import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.content.NullableBoolean
 import com.dergoogler.mmrl.platform.file.FileManager
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.disableFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
+import com.dergoogler.mmrl.platform.model.ModId.Companion.removeFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.updateFile
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 
-open class MagiskModuleManager(
-    fileManager: FileManager,
-) : BaseModuleManager(
-    fileManager = fileManager
-) {
+open class MagiskModuleManager() : BaseModuleManager() {
     override fun getManagerName(): String = "Magisk"
 
     override fun getModuleCompatibility() = ModuleCompatibility(
@@ -32,13 +32,13 @@ open class MagiskModuleManager(
 
     override fun uidShouldUmount(uid: Int): Boolean = false
 
-    override fun enable(id: String, useShell: Boolean, callback: IModuleOpsCallback) {
-        val dir = modulesDir.resolve(id)
+    override fun enable(id: ModId, useShell: Boolean, callback: IModuleOpsCallback) {
+        val dir = id.moduleDir
         if (!dir.exists()) callback.onFailure(id, null)
 
         runCatching {
-            dir.resolve("remove").apply { if (exists()) delete() }
-            dir.resolve("disable").apply { if (exists()) delete() }
+            id.removeFile.apply { if (exists()) delete() }
+            id.disableFile.apply { if (exists()) delete() }
         }.onSuccess {
             callback.onSuccess(id)
         }.onFailure {
@@ -46,13 +46,13 @@ open class MagiskModuleManager(
         }
     }
 
-    override fun disable(id: String, useShell: Boolean, callback: IModuleOpsCallback) {
-        val dir = modulesDir.resolve(id)
+    override fun disable(id: ModId, useShell: Boolean, callback: IModuleOpsCallback) {
+        val dir = id.moduleDir
         if (!dir.exists()) return callback.onFailure(id, null)
 
         runCatching {
-            dir.resolve("remove").apply { if (exists()) delete() }
-            dir.resolve("disable").createNewFile()
+            id.removeFile.apply { if (exists()) delete() }
+            id.disableFile.createNewFile()
         }.onSuccess {
             callback.onSuccess(id)
         }.onFailure {
@@ -60,13 +60,13 @@ open class MagiskModuleManager(
         }
     }
 
-    override fun remove(id: String, useShell: Boolean, callback: IModuleOpsCallback) {
-        val dir = modulesDir.resolve(id)
+    override fun remove(id: ModId, useShell: Boolean, callback: IModuleOpsCallback) {
+        val dir = id.moduleDir
         if (!dir.exists()) return callback.onFailure(id, null)
 
         runCatching {
-            dir.resolve("disable").apply { if (exists()) delete() }
-            dir.resolve("remove").createNewFile()
+            id.disableFile.apply { if (exists()) delete() }
+            id.removeFile.createNewFile()
         }.onSuccess {
             callback.onSuccess(id)
         }.onFailure {

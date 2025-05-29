@@ -22,6 +22,8 @@ import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.VersionItem
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
+import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasWebUI
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
 import com.dergoogler.mmrl.platform.stub.IModuleOpsCallback
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -111,7 +113,7 @@ class ModulesViewModel @Inject constructor(
     private val opsCallback = object : IModuleOpsCallback.Stub() {
         override fun onSuccess(id: ModId) {
             viewModelScope.launch {
-                modulesRepository.getLocal(id.toString())
+                modulesRepository.getLocal(id)
                 opsTasks.remove(id)
             }
         }
@@ -164,13 +166,13 @@ class ModulesViewModel @Inject constructor(
                 }
 
                 val b = if (menu.pinAction) {
-                    a.sortedByDescending { it.features.action }
+                    a.sortedByDescending { it.hasAction }
                 } else {
                     a
                 }
 
                 if (menu.pinWebUI) {
-                    b.sortedByDescending { it.features.webui }
+                    b.sortedByDescending { it.hasWebUI }
                 } else {
                     b
                 }

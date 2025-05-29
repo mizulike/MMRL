@@ -1,19 +1,20 @@
 package com.dergoogler.mmrl.platform.manager
 
 import com.dergoogler.mmrl.platform.content.LocalModule
-import com.dergoogler.mmrl.platform.content.LocalModuleFeatures
 import com.dergoogler.mmrl.platform.content.State
+import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
-import com.dergoogler.mmrl.platform.stub.IFileManager
+import com.dergoogler.mmrl.platform.model.ModId.Companion.disableFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.files
+import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
+import com.dergoogler.mmrl.platform.model.ModId.Companion.propFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.removeFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.updateFile
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.util.Shell.exec
 import org.apache.commons.compress.archivers.zip.ZipFile
-import java.io.File
 
-abstract class BaseModuleManager(
-    private val fileManager: IFileManager,
-) : IModuleManager.Stub() {
-    internal val modulesDir = File(MODULES_PATH)
+abstract class BaseModuleManager() : IModuleManager.Stub() {
 
     internal val mVersion by lazy {
         "su -v".exec().getOrDefault("unknown")
@@ -31,32 +32,18 @@ abstract class BaseModuleManager(
         "/system/bin/svc power reboot $reason || /system/bin/reboot $reason".exec()
     }
 
-    override fun getModules() = modulesDir.listFiles()
+    override fun getModules() = SuFile(ModId.ADB_DIR, ModId.MODULES_DIR).listFiles()
         .orEmpty()
         .mapNotNull { dir ->
-            readProps(dir)?.toModule(dir)
+            val id = ModId(dir.name)
+            id.readProps?.toModule()
         }
 
-    private fun hasWebUI(id: String): Boolean {
-        val moduleDir = modulesDir.resolve(id)
-        val webroot = moduleDir.resolve(WEBROOT_PATH)
-        return webroot.exists() && webroot.isDirectory
-    }
-
-    private fun hasFeature(type: String, id: String): Boolean {
-        val moduleDir = modulesDir.resolve(id)
-        val feature = moduleDir.resolve(type)
-        return feature.exists() && feature.isFile
-    }
-
-    override fun getModuleById(id: String): LocalModule? {
-        val dir = modulesDir.resolve(id)
-        return readProps(dir)?.toModule(dir)
-    }
+    override fun getModuleById(id: ModId): LocalModule? = id.readProps?.toModule()
 
     override fun getModuleInfo(zipPath: String): LocalModule? {
         val zipFile = ZipFile.Builder().setFile(zipPath).get()
-        val entry = zipFile.getEntry(PROP_FILE) ?: return null
+        val entry = zipFile.getEntry(ModId.PROP_FILE) ?: return null
 
         return zipFile.getInputStream(entry).use {
             it.bufferedReader()
@@ -76,118 +63,66 @@ abstract class BaseModuleManager(
             }
         }
 
-    private fun readProps(moduleDir: File) =
-        moduleDir.resolve(PROP_FILE).let {
-            when {
-                it.exists() -> readProps(it.readText())
-                else -> null
+    private val ModId.readProps
+        get() =
+            propFile.let {
+                when {
+                    it.exists() -> readProps(it.readText())
+                    else -> null
+                }
             }
+
+    private val ModId.readState
+        get(): State {
+            removeFile.apply {
+                if (exists()) return State.REMOVE
+            }
+
+            disableFile.apply {
+                if (exists()) return State.DISABLE
+            }
+
+            updateFile.apply {
+                if (exists()) return State.UPDATE
+            }
+
+            return State.ENABLE
         }
 
-    private fun readState(moduleDir: File): State {
-        moduleDir.resolve("remove").apply {
-            if (exists()) return State.REMOVE
-        }
-
-        moduleDir.resolve("disable").apply {
-            if (exists()) return State.DISABLE
-        }
-
-        moduleDir.resolve("update").apply {
-            if (exists()) return State.UPDATE
-        }
-
-        return State.ENABLE
-    }
-
-    private fun readLastUpdated(moduleDir: File): Long {
-        MODULE_FILES.forEach { filename ->
-            val file = moduleDir.resolve(filename)
-            if (file.exists()) {
-                return file.lastModified()
+    private fun readLastUpdated(id: ModId): Long {
+        id.files.forEach {
+            if (it.exists()) {
+                return it.lastModified()
             }
         }
 
         return 0L
     }
 
-    private fun Map<String, String>.toModule(
-        dir: File,
-    ): LocalModule {
-        val id = getOrDefault("id", dir.name)
+    private fun Map<String, String>.toModule(): LocalModule {
+        val id = ModId(getOrDefault("id", "unknown"))
 
-        return toModule(
-            path = dir.name,
-            state = readState(dir),
-            features = LocalModuleFeatures(
-                webui = hasWebUI(id),
-                action = hasFeature(ACTION_FILE, id),
-                service = hasFeature(SERVICE_FILE, id),
-                postFsData = hasFeature(POST_FS_DATA_FILE, id),
-                postMount = hasFeature(POST_MOUNT_FILE, id),
-                resetprop = hasFeature(SYSTEM_PROP_FILE, id),
-                bootCompleted = hasFeature(BOOT_COMPLETED_FILE, id),
-                sepolicy = hasFeature(SE_POLICY, id),
-                zygisk = false,
-                apks = false
-            ),
-            size = fileManager.size(dir.path, true, emptyList(), true),
-            lastUpdated = readLastUpdated(dir)
+        val size = id.moduleDir.length(
+            recursive = true,
+            skipSymLinks = true
+        )
+
+        return LocalModule(
+            id = id,
+            name = getOrDefault("name", id.id),
+            version = getOrDefault("version", ""),
+            versionCode = getOrDefault("versionCode", "-1").toIntOr(-1),
+            author = getOrDefault("author", ""),
+            description = getOrDefault("description", ""),
+            updateJson = getOrDefault("updateJson", ""),
+            state = id.readState,
+            size = size,
+            lastUpdated = readLastUpdated(id)
         )
     }
-
-    private fun Map<String, String>.toModule(
-        path: String = "unknown",
-        state: State = State.ENABLE,
-        lastUpdated: Long = 0L,
-        size: Long = 0L,
-        features: LocalModuleFeatures = LocalModuleFeatures.EMPTY,
-    ) = LocalModule(
-        id = ModId(getOrDefault("id", path)),
-        name = getOrDefault("name", path),
-        version = getOrDefault("version", ""),
-        versionCode = getOrDefault("versionCode", "-1").toIntOr(-1),
-        author = getOrDefault("author", ""),
-        description = getOrDefault("description", ""),
-        updateJson = getOrDefault("updateJson", ""),
-        state = state,
-        features = features,
-        size = size,
-        lastUpdated = lastUpdated
-    )
 
     private fun String.toIntOr(defaultValue: Int) =
         runCatching {
             toInt()
         }.getOrDefault(defaultValue)
-
-    companion object {
-        const val PROP_FILE = "module.prop"
-        const val WEBROOT_PATH = "webroot"
-        const val MODULES_PATH = "/data/adb/modules"
-
-        const val ACTION_FILE = "action.sh"
-        const val BOOT_COMPLETED_FILE = "boot-completed.sh"
-        const val SERVICE_FILE = "service.sh"
-        const val POST_FS_DATA_FILE = "post-fs-data.sh"
-        const val POST_MOUNT_FILE = "post-mount.sh"
-        const val SYSTEM_PROP_FILE = "system.prop"
-        const val SE_POLICY = "sepolicy.rule"
-
-
-        val MODULE_SERVICE_FILES = listOf(
-            ACTION_FILE,
-            SERVICE_FILE,
-            POST_FS_DATA_FILE,
-            POST_MOUNT_FILE,
-            WEBROOT_PATH,
-            BOOT_COMPLETED_FILE
-        )
-        val MODULE_FILES = listOf(
-            SE_POLICY,
-            *MODULE_SERVICE_FILES.toTypedArray(),
-            "uninstall.sh",
-            "system", "module.prop",
-        )
-    }
 }
