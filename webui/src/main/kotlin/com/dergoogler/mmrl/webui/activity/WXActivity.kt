@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.webui.activity
 
+import android.app.ActivityManager
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
@@ -16,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.graphics.toArgb
+import com.dergoogler.mmrl.ext.BuildCompat
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.getModId
@@ -274,6 +276,31 @@ open class WXActivity : ComponentActivity() {
                 indeterminateDrawable.setTint(options.colorScheme.primary.toArgb())
             })
         }
+
+    /**
+     * Sets the title of the activity in the recent apps list.
+     *
+     * This function updates the task description for the activity, which affects
+     * how it's displayed in the Android recents screen.
+     *
+     * On Android T (API 33) and above, it uses the modern `ActivityManager.TaskDescription.Builder`
+     * to set the label.
+     * For older versions, it uses the deprecated `ActivityManager.TaskDescription` constructor.
+     *
+     * @param title The string to be set as the title.
+     */
+    protected fun setActivityTitle(title: String) {
+        if (BuildCompat.atLeastT) {
+            val taskDescription =
+                ActivityManager.TaskDescription.Builder()
+                    .setLabel(title)
+                    .build()
+            setTaskDescription(taskDescription)
+        } else {
+            @Suppress("DEPRECATION")
+            setTaskDescription(ActivityManager.TaskDescription(title))
+        }
+    }
 
     private companion object {
         const val TAG = "WXActivity"

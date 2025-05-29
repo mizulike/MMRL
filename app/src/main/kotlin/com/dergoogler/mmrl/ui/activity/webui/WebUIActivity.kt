@@ -80,6 +80,13 @@ class WebUIActivity : WXActivity() {
         this.options = options
         this.view = view
 
+        // Activity Title
+        config {
+            if (title != null) {
+                setActivityTitle("MMRL - $title")
+            }
+        }
+
         val loading = createLoadingRenderer()
         setContentView(loading)
 
