@@ -5,21 +5,41 @@ import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
+import android.view.ViewGroup.LayoutParams
+import android.view.WindowInsetsController
 import android.webkit.WebMessage
 import android.webkit.WebView
+import android.widget.FrameLayout
 import androidx.annotation.UiThread
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.doOnAttach
 import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
+import com.dergoogler.mmrl.ext.BuildCompat
 import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.ext.findActivity
 import com.dergoogler.mmrl.ext.moshi.moshi
+import com.dergoogler.mmrl.ext.nullply
+import com.dergoogler.mmrl.webui.client.WXChromeClient
+import com.dergoogler.mmrl.webui.client.WXClient
 import com.dergoogler.mmrl.webui.interfaces.WXConsole
 import com.dergoogler.mmrl.webui.interfaces.WXInterface
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
+import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.model.WXEventHandler
 import com.dergoogler.mmrl.webui.util.WebUIOptions
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.android.awaitFrame
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 /**
  * A custom WebView class that provides additional functionality for WebUI.
@@ -39,7 +59,14 @@ import com.dergoogler.mmrl.webui.util.WebUIOptions
 open class WebUIView(
     protected val options: WebUIOptions,
 ) : WebView(options.context) {
+    private val scope = CoroutineScope(Dispatchers.Main)
+    protected var initJob: Job? = null
+    private var isInitialized = false
     internal var mSwipeView: WXSwipeRefresh? = null
+
+    init {
+        initWhenReady()
+    }
 
     constructor(context: Context) : this(WebUIOptions(context = context)) {
         throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
@@ -63,6 +90,48 @@ open class WebUIView(
     )
 
     protected val interfaces = hashSetOf<String>()
+
+    protected open fun onInit(isInitialized: Boolean) {}
+
+    private fun initWhenReady() {
+        // Basic setup that can run immediately
+        layoutParams = LayoutParams(
+            FrameLayout.LayoutParams.MATCH_PARENT,
+            FrameLayout.LayoutParams.MATCH_PARENT
+        )
+
+        // Delay full initialization until view is properly attached
+        doOnAttach {
+            initJob = scope.launch {
+                // Wait for first frame to ensure Activity is ready
+                withContext(Dispatchers.Main) { awaitFrame() }
+                initView()
+                onInit(isInitialized)
+            }
+        }
+    }
+
+    @SuppressLint("SetJavaScriptEnabled")
+    private fun initView() {
+        if (isInitialized) return
+
+        settings.apply {
+            javaScriptEnabled = true
+            domStorageEnabled = true
+            allowFileAccess = false
+        }
+
+        // Background and styling
+        with(options) {
+            setBackgroundColor(colorScheme.background.toArgb())
+            background = colorScheme.background.toArgb().toDrawable()
+        }
+
+        // JavaScript interfaces (delayed until WebView is fully ready)
+        post {
+            isInitialized = true
+        }
+    }
 
     fun <R> options(block: WebUIOptions.() -> R): R? {
         return try {
@@ -136,7 +205,15 @@ open class WebUIView(
         }
     }
 
+    override fun onDetachedFromWindow() {
+        initJob?.cancel()
+        this.destroy()
+        super.onDetachedFromWindow()
+    }
+
     override fun destroy() {
+        initJob?.cancel()
+
         // remove all interfaces
         for (obj in interfaces) {
             removeJavascriptInterface(obj)

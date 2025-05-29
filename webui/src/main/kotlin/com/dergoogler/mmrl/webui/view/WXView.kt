@@ -77,14 +77,6 @@ import kotlinx.coroutines.withContext
 open class WXView(
     options: WebUIOptions,
 ) : WebUIView(options) {
-    private val scope = CoroutineScope(Dispatchers.Main)
-    private var initJob: Job? = null
-    private var isInitialized = false
-
-    init {
-        initWhenReady()
-    }
-
     constructor(context: Context) : this(WebUIOptions(context = context)) {
         throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
@@ -101,24 +93,9 @@ open class WXView(
         throw UnsupportedOperationException("Default constructor not supported. Use constructor with options.")
     }
 
-    private fun initWhenReady() {
-        // Basic setup that can run immediately
-        layoutParams = LayoutParams(
-            FrameLayout.LayoutParams.MATCH_PARENT,
-            FrameLayout.LayoutParams.MATCH_PARENT
-        )
+    override fun onInit(isInitialized: Boolean) {
+        super.onInit(isInitialized)
 
-        // Delay full initialization until view is properly attached
-        doOnAttach {
-            initJob = scope.launch {
-                // Wait for first frame to ensure Activity is ready
-                withContext(Dispatchers.Main) { awaitFrame() }
-                initView()
-            }
-        }
-    }
-
-    private fun initView() {
         if (isInitialized) return
 
         val activity = context.findActivity()
@@ -136,9 +113,6 @@ open class WXView(
         webChromeClient = WXChromeClient(options)
 
         settings.apply {
-            javaScriptEnabled = true
-            domStorageEnabled = true
-            allowFileAccess = false
             options {
                 if (debug && remoteDebug) {
                     mixedContentMode = android.webkit.WebSettings.MIXED_CONTENT_ALWAYS_ALLOW
@@ -147,11 +121,6 @@ open class WXView(
             }
         }
 
-        // Background and styling
-        with(options) {
-            setBackgroundColor(colorScheme.background.toArgb())
-            background = colorScheme.background.toArgb().toDrawable()
-        }
 
         // Window insets handling
         ViewCompat.setOnApplyWindowInsetsListener(this) { view, insets ->
@@ -185,7 +154,6 @@ open class WXView(
         // JavaScript interfaces (delayed until WebView is fully ready)
         post {
             addJavascriptInterfaces()
-            isInitialized = true
             Log.d(TAG, "WebUI X fully initialized")
         }
     }
@@ -216,8 +184,6 @@ open class WXView(
     }
 
     private fun cleanup() {
-        initJob?.cancel()
-
         stopLoading()
         webChromeClient = null
         removeView(this)
