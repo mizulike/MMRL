@@ -5,7 +5,6 @@ import androidx.annotation.Keep
 import androidx.core.content.pm.PackageInfoCompat
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.webui.model.App
-import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 
 @Keep
 class ApplicationInterface(
@@ -13,10 +12,6 @@ class ApplicationInterface(
 ) : WXInterface(wxOptions) {
     override var name: String = "webui"
     override var tag: String = "ApplicationInterface"
-
-    companion object {
-        fun factory() = JavaScriptInterface(ApplicationInterface::class.java)
-    }
 
     @JavascriptInterface
     fun exit() {

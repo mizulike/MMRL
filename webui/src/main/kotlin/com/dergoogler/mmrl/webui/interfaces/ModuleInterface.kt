@@ -1,28 +1,17 @@
 package com.dergoogler.mmrl.webui.interfaces
 
 import android.app.Activity
-import android.content.Intent
-import android.content.pm.ShortcutInfo
-import android.content.pm.ShortcutManager
-import android.graphics.BitmapFactory
-import android.graphics.drawable.Icon
 import android.os.Build
-import android.util.Log
 import android.webkit.JavascriptInterface
-import android.widget.Toast
 import androidx.annotation.Keep
 import androidx.core.app.ShareCompat
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.platform.Platform
-import com.dergoogler.mmrl.platform.file.SuFile
-import com.dergoogler.mmrl.webui.R
-import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.moshi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
-import java.io.BufferedInputStream
 
 @JsonClass(generateAdapter = true)
 internal data class Manager(
@@ -37,10 +26,6 @@ class ModuleInterface(
 ) : WXInterface(wxOptions) {
     override var name: String = "$${modId.sanitizedId}"
     override var tag: String = "ModuleInterface"
-
-    companion object {
-        fun factory() = JavaScriptInterface(ModuleInterface::class.java)
-    }
 
     private fun getWindowInsetsController(activity: Activity): WindowInsetsControllerCompat =
         WindowCompat.getInsetsController(

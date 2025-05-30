@@ -2,7 +2,6 @@ package com.dergoogler.mmrl.webui.interfaces
 
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
-import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.moshi
 import java.io.BufferedInputStream
 import java.io.InputStream
@@ -13,10 +12,6 @@ class FileInputInterface(
 ) : WXInterface(wxOptions) {
     override var name: String = modId.sanitizedIdWithFileInputStream
     override var tag: String = "FileInputInterface"
-
-    companion object {
-        fun factory() = JavaScriptInterface(FileInputInterface::class.java)
-    }
 
     @JavascriptInterface
     fun open(path: String): FileInputInterfaceStream? =

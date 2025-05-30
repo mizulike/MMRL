@@ -15,7 +15,6 @@ import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenPackageManager
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
 import com.dergoogler.mmrl.webui.interfaces.UMApplicationInfo.Companion.toUMApplicationInfo
-import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.moshi
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -162,10 +161,6 @@ class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
 
     override var name: String = "\$packageManager"
     override var tag: String = "PackageManagerInterface"
-
-    companion object {
-        fun factory() = JavaScriptInterface(PackageManagerInterface::class.java)
-    }
 
     @JavascriptInterface
     fun getPackageUid(packageName: String, flags: Int, userId: Int): Int {

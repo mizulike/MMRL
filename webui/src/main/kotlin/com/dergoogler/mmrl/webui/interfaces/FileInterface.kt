@@ -4,7 +4,6 @@ import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.file.SuFile
-import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 
 @Keep
 class FileInterface(
@@ -12,10 +11,6 @@ class FileInterface(
 ) : WXInterface(wxOptions) {
     override var name: String = modId.sanitizedIdWithFile
     override var tag: String = "FileInterface"
-
-    companion object {
-        fun factory() = JavaScriptInterface(FileInterface::class.java)
-    }
 
     private val file = Platform.fileManager
 

@@ -4,7 +4,6 @@ import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
-import com.dergoogler.mmrl.webui.model.JavaScriptInterface
 import com.dergoogler.mmrl.webui.model.UMUserInfo
 import com.dergoogler.mmrl.webui.moshi
 
@@ -14,10 +13,6 @@ class UserManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions) {
 
     override var name: String = "\$userManager"
     override var tag: String = "UserManagerInterface"
-
-    companion object {
-        fun factory() = JavaScriptInterface(UserManagerInterface::class.java)
-    }
 
     @JavascriptInterface
     fun getUserCount(): Int = um.getUsers().size
