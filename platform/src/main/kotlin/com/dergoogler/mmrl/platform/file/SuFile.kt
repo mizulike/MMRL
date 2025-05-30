@@ -154,7 +154,6 @@ class SuFile(
         { super.isNamedPipe() }
     )
 
-
     override fun isSocket(): Boolean = fallback(
         { this.isSocket(path) },
         { super.isSocket() }
@@ -273,42 +272,47 @@ class SuFile(
     }
 
     @Throws(IOException::class)
-    fun newInputStream(): InputStream = fallback(
-        {
-            val pipe = ParcelFileDescriptor.createPipe()
-            try {
-                this.openReadStream(this@SuFile.path, pipe[1]).checkException()
-            } catch (e: RemoteException) {
-                pipe[0].close()
-                throw IOException(e)
-            } finally {
-                pipe[1].close()
-            }
-            return@fallback ParcelFileDescriptor.AutoCloseInputStream(pipe[0])
-        },
-        {
-            return@fallback FileInputStream(this@SuFile)
+    fun newInputStream(): InputStream {
+        val pipe = ParcelFileDescriptor.createPipe()
+        try {
+            fallback(
+                {
+                    this.openReadStream(path, pipe[1]).checkException()
+                },
+                {
+                    return@fallback super.openReadStream(path, pipe[1]).checkException()
+                }
+            )
+        } catch (e: RemoteException) {
+            pipe[0].close()
+            throw IOException(e)
+        } finally {
+            pipe[1].close()
         }
-    )
+
+        return ParcelFileDescriptor.AutoCloseInputStream(pipe[0])
+    }
 
     @Throws(IOException::class)
-    fun newOutputStream(append: Boolean): OutputStream = fallback(
-        {
-            val pipe = ParcelFileDescriptor.createPipe()
-            try {
-                this.openWriteStream(this@SuFile.path, pipe[0], append).checkException()
-            } catch (e: RemoteException) {
-                pipe[1].close()
-                throw IOException(e)
-            } finally {
-                pipe[0].close()
-            }
-            return@fallback ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])
-        },
-        {
-            return@fallback FileOutputStream(this@SuFile, append)
+    fun newOutputStream(append: Boolean): OutputStream {
+        val pipe = ParcelFileDescriptor.createPipe()
+        try {
+            fallback(
+                {
+                    this.openWriteStream(path, pipe[0], append).checkException()
+                },
+                {
+                    return@fallback super.openWriteStream(path, pipe[0], append).checkException()
+                }
+            )
+        } catch (e: RemoteException) {
+            pipe[1].close()
+            throw IOException(e)
+        } finally {
+            pipe[0].close()
         }
-    )
+        return ParcelFileDescriptor.AutoCloseOutputStream(pipe[1])
+    }
 
     @Throws(IOException::class)
     fun getCanonicalDirPath(): String {

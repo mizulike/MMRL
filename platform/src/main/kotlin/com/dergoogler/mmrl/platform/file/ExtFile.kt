@@ -1,13 +1,22 @@
 package com.dergoogler.mmrl.platform.file
 
 import android.net.Uri
+import android.os.ParcelFileDescriptor
 import android.os.RemoteException
 import android.system.ErrnoException
 import android.system.Os
 import android.system.OsConstants
+import android.system.OsConstants.O_APPEND
+import android.system.OsConstants.O_CREAT
+import android.system.OsConstants.O_RDONLY
+import android.system.OsConstants.O_TRUNC
+import android.system.OsConstants.O_WRONLY
+import com.dergoogler.mmrl.platform.content.ParcelResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.io.File
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  * Represents an extended file object with additional functionalities.
@@ -146,6 +155,51 @@ open class ExtFile(
             Os.lstat(path).st_mode
         } catch (e: ErrnoException) {
             0
+        }
+    }
+
+    private val extFileStreamPool: ExecutorService = Executors.newCachedThreadPool()
+
+    protected fun openReadStream(path: String, fd: ParcelFileDescriptor): ParcelResult {
+        val f = OpenFile()
+        try {
+            f.fd = Os.open(path, O_RDONLY, 0)
+            extFileStreamPool.execute {
+                runCatching {
+                    f.use { of ->
+                        of.write = FileUtils.createFileDescriptor(fd.detachFd())
+                        while (of.pread(SuFile.PIPE_CAPACITY, -1) > 0);
+                    }
+                }
+            }
+            return ParcelResult()
+        } catch (e: ErrnoException) {
+            f.close()
+            return ParcelResult(e)
+        }
+    }
+
+    protected fun openWriteStream(
+        path: String,
+        fd: ParcelFileDescriptor,
+        append: Boolean,
+    ): ParcelResult {
+        val f = OpenFile()
+        try {
+            val mode = O_CREAT or O_WRONLY or (if (append) O_APPEND else O_TRUNC)
+            f.fd = Os.open(path, mode, 438)
+            extFileStreamPool.execute {
+                runCatching {
+                    f.use { of ->
+                        of.read = FileUtils.createFileDescriptor(fd.detachFd())
+                        while (of.pwrite(SuFile.PIPE_CAPACITY.toLong(), -1, false) > 0);
+                    }
+                }
+            }
+            return ParcelResult()
+        } catch (e: ErrnoException) {
+            f.close()
+            return ParcelResult(e)
         }
     }
 }
