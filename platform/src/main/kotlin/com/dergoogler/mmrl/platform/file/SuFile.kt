@@ -18,6 +18,8 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import android.net.Uri
+import android.util.Log
+import com.dergoogler.mmrl.ext.isNotNullOrBlank
 import com.dergoogler.mmrl.platform.PlatformManager
 import java.io.FileInputStream
 import java.io.FileOutputStream
@@ -67,11 +69,21 @@ class SuFile(
     }
 
     fun readText(): String {
-        val bytes = newInputStream().use { it.readBytes() }
-        val data = ByteBuffer.wrap(bytes)
-        val content = StandardCharsets.UTF_8.decode(data).toString()
+        try {
+            val bytes = newInputStream().use { it.readBytes() }
+            val data = ByteBuffer.wrap(bytes)
+            val content = StandardCharsets.UTF_8.decode(data).toString()
 
-        return content
+            if (content.isNotNullOrBlank()) {
+                return content
+            }
+
+            return readText(Charsets.UTF_8)
+        } catch (e: Exception) {
+            Log.e(TAG, "Error reading text file: ${e.message}")
+            e.printStackTrace()
+            return readText(Charsets.UTF_8)
+        }
     }
 
     fun fromPaths(vararg paths: Any): SuFile? {
@@ -344,6 +356,7 @@ class SuFile(
     }
 
     companion object {
+        const val TAG = "SuFile"
         const val PIPE_CAPACITY = 16 * 4096
 
         fun String.toSuFile(): SuFile {
