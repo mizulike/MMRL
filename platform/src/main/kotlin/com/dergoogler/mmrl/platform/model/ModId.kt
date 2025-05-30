@@ -13,7 +13,10 @@ import kotlin.contracts.contract
 @Keep
 @Parcelize
 @JsonClass(generateAdapter = true)
-data class ModId(var id: String) : Parcelable {
+data class ModId(
+    val id: String,
+    val baseDir: String = ADB_DIR,
+) : Parcelable {
     val sanitizedId: String
         get() {
             return id.replace(Regex("[^a-zA-Z0-9_]"), "_")
@@ -182,7 +185,7 @@ data class ModId(var id: String) : Parcelable {
                 updateFile
             )
 
-        val ModId.adbDir get() = SuFile(ADB_DIR)
+        val ModId.adbDir get() = SuFile(baseDir)
         val ModId.modulesDir get() = SuFile(adbDir, MODULES_DIR)
         val ModId.moduleDir get() = SuFile(modulesDir, id)
         val ModId.webrootDir get() = SuFile(moduleDir, WEBROOT_DIR)
