@@ -21,7 +21,6 @@ import androidx.compose.ui.graphics.toArgb
 import com.dergoogler.mmrl.ext.BuildCompat
 import com.dergoogler.mmrl.ext.nullply
 import com.dergoogler.mmrl.platform.model.ModId
-import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.getModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
@@ -85,7 +84,7 @@ open class WXActivity : ComponentActivity() {
      * @return The [ModId] if found, otherwise `null`.
      */
     val modId by lazy {
-        intent.fromKeys("MOD_ID", "id") ?: intent.getModId()
+        intent.getModId()
     }
 
     /**
@@ -240,17 +239,6 @@ open class WXActivity : ComponentActivity() {
         }
 
         super.onPause()
-    }
-
-    private fun Intent.fromKeys(vararg keys: String): ModId? {
-        for (key in keys) {
-            val extra = getStringExtra(key)
-            if (extra != null) {
-                return extra.asModId
-            }
-        }
-
-        return null
     }
 
     /**

@@ -60,10 +60,11 @@ data class ModId(
         const val INTENT_MOD_ID_AS_PARCELABLE = "MOD_ID_AS_PARCELABLE"
         const val INTENT_MOD_ID = "MOD_ID"
         const val INTENT_ID = "id"
+        const val INTENT_BASE_DIR = "BASE_DIR"
 
-        @get:Keep
-        val String.asModId: ModId
-            get() = ModId(this)
+        fun String.toModId(baseDir: String = ADB_DIR): ModId {
+            return ModId(this, baseDir)
+        }
 
         val EMPTY = ModId("")
 
@@ -81,15 +82,16 @@ data class ModId(
          * using any of the supported keys.
          */
         fun Intent.getModId(): ModId? {
+            val baseDir = getStringExtra(INTENT_BASE_DIR) ?: ADB_DIR
             val modId = getStringExtra(INTENT_MOD_ID)
             val id = getStringExtra(INTENT_ID)
 
             if (modId != null) {
-                return modId.asModId
+                return modId.toModId(baseDir)
             }
 
             if (id != null) {
-                return id.asModId
+                return id.toModId(baseDir)
             }
 
             return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -109,6 +111,10 @@ data class ModId(
          */
         fun Intent.putModId(id: ModId) {
             putExtra(INTENT_MOD_ID_AS_PARCELABLE, id)
+        }
+
+        fun Intent.putBaseDir(dir: String) {
+            putExtra(INTENT_BASE_DIR, dir)
         }
 
         /**
