@@ -16,11 +16,11 @@ import org.apache.commons.compress.archivers.zip.ZipFile
 
 abstract class BaseModuleManager() : IModuleManager.Stub() {
 
-    internal val mVersion by lazy {
+    protected val mVersion by lazy {
         "su -v".exec().getOrDefault("unknown")
     }
 
-    internal val mVersionCode by lazy {
+    protected val mVersionCode by lazy {
         "su -V".exec().getOrDefault("").toIntOr(-1)
     }
 
@@ -53,7 +53,7 @@ abstract class BaseModuleManager() : IModuleManager.Stub() {
         }
     }
 
-    private fun readProps(props: String) = props.lines()
+    protected fun readProps(props: String) = props.lines()
         .associate { line ->
             val items = line.split("=", limit = 2).map { it.trim() }
             if (items.size != 2) {
@@ -63,7 +63,7 @@ abstract class BaseModuleManager() : IModuleManager.Stub() {
             }
         }
 
-    private val ModId.readProps
+    protected val ModId.readProps
         get() =
             propFile.let {
                 when {
@@ -72,7 +72,7 @@ abstract class BaseModuleManager() : IModuleManager.Stub() {
                 }
             }
 
-    private val ModId.readState
+    protected val ModId.readState
         get(): State {
             removeFile.apply {
                 if (exists()) return State.REMOVE
@@ -89,7 +89,7 @@ abstract class BaseModuleManager() : IModuleManager.Stub() {
             return State.ENABLE
         }
 
-    private fun readLastUpdated(id: ModId): Long {
+    protected fun readLastUpdated(id: ModId): Long {
         id.files.forEach {
             if (it.exists()) {
                 return it.lastModified()
@@ -99,7 +99,7 @@ abstract class BaseModuleManager() : IModuleManager.Stub() {
         return 0L
     }
 
-    private fun Map<String, String>.toModule(): LocalModule {
+    protected fun Map<String, String>.toModule(): LocalModule {
         val id = ModId(getOrDefault("id", "unknown"))
 
         val size = id.moduleDir.length(
@@ -121,7 +121,7 @@ abstract class BaseModuleManager() : IModuleManager.Stub() {
         )
     }
 
-    private fun String.toIntOr(defaultValue: Int) =
+    protected fun String.toIntOr(defaultValue: Int) =
         runCatching {
             toInt()
         }.getOrDefault(defaultValue)
