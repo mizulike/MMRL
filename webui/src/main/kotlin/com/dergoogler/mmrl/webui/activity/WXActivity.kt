@@ -22,6 +22,7 @@ import com.dergoogler.mmrl.ext.BuildCompat
 import com.dergoogler.mmrl.ext.nullply
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.getModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.putBaseDir
 import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.confirm
@@ -302,21 +303,24 @@ open class WXActivity : ComponentActivity() {
          * This extension function simplifies the process of starting a [WXActivity].
          * It creates an [Intent] for the given [WXActivity] subclass [T],
          * adds the `FLAG_ACTIVITY_NEW_DOCUMENT` and `FLAG_ACTIVITY_MULTIPLE_TASK` flags,
-         * puts the provided [modId] into the intent extras, and optionally allows
+         * puts the provided [modId] and [baseDir] into the intent extras, and optionally allows
          * further configuration of the [Intent] via the [intentConfig] lambda.
          *
          * @param T The specific subclass of [WXActivity] to launch.
          * @param modId The [ModId] to be passed to the activity.
+         * @param baseDir The base directory for the module, defaults to [ModId.ADB_DIR].
          * @param intentConfig An optional lambda to configure the [Intent] before starting the activity.
          */
         inline fun <reified T : WXActivity> Context.launchWebUIX(
             modId: ModId,
+            baseDir: String = ModId.ADB_DIR,
             noinline intentConfig: (Intent.() -> Unit)? = null,
         ) {
             val intent = Intent(this, T::class.java)
                 .apply {
                     addFlags(Intent.FLAG_ACTIVITY_NEW_DOCUMENT or Intent.FLAG_ACTIVITY_MULTIPLE_TASK)
                     putModId(modId)
+                    putBaseDir(baseDir)
                     intentConfig.nullply { this() }
                 }
 
