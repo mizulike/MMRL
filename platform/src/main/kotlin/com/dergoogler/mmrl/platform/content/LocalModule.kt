@@ -33,7 +33,7 @@ data class LocalModule(
 ) : Parcelable {
     companion object {
         val LocalModule.config get() = id.asModuleConfig
-        val LocalModule.hasWebUI get() = id.webrootDir.exists()
+        val LocalModule.hasWebUI get() = id.webrootDir.let { it.exists() && it.isDirectory() }
         val LocalModule.hasAction get() = id.actionFile.exists()
         val LocalModule.hasService get() = id.serviceFile.exists()
         val LocalModule.hasPostFsData get() = id.postFsDataFile.exists()
@@ -42,7 +42,7 @@ data class LocalModule(
         val LocalModule.hasBootCompleted get() = id.bootCompletedFile.exists()
         val LocalModule.hasSepolicy get() = id.sepolicyFile.exists()
         val LocalModule.hasUninstall get() = id.uninstallFile.exists()
-        val LocalModule.hasSystem get() = id.systemDir.exists()
+        val LocalModule.hasSystem get() = id.systemDir.let { it.exists() && it.isDirectory() }
         val LocalModule.hasDisable get() = id.disableFile.exists()
         val LocalModule.hasRemove get() = id.removeFile.exists()
         val LocalModule.hasUpdate get() = id.updateFile.exists()

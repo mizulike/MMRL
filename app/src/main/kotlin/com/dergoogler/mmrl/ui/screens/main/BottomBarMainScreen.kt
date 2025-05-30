@@ -27,6 +27,7 @@ import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.ext.navigatePopUpTo
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.ui.navigation.BottomNavRoute
 import com.dergoogler.mmrl.ui.navigation.graphs.homeScreen
 import com.dergoogler.mmrl.ui.navigation.graphs.modulesScreen
@@ -39,7 +40,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 fun BottomBarMainScreen() {
     val userPreferences = LocalUserPreferences.current
     val navController = LocalNavController.current
-    val isRoot = userPreferences.workingMode.isRoot && Platform.isAlive
+    val isRoot = userPreferences.workingMode.isRoot && PlatformManager.isAlive
 
     val mainScreens by remember(isRoot) {
         derivedStateOf {

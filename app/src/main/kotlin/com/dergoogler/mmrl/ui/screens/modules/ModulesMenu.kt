@@ -37,6 +37,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.isNotNullOrBlank
 import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.toFormattedDateSafely
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 
 @Composable
@@ -159,12 +160,12 @@ private fun MenuBottomSheet(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedButton(
-            enabled = Platform.isAlive,
+            enabled = PlatformManager.isAlive,
             onClick = {
                 val builder = StringBuilder()
 
                 with(builder) {
-                    Platform.moduleManager.modules.map {
+                    PlatformManager.moduleManager.modules.map {
                         append("Name: ${it.name}\n")
                         append("ID: ${it.id}\n")
                         append("Version: ${it.version}\n")

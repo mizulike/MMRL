@@ -9,6 +9,7 @@ import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.webui.moshi
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonClass
@@ -51,9 +52,9 @@ class ModuleInterface(
 
             return managerAdapter.toJson(
                 Manager(
-                    name = Platform.platform.name,
-                    versionName = Platform.moduleManager.version,
-                    versionCode = Platform.moduleManager.versionCode
+                    name = PlatformManager.platform.name,
+                    versionName = PlatformManager.moduleManager.version,
+                    versionCode = PlatformManager.moduleManager.versionCode
                 )
             )
         }

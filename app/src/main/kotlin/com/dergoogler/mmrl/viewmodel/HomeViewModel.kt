@@ -8,6 +8,7 @@ import android.os.storage.StorageManager
 import com.dergoogler.mmrl.model.local.ModuleAnalytics
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -31,31 +32,28 @@ class HomeViewModel @Inject constructor(
     modulesRepository: ModulesRepository,
     userPreferencesRepository: UserPreferencesRepository,
 ) : MMRLViewModel(application, localRepository, modulesRepository, userPreferencesRepository) {
-    val isProviderAlive get() = Platform.isAlive
-    val platform get() = Platform.platform
-
     val versionName: String
-        get() = Platform.get("") {
+        get() = PlatformManager.get("") {
             with(moduleManager) { version }
         }
 
     val isLkmMode: NullableBoolean
-        get() = Platform.get(NullableBoolean(null)) {
+        get() = PlatformManager.get(NullableBoolean(null)) {
             with(moduleManager) { isLkmMode }
         }
 
     val versionCode
-        get() = Platform.get(0) {
+        get() = PlatformManager.get(0) {
             with(moduleManager) { versionCode }
         }
 
     val seLinuxContext: String
-        get() = Platform.get("Failed") {
+        get() = PlatformManager.get("Failed") {
             seLinuxContext
         }
 
     val superUserCount: Int
-        get() = Platform.get(-1) {
+        get() = PlatformManager.get(-1) {
             with(moduleManager) {
                 superUserCount
             }
@@ -119,7 +117,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun reboot(reason: String = "") {
-        Platform.get(Unit) {
+        PlatformManager.get(Unit) {
             with(moduleManager) {
                 reboot(reason)
             }

@@ -2,7 +2,7 @@ package com.dergoogler.mmrl.webui.interfaces
 
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
-import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.file.SuFile
 
 @Keep
@@ -12,7 +12,7 @@ class FileInterface(
     override var name: String = modId.sanitizedIdWithFile
     override var tag: String = "FileInterface"
 
-    private val file = Platform.fileManager
+    private val file = PlatformManager.fileManager
 
     @JavascriptInterface
     fun read(path: String): String? =

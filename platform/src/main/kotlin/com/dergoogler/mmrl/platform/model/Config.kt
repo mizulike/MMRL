@@ -2,7 +2,6 @@ package com.dergoogler.mmrl.platform.model
 
 import android.content.Context
 import com.dergoogler.mmrl.platform.file.SuFile
-import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.util.moshi
 import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
@@ -42,7 +41,7 @@ data class ModuleConfig(
             selector = locale
         )
 
-    fun getWebuiEngine(context: Context = Platform.context): String? = get(
+    fun getWebuiEngine(context: Context): String? = get(
         prop = webuiEngine,
         selector = context.packageName
     )

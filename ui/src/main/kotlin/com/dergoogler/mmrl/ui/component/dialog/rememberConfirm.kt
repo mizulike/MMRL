@@ -13,13 +13,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ui.R
 
 data class ConfirmData(
     val title: String,
     val description: String,
     val onConfirm: () -> Unit,
-    val onClose: () -> Unit,
+    val onClose: (() -> Unit)? = null,
     val confirmText: String? = null,
     val closeText: String? = null,
 )
@@ -46,7 +47,13 @@ fun Context.confirm(confirmData: ConfirmData, colorScheme: ColorScheme) {
                         ConfirmDialog(
                             onDismissRequest = {
                                 showDialog = false
-                                confirmData.onClose()
+
+                                if (confirmData.onClose != null) {
+                                    confirmData.onClose()
+                                    return@ConfirmDialog
+                                }
+
+                                confirmData.onConfirm()
                             },
                             closeText = confirmData.closeText
                                 ?: stringResource(id = R.string.cancel),
@@ -54,9 +61,11 @@ fun Context.confirm(confirmData: ConfirmData, colorScheme: ColorScheme) {
                                 ?: stringResource(id = R.string.confirm),
                             title = confirmData.title,
                             description = confirmData.description,
-                            onClose = {
-                                showDialog = false
-                                confirmData.onClose()
+                            onClose = confirmData.onClose.nullable {
+                                {
+                                    showDialog = false
+                                    it()
+                                }
                             },
                             onConfirm = {
                                 showDialog = false

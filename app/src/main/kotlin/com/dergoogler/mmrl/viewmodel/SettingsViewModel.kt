@@ -7,6 +7,7 @@ import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -24,24 +25,21 @@ class SettingsViewModel @Inject constructor(
     modulesRepository: ModulesRepository,
     userPreferencesRepository: UserPreferencesRepository,
 ) : MMRLViewModel(application, localRepository, modulesRepository, userPreferencesRepository) {
-    val isProviderAlive get() = Platform.isAlive
-    val platform get() = Platform.platform
-
     val version
-        get() = Platform.get("") {
+        get() = PlatformManager.get("") {
             with(moduleManager) { "$version (${versionCode})" }
         }
 
     val versionCode
-        get() = Platform.get(-1) {
+        get() = PlatformManager.get(-1) {
             with(moduleManager) { versionCode }
         }
 
-    val isSuEnabled = Platform.get(true) {
+    val isSuEnabled = PlatformManager.get(true) {
         with(moduleManager) { isSuEnabled }
     }
 
-    fun setSuEnabled(value: Boolean) = Platform.get(true) {
+    fun setSuEnabled(value: Boolean) = PlatformManager.get(true) {
         with(moduleManager) { setSuEnabled(value) }
     }
 

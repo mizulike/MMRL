@@ -12,6 +12,7 @@ import androidx.annotation.Keep
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.graphics.createBitmap
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenPackageManager
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
 import com.dergoogler.mmrl.webui.interfaces.UMApplicationInfo.Companion.toUMApplicationInfo
@@ -156,8 +157,8 @@ data class UMApplicationInfo(
 @Keep
 class PackageManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions),
     CoroutineScope by MainScope() {
-    private val pm get(): HiddenPackageManager = Platform.packageManager
-    private val um get(): HiddenUserManager = Platform.userManager
+    private val pm get(): HiddenPackageManager = PlatformManager.packageManager
+    private val um get(): HiddenUserManager = PlatformManager.userManager
 
     override var name: String = "\$packageManager"
     override var tag: String = "PackageManagerInterface"

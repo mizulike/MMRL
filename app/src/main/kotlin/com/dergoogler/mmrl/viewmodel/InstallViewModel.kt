@@ -13,6 +13,7 @@ import com.dergoogler.mmrl.ext.tmpDir
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
@@ -82,7 +83,7 @@ class InstallViewModel @Inject constructor(
                 return@mapNotNull null
             }
 
-            val info = Platform.moduleManager.getModuleInfo(path)
+            val info = PlatformManager.moduleManager.getModuleInfo(path)
 
             if (info == null) {
                 devLog(R.string.unable_to_gather_module_info_of_file, path)
@@ -138,7 +139,7 @@ class InstallViewModel @Inject constructor(
 
             devLog(R.string.install_view_path, path)
 
-            Platform.moduleManager.getModuleInfo(path)?.let {
+            PlatformManager.moduleManager.getModuleInfo(path)?.let {
                 devLog(R.string.install_view_module_info, it.toString())
                 return@withContext install(path, bulkModules, it)
             }
@@ -165,7 +166,7 @@ class InstallViewModel @Inject constructor(
                 }
             }
 
-            val moduleInfo = Platform.moduleManager.getModuleInfo(tmpFile.path)
+            val moduleInfo = PlatformManager.moduleManager.getModuleInfo(tmpFile.path)
 
             if (moduleInfo == null) {
                 event = Event.FAILED
@@ -256,7 +257,7 @@ class InstallViewModel @Inject constructor(
 
     private fun deleteBySu(zipPath: String) {
         runCatching {
-            Platform.fileManager.deleteOnExit(zipPath)
+            PlatformManager.fileManager.deleteOnExit(zipPath)
         }.onFailure {
             Timber.e(it)
         }.onSuccess {

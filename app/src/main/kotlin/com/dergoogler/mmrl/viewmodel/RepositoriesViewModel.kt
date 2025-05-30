@@ -46,7 +46,6 @@ class RepositoriesViewModel @Inject constructor(
     private val reposFlow = MutableStateFlow(listOf<RepoState>())
     val repos get() = reposFlow.asStateFlow()
 
-
     private val repositoriesMenu
         get() = userPreferencesRepository.data
             .map { it.repositoriesMenu }

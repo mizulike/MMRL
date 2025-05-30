@@ -4,7 +4,7 @@ import android.content.Context
 import android.content.pm.UserInfo
 import android.os.IUserManager
 import android.os.Process
-import com.dergoogler.mmrl.platform.Platform.Companion.getSystemService
+import com.dergoogler.mmrl.platform.PlatformManager.getSystemService
 import com.dergoogler.mmrl.platform.stub.IServiceManager
 
 class HiddenUserManager(

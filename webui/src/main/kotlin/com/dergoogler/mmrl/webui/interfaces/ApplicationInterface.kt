@@ -3,7 +3,7 @@ package com.dergoogler.mmrl.webui.interfaces
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
 import androidx.core.content.pm.PackageInfoCompat
-import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.webui.model.App
 
 @Keep
@@ -51,9 +51,9 @@ class ApplicationInterface(
     @get:JavascriptInterface
     val currentRootManager: App
         get() = App(
-            packageName = Platform.platform.name,
-            versionName = Platform.moduleManager.version,
-            versionCode = Platform.moduleManager.versionCode.toLong()
+            packageName = PlatformManager.platform.name,
+            versionName = PlatformManager.moduleManager.version,
+            versionCode = PlatformManager.moduleManager.versionCode.toLong()
         )
 
     @get:JavascriptInterface

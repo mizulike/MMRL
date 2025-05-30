@@ -6,6 +6,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
+import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
@@ -23,6 +25,9 @@ open class MMRLViewModel @Inject constructor(
     val modulesRepository: ModulesRepository,
     val userPreferencesRepository: UserPreferencesRepository,
 ) : AndroidViewModel(application) {
+    val isProviderAlive get() = PlatformManager.isAlive
+    val platform get() = PlatformManager.platform
+
     val context
         get(): Context {
             return getApplication<Application>().applicationContext

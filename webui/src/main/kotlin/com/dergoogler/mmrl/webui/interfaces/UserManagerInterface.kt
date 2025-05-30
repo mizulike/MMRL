@@ -3,13 +3,14 @@ package com.dergoogler.mmrl.webui.interfaces
 import android.webkit.JavascriptInterface
 import androidx.annotation.Keep
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
 import com.dergoogler.mmrl.webui.model.UMUserInfo
 import com.dergoogler.mmrl.webui.moshi
 
 @Keep
 class UserManagerInterface(wxOptions: WXOptions) : WXInterface(wxOptions) {
-    private val um get(): HiddenUserManager = Platform.userManager
+    private val um get(): HiddenUserManager = PlatformManager.userManager
 
     override var name: String = "\$userManager"
     override var tag: String = "UserManagerInterface"

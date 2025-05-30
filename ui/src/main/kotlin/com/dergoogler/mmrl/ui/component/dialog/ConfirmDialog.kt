@@ -6,6 +6,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ui.R
 
 @Composable
@@ -18,9 +19,9 @@ fun ConfirmDialog(
     closeText: @Composable () -> Unit = {
         Text(text = stringResource(R.string.cancel))
     },
-    onClose: () -> Unit,
+    onClose: (() -> Unit)? = null,
     onConfirm: () -> Unit,
-    onDismissRequest: () -> Unit = onClose,
+    onDismissRequest: () -> Unit = onClose ?: onConfirm,
 ) {
     AlertDialog(
         title = title,
@@ -34,10 +35,12 @@ fun ConfirmDialog(
             }
         },
         dismissButton = {
-            TextButton(
-                onClick = onClose
-            ) {
-                closeText.invoke()
+            onClose.nullable {
+                TextButton(
+                    onClick = it
+                ) {
+                    closeText.invoke()
+                }
             }
         }
     )
@@ -49,9 +52,9 @@ fun ConfirmDialog(
     description: String,
     confirmText: String = stringResource(id = R.string.confirm),
     closeText: String = stringResource(id = R.string.cancel),
-    onClose: () -> Unit,
+    onClose: (() -> Unit)? = null,
     onConfirm: () -> Unit,
-    onDismissRequest: () -> Unit = onClose,
+    onDismissRequest: () -> Unit = onClose ?: onConfirm,
 ) = ConfirmDialog(
     onDismissRequest = onDismissRequest,
     title = {

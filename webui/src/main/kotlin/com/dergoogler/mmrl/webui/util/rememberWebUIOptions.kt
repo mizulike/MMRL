@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.core.content.pm.PackageInfoCompat
 import androidx.core.net.toUri
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
@@ -73,28 +74,28 @@ data class WebUIOptions(
     val cls: Class<out WXActivity>? = null,
 ) : ContextWrapper(context) {
     private val packageManager
-        get() = Platform.get(null) {
+        get() = PlatformManager.get(null) {
             packageManager
         }
     private val myUserId
-        get() = Platform.get(null) {
+        get() = PlatformManager.get(null) {
             userManager.myUserId
         }
 
-    val isProviderAlive get() = Platform.isAlive
+    val isProviderAlive get() = PlatformManager.isAlive
 
     val versionName: String
-        get() = Platform.get("") {
+        get() = PlatformManager.get("") {
             with(moduleManager) { version }
         }
 
     val versionCode: Int
-        get() = Platform.get(-1) {
+        get() = PlatformManager.get(-1) {
             with(moduleManager) { versionCode }
         }
 
     val platform: Platform
-        get() = Platform.get(Platform.Unknown) {
+        get() = PlatformManager.get(Platform.Unknown) {
             platform
         }
 

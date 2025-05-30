@@ -25,8 +25,6 @@ class SearchViewModel @Inject constructor(
     modulesRepository: ModulesRepository,
     userPreferencesRepository: UserPreferencesRepository,
 ) : MMRLViewModel(application, localRepository, modulesRepository, userPreferencesRepository) {
-    val isProviderAlive get() = Platform.isAlive
-
     private val keyFlow = MutableStateFlow("")
     val query get() = keyFlow.asStateFlow()
 

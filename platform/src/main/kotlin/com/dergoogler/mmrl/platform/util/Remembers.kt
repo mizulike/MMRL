@@ -4,37 +4,46 @@ import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisallowComposableCalls
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import com.dergoogler.mmrl.platform.Platform
-import com.dergoogler.mmrl.platform.TIMEOUT_MILLIS
-import kotlinx.coroutines.delay
+import androidx.compose.runtime.*
 import kotlinx.coroutines.withTimeoutOrNull
-
-
-@Composable
-inline fun <T> waitOfPlatform(
-    key: Any? = Unit,
-    crossinline block: @DisallowComposableCalls suspend () -> T,
-): MutableState<T?> = waitOfPlatform(null, key, block)
+import kotlinx.coroutines.flow.collectLatest
+import com.dergoogler.mmrl.platform.TIMEOUT_MILLIS
+import com.dergoogler.mmrl.platform.PlatformManager
 
 @Composable
 inline fun <T> waitOfPlatform(
-    fallback: T,
-    key: Any? = Unit,
+    fallback: T? = null,
+    key1: Any? = null,
+    key2: Any? = null,
     crossinline block: @DisallowComposableCalls suspend () -> T,
-): MutableState<T> {
-    val state = remember(key, Platform.isAlive) { mutableStateOf(fallback) }
+): State<T?> {
+    val state = remember(key1, key2) { mutableStateOf(fallback) }
 
-    LaunchedEffect(key, Platform.isAlive) {
-        withTimeoutOrNull(TIMEOUT_MILLIS) {
-            while (!Platform.isAlive) {
-                delay(500)
+    LaunchedEffect(key1, key2, PlatformManager) {
+        PlatformManager.isAliveFlow.collectLatest { isAlive ->
+            if (isAlive) {
+                Log.d(PlatformManager.TAG, "waitOfPlatform: Platform is alive, executing block.")
+                try {
+                    val result = withTimeoutOrNull(TIMEOUT_MILLIS) {
+                        block()
+                    }
+                    if (result != null) {
+                        state.value = result
+                    } else {
+                        Log.w(PlatformManager.TAG, "waitOfPlatform: Block execution timed out.")
+                    }
+                } catch (e: Exception) {
+                    Log.e(PlatformManager.TAG, "waitOfPlatform: Error executing block.", e)
+                }
+            } else {
+                Log.d(
+                    PlatformManager.TAG,
+                    "waitOfPlatform: Platform is not alive yet, state remains fallback."
+                )
             }
-        } ?: return@LaunchedEffect
-
-        state.value = block()
+        }
     }
 
     return state

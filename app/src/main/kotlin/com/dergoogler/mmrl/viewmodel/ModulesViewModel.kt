@@ -22,6 +22,7 @@ import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.VersionItem
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasWebUI
 import com.dergoogler.mmrl.platform.content.ModuleCompatibility
@@ -68,11 +69,8 @@ class ModulesViewModel @Inject constructor(
     modulesRepository = modulesRepository,
     userPreferencesRepository = userPreferencesRepository
 ) {
-    val isProviderAlive get() = Platform.isAlive
-    val platform get() = Platform.platform
-
     val moduleCompatibility: ModuleCompatibility
-        get() = Platform.get(
+        get() = PlatformManager.get(
             ModuleCompatibility(
                 hasMagicMount = false,
                 canRestoreModules = false
@@ -132,7 +130,7 @@ class ModulesViewModel @Inject constructor(
     }
 
     private fun providerObserver() {
-        Platform.isAliveFlow
+        PlatformManager.isAliveFlow
             .onEach {
                 if (it) getLocalAll()
 
@@ -265,12 +263,12 @@ class ModulesViewModel @Inject constructor(
             isOpsRunning = opsTasks.contains(module.id),
             toggle = {
                 opsTasks.add(module.id)
-                Platform.moduleManager
+                PlatformManager.moduleManager
                     .disable(module.id, useShell, opsCallback)
             },
             change = {
                 opsTasks.add(module.id)
-                Platform.moduleManager
+                PlatformManager.moduleManager
                     .remove(module.id, useShell, opsCallback)
             }
         )
@@ -279,12 +277,12 @@ class ModulesViewModel @Inject constructor(
             isOpsRunning = opsTasks.contains(module.id),
             toggle = {
                 opsTasks.add(module.id)
-                Platform.moduleManager
+                PlatformManager.moduleManager
                     .enable(module.id, useShell, opsCallback)
             },
             change = {
                 opsTasks.add(module.id)
-                Platform.moduleManager
+                PlatformManager.moduleManager
                     .remove(module.id, useShell, opsCallback)
             }
         )
@@ -294,7 +292,7 @@ class ModulesViewModel @Inject constructor(
             toggle = {},
             change = {
                 opsTasks.add(module.id)
-                Platform.moduleManager
+                PlatformManager.moduleManager
                     .enable(module.id, useShell, opsCallback)
             }
         )

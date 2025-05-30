@@ -9,11 +9,15 @@ import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.TIMEOUT_MILLIS
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.KernelSUInterface
+import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
+import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
+import com.dergoogler.mmrl.ui.component.dialog.confirm
 import com.dergoogler.mmrl.utils.initPlatform
 import com.dergoogler.mmrl.webui.activity.WXActivity
 import com.dergoogler.mmrl.webui.util.WebUIOptions
@@ -37,11 +41,11 @@ class WebUIActivity : WXActivity() {
         get(): String {
             val mmrlVersion = this.managerVersion.second
 
-            val platform = Platform.get("Unknown") {
-                platform.name
-            }
+            val platform = PlatformManager.get(Platform.Unknown) {
+                platform
+            }.name
 
-            val platformVersion = Platform.get(-1) {
+            val platformVersion = PlatformManager.get(-1) {
                 moduleManager.versionCode
             }
 
@@ -89,11 +93,25 @@ class WebUIActivity : WXActivity() {
         setContentView(loading)
 
         lifecycleScope.launch {
-            val deferred = Platform.getAsyncDeferred(this, null) {
-                view
+            val active = initPlatform(this, this@WebUIActivity, userPrefs.workingMode.toPlatform())
+
+            if (!active.await()) {
+                confirm(
+                    ConfirmData(
+                        title = "Failed!",
+                        description = "Failed to initialize platform. Please try again.",
+                        confirmText = "Close",
+                        onConfirm = {
+                            finish()
+                        },
+                    ),
+                    colorScheme = options.colorScheme
+                )
+
+                return@launch
             }
 
-            setContentView(deferred.await())
+            setContentView(view)
         }
     }
 }

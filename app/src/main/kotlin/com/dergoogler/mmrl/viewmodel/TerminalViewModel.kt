@@ -19,6 +19,7 @@ import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -96,15 +97,11 @@ open class TerminalViewModel @Inject constructor(
         addAction("${context.packageName}.${action.name}")
     }
 
-    val platform: Platform = Platform.get(Platform.NonRoot) {
-        this.platform
-    }
-
-    val moduleManager: IModuleManager? = Platform.get(null) {
+    val moduleManager: IModuleManager? = PlatformManager.get(null) {
             this.moduleManager
         }
 
-    val fileManager: IFileManager? = Platform.get(null) {
+    val fileManager: IFileManager? = PlatformManager.get(null) {
             this.fileManager
         }
 

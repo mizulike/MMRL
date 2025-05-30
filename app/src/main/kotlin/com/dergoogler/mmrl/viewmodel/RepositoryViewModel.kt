@@ -36,8 +36,6 @@ class RepositoryViewModel @AssistedInject constructor(
     modulesRepository: ModulesRepository,
     userPreferencesRepository: UserPreferencesRepository,
 ) : MMRLViewModel(application, localRepository, modulesRepository, userPreferencesRepository) {
-    val isProviderAlive get() = Platform.isAlive
-
     private val repositoryMenu
         get() = userPreferencesRepository.data
             .map { it.repositoryMenu }

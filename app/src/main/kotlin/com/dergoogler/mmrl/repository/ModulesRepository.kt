@@ -2,7 +2,7 @@ package com.dergoogler.mmrl.repository
 
 import com.dergoogler.mmrl.database.entity.Repo
 import com.dergoogler.mmrl.network.runRequest
-import com.dergoogler.mmrl.platform.Platform
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.stub.IRepoManager
@@ -17,7 +17,7 @@ class ModulesRepository @Inject constructor(
     private val localRepository: LocalRepository,
 ) {
     suspend fun getLocalAll() = withContext(Dispatchers.IO) {
-        with(Platform.moduleManager.modules) {
+        with(PlatformManager.moduleManager.modules) {
             localRepository.deleteLocalAll()
             localRepository.insertLocal(this)
             localRepository.clearUpdatableTag(map { it.id.id })
@@ -25,7 +25,7 @@ class ModulesRepository @Inject constructor(
     }
 
     suspend fun getLocal(id: ModId) = withContext(Dispatchers.IO) {
-        val module = Platform.moduleManager.getModuleById(id)
+        val module = PlatformManager.moduleManager.getModuleById(id)
         localRepository.insertLocal(module)
     }
 

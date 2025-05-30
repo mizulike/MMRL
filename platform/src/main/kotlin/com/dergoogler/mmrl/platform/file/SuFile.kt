@@ -18,6 +18,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import com.dergoogler.mmrl.platform.stub.IFileManager
 import android.net.Uri
+import com.dergoogler.mmrl.platform.PlatformManager
 import java.io.FileInputStream
 import java.io.FileOutputStream
 
@@ -54,7 +55,7 @@ class SuFile(
         root: IFileManager.() -> R,
         nonRoot: () -> R,
     ): R {
-        val fileManager = Platform.fileManagerOrNull
+        val fileManager = PlatformManager.fileManagerOrNull
         try {
             if (fileManager != null) {
                 return root(fileManager)
