@@ -15,7 +15,6 @@ import android.webkit.WebResourceRequest
 import android.webkit.WebResourceResponse
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dergoogler.mmrl.ext.nullply
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
@@ -30,7 +29,6 @@ import com.dergoogler.mmrl.webui.handler.webrootPathHandler
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXSwipeRefresh
-import com.dergoogler.mmrl.webui.view.WXView
 import com.dergoogler.mmrl.webui.wxAssetLoader
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -166,7 +164,7 @@ open class WXClient : WebViewClient {
     override fun onReceivedError(
         view: WebView?,
         request: WebResourceRequest?,
-        error: WebResourceError?
+        error: WebResourceError?,
     ) {
         super.onReceivedError(view, request, error)
         mSwipeView.nullply {
@@ -178,7 +176,7 @@ open class WXClient : WebViewClient {
     override fun onReceivedHttpError(
         view: WebView?,
         request: WebResourceRequest?,
-        errorResponse: WebResourceResponse?
+        errorResponse: WebResourceResponse?,
     ) {
         super.onReceivedHttpError(view, request, errorResponse)
         mSwipeView.nullply {
@@ -205,23 +203,17 @@ open class WXClient : WebViewClient {
         }
     }
 
-    @SuppressLint("WebViewClientOnReceivedSslError")
-    override fun onReceivedSslError(
-        view: WebView?,
-        handler: SslErrorHandler?,
-        error: SslError?,
-    ) {
-        if (mOptions.debug) {
-            handler?.proceed()
-        } else {
-            handler?.cancel()
-        }
-    }
-
     override fun shouldInterceptRequest(
         view: WebView?,
         request: WebResourceRequest,
     ): WebResourceResponse? {
+        val urlString = request.url.toString()
+
+        if (urlString.endsWith("/favicon.ico")) {
+            Log.d(TAG, "Blocking favicon.ico request for $urlString")
+            return WebResourceResponse("image/png", null, null)
+        }
+
         if (mOptions.debug) Log.d(TAG, "shouldInterceptRequest: ${request.url}")
         return mWxAssetsLoader(request.url)
     }
