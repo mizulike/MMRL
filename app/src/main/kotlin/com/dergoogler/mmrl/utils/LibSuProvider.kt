@@ -4,12 +4,11 @@ import android.content.Context
 import android.content.ServiceConnection
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.model.IProvider
-import com.dergoogler.mmrl.platform.model.PlatformIntent
+import com.dergoogler.mmrl.platform.model.createPlatformIntent
 import com.topjohnwu.superuser.Shell
 import com.topjohnwu.superuser.ipc.RootService
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
-
 
 class LibSuProvider(
     private val context: Context,
@@ -32,23 +31,19 @@ class LibSuProvider(
     }
 
     private val serviceIntent
-        get() = PlatformIntent(
-            context,
-            platform,
-            SuService::class.java
-        )
+        get() = context.createPlatformIntent<SuService>(platform)
 
     override fun bind(connection: ServiceConnection) {
-        RootService.bind(serviceIntent.intent, connection)
+        RootService.bind(serviceIntent, connection)
     }
 
     override fun unbind(connection: ServiceConnection) {
-        RootService.stop(serviceIntent.intent)
+        RootService.stop(serviceIntent)
     }
 }
 
 suspend fun initPlatform(context: Context, platform: Platform) = Platform.init {
     this.context = context
     this.platform = platform
-    this.provider = from(LibSuProvider(context, platform))
+    this.rootProvider = from(LibSuProvider(context, platform))
 }

@@ -16,10 +16,34 @@ interface IProvider {
     fun unbind(connection: ServiceConnection)
 }
 
+/**
+ * Creates an [Intent] for a specific platform.
+ *
+ * This function is an inline extension function on the [Context] class.
+ * It takes a reified type parameter `T` which represents the target component (e.g., Activity or Service)
+ * and a [Platform] enum value indicating the platform for which the intent is being created.
+ *
+ * The created [Intent] will have its component set to the fully qualified name of the class `T`
+ * within the current application's package.
+ * It will also include the specified [platform] as an extra, using [PLATFORM_KEY] as the key.
+ *
+ * @param T The reified type of the target component (e.g., an Activity or Service class).
+ * @param platform The [Platform] for which this intent is being created.
+ * @return An [Intent] configured to launch the specified component for the given platform.
+ */
+inline fun <reified T> Context.createPlatformIntent(platform: Platform): Intent = Intent().apply {
+    component = ComponentName(
+        packageName,
+        T::class.java.name
+    )
+    putExtra(PLATFORM_KEY, platform)
+}
+
+@Deprecated("Use Context.createPlatformIntent(...) instead")
 data class PlatformIntent(
     val context: Context,
     val platform: Platform,
-    val clazz: Class<*>
+    val clazz: Class<*>,
 ) {
     companion object {
         fun Intent.getPlatform(): Platform =

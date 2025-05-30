@@ -108,10 +108,6 @@ enum class Platform(val id: String) {
                 throw IllegalArgumentException("Platform cannot be null")
             }
 
-            if (conf.provider == null) {
-                throw IllegalArgumentException("Provider cannot be null")
-            }
-
             return when {
                 isAlive -> true
                 else -> try {
@@ -123,7 +119,9 @@ enum class Platform(val id: String) {
                         RKSU,
                         MKSU,
                         APatch,
-                            -> conf.provider
+                            -> conf.rootProvider
+
+                        NonRoot -> conf.nonRootProvider
 
                         else -> null
                     }

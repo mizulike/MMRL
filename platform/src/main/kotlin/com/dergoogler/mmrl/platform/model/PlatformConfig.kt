@@ -4,16 +4,11 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.ServiceConnection
 import android.os.IBinder
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.TIMEOUT_MILLIS
 import com.dergoogler.mmrl.platform.stub.IServiceManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.withTimeout
@@ -22,7 +17,20 @@ interface PlatformConfig {
     var context: Context?
     var platform: Platform?
     var debug: Boolean
-    var provider: IServiceManager?
+    /**
+     * The root service provider instance.
+     * This property holds an instance of [IServiceManager] that represents the root service provider.
+     * It is used to interact with the root service if available.
+     * It can be null if the root service is not available or not yet initialized.
+     */
+    var rootProvider: IServiceManager?
+    /**
+     *  An instance of [IServiceManager] for the non-root provider,
+     *  or `null` if the non-root provider is not available or not connected.
+     *
+     *  @see IServiceManager
+     */
+    var nonRootProvider: IServiceManager?
     suspend fun get(
         provider: IProvider,
         timeoutMillis: Long = TIMEOUT_MILLIS,
@@ -38,7 +46,8 @@ data class PlatformConfigImpl(
     override var context: Context? = null,
     override var platform: Platform? = null,
     override var debug: Boolean = false,
-    override var provider: IServiceManager? = null,
+    override var rootProvider: IServiceManager? = null,
+    override var nonRootProvider: IServiceManager? = null,
 ) : PlatformConfig {
     @OptIn(InternalCoroutinesApi::class)
     override suspend fun get(
@@ -87,5 +96,9 @@ data class PlatformConfigImpl(
             !provider.isAuthorized() -> throw IllegalStateException("${provider.name} not authorized")
             else -> get(provider, timeoutMillis)
         }
+    }
+
+    private companion object {
+        const val TAG = "PlatformConfig"
     }
 }
