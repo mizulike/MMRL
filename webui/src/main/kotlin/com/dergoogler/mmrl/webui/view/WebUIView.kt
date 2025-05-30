@@ -249,6 +249,40 @@ open class WebUIView(
     }
 
     /**
+     * Adds a JavaScript interface to this WebView.
+     *
+     * This function simplifies the process of adding JavaScript interfaces by allowing you to
+     * directly specify the interface class [T] and optionally provide constructor arguments
+     * and parameter types.
+     *
+     * @param T The type of the JavaScript interface, which must extend [WXInterface].
+     * @param initargs An optional array of arguments to be passed to the constructor of the interface.
+     * @param parameterTypes An optional array of parameter types for the constructor of the interface.
+     * @throws BrickException if an error occurs while adding the interface.
+     */
+    @Throws(BrickException::class)
+    @SuppressLint("JavascriptInterface")
+    inline fun <reified T : WXInterface> addJavascriptInterface(
+        initargs: Array<Any>? = null,
+        parameterTypes: Array<Class<*>>? = null,
+    ) {
+        try {
+            val interfaceObject: JavaScriptInterface<out WXInterface> = JavaScriptInterface(
+                T::class.java,
+                initargs,
+                parameterTypes
+            )
+
+            addJavascriptInterface(interfaceObject)
+        } catch (e: Exception) {
+            throw BrickException(
+                message = "Couldn't add a new JavaScript interface.",
+                cause = e,
+            )
+        }
+    }
+
+    /**
      * Adds multiple JavaScript interfaces to this WebView.
      *
      * This function iterates over the provided JavaScript interfaces and adds each one

@@ -159,14 +159,12 @@ open class WXView(
     }
 
     private fun addJavascriptInterfaces() {
-        addJavascriptInterface(
-            FileInputInterface.factory(),
-            ApplicationInterface.factory(),
-            FileInterface.factory(),
-            ModuleInterface.factory(),
-            UserManagerInterface.factory(),
-            PackageManagerInterface.factory(),
-        )
+        addJavascriptInterface<FileInputInterface>()
+        addJavascriptInterface<ApplicationInterface>()
+        addJavascriptInterface<FileInterface>()
+        addJavascriptInterface<ModuleInterface>()
+        addJavascriptInterface<UserManagerInterface>()
+        addJavascriptInterface<PackageManagerInterface>()
 
         if (options.config.dexFiles.isNotEmpty()) {
             for (dexFile in options.config.dexFiles) {
