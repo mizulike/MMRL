@@ -176,12 +176,9 @@ open class WXView(
         }
     }
 
-    override fun onDetachedFromWindow() {
-        cleanup()
-        super.onDetachedFromWindow()
-    }
+    override fun cleanup() {
+        super.cleanup()
 
-    private fun cleanup() {
         stopLoading()
         webChromeClient = null
         removeView(this)
@@ -193,11 +190,6 @@ open class WXView(
     private val Int.asPx: Int
         get() = (this / context.resources.displayMetrics.density).toInt()
 
-
-    override fun destroy() {
-        cleanup()
-        super.destroy()
-    }
 
     /**
      * Loads the domain URL specified in the [WebUIOptions].

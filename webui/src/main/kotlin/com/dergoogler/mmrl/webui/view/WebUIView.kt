@@ -181,14 +181,17 @@ open class WebUIView(
         post { evaluateJavascript(script, null) }
     }
 
-    override fun onDetachedFromWindow() {
+    protected open fun cleanup() {
+        stopLoading()
+        loadUrl("about:blank")
+        clearHistory()
+        removeAllViews()
+
         initJob?.cancel()
-        this.destroy()
-        super.onDetachedFromWindow()
     }
 
     override fun destroy() {
-        initJob?.cancel()
+        cleanup()
 
         // remove all interfaces
         for (obj in interfaces) {
