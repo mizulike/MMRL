@@ -99,8 +99,8 @@ abstract class BaseModuleManager() : IModuleManager.Stub() {
         return 0L
     }
 
-    protected fun Map<String, String>.toModule(): LocalModule {
-        val id = ModId(getOrDefault("id", "unknown"))
+    protected fun Map<String, String>.toModule(baseDir: String = ModId.ADB_DIR): LocalModule {
+        val id = ModId(getOrDefault("id", "unknown"), baseDir)
 
         val size = id.moduleDir.length(
             recursive = true,
