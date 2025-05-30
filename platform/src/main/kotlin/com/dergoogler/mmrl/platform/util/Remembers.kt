@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.collectLatest
 import com.dergoogler.mmrl.platform.TIMEOUT_MILLIS
 import com.dergoogler.mmrl.platform.PlatformManager
 
+@ExperimentalComposeApi
 @Composable
 inline fun <T> waitOfPlatform(
     fallback: T? = null,
