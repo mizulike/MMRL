@@ -94,7 +94,7 @@ data class WebUIOptions(
         }
 
     val platform: Platform
-        get() = Platform.get(Platform.NonRoot) {
+        get() = Platform.get(Platform.Unknown) {
             platform
         }
 

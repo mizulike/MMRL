@@ -49,7 +49,8 @@ enum class Platform(val id: String) {
     MKSU("mksu"),
     SukiSU("sukisu"),
     RKSU("rksu"),
-    NonRoot("");
+    NonRoot("nonroot"),
+    Unknown("unknown");
 
     companion object {
         private const val TAG = "Platform"
