@@ -11,6 +11,7 @@ import android.system.OsConstants.O_CREAT
 import android.system.OsConstants.O_RDONLY
 import android.system.OsConstants.O_TRUNC
 import android.system.OsConstants.O_WRONLY
+import androidx.annotation.UiThread
 import com.dergoogler.mmrl.platform.content.ParcelResult
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -160,22 +161,19 @@ open class ExtFile(
 
     private val extFileStreamPool: ExecutorService = Executors.newCachedThreadPool()
 
+    @UiThread
     protected fun openReadStream(path: String, fd: ParcelFileDescriptor): ParcelResult {
         val f = OpenFile()
-        try {
+        return try {
             f.fd = Os.open(path, O_RDONLY, 0)
-            extFileStreamPool.execute {
-                runCatching {
-                    f.use { of ->
-                        of.write = FileUtils.createFileDescriptor(fd.detachFd())
-                        while (of.pread(SuFile.PIPE_CAPACITY, -1) > 0);
-                    }
-                }
+            f.use { of ->
+                of.write = FileUtils.createFileDescriptor(fd.detachFd())
+                while (of.pread(SuFile.PIPE_CAPACITY, -1) > 0);
             }
-            return ParcelResult()
+            ParcelResult()
         } catch (e: ErrnoException) {
             f.close()
-            return ParcelResult(e)
+            ParcelResult(e)
         }
     }
 
