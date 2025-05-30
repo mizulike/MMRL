@@ -2,6 +2,7 @@ package com.dergoogler.mmrl.platform.manager
 
 import com.dergoogler.mmrl.platform.content.LocalModule
 import com.dergoogler.mmrl.platform.content.State
+import com.dergoogler.mmrl.platform.file.ExtFile
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.disableFile
@@ -32,7 +33,7 @@ abstract class BaseModuleManager() : IModuleManager.Stub() {
         "/system/bin/svc power reboot $reason || /system/bin/reboot $reason".exec()
     }
 
-    override fun getModules() = SuFile(ModId.ADB_DIR, ModId.MODULES_DIR).listFiles()
+    override fun getModules() = ExtFile(ModId.ADB_DIR, ModId.MODULES_DIR).listFiles()
         .orEmpty()
         .mapNotNull { dir ->
             val id = ModId(dir.name)
