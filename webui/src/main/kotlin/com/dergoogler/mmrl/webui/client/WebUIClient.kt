@@ -186,9 +186,9 @@ open class WXClient : WebViewClient {
 
     override fun shouldOverrideUrlLoading(
         view: WebView,
-        request: WebResourceRequest?,
+        request: WebResourceRequest,
     ): Boolean {
-        val mUri = request?.url ?: return false
+        val mUri = request.url ?: return false
         val mUrl = mUri.toString()
 
         val isUnsafe = !mOptions.isDomainSafe(mUrl)
