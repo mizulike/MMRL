@@ -19,16 +19,16 @@ import com.dergoogler.mmrl.platform.stub.IFileManager
 import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.platform.stub.IServiceManager
 
-class ServiceManager(
-    private val platform: Platform,
+open class ServiceManager(
+    protected val platform: Platform,
 ) : IServiceManager.Stub() {
-    private val services = hashMapOf<String, IBinder>()
+    protected val services = hashMapOf<String, IBinder>()
 
-    private val fileManager by lazy {
+    protected val fileManager by lazy {
         FileManager()
     }
 
-    private val moduleManager by lazy {
+    protected val moduleManager by lazy {
         when (platform) {
             Platform.Magisk -> MagiskModuleManager()
 
@@ -109,7 +109,7 @@ class ServiceManager(
             super.onTransact(code, data, reply, flags)
         }
 
-    private companion object Default {
-        const val TAG = "MMRLServiceManager"
+    protected companion object Default {
+        const val TAG = "Platform->ServiceManager"
     }
 }
