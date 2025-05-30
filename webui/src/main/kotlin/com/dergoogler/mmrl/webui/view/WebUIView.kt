@@ -13,6 +13,7 @@ import android.widget.FrameLayout
 import androidx.annotation.UiThread
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.drawable.toDrawable
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
@@ -144,7 +145,7 @@ open class WebUIView(
     }
 
     fun postMessage(message: String) {
-        val uri = options.domain
+        val uri = /* options.domain */ "*".toUri()
 
         if (WebViewFeature.isFeatureSupported(WebViewFeature.POST_WEB_MESSAGE)) {
             val compatMessage = WebMessageCompat(message)
