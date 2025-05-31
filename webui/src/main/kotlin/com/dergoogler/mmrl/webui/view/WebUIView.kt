@@ -1,12 +1,10 @@
 package com.dergoogler.mmrl.webui.view
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.util.AttributeSet
 import android.util.Log
 import android.view.ViewGroup.LayoutParams
-import android.view.WindowInsetsController
 import android.webkit.WebMessage
 import android.webkit.WebView
 import android.widget.FrameLayout
@@ -14,26 +12,20 @@ import androidx.annotation.UiThread
 import androidx.compose.ui.graphics.toArgb
 import androidx.core.graphics.drawable.toDrawable
 import androidx.core.net.toUri
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.doOnAttach
 import androidx.webkit.WebMessageCompat
 import androidx.webkit.WebViewCompat
 import androidx.webkit.WebViewFeature
-import com.dergoogler.mmrl.ext.BuildCompat
 import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.ext.findActivity
 import com.dergoogler.mmrl.ext.moshi.moshi
-import com.dergoogler.mmrl.ext.nullply
-import com.dergoogler.mmrl.webui.client.WXChromeClient
-import com.dergoogler.mmrl.webui.client.WXClient
 import com.dergoogler.mmrl.webui.interfaces.WXConsole
 import com.dergoogler.mmrl.webui.interfaces.WXInterface
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
-import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
+import com.dergoogler.mmrl.webui.model.WXEvent
 import com.dergoogler.mmrl.webui.model.WXEventHandler
+import com.dergoogler.mmrl.webui.model.WXRawEvent
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -160,19 +152,91 @@ open class WebUIView(
         }
     }
 
-    fun postEventHandler(event: WXEventHandler) {
+    /**
+     * Posts a [WXEvent] to the WebView.
+     *
+     * @param type The type of the event.
+     */
+    fun postWXEvent(type: WXEvent) =
+        postWXEvent<WXEvent, Nothing>(type, null)
+
+    /**
+     * Posts an event with the given [type] string to the WebView.
+     *
+     * @param type The type of the event.
+     */
+    fun postWXEvent(type: String) =
+        postWXEvent<String, Nothing>(type, null)
+
+    /**
+     * Posts a [WXEvent] with the given [data] to the WebView.
+     *
+     * @param type The type of the event.
+     * @param data The data to be sent with the event.
+     * @param D The type of the data.
+     */
+    fun <D : Any?> postWXEvent(type: WXEvent, data: D?) =
+        postWXEvent<WXEvent, D>(type, data)
+
+    /**
+     * Posts an event with the given [type] string and [data] to the WebView.
+     *
+     * @param type The type of the event.
+     * @param data The data to be sent with the event.
+     * @param D The type of the data.
+     */
+    fun <D : Any?> postWXEvent(type: String, data: D?) =
+        postWXEvent<String, D>(type, data)
+
+    /**
+     * Posts an event with the given [type] and [data] to the WebView.
+     * This is a generic function that can be used to post any type of event.
+     *
+     * @param type The type of the event.
+     * @param data The data to be sent with the event.
+     * @param T The type of the event type.
+     * @param D The type of the data.
+     */
+    fun <T, D : Any?> postWXEvent(type: T, data: D?) =
+        postWXEvent<T, D?>(WXEventHandler<T, D?>(type, data))
+
+    /**
+     * Posts the given [WXEventHandler] event to the WebView.
+     *
+     * It serializes the event to JSON and sends it as a message to the WebView.
+     * If the activity or WebView is not available, or if serialization fails,
+     * an error is logged and the event is not posted.
+     *
+     * @param event The event to be posted.
+     * @param T The type of the event type.
+     * @param D The type of the data.
+     */
+    fun <T, D : Any?> postWXEvent(event: WXEventHandler<T, D?>) {
         val activity = context.findActivity()
         if (activity == null) {
-            console.error("[$TAG] Activity not available for postEvent")
+            console.error("[$TAG] Activity/WebView not available for postEvent")
             return
         }
 
-        val adapter = moshi.adapter(WXEventHandler::class.java)
+        val type = event.getType()
+        val data = event.data
+
+        val newEvent = WXRawEvent(
+            type = type,
+            data = data
+        )
+
+        val adapter = moshi.adapter(WXRawEvent::class.java)
+
+        val jsonPayload = try {
+            adapter.toJson(newEvent)
+        } catch (e: Exception) {
+            console.error("[$TAG] Failed to serialize WXEventHandler: ${e.message}")
+            return
+        }
 
         options {
-            postMessage(
-                adapter.toJson(event)
-            )
+            postMessage(jsonPayload)
         }
     }
 

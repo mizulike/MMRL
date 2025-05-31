@@ -27,10 +27,11 @@ import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.confirm
 import com.dergoogler.mmrl.webui.R
+import com.dergoogler.mmrl.webui.model.WXEvent
+import com.dergoogler.mmrl.webui.model.WXEventHandler
+import com.dergoogler.mmrl.webui.model.WXKeyboardEventData
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.asWebUIConfig
-import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
-import com.dergoogler.mmrl.webui.util.PostWindowEventMessage.Companion.asEvent
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
 import com.dergoogler.mmrl.webui.view.WebUIXView
@@ -141,19 +142,27 @@ open class WXActivity : ComponentActivity() {
 
         config {
             if (windowResize) {
-                rootView.getViewTreeObserver().addOnGlobalLayoutListener {
+                rootView.viewTreeObserver.addOnGlobalLayoutListener {
                     val r = Rect()
                     rootView.getWindowVisibleDisplayFrame(r)
-                    val screenHeight: Int = rootView.getRootView().height
-                    val keypadHeight: Int = screenHeight - r.bottom
-                    if (keypadHeight > screenHeight * 0.15) {
-                        if (!isKeyboardShowing) {
-                            isKeyboardShowing = true
+
+                    val screenHeight = rootView.rootView.height
+                    val keypadHeight = screenHeight - r.bottom
+                    val keyboardVisibleNow = keypadHeight > screenHeight * 0.15
+
+                    if (keyboardVisibleNow != isKeyboardShowing) {
+                        isKeyboardShowing = keyboardVisibleNow
+
+                        view.wx.postWXEvent(
+                            WXEventHandler(
+                                WXEvent.WX_ON_KEYBOARD,
+                                WXKeyboardEventData(visible = keyboardVisibleNow)
+                            )
+                        )
+
+                        if (keyboardVisibleNow) {
                             adjustWebViewHeight(keypadHeight)
-                        }
-                    } else {
-                        if (isKeyboardShowing) {
-                            isKeyboardShowing = false
+                        } else {
                             resetWebViewHeight()
                         }
                     }
@@ -182,7 +191,13 @@ open class WXActivity : ComponentActivity() {
                 when (val backHandler = handler) {
                     is String -> when (backHandler) {
                         "native" -> handleNativeBack()
-                        "javascript" -> view.wx.postEventHandler(PostWindowEventMessage.WX_ON_BACK.asEvent)
+                        "javascript" -> view.wx.postWXEvent(
+                            WXEventHandler(
+                                WXEvent.WX_ON_BACK,
+                                null
+                            )
+                        )
+
                         else -> finish()
                     }
 
@@ -226,7 +241,7 @@ open class WXActivity : ComponentActivity() {
         with(view.wx) {
             this.onResume()
             resumeTimers()
-            postEventHandler(PostWindowEventMessage.WX_ON_RESUME.asEvent)
+            postWXEvent(WXEvent.WX_ON_RESUME)
         }
 
         super.onResume()
@@ -236,7 +251,7 @@ open class WXActivity : ComponentActivity() {
         with(view.wx) {
             this.onPause()
             pauseTimers()
-            postEventHandler(PostWindowEventMessage.WX_ON_PAUSE.asEvent)
+            postWXEvent(WXEvent.WX_ON_PAUSE)
         }
 
         super.onPause()

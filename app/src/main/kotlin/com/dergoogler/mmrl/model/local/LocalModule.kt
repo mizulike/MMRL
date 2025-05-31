@@ -1,7 +1,7 @@
 package com.dergoogler.mmrl.model.local
 
 import com.dergoogler.mmrl.utils.Utils
-import com.dergoogler.mmrl.platform.model.ModId.Companion.asModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.toModId
 
 typealias LocalModule = com.dergoogler.mmrl.platform.content.LocalModule
 
@@ -9,7 +9,7 @@ val com.dergoogler.mmrl.platform.content.LocalModule.versionDisplay get() = Util
 
 fun com.dergoogler.mmrl.platform.content.LocalModule.Companion.example() =
     com.dergoogler.mmrl.platform.content.LocalModule(
-        id = "local_example".asModId,
+        id = "local_example".toModId(),
         name = "Example",
         version = "2022.08.16",
         versionCode = 1703,

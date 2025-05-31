@@ -3,7 +3,6 @@ package com.dergoogler.mmrl.webui.view
 import android.content.Context
 import android.util.Log
 import android.view.View
-import android.view.ViewGroup.LayoutParams
 import android.widget.FrameLayout
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.ui.graphics.toArgb
@@ -14,8 +13,8 @@ import androidx.core.view.doOnAttach
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.dergoogler.mmrl.ext.exception.BrickException
 import com.dergoogler.mmrl.ext.nullply
-import com.dergoogler.mmrl.webui.util.PostWindowEventMessage
-import com.dergoogler.mmrl.webui.util.PostWindowEventMessage.Companion.asEvent
+import com.dergoogler.mmrl.webui.model.WXEvent
+import com.dergoogler.mmrl.webui.model.WXRefreshEventData
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 
 /**
@@ -49,9 +48,9 @@ open class WebUIXView : FrameLayout, SwipeRefreshLayout.OnRefreshListener {
     private var mView: WXView? = null
     private var mOptions: WebUIOptions? = null
     private var mSwipeView: WXSwipeRefresh? = null
-    private val mLayoutParams: FrameLayout.LayoutParams? = LayoutParams(
-        FrameLayout.LayoutParams.MATCH_PARENT,
-        FrameLayout.LayoutParams.MATCH_PARENT
+    private val mLayoutParams: LayoutParams? = LayoutParams(
+        LayoutParams.MATCH_PARENT,
+        LayoutParams.MATCH_PARENT
     )
 
     /**
@@ -100,6 +99,10 @@ open class WebUIXView : FrameLayout, SwipeRefreshLayout.OnRefreshListener {
         this.mView = wxView
         this.mOptions = options
         this.mSwipeView = WXSwipeRefresh(options.context, wxView)
+
+        mSwipeView?.nullply {
+            isEnabled = options.config.pullToRefresh
+        }
 
         val mainView =
             createMainView() ?: throw BrickException("Failed to create main WebUI X View")
@@ -151,9 +154,15 @@ open class WebUIXView : FrameLayout, SwipeRefreshLayout.OnRefreshListener {
         // Disabled pull-to-refresh
         if (!options.config.pullToRefresh) return
 
-
         if (options.config.refreshInterceptor == "javascript") {
-            wx.postEventHandler(PostWindowEventMessage.WX_ON_REFRESH.asEvent)
+            wx.postWXEvent(
+                type = WXEvent.WX_ON_REFRESH,
+                data = WXRefreshEventData(
+                    isRefreshing = swipeView.isRefreshing,
+                    isShown = swipeView.isShown,
+                    isEnabled = swipeView.isEnabled,
+                )
+            )
             return
         }
 

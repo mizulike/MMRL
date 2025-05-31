@@ -31,6 +31,8 @@ import com.dergoogler.mmrl.webui.interfaces.WXInterface
 import com.dergoogler.mmrl.webui.interfaces.WXOptions
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.model.JavaScriptInterface
+import com.dergoogler.mmrl.webui.model.WXEvent
+import com.dergoogler.mmrl.webui.model.WXInsetsEventData.Companion.toEventData
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.util.getRequireNewVersion
 import com.dergoogler.mmrl.webui.view.WebUIView
@@ -134,6 +136,11 @@ open class WXView(
                 bottom = bottom.asPx,
                 left = left.asPx,
                 right = right.asPx
+            )
+
+            postWXEvent(
+                type = WXEvent.WX_ON_INSETS,
+                data = newInsets.toEventData()
             )
 
             if (options.debug) Log.d(TAG, "Insets: $newInsets")
