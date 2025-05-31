@@ -161,10 +161,23 @@ open class WXClient : WebViewClient {
         }
     }
 
+    @SuppressLint("WebViewClientOnReceivedSslError")
+    override fun onReceivedSslError(
+        view: WebView,
+        handler: SslErrorHandler,
+        error: SslError,
+    ) {
+        if (mOptions.debug) {
+            handler.proceed()
+        } else {
+            handler.cancel()
+        }
+    }
+
     override fun onReceivedError(
-        view: WebView?,
-        request: WebResourceRequest?,
-        error: WebResourceError?,
+        view: WebView,
+        request: WebResourceRequest,
+        error: WebResourceError,
     ) {
         super.onReceivedError(view, request, error)
         mSwipeView.nullply {
@@ -172,7 +185,6 @@ open class WXClient : WebViewClient {
         }
     }
 
-    // Add HTTP error handling too
     override fun onReceivedHttpError(
         view: WebView?,
         request: WebResourceRequest?,
