@@ -18,8 +18,8 @@ import com.dergoogler.mmrl.app.utils.NotificationUtils
 import com.dergoogler.mmrl.compat.MediaStoreCompat.createDownloadUri
 import com.dergoogler.mmrl.compat.NetworkCompat
 import com.dergoogler.mmrl.compat.PermissionCompat
+import com.dergoogler.mmrl.datastore.UserPreferencesRepository
 import com.dergoogler.mmrl.ext.parcelable
-import com.dergoogler.mmrl.repository.UserPreferencesRepository
 import dagger.hilt.android.AndroidEntryPoint
 import dev.dergoogler.mmrl.compat.BuildCompat
 import kotlinx.coroutines.Dispatchers
