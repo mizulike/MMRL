@@ -35,7 +35,7 @@ class UserPreferencesRepository @Inject constructor(
         userPreferencesDataSource.setTerminalTextWrap(value)
 
     suspend fun setDatePattern(value: String) = userPreferencesDataSource.setDatePattern(value)
- 
+
     suspend fun setAutoUpdateRepos(value: Boolean) =
         userPreferencesDataSource.setAutoUpdateRepos(value)
 
