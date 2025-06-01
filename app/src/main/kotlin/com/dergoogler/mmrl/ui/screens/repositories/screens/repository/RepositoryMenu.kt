@@ -33,7 +33,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 
 @Composable
 fun RepositoryMenu(
-    setMenu: (RepositoryMenu) -> Unit
+    setMenu: (RepositoryMenu) -> Unit,
 ) {
     val userPreferences = LocalUserPreferences.current
     var open by rememberSaveable { mutableStateOf(false) }
@@ -60,11 +60,12 @@ fun RepositoryMenu(
 private fun MenuBottomSheet(
     onClose: () -> Unit,
     menu: RepositoryMenu,
-    setMenu: (RepositoryMenu) -> Unit
+    setMenu: (RepositoryMenu) -> Unit,
 ) = BottomSheet(onDismissRequest = onClose) {
     val options = listOf(
         Option.Name to R.string.menu_sort_option_name,
-        Option.UpdatedTime to R.string.menu_sort_option_updated
+        Option.UpdatedTime to R.string.menu_sort_option_updated,
+        Option.Size to R.string.menu_sort_option_size
     )
 
     val optionsRepoListMode = listOf(
@@ -164,7 +165,8 @@ private fun MenuBottomSheet(
                 label = { Text(text = stringResource(id = R.string.menu_show_cover)) }
             )
 
-            MenuChip(selected = menu.showVerified,
+            MenuChip(
+                selected = menu.showVerified,
                 onClick = { setMenu(menu.copy(showVerified = !menu.showVerified)) },
                 label = { Text(text = stringResource(id = R.string.menu_show_verified)) })
 

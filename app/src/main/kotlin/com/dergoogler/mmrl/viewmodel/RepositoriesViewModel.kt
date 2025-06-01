@@ -90,12 +90,14 @@ class RepositoriesViewModel @Inject constructor(
         when (option) {
             Option.Name -> compareByDescending { it.name.lowercase() }
             Option.UpdatedTime -> compareBy { it.timestamp }
+            Option.Size -> compareByDescending { it.size }
         }
 
     } else {
         when (option) {
             Option.Name -> compareBy { it.name.lowercase() }
             Option.UpdatedTime -> compareByDescending { it.timestamp }
+            Option.Size -> compareBy { it.size }
         }
     }
 

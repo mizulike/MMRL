@@ -167,12 +167,14 @@ class RepositoryViewModel @AssistedInject constructor(
         when (option) {
             Option.Name -> compareByDescending { it.second.name.lowercase() }
             Option.UpdatedTime -> compareBy { it.first.lastUpdated }
+            Option.Size -> compareByDescending { 0 }
         }
 
     } else {
         when (option) {
             Option.Name -> compareBy { it.second.name.lowercase() }
             Option.UpdatedTime -> compareByDescending { it.first.lastUpdated }
+            Option.Size -> compareBy { 0 }
         }
     }
 
