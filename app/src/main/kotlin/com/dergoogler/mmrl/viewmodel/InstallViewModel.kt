@@ -12,7 +12,6 @@ import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.tmpDir
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
-import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -22,6 +21,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dergoogler.mmrl.utils.initPlatform
 import com.topjohnwu.superuser.CallbackList
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -44,27 +44,37 @@ class InstallViewModel @Inject constructor(
         Timber.d("InstallViewModel initialized")
     }
 
-    fun installModules(uris: List<Uri>) = viewModelScope.launch {
+    suspend fun installModules(scope: CoroutineScope, uris: List<Uri>) {
         val userPreferences = userPreferencesRepository.data.first()
         event = Event.LOADING
         var allSucceeded = true
 
-        if (!initPlatform(context, userPreferences.workingMode.toPlatform())) {
+        devLog(R.string.waiting_for_platformmanager_to_initialize)
+
+        val deferred = initPlatform(
+            scope = scope,
+            context = context,
+            platform = userPreferences.workingMode.toPlatform()
+        )
+
+        if (!deferred.await()) {
             event = Event.FAILED
-            log(R.string.service_is_not_available)
-            return@launch
+            log(R.string.failed_to_initialize_platform)
+            return
+        } else {
+            devLog(R.string.platform_initialized)
         }
 
         if (moduleManager == null) {
             event = Event.FAILED
             log(R.string.module_manager_is_null)
-            return@launch
+            return
         }
 
         if (fileManager == null) {
             event = Event.FAILED
             log(R.string.file_manager_is_null)
-            return@launch
+            return
         }
 
         val bulkModules = uris.mapNotNull { uri ->
@@ -96,7 +106,7 @@ class InstallViewModel @Inject constructor(
                 event = Event.FAILED
                 allSucceeded = false
                 log(R.string.cannot_install_blacklisted_modules_settings_security_blacklist_alerts)
-                return@launch
+                return
             }
 
             BulkModule(
@@ -150,7 +160,6 @@ class InstallViewModel @Inject constructor(
                 log(context.getString(R.string.copying_failed))
                 return@withContext false
             }
-
 
             val io = context.contentResolver.openInputStream(uri)
 

@@ -14,6 +14,49 @@ import kotlin.contracts.contract
 infix fun <T> Any?.nullable(param: T): T? = if (this != null) param else null
 
 /**
+ * Safely invokes a block of code on a nullable receiver if it's not null, otherwise returns null.
+ *
+ * This infix function provides a concise way to execute a lambda expression (`block`)
+ * only when the receiver object (`this`) is not null. If the receiver is null,
+ * the function immediately returns null, preventing a NullPointerException.
+ *
+ * This is similar to the safe call operator (`?.`), but allows for more complex
+ * operations within the block that might not be directly achievable with a simple
+ * safe call.
+ *
+ * @param T The type of the nullable receiver.
+ * @param R The return type of the block.
+ * @param block A lambda expression (extension function) that will be executed if the receiver is not null.
+ *              The receiver object (`this`) is available within the block's scope.
+ * @return The result of executing the `block` if the receiver is not null, otherwise `null`.
+ *
+ * @sample
+ * ```kotlin
+ * data class Person(val name: String, val age: Int)
+ *
+ * fun main() {
+ *     val person1: Person? = Person("Alice", 30)
+ *     val person2: Person? = null
+ *
+ *     // Example 1: Accessing properties and performing operations
+ *     val greeting1 = person1.nullvoke { "Hello, ${this.name}! You are ${this.age} years old." }
+ *     println(greeting1) // Output: Hello, Alice! You are 30 years old.
+ *
+ *     val greeting2 = person2.nullvoke { "Hello, ${this.name}! You are ${this.age} years old." }
+ *     println(greeting2) // Output: null
+ *
+ *     // Example 2: Calling methods
+ *     val upperCaseName1 = person1.nullvoke { name.toUpperCase() }
+ *     println(upperCaseName1) // Output: ALICE
+ *
+ *     val upperCaseName2 = person2.nullvoke { name.toUpperCase() }
+ *     println(upperCaseName2) // Output: null
+ *
+ *     // Example 3: When the block itself might return null
+ */
+infix fun <T, R> T?.nullvoke(block: T.() -> R): R? = if (this != null) block(this) else null
+
+/**
  * Returns the provided parameter if the Boolean receiver is non-null and true; otherwise, returns null.
  *
  * @param param The value to return if the receiver is non-null and true.

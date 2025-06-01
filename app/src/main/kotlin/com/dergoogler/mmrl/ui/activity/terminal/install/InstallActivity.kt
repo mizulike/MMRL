@@ -6,22 +6,29 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.WindowManager
 import androidx.activity.viewModels
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.lifecycleScope
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.nullply
+import com.dergoogler.mmrl.ext.nullvoke
 import com.dergoogler.mmrl.ext.tmpDir
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.viewmodel.InstallViewModel
 import dev.dergoogler.mmrl.compat.BuildCompat
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.ui.activity.setBaseContent
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import kotlin.coroutines.cancellation.CancellationException
 
 class InstallActivity : MMRLComponentActivity() {
     private val viewModel: InstallViewModel by viewModels()
+    private var installJob: Job? = null
 
     override val windowFlags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
 
@@ -63,7 +70,7 @@ class InstallActivity : MMRLComponentActivity() {
                 onClose = {
                     confirmDialog = false
                     // just in [case]
-                    viewModel.shell?.close()
+                    viewModel.shell.close()
                     finish()
                 },
                 onConfirm = {
@@ -72,22 +79,38 @@ class InstallActivity : MMRLComponentActivity() {
                 }
             )
 
+            DisposableEffect(installJob) {
+                onDispose {
+                    cancelJob("InstallActivity was disposed")
+                }
+            }
+
             InstallScreen(viewModel)
+        }
+    }
+
+    private fun cancelJob(message: String) {
+        installJob nullvoke {
+            cancel(message)
         }
     }
 
     override fun onDestroy() {
         Timber.d("InstallActivity onDestroy")
         tmpDir.deleteRecursively()
+        cancelJob("InstallActivity was destroyed")
         super.onDestroy()
     }
 
     private fun initModule(uris: List<Uri>) {
-        lifecycleScope.launch {
+        val job = lifecycleScope.launch {
             viewModel.installModules(
+                scope = this,
                 uris = uris
             )
         }
+
+        installJob = job
     }
 
     companion object {

@@ -21,4 +21,7 @@
     <string name="non_root_platform_is_not_supported">! Unrooted platforms are not supported</string>
     <string name="module_manager_is_null">! Module manager is null</string>
     <string name="file_manager_is_null">! File manager is null</string>
+    <string name="waiting_for_platformmanager_to_initialize">- Waiting for PlatformManager to initialize...</string>
+    <string name="failed_to_initialize_platform">! Failed to initialize Platform</string>
+    <string name="platform_initialized">- Platform initialized</string>
 </resources>
