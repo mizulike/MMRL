@@ -192,6 +192,8 @@ data class ModId(
             )
 
         val ModId.adbDir get() = SuFile(baseDir)
+        val ModId.configDir get() = SuFile(adbDir, HIDDEN_CONFIG_DIR)
+        val ModId.moduleConfigDir get() = SuFile(configDir, id)
         val ModId.modulesDir get() = SuFile(adbDir, MODULES_DIR)
         val ModId.moduleDir get() = SuFile(modulesDir, id)
         val ModId.webrootDir get() = SuFile(moduleDir, WEBROOT_DIR)
@@ -212,6 +214,7 @@ data class ModId(
         const val ADB_DIR = "/data/adb"
         const val WEBROOT_DIR = "webroot"
         const val MODULES_DIR = "modules"
+        const val HIDDEN_CONFIG_DIR = ".config"
 
         const val PROP_FILE = "module.prop"
 

@@ -5,6 +5,7 @@ import android.webkit.WebResourceResponse
 import com.dergoogler.mmrl.ext.isNull
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toSuFile
+import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleConfigDir
 import com.dergoogler.mmrl.webui.InjectionType
 import com.dergoogler.mmrl.webui.PathHandler
 import com.dergoogler.mmrl.webui.addInjection
@@ -20,8 +21,7 @@ fun webrootPathHandler(
     insets: Insets,
 ): PathHandler {
 
-    val configBase =
-        SuFile("/data/adb/.config/${options.modId.id}")
+    val configBase = options.modId.moduleConfigDir
     val configStyleBase = SuFile(configBase, "style")
     val configJsBase = SuFile(configBase, "js")
 

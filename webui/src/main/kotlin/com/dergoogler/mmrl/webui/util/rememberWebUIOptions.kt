@@ -18,6 +18,7 @@ import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
+import com.dergoogler.mmrl.platform.model.ModId.Companion.webrootDir
 import com.dergoogler.mmrl.ui.theme.Colors.Companion.getColorScheme
 import com.dergoogler.mmrl.webui.activity.WXActivity
 import com.dergoogler.mmrl.webui.client.WXClient
@@ -99,7 +100,7 @@ data class WebUIOptions(
             platform
         }
 
-    val webRoot = SuFile(modId.moduleDir, "webroot")
+    val webRoot = modId.webrootDir
 
     fun isDomainSafe(domain: String): Boolean {
         if (debug) {
@@ -113,7 +114,7 @@ data class WebUIOptions(
 
     val indexFile: String
         get() {
-            val files = webRoot.listFiles { it.isFile() }
+            val files = webRoot.listFiles { dir -> dir.isFile() }
 
             if (files == null) return "index.html"
 
