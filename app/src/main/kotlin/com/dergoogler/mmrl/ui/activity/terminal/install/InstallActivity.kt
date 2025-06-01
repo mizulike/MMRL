@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.viewModels
 import androidx.compose.runtime.DisposableEffect
@@ -19,6 +20,7 @@ import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.viewmodel.InstallViewModel
 import dev.dergoogler.mmrl.compat.BuildCompat
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
+import com.dergoogler.mmrl.ui.activity.TerminalActivity
 import com.dergoogler.mmrl.ui.activity.setBaseContent
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -26,18 +28,14 @@ import kotlinx.coroutines.launch
 import timber.log.Timber
 import kotlin.coroutines.cancellation.CancellationException
 
-class InstallActivity : MMRLComponentActivity() {
-    private val viewModel: InstallViewModel by viewModels()
-    private var installJob: Job? = null
-
-    override val windowFlags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-
+class InstallActivity : TerminalActivity<InstallViewModel>() {
     private var confirmDialog by mutableStateOf(true)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Timber.d("InstallActivity onCreate")
         super.onCreate(savedInstanceState)
 
+        viewModel = viewModels<InstallViewModel>().value
 
         val uris: ArrayList<Uri>? = if (intent.data != null) {
             arrayListOf(intent.data!!)
@@ -50,7 +48,7 @@ class InstallActivity : MMRLComponentActivity() {
             }
         }
 
-        Timber.d("InstallActivity onCreate: $uris")
+        Log.d(TAG, "InstallActivity onCreate: $uris")
 
         val confirm = intent.getBooleanExtra("confirm", true)
 
@@ -69,7 +67,6 @@ class InstallActivity : MMRLComponentActivity() {
                 description = R.string.install_screen_confirm_text,
                 onClose = {
                     confirmDialog = false
-                    // just in [case]
                     viewModel.shell.close()
                     finish()
                 },
@@ -79,19 +76,13 @@ class InstallActivity : MMRLComponentActivity() {
                 }
             )
 
-            DisposableEffect(installJob) {
+            DisposableEffect(terminalJob) {
                 onDispose {
                     cancelJob("InstallActivity was disposed")
                 }
             }
 
             InstallScreen(viewModel)
-        }
-    }
-
-    private fun cancelJob(message: String) {
-        installJob nullvoke {
-            cancel(message)
         }
     }
 
@@ -110,10 +101,12 @@ class InstallActivity : MMRLComponentActivity() {
             )
         }
 
-        installJob = job
+        terminalJob = job
     }
 
     companion object {
+        private const val TAG = "InstallActivity"
+
         fun start(context: Context, uri: List<Uri>, confirm: Boolean = true) {
             val intent = Intent(context, InstallActivity::class.java)
                 .apply {

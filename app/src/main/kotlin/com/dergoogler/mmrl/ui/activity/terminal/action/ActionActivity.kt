@@ -1,50 +1,73 @@
 package com.dergoogler.mmrl.ui.activity.terminal.action
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.WindowManager
 import androidx.activity.viewModels
+import androidx.compose.runtime.DisposableEffect
 import androidx.lifecycle.lifecycleScope
 import com.dergoogler.mmrl.ext.tmpDir
+import com.dergoogler.mmrl.platform.content.LocalModule
+import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.getModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.isNullOrEmpty
+import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.viewmodel.ActionViewModel
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
+import com.dergoogler.mmrl.ui.activity.TerminalActivity
 import com.dergoogler.mmrl.ui.activity.setBaseContent
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-class ActionActivity : MMRLComponentActivity() {
-    private val viewModel: ActionViewModel by viewModels()
-
-    override val windowFlags = WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON
-
+class ActionActivity : TerminalActivity<ActionViewModel>() {
     override fun onCreate(savedInstanceState: Bundle?) {
-        Timber.d("ActionActivity onCreate")
+        Log.d(TAG, "onCreate")
         super.onCreate(savedInstanceState)
 
-        val modId = intent.getStringExtra("MOD_ID")
+        viewModel = viewModels<ActionViewModel>().value
+
+        val modId = intent.getModId()
 
         if (modId.isNullOrEmpty()) {
             finish()
         } else {
-            Timber.d("ActionActivity onCreate: $modId")
+            Log.d(TAG, "onCreate: $modId")
             initAction(modId)
         }
 
         setBaseContent {
+            DisposableEffect(terminalJob) {
+                onDispose {
+                    cancelJob("$TAG was disposed")
+                }
+            }
+
             ActionScreen()
         }
     }
 
-    override fun onDestroy() {
-        Timber.d("InstallActivity onDestroy")
-        tmpDir.deleteRecursively()
-        super.onDestroy()
-    }
-
-    private fun initAction(modId: String) {
+    private fun initAction(modId: ModId) {
         lifecycleScope.launch {
             viewModel.runAction(
+                scope = this,
                 modId = modId,
             )
+        }
+    }
+
+    companion object {
+        private const val TAG = "ActionActivity"
+
+        fun start(context: Context, modId: ModId) {
+            val intent = Intent(context, ActionActivity::class.java)
+                .apply {
+                    putModId(modId)
+                }
+
+            context.startActivity(intent)
         }
     }
 }

@@ -152,18 +152,6 @@ open class MMRLComponentActivity : ComponentActivity() {
         notificationManager.createNotificationChannel(channel)
     }
 
-    companion object {
-        fun startActionActivity(context: Context, module: LocalModule) {
-            val intent = Intent(context, ActionActivity::class.java)
-                .apply {
-                    putExtra("MOD_ID", module.id)
-                }
-
-            context.startActivity(intent)
-        }
-    }
-
-
     inline fun <reified A : ComponentActivity> setActivityEnabled(enable: Boolean) {
         val component = ComponentName(
             this, A::class.java

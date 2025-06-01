@@ -46,6 +46,7 @@ import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.platform.model.ModuleConfig
+import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.component.DropdownMenu
@@ -165,9 +166,9 @@ fun ModuleItem(
                 ActionButton(
                     enabled = isProviderAlive && module.state != State.REMOVE && module.state != State.DISABLE,
                     onClick = {
-                        MMRLComponentActivity.startActionActivity(
+                        ActionActivity.start(
                             context = context,
-                            module = module
+                            modId = module.id
                         )
                     }
                 )

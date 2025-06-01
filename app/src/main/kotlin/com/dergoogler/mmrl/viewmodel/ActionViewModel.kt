@@ -16,6 +16,7 @@ import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.utils.initPlatform
 import com.topjohnwu.superuser.CallbackList
 import kotlinx.coroutines.CompletableDeferred
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -37,66 +38,67 @@ class ActionViewModel @Inject constructor(
         Timber.d("ActionViewModel initialized")
     }
 
-    suspend fun runAction(modId: String) {
-        val module = localModule(modId)
+    suspend fun runAction(scope: CoroutineScope, modId: ModId) {
+        val module = localModule(modId.toString())
         val userPreferences = userPreferencesRepository.data.first()
+        event = Event.LOADING
 
-        viewModelScope.launch {
-            event = Event.LOADING
+        devLog(R.string.waiting_for_platformmanager_to_initialize)
 
-            if (!initPlatform(context, userPreferences.workingMode.toPlatform())) {
-                event = Event.FAILED
-                log(R.string.service_is_not_available)
-                return@launch
-            }
+        val deferred = initPlatform(
+            scope = scope,
+            context = context,
+            platform = userPreferences.workingMode.toPlatform()
+        )
 
-            if (platform.isNotValid) {
-                event = Event.FAILED
-                log(R.string.non_root_platform_is_not_supported)
-                return@launch
-            }
+        if (!deferred.await()) {
+            event = Event.FAILED
+            log(R.string.failed_to_initialize_platform)
+            return
+        } else {
+            devLog(R.string.platform_initialized)
+        }
 
-            if (moduleManager == null) {
-                event = Event.FAILED
-                log(R.string.module_manager_is_null)
-                return@launch
-            }
+        if (moduleManager == null) {
+            event = Event.FAILED
+            log(R.string.module_manager_is_null)
+            return
+        }
 
-            if (fileManager == null) {
-                event = Event.FAILED
-                log(R.string.file_manager_is_null)
-                return@launch
-            }
+        if (fileManager == null) {
+            event = Event.FAILED
+            log(R.string.file_manager_is_null)
+            return
+        }
 
-            if (module == null) {
-                event = Event.FAILED
-                log(R.string.module_not_found)
-                return@launch
-            }
+        if (module == null) {
+            event = Event.FAILED
+            log(R.string.module_not_found)
+            return
+        }
 
-            if (!module.hasAction) {
-                event = Event.FAILED
-                log(R.string.this_module_don_t_have_an_action)
-                return@launch
-            }
+        if (!module.hasAction) {
+            event = Event.FAILED
+            log(R.string.this_module_don_t_have_an_action)
+            return
+        }
 
-            if (module.state == State.DISABLE || module.state == State.REMOVE) {
-                event = Event.FAILED
-                log(R.string.module_is_disabled_or_removed_unable_to_execute_action)
-                return@launch
-            }
+        if (module.state == State.DISABLE || module.state == State.REMOVE) {
+            event = Event.FAILED
+            log(R.string.module_is_disabled_or_removed_unable_to_execute_action)
+            return
+        }
 
-            val result = action(modId, userPreferences.useShellForModuleAction)
+        val result = action(modId, userPreferences.useShellForModuleAction)
 
-            event = if (result) {
-                Event.SUCCEEDED
-            } else {
-                Event.FAILED
-            }
+        event = if (result) {
+            Event.SUCCEEDED
+        } else {
+            Event.FAILED
         }
     }
 
-    private suspend fun action(modId: String, legacy: Boolean): Boolean =
+    private suspend fun action(modId: ModId, legacy: Boolean): Boolean =
         withContext(Dispatchers.IO) {
             val actionResult = CompletableDeferred<Boolean>()
 
@@ -133,7 +135,7 @@ class ActionViewModel @Inject constructor(
                     "busybox sh /data/adb/modules/$modId/action.sh"
                 )
             } else {
-                listOf(moduleManager!!.getActionCommand(ModId(modId)))
+                listOf(moduleManager!!.getActionCommand(modId))
             }
 
             val result = shell.newJob().add(*cmds.toTypedArray()).to(stdout, stderr).exec()
