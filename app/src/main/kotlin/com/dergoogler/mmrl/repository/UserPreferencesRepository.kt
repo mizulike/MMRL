@@ -6,6 +6,7 @@ import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.datastore.model.ModulesMenu
 import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
 import com.dergoogler.mmrl.datastore.model.RepositoryMenu
+import com.dergoogler.mmrl.datastore.model.WebUIEngine
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -112,4 +113,7 @@ class UserPreferencesRepository @Inject constructor(
 
     suspend fun setEnableToolbarEvents(value: Boolean) =
         userPreferencesDataSource.setEnableToolbarEvents(value)
+
+    suspend fun setWebUIEngine(value: WebUIEngine) =
+        userPreferencesDataSource.setWebUIEngine(value)
 }

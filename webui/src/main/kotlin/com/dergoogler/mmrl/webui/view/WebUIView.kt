@@ -59,6 +59,7 @@ open class WebUIView(
     internal var mSwipeView: WXSwipeRefresh? = null
 
     init {
+        setWebContentsDebuggingEnabled(options.debug)
         initWhenReady()
     }
 

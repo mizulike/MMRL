@@ -7,6 +7,7 @@ import com.dergoogler.mmrl.datastore.model.ModulesMenu
 import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
 import com.dergoogler.mmrl.datastore.model.RepositoryMenu
 import com.dergoogler.mmrl.datastore.model.UserPreferences
+import com.dergoogler.mmrl.datastore.model.WebUIEngine
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -294,6 +295,14 @@ class UserPreferencesDataSource @Inject constructor(
         userPreferences.updateData {
             it.copy(
                 enableToolbarEvents = value
+            )
+        }
+    }
+
+    suspend fun setWebUIEngine(value: WebUIEngine) = withContext(Dispatchers.IO) {
+        userPreferences.updateData {
+            it.copy(
+                webuiEngine = value
             )
         }
     }

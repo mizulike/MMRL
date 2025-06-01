@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.datastore.model.DarkMode
 import com.dergoogler.mmrl.datastore.model.Homepage
+import com.dergoogler.mmrl.datastore.model.WebUIEngine
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.platform.Platform
@@ -241,6 +242,12 @@ class SettingsViewModel @Inject constructor(
     fun setEnableToolbarEvents(value: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.setEnableToolbarEvents(value)
+        }
+    }
+
+    fun setWebUIEngine(value: WebUIEngine) {
+        viewModelScope.launch {
+            userPreferencesRepository.setWebUIEngine(value)
         }
     }
 }

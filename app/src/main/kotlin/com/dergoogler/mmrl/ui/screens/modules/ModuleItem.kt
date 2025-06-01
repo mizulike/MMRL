@@ -53,6 +53,7 @@ import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.LocalCover
 import com.dergoogler.mmrl.webui.activity.WXActivity.Companion.launchWebUIX
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
+import com.dergoogler.mmrl.utils.launchWebUI
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
@@ -75,7 +76,7 @@ fun ModuleItem(
 
     val canWenUIAccessed = isProviderAlive && module.hasWebUI && module.state != State.REMOVE
     val clicker: (() -> Unit)? = canWenUIAccessed nullable {
-        context.launchWebUIX<WebUIActivity>(module.id)
+        userPreferences.launchWebUI(context, module.id)
     }
 
     Card(
