@@ -11,6 +11,7 @@ import kotlinx.coroutines.withTimeoutOrNull
 import kotlinx.coroutines.flow.collectLatest
 import com.dergoogler.mmrl.platform.TIMEOUT_MILLIS
 import com.dergoogler.mmrl.platform.PlatformManager
+import kotlinx.coroutines.CoroutineScope
 
 @ExperimentalComposeApi
 @Composable
@@ -18,7 +19,7 @@ inline fun <T> waitOfPlatform(
     fallback: T? = null,
     key1: Any? = null,
     key2: Any? = null,
-    crossinline block: @DisallowComposableCalls suspend () -> T,
+    crossinline block: @DisallowComposableCalls suspend CoroutineScope.() -> T,
 ): State<T?> {
     val state = remember(key1, key2) { mutableStateOf(fallback) }
 
@@ -28,7 +29,7 @@ inline fun <T> waitOfPlatform(
                 Log.d(PlatformManager.TAG, "waitOfPlatform: Platform is alive, executing block.")
                 try {
                     val result = withTimeoutOrNull(TIMEOUT_MILLIS) {
-                        block()
+                        block(this)
                     }
                     if (result != null) {
                         state.value = result
