@@ -1,2 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="non_root_platform_is_not_supported">! Plataformas sem root não são suportadas</string>
+    <string name="module_manager_is_null">! Gerenciador de módulos é nulo</string>
+    <string name="file_manager_is_null">! Gerenciador de arquivos é nulo</string>
+    <string name="removed_updated_folder">- Pasta atualizada removida</string>
+    <string name="failed_to_remove_updated_folder">! Falha ao remover a pasta atualizada</string>
+    <string name="service_is_not_available">! Serviço não está disponível</string>
+    <string name="unable_to_gather_module_info_of_file">! Não foi possível reunir informações do módulo do arquivo:%1$s</string>
+    <string name="cannot_install_blacklisted_modules_settings_security_blacklist_alerts">! Não é possivel instalar módulos da lista negra. Configurações → Segurança → Alertas de lista negra</string>
+    <string name="installation_aborted_due_to_an_error">! Instalação abortada devido a um erro</string>
+    <string name="install_view_path">- Caminho: %1$s</string>
+    <string name="copying_zip_to_temp_directory">- Copiando o zip para o diretório temporário</string>
+    <string name="install_view_module_info">- Informação do módulo: %1$s</string>
+    <string name="copying_failed">! Falha na cópia</string>
+    <string name="unable_to_gather_module_info">! Não é possível reunir as informações do módulo</string>
+    <string name="install_view_installing">- Instalando %1$s</string>
+    <string name="module_not_found">! Módulo não encontrado.</string>
+    <string name="this_module_don_t_have_an_action">! Esse módulo não tem uma ação.</string>
+    <string name="module_is_disabled_or_removed_unable_to_execute_action">! Módulo foi desabilitado ou removido. Não foi possível executar a ação.</string>
+    <string name="execution_failed_try_to_use_shell_for_the_action_execution_settings_module_use_shell_for_module_action">- Falha na execução. Tente usar o Shell para executar a ação, Configurações → Módulo → Usar Shell para Ação do Módulo.</string>
+    <string name="unable_to_find_path_for_uri">! Não foi possível achar o caminho do uri: %1$s</string>
+    <string name="is_not_a_module_file_magisk_modules_must_be_zip_files_skipping">! %1$s não é um arquivo de módulo. Módulos do Magisk devem ser arquivos .zip. Pulando...</string>
+</resources>
