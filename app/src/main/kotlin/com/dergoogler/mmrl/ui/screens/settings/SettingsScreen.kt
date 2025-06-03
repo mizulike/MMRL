@@ -8,6 +8,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.stringResource
+import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
@@ -45,6 +46,20 @@ fun SettingsScreen() {
         allowNavigateBack = false,
         title = R.string.page_settings
     ) {
+        ListButtonItem(
+            icon = R.drawable.sandbox,
+            title = stringResource(id = R.string.settings_try_wxp),
+            onClick = {
+                browser.openUri(
+                    if (BuildConfig.IS_GOOGLE_PLAY_BUILD) {
+                        "https://play.google.com/store/apps/details?id=com.dergoogler.mmrl.wx"
+                    } else {
+                        "https://github.com/MMRLApp/WebUI-X-Portable"
+                    }
+                )
+            }
+        )
+
         ListButtonItem(
             icon = R.drawable.color_swatch,
             title = stringResource(id = R.string.settings_appearance),
@@ -100,7 +115,8 @@ fun SettingsScreen() {
             }
         )
 
-        val manager = FeaturedManager.managers.find { userPreferences.workingMode == it.workingMode }
+        val manager =
+            FeaturedManager.managers.find { userPreferences.workingMode == it.workingMode }
 
         manager.nullable { mng ->
             ListRadioCheckItem(
