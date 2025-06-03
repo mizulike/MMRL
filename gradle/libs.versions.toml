@@ -42,6 +42,7 @@ squareRetrofit = "2.11.0"
 squareOkhttp = "4.12.0"
 squareMoshi = "1.15.1"
 runtimeAndroid = "1.7.6"
+webuiXPortable = "a331b7d8d2"
 workRuntimeKtx = "2.10.0"
 lifecycleProcess = "2.8.7"
 apacheCommons = "1.27.1"
@@ -151,6 +152,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 androidx-material3-android = { group = "androidx.compose.material3", name = "material3-android", version.ref = "material3Android" }
 runtime-android = { group = "androidx.compose.runtime", name = "runtime-android", version.ref = "runtimeAndroidVersion" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+webuix-portable = { module = "com.github.MMRLApp:WebUI-X-Portable", version.ref = "webuiXPortable" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

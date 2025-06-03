@@ -178,10 +178,11 @@ dependencies {
     implementation(libs.androidx.swiperefreshlayout)
     compileOnly(projects.hiddenApi)
     implementation(projects.platform)
-    implementation(projects.webui)
     implementation(projects.ui)
     implementation(projects.ext)
     implementation(projects.datastore)
+
+    implementation(libs.webuix.portable)
 
     implementation(libs.kotlin.stdlib)
 

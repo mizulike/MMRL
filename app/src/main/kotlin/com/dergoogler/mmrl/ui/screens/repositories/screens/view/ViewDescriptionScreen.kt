@@ -44,6 +44,7 @@ import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.util.WebUIOptions
 import com.dergoogler.mmrl.webui.view.WXView
+import com.dergoogler.mmrl.webui.view.WebUIView
 import com.dergoogler.mmrl.webui.wxAssetLoader
 
 const val launchUrl = "https://mui.kernelsu.org/internal/assets/markdown.html"
@@ -102,7 +103,7 @@ fun ViewDescriptionScreen(
             ) {
                 AndroidView(
                     factory = {
-                        val options =  WebUIOptions(
+                        val options = WebUIOptions(
                             context = it,
                             isDarkMode = userPrefs.isDarkMode(),
                             colorScheme = userPrefs.colorScheme(it),
@@ -115,9 +116,12 @@ fun ViewDescriptionScreen(
                             }
                         )
 
-                        WXView(options).apply {
+                        WebUIView(options).apply {
                             webViewClient = WXClient(options, assetsLoader)
-                            addJavascriptInterface(MarkdownInterface.factory(readme))
+                            addJavascriptInterface<MarkdownInterface>(
+                                arrayOf(readme),
+                                arrayOf(String::class.java)
+                            )
                         }
                     }, update = {
                         it.loadUrl(launchUrl)

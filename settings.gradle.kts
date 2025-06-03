@@ -24,7 +24,6 @@ include(
     ":app",
     ":hidden-api",
     ":platform",
-    ":webui",
     ":ui",
     ":ext",
     ":datastore"
