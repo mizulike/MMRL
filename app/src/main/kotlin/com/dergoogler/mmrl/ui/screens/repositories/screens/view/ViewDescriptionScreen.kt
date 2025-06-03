@@ -36,14 +36,12 @@ import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import androidx.navigation.NavHostController
-import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.MarkdownInterface
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.webui.client.WXClient
 import com.dergoogler.mmrl.webui.handler.internalPathHandler
 import com.dergoogler.mmrl.webui.model.Insets
 import com.dergoogler.mmrl.webui.util.WebUIOptions
-import com.dergoogler.mmrl.webui.view.WXView
 import com.dergoogler.mmrl.webui.view.WebUIView
 import com.dergoogler.mmrl.webui.wxAssetLoader
 
@@ -107,7 +105,6 @@ fun ViewDescriptionScreen(
                             context = it,
                             isDarkMode = userPrefs.isDarkMode(),
                             colorScheme = userPrefs.colorScheme(it),
-                            cls = WebUIActivity::class.java
                         )
 
                         val assetsLoader = wxAssetLoader(

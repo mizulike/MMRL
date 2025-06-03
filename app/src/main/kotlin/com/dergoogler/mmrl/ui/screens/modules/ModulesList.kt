@@ -42,13 +42,9 @@ import com.dergoogler.mmrl.ui.component.VersionItemBottomSheet
 import com.dergoogler.mmrl.ui.component.scrollbar.VerticalFastScrollbar
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.ModulesViewModel
-import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
-import com.dergoogler.mmrl.platform.model.ModuleConfig
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
-import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
-import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.component.DropdownMenu
 import com.dergoogler.mmrl.ui.component.button.FilledTonalDoubleButton
 import com.dergoogler.mmrl.webui.model.WebUIConfig
@@ -292,19 +288,19 @@ private fun RemoveOrRestore(
 private fun CreateShortcut(config: WebUIConfig) {
     val context = LocalContext.current
 
-    DropdownMenuItem(
-        text = { Text(stringResource(R.string.create_webui_shortcut)) },
-        leadingIcon = {
-            Icon(
-                painter = painterResource(R.drawable.link),
-                contentDescription = null
-            )
-        },
-        enabled = config.canAddWebUIShortcut(),
-        onClick = {
-            config.createShortcut(context, WebUIActivity::class.java)
-        }
-    )
+//    DropdownMenuItem(
+//        text = { Text(stringResource(R.string.create_webui_shortcut)) },
+//        leadingIcon = {
+//            Icon(
+//                painter = painterResource(R.drawable.link),
+//                contentDescription = null
+//            )
+//        },
+//        enabled = config.canAddWebUIShortcut(),
+//        onClick = {
+//            config.createShortcut(context, WebUIActivity::class.java)
+//        }
+//    )
 }
 
 @Composable

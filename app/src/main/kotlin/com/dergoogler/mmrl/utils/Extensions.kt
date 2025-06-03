@@ -1,18 +1,18 @@
 package com.dergoogler.mmrl.utils
 
+import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.widget.Toast
 import androidx.compose.runtime.Composable
+import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.datastore.model.UserPreferences
 import com.dergoogler.mmrl.datastore.model.WebUIEngine
 import com.dergoogler.mmrl.ext.toFormattedDateSafely
 import com.dergoogler.mmrl.platform.model.ModId
+import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.platform.model.ModuleConfig.Companion.asModuleConfig
-import com.dergoogler.mmrl.ui.activity.webui.KsuWebUIActivity
-import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
-import com.dergoogler.mmrl.webui.activity.WXActivity.Companion.launchWebUI
-import com.dergoogler.mmrl.webui.activity.WXActivity.Companion.launchWebUIX
 import com.topjohnwu.superuser.Shell
 
 val Float.toFormattedDateSafely: String
@@ -52,20 +52,47 @@ fun createRootShell(
     return builder.build(*commands)
 }
 
+internal val WebUIXPackageName = "com.dergoogler.mmrl.wx${if (BuildConfig.DEBUG) ".debug" else ""}"
+
 fun UserPreferences.launchWebUI(context: Context, modId: ModId) {
     val config = modId.asModuleConfig
+
+    val launchWX: (ModId) -> Unit = { modId ->
+        val intent = Intent().apply {
+
+            component = ComponentName(
+                WebUIXPackageName,
+                "com.dergoogler.mmrl.wx.ui.activity.webui.WebUIActivity"
+            )
+            putModId(modId)
+        }
+
+        context.startActivity(intent)
+    }
+
+    val launchWL: (ModId) -> Unit = { modId ->
+        val intent = Intent().apply {
+            component = ComponentName(
+                WebUIXPackageName,
+                "com.dergoogler.mmrl.wx.ui.activity.webui.KsuWebUIActivity"
+            )
+            putModId(modId)
+        }
+
+        context.startActivity(intent)
+    }
 
     if (webuiEngine == WebUIEngine.PREFER_MODULE) {
         val configEngine = config.getWebuiEngine(context)
 
         if (configEngine == null) {
-            context.launchWebUIX<WebUIActivity>(modId)
+            launchWX(modId)
             return
         }
 
         when (configEngine) {
-            "wx" -> context.launchWebUIX<WebUIActivity>(modId)
-            "ksu" -> context.launchWebUI<KsuWebUIActivity>(modId.id)
+            "wx" -> launchWX(modId)
+            "ksu" -> launchWL(modId)
             else -> Toast.makeText(context, "Unknown WebUI engine", Toast.LENGTH_SHORT).show()
         }
 
@@ -74,13 +101,13 @@ fun UserPreferences.launchWebUI(context: Context, modId: ModId) {
 
 
     if (webuiEngine == WebUIEngine.WX) {
-        context.launchWebUIX<WebUIActivity>(modId)
+        launchWX(modId)
         return
 
     }
 
     if (webuiEngine == WebUIEngine.KSU) {
-        context.launchWebUI<KsuWebUIActivity>(modId.id)
+        launchWL(modId)
         return
     }
 

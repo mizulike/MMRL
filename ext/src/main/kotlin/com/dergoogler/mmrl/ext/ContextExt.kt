@@ -40,6 +40,10 @@ fun Context.getUriForFile(file: File): Uri {
     )
 }
 
+fun Context.isPackageInstalled(target: String): Boolean {
+    return packageManager.getInstalledApplications(0).find { info -> info.packageName == target } != null
+}
+
 val Context.managerVersion
     get(): Pair<String, Long> {
         return try {

@@ -19,10 +19,8 @@ import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isSetup
 import com.dergoogler.mmrl.network.NetworkUtils
-import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
-import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.screens.main.MainScreen
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -63,7 +61,6 @@ class MainActivity : MMRLComponentActivity() {
                 NetworkUtils.setEnableDoh(preferences.useDoh)
 
                 setActivityEnabled<InstallActivity>(preferences.workingMode.isRoot)
-                setActivityEnabled<WebUIActivity>(preferences.workingMode.isRoot)
                 setActivityEnabled<ActionActivity>(preferences.workingMode.isRoot)
             }
 

@@ -153,15 +153,21 @@ android {
         targetCompatibility = JavaVersion.VERSION_21
     }
 
-    packaging.resources.excludes += setOf(
-        "META-INF/**",
-        "okhttp3/**",
-        // "kotlin/**",
-        "org/**",
-        "**.properties",
-        "**.bin",
-        "**/*.proto"
-    )
+    packaging {
+        jniLibs {
+            pickFirsts += listOf("lib/arm64-v8a/libmmrl-file-manager.so")
+        }
+
+        resources.excludes += setOf(
+            "META-INF/**",
+            "okhttp3/**",
+            // "kotlin/**",
+            "org/**",
+            "**.properties",
+            "**.bin",
+            "**/*.proto"
+        )
+    }
 
     dependenciesInfo.includeInApk = false
 

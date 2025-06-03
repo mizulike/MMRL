@@ -33,10 +33,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ext.fadingEdge
+import com.dergoogler.mmrl.ext.isPackageInstalled
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.local.versionDisplay
-import com.dergoogler.mmrl.ui.activity.webui.WebUIActivity
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.text.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
@@ -51,8 +51,8 @@ import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.LocalCover
-import com.dergoogler.mmrl.webui.activity.WXActivity.Companion.launchWebUIX
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
+import com.dergoogler.mmrl.utils.WebUIXPackageName
 import com.dergoogler.mmrl.utils.launchWebUI
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
@@ -74,7 +74,11 @@ fun ModuleItem(
     val menu = userPreferences.modulesMenu
     val context = LocalContext.current
 
-    val canWenUIAccessed = isProviderAlive && module.hasWebUI && module.state != State.REMOVE
+    val canWenUIAccessed =
+        isProviderAlive && module.hasWebUI && module.state != State.REMOVE && context.isPackageInstalled(
+            WebUIXPackageName
+        )
+
     val clicker: (() -> Unit)? = canWenUIAccessed nullable {
         userPreferences.launchWebUI(context, module.id)
     }
@@ -131,13 +135,9 @@ fun ModuleItem(
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-
-                val icon =
-                    if (module.state != State.REMOVE) R.drawable.world_code else R.drawable.world_off
-
                 TextWithIcon(
                     text = module.config.name ?: module.name,
-                    icon = module.hasWebUI nullable icon,
+                    icon = module.hasWebUI nullable R.drawable.sandbox,
                     style = TextWithIconDefaults.style.copy(textStyle = MaterialTheme.typography.titleSmall)
                 )
 
