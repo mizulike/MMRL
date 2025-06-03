@@ -106,10 +106,6 @@ fun HomeScreen(
             onClose = { openRebootSheet = false })
     }
 
-    val analytics by waitOfPlatform {
-        viewModel.getAnalytics()
-    }
-
     Scaffold(
         modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
@@ -290,91 +286,6 @@ fun HomeScreen(
                         )
                     }
                 }
-
-                if (viewModel.platform.isValid) {
-                    analytics.let {
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Card(
-                                modifier = compressedCardModifierRow
-                            ) {
-                                if (it != null) {
-                                    ListItem(
-                                        contentPaddingValues = listItemContentPaddingValues,
-                                        desc = stringResource(R.string.home_installed_modules),
-                                        title = it.totalModules.toString()
-                                    )
-                                } else {
-                                    Loading()
-                                }
-                            }
-                            Card(
-                                modifier = compressedCardModifierRow
-                            ) {
-                                if (it != null) {
-                                    ListItem(
-                                        contentPaddingValues = listItemContentPaddingValues,
-                                        desc = stringResource(R.string.home_updated_modules),
-                                        title = it.totalUpdated.toString()
-                                    )
-                                } else {
-                                    Loading()
-                                }
-                            }
-                        }
-
-                        Card(
-                            modifier = compressedCardModifier
-                        ) {
-                            if (it != null) {
-                                ListProgressBarItem(
-                                    contentPaddingValues = listItemContentPaddingValues,
-                                    progressBarModifier = Modifier
-                                        .weight(1f),
-                                    startDesc = it.totalModulesUsage.toFormattedFileSize(),
-                                    endDesc = it.totalDeviceStorage.toFormattedFileSize(),
-                                    title = stringResource(id = R.string.home_storage_usage),
-                                    progress = it.totalStorageUsage,
-                                )
-                            } else {
-                                Loading()
-                            }
-                        }
-
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(16.dp)
-                        ) {
-                            Card(
-                                modifier = compressedCardModifierRow
-                            ) {
-                                if (it != null) {
-                                    ListItem(
-                                        contentPaddingValues = listItemContentPaddingValues,
-                                        desc = stringResource(R.string.home_enabled_modules),
-                                        title = it.totalEnabled.toString()
-                                    )
-                                } else {
-                                    Loading()
-                                }
-                            }
-
-                            Card(
-                                modifier = compressedCardModifierRow
-                            ) {
-                                if (it != null) {
-                                    ListItem(
-                                        contentPaddingValues = listItemContentPaddingValues,
-                                        desc = stringResource(R.string.home_disabled_modules),
-                                        title = it.totalDisabled.toString()
-                                    )
-                                } else {
-                                    Loading()
-                                }
-                            }
-                        }
-                    }
-                }
             }
 
             Card(
@@ -437,14 +348,4 @@ private fun TopBar(
             }
         }
     )
-}
-
-@Composable
-private fun Loading() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator()
-    }
 }

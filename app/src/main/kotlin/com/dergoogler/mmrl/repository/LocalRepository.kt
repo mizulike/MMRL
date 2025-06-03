@@ -35,6 +35,8 @@ class LocalRepository @Inject constructor(
         list.map { it.toModule() }
     }
 
+    fun getLocalAll() = localDao.getAll()
+
     fun getLocalByIdOrNullAsFlow(id: String) = localDao.getByIdOrNullAsFlow(id).map {
         it?.toModule()
     }
