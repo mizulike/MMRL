@@ -193,7 +193,7 @@ jobs:
     name: Release on Telegram or GitHub
     runs-on: ubuntu-latest
     if: github.event.inputs.send_telegram == 'true' || github.event.inputs.send_github == 'true'
-    needs: [ build, spoofed-build ]
+    needs: [ build ]
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
