@@ -131,20 +131,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".ui.activity.webui.WebUIActivity"
-            android:autoRemoveFromRecents="true"
-            android:documentLaunchMode="always"
-            android:exported="false"
-            android:taskAffinity="${applicationId}.WEBUI_X" />
-
-        <activity
-            android:name=".ui.activity.webui.KsuWebUIActivity"
-            android:autoRemoveFromRecents="true"
-            android:documentLaunchMode="always"
-            android:exported="false"
-            android:taskAffinity="${applicationId}.KSU_WEBUI" />
-
         <service
             android:name=".service.DownloadService"
             android:exported="false"
