@@ -137,7 +137,7 @@ fun ModuleItem(
             ) {
                 TextWithIcon(
                     text = module.config.name ?: module.name,
-                    icon = module.hasWebUI nullable R.drawable.sandbox,
+                    icon = canWenUIAccessed nullable R.drawable.sandbox,
                     style = TextWithIconDefaults.style.copy(textStyle = MaterialTheme.typography.titleSmall)
                 )
 

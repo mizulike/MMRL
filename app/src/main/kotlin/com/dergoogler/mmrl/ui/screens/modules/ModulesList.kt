@@ -33,7 +33,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.isPackageInstalled
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.Blacklist
@@ -45,10 +47,13 @@ import com.dergoogler.mmrl.viewmodel.ModulesViewModel
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
+import com.dergoogler.mmrl.ui.component.Alert
 import com.dergoogler.mmrl.ui.component.DropdownMenu
 import com.dergoogler.mmrl.ui.component.button.FilledTonalDoubleButton
+import com.dergoogler.mmrl.utils.WebUIXPackageName
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.webUiConfig
+import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 
 @Composable
 fun ModulesList(
@@ -59,12 +64,35 @@ fun ModulesList(
 ) = Box(
     modifier = Modifier.fillMaxSize()
 ) {
+    val browser = LocalUriHandler.current
+    val context = LocalContext.current
+
     LazyColumn(
         state = state,
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
+        if (!context.isPackageInstalled(WebUIXPackageName)) {
+            item {
+                Alert(
+                    title = "WebUI X",
+                    message = "To enter WebUI's you'll have to install WebUI X: Portable. @get(Get it here)",
+                    onDescTagClick = {
+                        when (it) {
+                            "get" -> browser.openUri(
+                                if (BuildConfig.IS_GOOGLE_PLAY_BUILD) {
+                                    "https://play.google.com/store/apps/details?id=com.dergoogler.mmrl.wx"
+                                } else {
+                                    "https://github.com/MMRLApp/WebUI-X-Portable"
+                                }
+                            )
+                        }
+                    }
+                )
+            }
+        }
+
         items(
             items = list,
             key = { it.id }

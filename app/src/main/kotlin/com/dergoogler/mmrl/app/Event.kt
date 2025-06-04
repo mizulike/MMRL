@@ -4,7 +4,7 @@ import java.time.LocalDateTime
 import java.time.LocalTime
 import java.time.MonthDay
 
-enum class Event {
+enum class  Event {
     NON,
     LOADING,
     SUCCEEDED,
