@@ -21,6 +21,11 @@ on:
         required: true
         default: false
         type: boolean
+      spoof_build:
+        description: 'Attach spoofed build'
+        required: true
+        default: false
+        type: boolean
       send_github:
         description: 'Release on GitHub'
         required: true
@@ -43,6 +48,7 @@ on:
 jobs:
   spoofed-build:
     name: Build spoofed APK
+    if: github.event.inputs.spoof_build == 'true'
     runs-on: ubuntu-latest
     outputs:
       release-name: ${{ steps.release-name.outputs.name }}
@@ -186,6 +192,7 @@ jobs:
   release:
     name: Release on Telegram or GitHub
     runs-on: ubuntu-latest
+    if: github.event.inputs.send_telegram == 'true' || github.event.inputs.send_github == 'true'
     needs: [ build, spoofed-build ]
     steps:
       - name: Checkout
@@ -200,6 +207,7 @@ jobs:
           path: unspoofed-apk
 
       - name: Download Spoofed APK
+        if: github.event.inputs.spoof_build == 'true'
         uses: actions/download-artifact@v4
         with:
           name: ${{ needs.spoofed-build.outputs.release-name }}
@@ -212,6 +220,7 @@ jobs:
           path: mapping
 
       - name: Download Spoofed Mappings
+        if: github.event.inputs.spoof_build == 'true'
         uses: actions/download-artifact@v4
         with:
           name: spoofed-mapping
@@ -224,6 +233,7 @@ jobs:
           echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Find spoofed APK
+        if: github.event.inputs.spoof_build == 'true'
         id: find_spoofed_apk
         run: |
           APK_PATH=$(find spoofed-apk -name "*.apk" | head -n 1)
@@ -236,6 +246,7 @@ jobs:
           echo "MAPPING_PATH=$MAPPING_PATH" >> $GITHUB_OUTPUT
 
       - name: Find spoofed mapping file
+        if: github.event.inputs.spoof_build == 'true'
         id: spoofed_mapping
         run: |
           MAPPING_PATH=$(find spoofed-mapping -name "mapping.txt" | head -n 1)
@@ -321,7 +332,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Upload spoofed APK to GitHub Release
-        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true' && github.event.inputs.spoof_build == 'true'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
@@ -343,7 +354,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Upload spoofed mapping to GitHub Release
-        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true' && github.event.inputs.spoof_build == 'true'
         uses: actions/upload-release-asset@v1
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
