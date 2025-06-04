@@ -39,12 +39,6 @@ class ActionActivity : TerminalActivity<ActionViewModel>() {
         }
 
         setBaseContent {
-            DisposableEffect(terminalJob) {
-                onDispose {
-                    cancelJob("$TAG was disposed")
-                }
-            }
-
             ActionScreen()
         }
     }

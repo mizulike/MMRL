@@ -76,12 +76,6 @@ class InstallActivity : TerminalActivity<InstallViewModel>() {
                 }
             )
 
-            DisposableEffect(terminalJob) {
-                onDispose {
-                    cancelJob("InstallActivity was disposed")
-                }
-            }
-
             InstallScreen(viewModel)
         }
     }
@@ -96,7 +90,6 @@ class InstallActivity : TerminalActivity<InstallViewModel>() {
     private fun initModule(uris: List<Uri>) {
         val job = lifecycleScope.launch {
             viewModel.installModules(
-                scope = this,
                 uris = uris
             )
         }

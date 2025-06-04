@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const.CLEAR_CMD
 import com.dergoogler.mmrl.app.Event
@@ -26,11 +27,13 @@ import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.ui.activity.terminal.Actions
 import com.dergoogler.mmrl.ui.activity.terminal.ShellBroadcastReceiver
 import com.dergoogler.mmrl.utils.createRootShell
+import com.dergoogler.mmrl.utils.initPlatform
 import dev.dergoogler.mmrl.compat.BuildCompat
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -54,6 +57,27 @@ open class TerminalViewModel @Inject constructor(
     val local get() = localFlow.asStateFlow()
 
     private var receiver: BroadcastReceiver? = null
+
+    init {
+        viewModelScope.launch {
+            val userPreferences = userPreferencesRepository.data.first()
+
+            devLog(R.string.waiting_for_platformmanager_to_initialize)
+
+            val deferred = initPlatform(
+                scope = viewModelScope,
+                context = context,
+                platform = userPreferences.workingMode.toPlatform()
+            )
+
+            if (!deferred.await()) {
+                event = Event.FAILED
+                log(R.string.failed_to_initialize_platform)
+            } else {
+                devLog(R.string.platform_initialized)
+            }
+        }
+    }
 
     fun registerReceiver() {
         if (receiver == null) {
@@ -94,24 +118,8 @@ open class TerminalViewModel @Inject constructor(
         addAction("${context.packageName}.${action.name}")
     }
 
-    val moduleManager: IModuleManager? = PlatformManager.get(null) {
-            this.moduleManager
-        }
-
-    val fileManager: IFileManager? = PlatformManager.get(null) {
-            this.fileManager
-        }
-
     fun reboot(reason: String = "") {
-        if (moduleManager == null) {
-            Toast.makeText(
-                context,
-                context.getString(R.string.unable_to_perform_reboot_task), Toast.LENGTH_SHORT
-            ).show()
-            return
-        }
-
-        moduleManager.reboot(reason)
+        PlatformManager.moduleManager.reboot(reason)
     }
 
     suspend fun writeLogsTo(uri: Uri) = withContext(Dispatchers.IO) {

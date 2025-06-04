@@ -15,6 +15,7 @@ import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.content.BulkModule
+import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -44,38 +45,10 @@ class InstallViewModel @Inject constructor(
         Timber.d("InstallViewModel initialized")
     }
 
-    suspend fun installModules(scope: CoroutineScope, uris: List<Uri>) {
+    suspend fun installModules(uris: List<Uri>) {
         val userPreferences = userPreferencesRepository.data.first()
         event = Event.LOADING
         var allSucceeded = true
-
-        devLog(R.string.waiting_for_platformmanager_to_initialize)
-
-        val deferred = initPlatform(
-            scope = scope,
-            context = context,
-            platform = userPreferences.workingMode.toPlatform()
-        )
-
-        if (!deferred.await()) {
-            event = Event.FAILED
-            log(R.string.failed_to_initialize_platform)
-            return
-        } else {
-            devLog(R.string.platform_initialized)
-        }
-
-        if (moduleManager == null) {
-            event = Event.FAILED
-            log(R.string.module_manager_is_null)
-            return
-        }
-
-        if (fileManager == null) {
-            event = Event.FAILED
-            log(R.string.file_manager_is_null)
-            return
-        }
 
         val bulkModules = uris.mapNotNull { uri ->
             val path = context.getPathForUri(uri)
@@ -139,7 +112,7 @@ class InstallViewModel @Inject constructor(
         uri: Uri,
         bulkModules: List<BulkModule>,
     ): Boolean =
-        withContext(Dispatchers.IO) {
+        withContext(viewModelScope.coroutineContext) {
             val path = context.getPathForUri(uri)
 
             if (path == null) {
@@ -192,7 +165,7 @@ class InstallViewModel @Inject constructor(
         bulkModules: List<BulkModule>,
         module: LocalModule? = null,
     ): Boolean =
-        withContext(Dispatchers.IO) {
+        withContext(viewModelScope.coroutineContext) {
             val zipFile = File(zipPath)
             val userPreferences = userPreferencesRepository.data.first()
 
@@ -204,7 +177,7 @@ class InstallViewModel @Inject constructor(
                 "export MMRL_VER=${BuildConfig.VERSION_NAME}",
                 "export MMRL_VER_CODE=${BuildConfig.VERSION_CODE}",
                 "export BULK_MODULES=\"${bulkModules.joinToString(" ") { it.id }}\"",
-                moduleManager!!.getInstallCommand(zipPath)
+                PlatformManager.moduleManager.getInstallCommand(zipPath)
             )
 
             val stdout = object : CallbackList<String?>() {
@@ -241,9 +214,7 @@ class InstallViewModel @Inject constructor(
             } else {
                 if (module != null && !shell.isAlive) {
                     runCatching {
-                        fileManager.nullable {
-                            it.delete("/data/adb/modules_update/${module.id}")
-                        }
+                        SuFile("/data/adb/modules_update/${module.id}").deleteRecursively()
                     }.onFailure {
                         Timber.e(it)
                         log(R.string.failed_to_remove_updated_folder)

@@ -7,6 +7,7 @@ import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.datastore.UserPreferencesRepository
+import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
@@ -43,34 +44,6 @@ class ActionViewModel @Inject constructor(
         val userPreferences = userPreferencesRepository.data.first()
         event = Event.LOADING
 
-        devLog(R.string.waiting_for_platformmanager_to_initialize)
-
-        val deferred = initPlatform(
-            scope = scope,
-            context = context,
-            platform = userPreferences.workingMode.toPlatform()
-        )
-
-        if (!deferred.await()) {
-            event = Event.FAILED
-            log(R.string.failed_to_initialize_platform)
-            return
-        } else {
-            devLog(R.string.platform_initialized)
-        }
-
-        if (moduleManager == null) {
-            event = Event.FAILED
-            log(R.string.module_manager_is_null)
-            return
-        }
-
-        if (fileManager == null) {
-            event = Event.FAILED
-            log(R.string.file_manager_is_null)
-            return
-        }
-
         if (module == null) {
             event = Event.FAILED
             log(R.string.module_not_found)
@@ -99,7 +72,7 @@ class ActionViewModel @Inject constructor(
     }
 
     private suspend fun action(modId: ModId, legacy: Boolean): Boolean =
-        withContext(Dispatchers.IO) {
+        withContext(viewModelScope.coroutineContext) {
             val actionResult = CompletableDeferred<Boolean>()
 
             val stdout = object : CallbackList<String?>() {
@@ -135,7 +108,7 @@ class ActionViewModel @Inject constructor(
                     "busybox sh /data/adb/modules/$modId/action.sh"
                 )
             } else {
-                listOf(moduleManager!!.getActionCommand(modId))
+                listOf(PlatformManager.moduleManager.getActionCommand(modId))
             }
 
             val result = shell.newJob().add(*cmds.toTypedArray()).to(stdout, stderr).exec()
