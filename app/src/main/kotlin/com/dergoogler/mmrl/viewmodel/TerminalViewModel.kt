@@ -8,6 +8,7 @@ import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
 import android.widget.Toast
+import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -29,6 +30,7 @@ import com.dergoogler.mmrl.ui.activity.terminal.ShellBroadcastReceiver
 import com.dergoogler.mmrl.utils.createRootShell
 import com.dergoogler.mmrl.utils.initPlatform
 import dev.dergoogler.mmrl.compat.BuildCompat
+import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -46,17 +48,23 @@ open class TerminalViewModel @Inject constructor(
     modulesRepository: ModulesRepository,
     userPreferencesRepository: UserPreferencesRepository,
 ) : MMRLViewModel(application, localRepository, modulesRepository, userPreferencesRepository) {
-    internal val logs = mutableListOf<String>()
+    protected val logs = mutableListOf<String>()
     internal val console = mutableStateListOf<String>()
     var event by mutableStateOf(Event.LOADING)
-        internal set
+        protected set
     var shell by mutableStateOf(createRootShell())
-        internal set
+        protected set
 
     private val localFlow = MutableStateFlow<LocalModule?>(null)
     val local get() = localFlow.asStateFlow()
 
     private var receiver: BroadcastReceiver? = null
+
+    /**
+     * Deferred that completes after the ViewModel's attempt to initialize the PlatformManager.
+     * Completes with `true` if successful, `false` otherwise.
+     */
+    protected val platformReadyDeferred = CompletableDeferred<Boolean>()
 
     init {
         viewModelScope.launch {
@@ -70,11 +78,14 @@ open class TerminalViewModel @Inject constructor(
                 platform = userPreferences.workingMode.toPlatform()
             )
 
-            if (!deferred.await()) {
+            val platformInitializedSuccessfully = deferred.await()
+            if (!platformInitializedSuccessfully) {
                 event = Event.FAILED
                 log(R.string.failed_to_initialize_platform)
+                platformReadyDeferred.complete(false)
             } else {
                 devLog(R.string.platform_initialized)
+                platformReadyDeferred.complete(true)
             }
         }
     }
@@ -143,37 +154,47 @@ open class TerminalViewModel @Inject constructor(
 
     private val devMode = runBlocking { userPreferencesRepository.data.first().developerMode }
 
-    internal fun devLog(@StringRes message: Int, vararg format: Any?) {
+    @MainThread
+    protected fun devLog(@StringRes message: Int, vararg format: Any?) {
         if (devMode) log(message, *format)
     }
 
-    internal fun devLog(@StringRes message: Int) {
+    @MainThread
+    protected fun devLog(@StringRes message: Int) {
         if (devMode) log(message)
     }
 
-    internal fun log(@StringRes message: Int, vararg format: Any?) {
+    @MainThread
+    protected fun log(@StringRes message: Int, vararg format: Any?) {
         log(
             message = context.getString(message, *format),
             log = localizedEnglishResources.getString(message, *format)
         )
     }
 
-    internal fun log(@StringRes message: Int) {
+    @MainThread
+    protected fun log(@StringRes message: Int) {
         log(
             message = context.getString(message),
             log = localizedEnglishResources.getString(message)
         )
     }
 
-    internal fun log(
+    /**
+     * Logs a message to the console and the log.
+     */
+    @MainThread
+    protected fun log(
         message: String,
         log: String = message,
     ) {
-        if (message.startsWith(CLEAR_CMD)) {
-            console.clear()
-        } else {
-            console.add(message)
-            logs.add(log)
+        viewModelScope.launch(Dispatchers.Main) {
+            if (message.startsWith(CLEAR_CMD)) {
+                console.clear()
+            } else {
+                console.add(message)
+                logs.add(log)
+            }
         }
     }
 }

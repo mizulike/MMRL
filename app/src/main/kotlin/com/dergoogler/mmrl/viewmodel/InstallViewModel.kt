@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.lifecycle.viewModelScope
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.app.Const.CLEAR_CMD
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.compat.MediaStoreCompat.copyToDir
 import com.dergoogler.mmrl.compat.MediaStoreCompat.getPathForUri
@@ -19,10 +20,7 @@ import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
-import com.dergoogler.mmrl.utils.initPlatform
 import com.topjohnwu.superuser.CallbackList
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -45,203 +43,262 @@ class InstallViewModel @Inject constructor(
         Timber.d("InstallViewModel initialized")
     }
 
+    private val stdoutCallbackList = object : CallbackList<String?>() {
+        override fun onAddElement(msg: String?) {
+            if (msg == null) return
+            viewModelScope.launch {
+                msg.lines().forEach { line ->
+                    log(line)
+                }
+            }
+        }
+    }
+
+    private val stderrCallbackList = object : CallbackList<String?>() {
+        override fun onAddElement(msg: String?) {
+            if (msg == null) return
+            viewModelScope.launch {
+                msg.lines().forEach { line ->
+                    log("Error: $line")
+                }
+            }
+        }
+    }
+
     suspend fun installModules(uris: List<Uri>) {
+        if (!platformReadyDeferred.await()) {
+            log(R.string.platform_initialization_failed_cannot_install)
+            event = Event.FAILED
+            return
+        }
+
+        if (!PlatformManager.isAlive) {
+            log(R.string.platform_not_alive_cannot_install)
+            event = Event.FAILED
+            return
+        }
+
         val userPreferences = userPreferencesRepository.data.first()
         event = Event.LOADING
         var allSucceeded = true
 
-        val bulkModules = uris.mapNotNull { uri ->
-            val path = context.getPathForUri(uri)
+        val processedModules = mutableListOf<Pair<Uri, BulkModule?>>()
+        var blacklistedModuleFound = false
 
-            if (path == null) {
-                devLog(R.string.unable_to_find_path_for_uri, uri)
-                return@mapNotNull null
+        withContext(Dispatchers.IO) {
+            for (uri in uris) {
+                val path = context.getPathForUri(uri)
+                if (path == null) {
+                    withContext(Dispatchers.Main) {
+                        devLog(
+                            R.string.unable_to_find_path_for_uri,
+                            uri.toString()
+                        )
+                    }
+                    processedModules.add(uri to null)
+                    allSucceeded = false
+                    continue
+                }
+
+                if (userPreferences.strictMode && !path.endsWith(".zip")) {
+                    withContext(Dispatchers.Main) {
+                        log(
+                            R.string.is_not_a_module_file_magisk_modules_must_be_zip_files_skipping,
+                            path
+                        )
+                    }
+                    processedModules.add(uri to null)
+                    allSucceeded = false
+                    continue
+                }
+
+                val info = PlatformManager.moduleManager.getModuleInfo(path)
+                if (info == null) {
+                    withContext(Dispatchers.Main) {
+                        devLog(
+                            R.string.unable_to_gather_module_info_of_file,
+                            path
+                        )
+                    }
+                    processedModules.add(uri to null)
+                    allSucceeded = false
+                    continue
+                }
+
+                val blacklist = getBlacklistById(info.id.toString())
+                if (Blacklist.isBlacklisted(userPreferences.blacklistAlerts, blacklist)) {
+                    withContext(Dispatchers.Main) {
+                        log(R.string.cannot_install_blacklisted_modules_settings_security_blacklist_alerts)
+                        event = Event.FAILED
+                    }
+                    allSucceeded = false
+                    blacklistedModuleFound = true
+                    break
+                }
+                processedModules.add(uri to BulkModule(id = info.id.toString(), name = info.name))
             }
-
-            if (userPreferences.strictMode && !path.endsWith(".zip")) {
-                log(
-                    R.string.is_not_a_module_file_magisk_modules_must_be_zip_files_skipping,
-                    path
-                )
-                return@mapNotNull null
-            }
-
-            val info = PlatformManager.moduleManager.getModuleInfo(path)
-
-            if (info == null) {
-                devLog(R.string.unable_to_gather_module_info_of_file, path)
-                return@mapNotNull null
-            }
-
-            val blacklist = getBlacklistById(info.id.toString())
-            val isBlacklisted = Blacklist.isBlacklisted(userPreferences.blacklistAlerts, blacklist)
-            if (isBlacklisted) {
-                event = Event.FAILED
-                allSucceeded = false
-                log(R.string.cannot_install_blacklisted_modules_settings_security_blacklist_alerts)
-                return
-            }
-
-            BulkModule(
-                id = info.id.toString(),
-                name = info.name
-            )
         }
 
-        for (uri in uris) {
-            if (userPreferences.clearInstallTerminal && uris.size > 1) {
-                console.clear()
+        if (blacklistedModuleFound) {
+            return
+        }
+
+        val validBulkModules = processedModules.mapNotNull { it.second }
+
+        for (item in processedModules) {
+            val uri = item.first
+            val bulkModuleInfo = item.second
+            if (bulkModuleInfo == null) {
+                continue
             }
 
-            val result = loadAndInstallModule(uri, bulkModules)
+            if (userPreferences.clearInstallTerminal && uris.size > 1) {
+                log(CLEAR_CMD)
+            }
+
+            val result = loadAndInstallModule(uri, validBulkModules)
             if (!result) {
                 allSucceeded = false
-                log(context.getString(R.string.installation_aborted_due_to_an_error))
+                withContext(Dispatchers.Main) {
+                    log(context.getString(R.string.installation_aborted_due_to_an_error))
+                }
                 break
             }
         }
-
-        event = if (allSucceeded) {
-            Event.SUCCEEDED
-        } else {
-            Event.FAILED
-        }
+        event = if (allSucceeded) Event.SUCCEEDED else Event.FAILED
     }
 
     private suspend fun loadAndInstallModule(
         uri: Uri,
-        bulkModules: List<BulkModule>,
-    ): Boolean =
-        withContext(viewModelScope.coroutineContext) {
-            val path = context.getPathForUri(uri)
+        allBulkModulesInBatch: List<BulkModule>,
+    ): Boolean = withContext(Dispatchers.IO) {
+        val path = context.getPathForUri(uri)
 
-            if (path == null) {
-                log(R.string.unable_to_find_path_for_uri, uri)
-                return@withContext false
+        if (path != null) {
+            val moduleInfoFromPath = PlatformManager.moduleManager.getModuleInfo(path)
+            if (moduleInfoFromPath != null) {
+                withContext(Dispatchers.Main) {
+                    devLog(R.string.install_view_module_info, moduleInfoFromPath.toString())
+                }
+                return@withContext install(path, allBulkModulesInBatch, moduleInfoFromPath)
             }
+        }
 
-            devLog(R.string.install_view_path, path)
-
-            PlatformManager.moduleManager.getModuleInfo(path)?.let {
-                devLog(R.string.install_view_module_info, it.toString())
-                return@withContext install(path, bulkModules, it)
-            }
-
-            log(R.string.copying_zip_to_temp_directory)
-            val tmpFile = context.copyToDir(uri, context.tmpDir) ?: run {
+        withContext(Dispatchers.Main) { log(R.string.copying_zip_to_temp_directory) }
+        val tmpFile = context.copyToDir(uri, context.tmpDir) ?: run {
+            withContext(Dispatchers.Main) {
                 event = Event.FAILED
                 log(context.getString(R.string.copying_failed))
-                return@withContext false
             }
+            return@withContext false
+        }
 
-            val io = context.contentResolver.openInputStream(uri)
-
-            if (io == null) {
-                event = Event.FAILED
-                log(R.string.copying_failed)
-                return@withContext false
-            }
-
-            io.use { input ->
-                tmpFile.outputStream().use { output ->
-                    input.copyTo(output)
-                }
-            }
-
-            val moduleInfo = PlatformManager.moduleManager.getModuleInfo(tmpFile.path)
-
-            if (moduleInfo == null) {
+        val moduleInfoFromTmp = PlatformManager.moduleManager.getModuleInfo(tmpFile.path)
+        if (moduleInfoFromTmp == null) {
+            withContext(Dispatchers.Main) {
                 event = Event.FAILED
                 log(R.string.unable_to_gather_module_info)
-                return@withContext false
             }
-
-            devLog(R.string.install_view_module_info)
-            return@withContext install(tmpFile.path, bulkModules)
+            tmpFile.delete()
+            return@withContext false
         }
+
+        withContext(Dispatchers.Main) {
+            devLog(R.string.install_view_module_info, moduleInfoFromTmp.toString())
+        }
+        return@withContext install(tmpFile.path, allBulkModulesInBatch, moduleInfoFromTmp)
+    }
 
     private suspend fun install(
         zipPath: String,
-        bulkModules: List<BulkModule>,
+        allBulkModulesInBatch: List<BulkModule>,
         module: LocalModule? = null,
-    ): Boolean =
-        withContext(viewModelScope.coroutineContext) {
-            val zipFile = File(zipPath)
-            val userPreferences = userPreferencesRepository.data.first()
+    ): Boolean = withContext(Dispatchers.Default) {
+        val zipFile = File(zipPath)
+        val userPreferences = userPreferencesRepository.data.first()
 
-            val installationResult = CompletableDeferred<Boolean>()
-
-            val cmds = listOf(
-                "export ASH_STANDALONE=1",
-                "export MMRL=true",
-                "export MMRL_VER=${BuildConfig.VERSION_NAME}",
-                "export MMRL_VER_CODE=${BuildConfig.VERSION_CODE}",
-                "export BULK_MODULES=\"${bulkModules.joinToString(" ") { it.id }}\"",
-                PlatformManager.moduleManager.getInstallCommand(zipPath)
-            )
-
-            val stdout = object : CallbackList<String?>() {
-                override fun onAddElement(msg: String?) {
-                    if (msg == null) return
-
-                    viewModelScope.launch {
-                        log(msg)
-                    }
-                }
+        val installCommand = PlatformManager.moduleManager.getInstallCommand(zipPath)
+        if (installCommand.isNullOrBlank()) {
+            withContext(Dispatchers.Main) {
+                log("Error: Failed to get install command for ${zipFile.name}")
             }
+            return@withContext false
+        }
 
-            val stderr = object : CallbackList<String?>() {
-                override fun onAddElement(msg: String?) {
-                    if (msg == null) return
+        val cmds = listOf(
+            "export ASH_STANDALONE=1",
+            "export MMRL=true",
+            "export MMRL_VER=${BuildConfig.VERSION_NAME}",
+            "export MMRL_VER_CODE=${BuildConfig.VERSION_CODE}",
+            "export BULK_MODULES=\"${allBulkModulesInBatch.joinToString(" ") { it.id }}\"",
+            installCommand
+        )
 
-                    viewModelScope.launch {
-                        if (userPreferences.developerMode) console.add(msg)
-                        logs.add(msg)
-                    }
-                }
-            }
-
+        withContext(Dispatchers.Main) {
             log(R.string.install_view_installing, zipFile.name)
+        }
 
-            val result = shell.newJob().add(*cmds.toTypedArray()).to(stdout, stderr).exec()
+        if (!shell.isAlive) {
+            withContext(Dispatchers.Main) {
+                log("Error: Shell is not alive. Cannot execute installation.")
+            }
+            return@withContext false
+        }
 
-            if (result.isSuccess) {
-                module.nullable(::insertLocal)
-                if (userPreferences.deleteZipFile) {
-                    deleteBySu(zipPath)
-                }
-                installationResult.complete(true)
-            } else {
-                if (module != null && !shell.isAlive) {
+        val result = shell.newJob()
+            .add(*cmds.toTypedArray())
+            .to(stdoutCallbackList, stderrCallbackList)
+            .exec()
+
+        val success = result.isSuccess
+        if (success) {
+            module.nullable(::insertLocal)
+
+            if (userPreferences.deleteZipFile) {
+                deleteBySu(zipPath)
+            }
+        } else {
+            withContext(Dispatchers.Main) {
+                log("Error: Installation failed for ${zipFile.name}. Exit code: ${result.code}")
+                result.err.forEach { log("Shell Error: $it") }
+            }
+            if (module != null && !shell.isAlive) {
+                withContext(Dispatchers.IO) {
                     runCatching {
                         SuFile("/data/adb/modules_update/${module.id}").deleteRecursively()
                     }.onFailure {
-                        Timber.e(it)
-                        log(R.string.failed_to_remove_updated_folder)
-                    }.onSuccess {
-                        devLog(R.string.removed_updated_folder)
+                        Timber.e(
+                            it,
+                            "Failed to cleanup /data/adb/modules_update/${module.id}"
+                        )
                     }
                 }
-                installationResult.complete(false)
             }
-
-            return@withContext installationResult.await()
         }
+        return@withContext success
+    }
 
-
-    private fun insertLocal(module: LocalModule) {
-        viewModelScope.launch {
-            localRepository.insertLocal(module.copy(state = com.dergoogler.mmrl.platform.content.State.UPDATE))
+    private suspend fun insertLocal(module: LocalModule) {
+        withContext(Dispatchers.IO) {
+            localRepository.insertLocal(module)
         }
     }
 
     private fun deleteBySu(zipPath: String) {
-        runCatching {
-            PlatformManager.fileManager.deleteOnExit(zipPath)
-        }.onFailure {
-            Timber.e(it)
-        }.onSuccess {
-            Timber.d("Deleted: $zipPath")
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                PlatformManager.fileManager.deleteOnExit(zipPath)
+            }.onFailure {
+                Timber.e(it, "Failed to delete $zipPath via su")
+                withContext(Dispatchers.Main) {
+                    log("Warning: Failed to delete $zipPath after installation.")
+                }
+            }.onSuccess {
+                Timber.d("Deleted: $zipPath")
+                withContext(Dispatchers.Main) {
+                    devLog(R.string.deleted_zip_file, zipPath)
+                }
+            }
         }
     }
 }
