@@ -33,9 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
-import com.dergoogler.mmrl.ext.isPackageInstalled
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.online.Blacklist
@@ -47,10 +45,8 @@ import com.dergoogler.mmrl.viewmodel.ModulesViewModel
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
-import com.dergoogler.mmrl.ui.component.Alert
 import com.dergoogler.mmrl.ui.component.DropdownMenu
 import com.dergoogler.mmrl.ui.component.button.FilledTonalDoubleButton
-import com.dergoogler.mmrl.utils.WebUIXPackageName
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.webUiConfig
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
@@ -73,26 +69,6 @@ fun ModulesList(
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        if (!context.isPackageInstalled(WebUIXPackageName)) {
-            item {
-                Alert(
-                    title = "WebUI X",
-                    message = "To enter WebUI's you'll have to install WebUI X: Portable. @get(Get it here)",
-                    onDescTagClick = {
-                        when (it) {
-                            "get" -> browser.openUri(
-                                if (BuildConfig.IS_GOOGLE_PLAY_BUILD) {
-                                    "https://play.google.com/store/apps/details?id=com.dergoogler.mmrl.wx"
-                                } else {
-                                    "https://github.com/MMRLApp/WebUI-X-Portable"
-                                }
-                            )
-                        }
-                    }
-                )
-            }
-        }
-
         items(
             items = list,
             key = { it.id }
@@ -246,70 +222,100 @@ private fun RemoveOrRestore(
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
-    val context = LocalContext.current
-    val density = LocalDensity.current
-    var offset = Offset.Zero
-    val config = module.webUiConfig
+    FilledTonalButton(
+        onClick = onClick,
+        enabled = enabled,
+        contentPadding = PaddingValues(horizontal = 12.dp)
+    ) {
+        Icon(
+            modifier = Modifier.size(20.dp),
+            painter = painterResource(
+                id = if (module.state == State.REMOVE) {
+                    R.drawable.rotate
+                } else {
+                    R.drawable.trash
+                }
+            ),
+            contentDescription = null
+        )
 
-    var expanded by remember { mutableStateOf(false) }
-    Box {
-        FilledTonalDoubleButton(
-            onClick = onClick,
-            onDropdownClick = {
-                expanded = !expanded
-            },
-            dropdownBtnModifier = Modifier
-                .pointerInteropFilter {
-                    offset = Offset(it.x, it.y)
-                    false
-                },
-            enabled = enabled,
-            dropdownIcon = R.drawable.dots_vertical,
-            contentPadding = PaddingValues(horizontal = 12.dp)
-        ) {
-            Icon(
-                modifier = Modifier.size(20.dp),
-                painter = painterResource(
-                    id = if (module.state == State.REMOVE) {
-                        R.drawable.rotate
-                    } else {
-                        R.drawable.trash
-                    }
-                ),
-                contentDescription = null
+        Spacer(modifier = Modifier.width(6.dp))
+        Text(
+            text = stringResource(
+                id = if (module.state == State.REMOVE) {
+                    R.string.module_restore
+                } else {
+                    R.string.module_remove
+                }
             )
-
-            Spacer(modifier = Modifier.width(6.dp))
-            Text(
-                text = stringResource(
-                    id = if (module.state == State.REMOVE) {
-                        R.string.module_restore
-                    } else {
-                        R.string.module_remove
-                    }
-                )
-            )
-        }
-
-        val offsets = with(density) {
-            DpOffset(
-                offset.x.toDp(),
-                offset.y.toDp()
-            )
-        }
-
-        DropdownMenu(
-            expanded = expanded,
-            offset = offsets,
-            onDismissRequest = { expanded = false }
-        ) {
-            when {
-                config.hasWebUIShortcut(context) -> RemoveShortcut(config)
-                module.state == State.REMOVE -> RemoveShortcut(config)
-                else -> CreateShortcut(config)
-            }
-        }
+        )
     }
+
+    /*
+     val context = LocalContext.current
+     val density = LocalDensity.current
+     var offset = Offset.Zero
+     val config = module.webUiConfig
+
+     var expanded by remember { mutableStateOf(false) }
+     Box {
+         FilledTonalDoubleButton(
+             onClick = onClick,
+             onDropdownClick = {
+                 expanded = !expanded
+             },
+             dropdownBtnModifier = Modifier
+                 .pointerInteropFilter {
+                     offset = Offset(it.x, it.y)
+                     false
+                 },
+             enabled = enabled,
+             dropdownIcon = R.drawable.dots_vertical,
+             contentPadding = PaddingValues(horizontal = 12.dp)
+         ) {
+             Icon(
+                 modifier = Modifier.size(20.dp),
+                 painter = painterResource(
+                     id = if (module.state == State.REMOVE) {
+                         R.drawable.rotate
+                     } else {
+                         R.drawable.trash
+                     }
+                 ),
+                 contentDescription = null
+             )
+
+             Spacer(modifier = Modifier.width(6.dp))
+             Text(
+                 text = stringResource(
+                     id = if (module.state == State.REMOVE) {
+                         R.string.module_restore
+                     } else {
+                         R.string.module_remove
+                     }
+                 )
+             )
+         }
+
+         val offsets = with(density) {
+             DpOffset(
+                 offset.x.toDp(),
+                 offset.y.toDp()
+             )
+         }
+
+         DropdownMenu(
+             expanded = expanded,
+             offset = offsets,
+             onDismissRequest = { expanded = false }
+         ) {
+             when {
+                 config.hasWebUIShortcut(context) -> RemoveShortcut(config)
+                 module.state == State.REMOVE -> RemoveShortcut(config)
+                 else -> CreateShortcut(config)
+             }
+         }
+     }*/
 }
 
 @Composable

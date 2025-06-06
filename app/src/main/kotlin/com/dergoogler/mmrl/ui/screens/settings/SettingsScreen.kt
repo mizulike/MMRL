@@ -11,8 +11,10 @@ import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
+import com.dergoogler.mmrl.ext.isPackageInstalled
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.takeFalse
 import com.dergoogler.mmrl.model.local.FeaturedManager
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
@@ -24,6 +26,7 @@ import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
+import com.dergoogler.mmrl.utils.WebUIXPackageName
 import com.jakewharton.processphoenix.ProcessPhoenix
 
 @Composable
@@ -46,19 +49,21 @@ fun SettingsScreen() {
         allowNavigateBack = false,
         title = R.string.page_settings
     ) {
-        ListButtonItem(
-            icon = R.drawable.sandbox,
-            title = stringResource(id = R.string.settings_try_wxp),
-            onClick = {
-                browser.openUri(
-                    if (BuildConfig.IS_GOOGLE_PLAY_BUILD) {
-                        "https://play.google.com/store/apps/details?id=com.dergoogler.mmrl.wx"
-                    } else {
-                        "https://github.com/MMRLApp/WebUI-X-Portable"
-                    }
-                )
-            }
-        )
+        context.isPackageInstalled(WebUIXPackageName).takeFalse {
+            ListButtonItem(
+                icon = R.drawable.sandbox,
+                title = stringResource(id = R.string.settings_try_wxp),
+                onClick = {
+                    browser.openUri(
+                        if (BuildConfig.IS_GOOGLE_PLAY_BUILD) {
+                            "https://play.google.com/store/apps/details?id=com.dergoogler.mmrl.wx"
+                        } else {
+                            "https://github.com/MMRLApp/WebUI-X-Portable"
+                        }
+                    )
+                }
+            )
+        }
 
         ListButtonItem(
             icon = R.drawable.color_swatch,
