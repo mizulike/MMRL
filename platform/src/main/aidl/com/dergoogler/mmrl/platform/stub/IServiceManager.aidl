@@ -13,4 +13,6 @@ interface IServiceManager {
     IFileManager getFileManager() = 5;
     IBinder addService(in Service service) = 6;
     IBinder getService(String name) = 7;
+    boolean isSELinuxEnabled() = 8;
+    boolean isSELinuxEnforced() = 9;
 }

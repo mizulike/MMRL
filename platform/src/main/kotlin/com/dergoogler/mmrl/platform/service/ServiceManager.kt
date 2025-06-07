@@ -34,10 +34,12 @@ open class ServiceManager(
 
             Platform.RKSU,
             Platform.MKSU,
-            Platform.KernelSU -> KernelSUModuleManager()
+            Platform.KernelSU,
+                -> KernelSUModuleManager()
 
             Platform.SukiSU,
-            Platform.KsuNext -> KsuNextModuleManager()
+            Platform.KsuNext,
+                -> KsuNextModuleManager()
 
             Platform.APatch -> APatchModuleManager()
 
@@ -57,9 +59,9 @@ open class ServiceManager(
         return Os.getpid()
     }
 
-    override fun getSELinuxContext(): String {
-        return SELinux.getContext()
-    }
+    override fun isSELinuxEnforced(): Boolean = SELinux.isSELinuxEnforced()
+    override fun isSELinuxEnabled(): Boolean = SELinux.isSELinuxEnabled()
+    override fun getSELinuxContext(): String = SELinux.getContext()
 
     override fun currentPlatform(): String {
         return platform.name.lowercase()

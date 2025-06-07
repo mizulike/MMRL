@@ -356,6 +356,34 @@ object PlatformManager {
     val seLinuxContext: String get() = mService.seLinuxContext
 
     /**
+     * Checks if SELinux is enabled on the system.
+     *
+     * This property queries the underlying `IServiceManager` to determine the SELinux status.
+     *
+     * @return `true` if SELinux is enabled, `false` if it is disabled, or `null` if the
+     *         status cannot be determined (e.g., if the service is not available or the
+     *         method is not implemented by the service).
+     * @throws IllegalStateException if `mService` is null (i.e., [isAlive] is false),
+     *         depending on the `mService` implementation.
+     */
+    val isSELinuxEnabled: Boolean get() = mService.isSELinuxEnabled()
+
+    /**
+     * Indicates whether SELinux is currently in enforcing mode on the device,
+     * as reported by the underlying service.
+     *
+     * This property delegates to the `isSELinuxEnforced()` method of the [mService].
+     *
+     * @return `true` if SELinux is enforced, `false` if it's permissive or disabled,
+     *         or `null` if the state cannot be determined (e.g., service not connected
+     *         or an error occurs during the call).
+     * @throws IllegalStateException if `mService` is null (i.e., [isAlive] is false),
+     *         unless the underlying `mService.isSELinuxEnforced()` implementation
+     *         handles this gracefully (which is not guaranteed by the interface).
+     */
+    val isSELinuxEnforced: Boolean get() = mService.isSELinuxEnforced()
+
+    /**
      * Gets the current platform information.
      * This property attempts to retrieve the platform details from the underlying service.
      * If the service is not available or an error occurs during the retrieval,
