@@ -14,18 +14,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.rememberModalBottomSheetState
@@ -45,11 +38,9 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
@@ -70,12 +61,9 @@ import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasWebUI
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
-import com.dergoogler.mmrl.ui.component.AntiFeaturesItem
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.LocalCover
-import com.dergoogler.mmrl.ui.component.MarkdownText
-import com.dergoogler.mmrl.ui.component.NavigationBarsSpacer
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.utils.WebUIXPackageName
 import com.dergoogler.mmrl.utils.launchWebUI
@@ -348,8 +336,8 @@ fun BottomSheetForWXP(
 
             TextButton(
                 onClick = {
-                    scope.launch {
-                        sheetState.hide()
+                    scope.launch { sheetState.hide() }.invokeOnCompletion {
+                        onCancel()
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
