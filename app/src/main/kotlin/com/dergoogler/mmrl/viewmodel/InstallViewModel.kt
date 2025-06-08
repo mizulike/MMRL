@@ -46,10 +46,9 @@ class InstallViewModel @Inject constructor(
     private val stdoutCallbackList = object : CallbackList<String?>() {
         override fun onAddElement(msg: String?) {
             if (msg == null) return
+
             viewModelScope.launch {
-                msg.lines().forEach { line ->
-                    log(line)
-                }
+                log(msg)
             }
         }
     }
@@ -57,10 +56,9 @@ class InstallViewModel @Inject constructor(
     private val stderrCallbackList = object : CallbackList<String?>() {
         override fun onAddElement(msg: String?) {
             if (msg == null) return
+
             viewModelScope.launch {
-                msg.lines().forEach { line ->
-                    log("Error: $line")
-                }
+                log(msg)
             }
         }
     }
