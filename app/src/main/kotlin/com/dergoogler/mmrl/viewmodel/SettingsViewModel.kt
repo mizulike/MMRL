@@ -244,6 +244,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setShowTerminalLineNumbers(value: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setShowTerminalLineNumbers(value)
+        }
+    }
+
     fun setWebUIEngine(value: WebUIEngine) {
         viewModelScope.launch {
             userPreferencesRepository.setWebUIEngine(value)

@@ -209,6 +209,7 @@ fun InstallScreen(
             list = viewModel.console,
             state = listState,
             breakList = userPreferences.terminalTextWrap,
+            showLineNumbers = userPreferences.showTerminalLineNumbers,
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize()

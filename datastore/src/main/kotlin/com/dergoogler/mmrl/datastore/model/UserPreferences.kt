@@ -67,6 +67,8 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     @ProtoNumber(35) val enableErudaConsole: Boolean = false,
     @ProtoNumber(36) val enableToolbarEvents: Boolean = true,
     @ProtoNumber(37) val webuiEngine: WebUIEngine = WebUIEngine.PREFER_MODULE,
+    @ProtoNumber(38) val showTerminalLineNumbers: Boolean = true,
+
 ) {
     fun isDarkMode() = when (darkMode) {
         DarkMode.AlwaysOff -> false

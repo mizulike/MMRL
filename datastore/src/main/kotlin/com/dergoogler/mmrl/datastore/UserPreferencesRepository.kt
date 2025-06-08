@@ -110,6 +110,9 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setEnableEruda(value: Boolean) =
         userPreferencesDataSource.setEnableEruda(value)
 
+    suspend fun setShowTerminalLineNumbers(value: Boolean) =
+        userPreferencesDataSource.setShowTerminalLineNumbers(value)
+
     suspend fun setEnableToolbarEvents(value: Boolean) =
         userPreferencesDataSource.setEnableToolbarEvents(value)
 

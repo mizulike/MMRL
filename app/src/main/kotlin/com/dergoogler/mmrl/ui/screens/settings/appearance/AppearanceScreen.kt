@@ -44,6 +44,13 @@ fun AppearanceScreen() {
             onChange = viewModel::setTerminalTextWrap
         )
 
+        ListSwitchItem(
+            title = stringResource(id = R.string.settings_terminal_line_numbers),
+            desc = stringResource(id = R.string.settings_terminal_line_numbers_desc),
+            checked = userPreferences.showTerminalLineNumbers,
+            onChange = viewModel::setShowTerminalLineNumbers
+        )
+
         ListEditTextItem(
             title = stringResource(id = R.string.settings_date_pattern),
             desc = stringResource(id = R.string.settings_date_pattern_desc),

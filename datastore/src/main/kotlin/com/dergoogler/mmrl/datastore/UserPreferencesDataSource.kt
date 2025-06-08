@@ -299,6 +299,14 @@ class UserPreferencesDataSource @Inject constructor(
         }
     }
 
+    suspend fun setShowTerminalLineNumbers(value: Boolean) = withContext(Dispatchers.IO) {
+        userPreferences.updateData {
+            it.copy(
+                showTerminalLineNumbers = value
+            )
+        }
+    }
+
     suspend fun setWebUIEngine(value: WebUIEngine) = withContext(Dispatchers.IO) {
         userPreferences.updateData {
             it.copy(
