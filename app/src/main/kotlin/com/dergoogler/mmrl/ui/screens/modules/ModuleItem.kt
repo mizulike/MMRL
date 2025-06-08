@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
@@ -56,6 +57,7 @@ import com.dergoogler.mmrl.ui.component.card.CardDefaults.cardStyle
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.ext.toStyleMarkup
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.config
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasWebUI
 import com.dergoogler.mmrl.platform.file.SuFile
@@ -193,11 +195,17 @@ fun ModuleItem(
             switch?.invoke()
         }
 
+        val description = if (module.config.description != null) {
+            module.config.description!!.toStyleMarkup()
+        } else {
+            AnnotatedString(module.description)
+        }
+
         Text(
             modifier = Modifier
                 .alpha(alpha = alpha)
                 .padding(horizontal = 16.dp),
-            text = module.config.description ?: module.description,
+            text = description,
             style = MaterialTheme.typography.bodySmall,
             maxLines = 5,
             overflow = TextOverflow.Ellipsis,
