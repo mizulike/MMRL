@@ -14,6 +14,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.DisableSelection
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,42 +47,46 @@ fun Console(
         }
     }
 
-    LazyColumn(
-        state = state,
-        modifier = modifier.let {
-            if (breakList) it else it.horizontalScroll(rememberScrollState())
-        }
-    ) {
-        itemsIndexed(list) { index, item ->
-            val interactionSource = remember { MutableInteractionSource() }
-            val isHovered by interactionSource.collectIsHoveredAsState()
+    SelectionContainer {
+        LazyColumn(
+            state = state,
+            modifier = modifier.let {
+                if (breakList) it else it.horizontalScroll(rememberScrollState())
+            }
+        ) {
+            itemsIndexed(list) { index, item ->
+                val interactionSource = remember { MutableInteractionSource() }
+                val isHovered by interactionSource.collectIsHoveredAsState()
 
-            Row(
-                modifier = Modifier
-                    .padding(horizontal = 8.dp, vertical = 2.dp)
-                    .background(
-                        if (isHovered) {
-                            MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.34f)
-                        } else Color.Transparent
-                    )
-                    .hoverable(interactionSource = interactionSource),
-            ) {
-                if (showLineNumbers) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp, vertical = 2.dp)
+                        .background(
+                            if (isHovered) {
+                                MaterialTheme.colorScheme.surfaceContainer.copy(alpha = 0.34f)
+                            } else Color.Transparent
+                        )
+                        .hoverable(interactionSource = interactionSource),
+                ) {
+                    DisableSelection {
+                        if (showLineNumbers) {
+                            Text(
+                                text = "${index + 1}".padStart(4),
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .width(40.dp),
+                                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+                                style = style
+                            )
+                        }
+                    }
+
                     Text(
-                        text = "${index + 1}".padStart(4),
-                        modifier = Modifier
-                            .padding(end = 8.dp)
-                            .width(40.dp),
-                        color = MaterialTheme.colorScheme.outline.copy(alpha = 0.6f),
+                        text = item,
+                        color = style.color,
                         style = style
                     )
                 }
-
-                Text(
-                    text = item,
-                    color = style.color,
-                    style = style
-                )
             }
         }
     }
