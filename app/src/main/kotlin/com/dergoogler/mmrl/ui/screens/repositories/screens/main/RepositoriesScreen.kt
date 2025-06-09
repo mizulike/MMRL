@@ -21,7 +21,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.RepositoriesMenu
+import com.dergoogler.mmrl.ext.currentScreenWidth
 import com.dergoogler.mmrl.model.local.BulkModule
 import com.dergoogler.mmrl.ui.activity.terminal.install.InstallActivity
 import com.dergoogler.mmrl.ui.animate.slideInTopToBottom
@@ -56,8 +56,6 @@ import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
-import com.dergoogler.mmrl.ui.component.TopAppBarIcon
-import com.dergoogler.mmrl.ui.component.scaffold.ResponsiveScaffold
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.navigation.MainRoute
 import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
@@ -141,7 +139,6 @@ fun RepositoriesScreen(
         topBar = {
             TopBar(
                 setMenu = viewModel::setRepositoriesMenu,
-                scrollBehavior = scrollBehavior,
                 onAdd = { add = true }
             )
         },
@@ -263,16 +260,17 @@ private fun AddDialog(
 @Composable
 private fun TopBar(
     onAdd: () -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior,
     setMenu: KFunction1<RepositoriesMenu, Unit>,
 ) {
+    val width = currentScreenWidth()
     val mainNavController = LocalMainNavController.current
 
     TopAppBar(
         title = {
+            if (!width.isSmall) return@TopAppBar
+
             TopAppBarEventIcon()
         },
-        scrollBehavior = scrollBehavior,
         actions = {
             IconButton(
                 onClick = {

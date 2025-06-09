@@ -261,6 +261,7 @@ fun NewViewScreen(
         topBar = {
             TopBar(
                 colors = TopAppBarDefaults.topAppBarColors().copy(
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
                     containerColor = Color.Transparent
                 ),
                 actions = {

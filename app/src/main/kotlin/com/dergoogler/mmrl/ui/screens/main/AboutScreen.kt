@@ -48,7 +48,6 @@ fun AboutScreen() {
         topBar = {
             NavigateUpTopBar(
                 title = stringResource(id = R.string.settings_about),
-                scrollBehavior = scrollBehavior,
                 navController = mainNavController
             )
         },

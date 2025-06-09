@@ -9,6 +9,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ext.none
@@ -26,6 +27,7 @@ fun SearchScreen(viewModel: SearchViewModel) {
     val listState = rememberLazyListState()
 
     ResponsiveScaffold(
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             SearchTopBar(
                 isSearch = true,
@@ -33,7 +35,6 @@ fun SearchScreen(viewModel: SearchViewModel) {
                 autoFocus = false,
                 onQueryChange = viewModel::search,
                 title = {},
-                scrollBehavior = scrollBehavior
             )
         },
         contentWindowInsets = WindowInsets.none

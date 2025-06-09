@@ -44,6 +44,7 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isNonRoot
 import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.ext.ModifierScopeUnit
+import com.dergoogler.mmrl.ext.currentScreenWidth
 import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.none
@@ -114,7 +115,6 @@ fun HomeScreen(
                 onRebootClick = {
                     openRebootSheet = true
                 },
-                scrollBehavior = scrollBehavior
             )
         },
         contentWindowInsets = WindowInsets.none
@@ -383,13 +383,15 @@ private fun TopBar(
     onRebootClick: () -> Unit = {},
     onInfoClick: () -> Unit = {},
     onHeartClick: () -> Unit = {},
-    scrollBehavior: TopAppBarScrollBehavior,
 ) {
+    val width = currentScreenWidth()
+
     TopAppBar(
         title = {
+            if (!width.isSmall) return@TopAppBar
+
             TopAppBarEventIcon()
         },
-        scrollBehavior = scrollBehavior,
         actions = {
             if (isProviderAlive) {
                 IconButton(onClick = onRebootClick) {

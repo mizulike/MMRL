@@ -60,7 +60,6 @@ fun ExploreRepositoriesScreen() {
         topBar = {
             NavigateUpTopBar(
                 title = stringResource(id = R.string.explore_repositories),
-                scrollBehavior = scrollBehavior,
                 navController = navController,
             )
         },

@@ -19,7 +19,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -38,6 +37,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.ModulesMenu
+import com.dergoogler.mmrl.ext.currentScreenWidth
 import com.dergoogler.mmrl.ext.isScrollingUp
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
@@ -97,7 +97,6 @@ fun ModulesScreen(
                 onOpenSearch = viewModel::openSearch,
                 onCloseSearch = viewModel::closeSearch,
                 setMenu = viewModel::setModulesMenu,
-                scrollBehavior = scrollBehavior
             )
         },
         floatingActionButton = {
@@ -154,8 +153,9 @@ private fun TopBar(
     onOpenSearch: () -> Unit,
     onCloseSearch: () -> Unit,
     setMenu: (ModulesMenu) -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior,
 ) {
+    val width = currentScreenWidth()
+
     var currentQuery by remember { mutableStateOf(query) }
     DisposableEffect(isSearch) {
         onDispose { currentQuery = "" }
@@ -173,9 +173,10 @@ private fun TopBar(
             currentQuery = ""
         },
         title = {
+            if (!width.isSmall) return@SearchTopBar
+
             TopAppBarEventIcon()
         },
-        scrollBehavior = scrollBehavior,
         actions = {
             if (!isSearch) {
                 IconButton(

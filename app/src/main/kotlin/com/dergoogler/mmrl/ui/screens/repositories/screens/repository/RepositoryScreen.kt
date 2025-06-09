@@ -8,7 +8,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -59,7 +58,6 @@ fun RepositoryScreen(
                 onOpenSearch = viewModel::openSearch,
                 onCloseSearch = viewModel::closeSearch,
                 setMenu = viewModel::setRepositoryMenu,
-                scrollBehavior = scrollBehavior
             )
         },
         contentWindowInsets = WindowInsets.none
@@ -95,7 +93,6 @@ private fun TopBar(
     onOpenSearch: () -> Unit,
     onCloseSearch: () -> Unit,
     setMenu: (RepositoryMenu) -> Unit,
-    scrollBehavior: TopAppBarScrollBehavior,
 ) {
     val arguments = LocalPanicArguments.current
 
@@ -119,7 +116,6 @@ private fun TopBar(
                 title = arguments.panicString("repoName")
             )
         },
-        scrollBehavior = scrollBehavior,
         actions = {
             if (!isSearch) {
                 IconButton(

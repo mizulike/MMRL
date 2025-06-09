@@ -63,7 +63,6 @@ fun SettingsScaffold(
             if (allowNavigateBack) {
                 NavigateUpTopBar(
                     title = title,
-                    scrollBehavior = scrollBehavior,
                     navController = navController,
                     actions = actions
                 )
@@ -72,7 +71,6 @@ fun SettingsScaffold(
                     title = {
                         ToolbarTitle(title = title)
                     },
-                    scrollBehavior = scrollBehavior,
                     actions = actions
                 )
             }

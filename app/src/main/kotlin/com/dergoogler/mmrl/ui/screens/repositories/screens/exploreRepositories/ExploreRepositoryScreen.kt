@@ -113,6 +113,7 @@ fun ExploreRepositoryScreen(
         topBar = {
             NavigateUpTopBar(
                 colors = TopAppBarDefaults.topAppBarColors().copy(
+                    scrolledContainerColor = MaterialTheme.colorScheme.background,
                     containerColor = Color.Transparent
                 ),
                 title = "",

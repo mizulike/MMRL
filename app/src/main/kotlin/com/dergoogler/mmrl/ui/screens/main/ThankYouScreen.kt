@@ -48,7 +48,6 @@ fun ThankYouScreen(
         topBar = {
             NavigateUpTopBar(
                 title = stringResource(id = R.string.thank_you),
-                scrollBehavior = scrollBehavior,
                 navController = mainNavController
             )
         },
