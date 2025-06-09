@@ -23,7 +23,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
 import androidx.compose.runtime.LaunchedEffect
@@ -62,6 +61,11 @@ import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListProgressBarItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.List
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Item
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.navigation.MainRoute
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
@@ -218,49 +222,45 @@ fun HomeScreen(
                 ) {
                     val uname = Os.uname()
 
-                    ListItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        icon = R.drawable.cookie_man,
-                        title = stringResource(R.string.kernel),
-                        desc = uname.release
-                    )
-
-                    ListItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        icon = R.drawable.launcher_outline,
-                        title = stringResource(R.string.manager_version),
-                        desc = "${context.managerVersion.first} (${context.managerVersion.second})"
-                    )
-
-                    ListItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        icon = R.drawable.fingerprint,
-                        title = stringResource(R.string.fingerprint),
-                        desc = if (userPreferences.hideFingerprintInHome) {
-                            stringResource(id = R.string.hidden)
-                        } else {
-                            Build.FINGERPRINT
-                        }
-                    )
-
-                    ListItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        icon = R.drawable.cpu_2,
-                        title = stringResource(R.string.architecture),
-                        desc = Os.uname().machine
-                    )
-
-                    SELinuxStatus(
+                    List(
                         contentPaddingValues = listItemContentPaddingValues
-                    )
+                    ) {
+                        Item {
+                            Icon(painter = painterResource(R.drawable.cookie_man))
+                            Title(R.string.kernel)
+                            Description(uname.release)
+                        }
+                        Item {
+                            Icon(painter = painterResource(R.drawable.launcher_outline))
+                            Title(R.string.manager_version)
+                            Description("${context.managerVersion.first} (${context.managerVersion.second})")
+                        }
+                        Item {
+                            Icon(painter = painterResource(R.drawable.fingerprint))
+                            Title(R.string.fingerprint)
+                            Description(
+                                if (userPreferences.hideFingerprintInHome) {
+                                    stringResource(id = R.string.hidden)
+                                } else {
+                                    Build.FINGERPRINT
+                                }
+                            )
+                        }
+                        Item {
+                            Icon(painter = painterResource(R.drawable.cpu_2))
+                            Title(R.string.architecture)
+                            Description(uname.machine)
+                        }
 
-                    if (viewModel.platform.isKernelSuOrNext) {
-                        ListItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            icon = R.drawable.user_outlined,
-                            title = "SuperUser Apps",
-                            desc = viewModel.superUserCount.toString()
-                        )
+                        SELinuxStatus()
+
+                        viewModel.platform.isKernelSuOrNext.takeTrue {
+                            Item {
+                                Icon(painter = painterResource(R.drawable.user_outlined))
+                                Title(R.string.super_user_apps)
+                                Description(viewModel.superUserCount.toString())
+                            }
+                        }
                     }
                 }
 
