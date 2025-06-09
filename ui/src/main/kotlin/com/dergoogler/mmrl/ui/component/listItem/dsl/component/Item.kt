@@ -15,8 +15,36 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScopeInstance
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Start
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.End
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import kotlin.math.max
 
+/**
+ * Represents a single item within a list.
+ *
+ * This composable function is designed to be used within the scope of a `ListScope` (e.g., inside a `List` composable).
+ * It provides a structured way to define the layout of a list item, including optional start/end icons or actions,
+ * a title, and a description.
+ *
+ * The layout is determined by the `ListItemSlot` enum, which defines the different sections of the item.
+ * The `content` lambda is executed within a `ListItemScope`, allowing you to use composables like `Start`, `Title`,
+ * `Description`, and `End` to place content in their respective slots.
+ *
+ * @param modifier Optional [Modifier] to be applied to the item.
+ * @param enabled A boolean indicating whether the item is enabled. Disabled items will have reduced opacity.
+ * @param content A lambda function that defines the content of the list item within a `ListItemScope`.
+ *                This allows you to use slot-based composables like `Start`, `Title`, `Description`, and `End`.
+ *
+ * @see ListScope
+ * @see ListItemScope
+ * @see ListItemSlot
+ * @see Start
+ * @see Title
+ * @see Description
+ * @see End
+ */
 @Composable
 fun ListScope.Item(
     modifier: Modifier = Modifier,

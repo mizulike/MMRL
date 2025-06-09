@@ -19,18 +19,3 @@ fun ListItemScope.Start(content: @Composable BoxScope.() -> Unit) {
         content()
     }
 }
-
-/**
- * Composable function that defines the end slot of a list item.
- * This slot is typically used for trailing icons, actions, or other content
- * that should be aligned to the end of the list item.
- *
- * @param content The composable content to be displayed in the end slot.
- *                The content is placed within a `Box` that is aligned to the end.
- */
-@Composable
-fun ListItemScope.End(content: @Composable BoxScope.() -> Unit) {
-    Box(modifier = Modifier.end()) {
-        content()
-    }
-}
