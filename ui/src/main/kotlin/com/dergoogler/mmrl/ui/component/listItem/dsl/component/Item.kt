@@ -1,11 +1,8 @@
-package com.dergoogler.mmrl.ui.component.listItem.dsl
+package com.dergoogler.mmrl.ui.component.listItem.dsl.component
 
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -13,43 +10,12 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScopeInstance
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
 import kotlin.math.max
-
-@Composable
-fun ListScope.Section(
-    modifier: Modifier = Modifier,
-    content: @Composable ListScope.() -> Unit,
-
-    ) {
-    val layoutDirection = LocalLayoutDirection.current
-
-
-}
-
-@Composable
-fun ListScope.Button(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
-    enabled: Boolean = true,
-    content: @Composable ListItemScope.() -> Unit,
-) {
-    this.Item(
-        modifier = Modifier
-            .clickable(
-                interactionSource = interactionSource,
-                role = Role.Button,
-                indication = ripple(),
-                onClick = onClick
-            )
-            .then(modifier),
-        enabled = enabled,
-        content = content
-    )
-}
-
 
 @Composable
 fun ListScope.Item(
