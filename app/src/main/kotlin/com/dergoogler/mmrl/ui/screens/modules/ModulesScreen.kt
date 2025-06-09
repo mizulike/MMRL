@@ -17,7 +17,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -135,7 +135,7 @@ fun ModulesScreen(
                 isRefreshing = state.isRefreshing,
                 onRefresh = viewModel::getLocalAll
             ) {
-                ModulesList(
+                this@Scaffold.ModulesList(
                     list = list,
                     state = listState,
                     viewModel = viewModel,

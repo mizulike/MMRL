@@ -9,24 +9,19 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
@@ -36,7 +31,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -54,12 +48,10 @@ import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.nullable
-import com.dergoogler.mmrl.ext.nullvoke
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
-import com.dergoogler.mmrl.platform.util.waitOfPlatform
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.SELinuxStatus
 import com.dergoogler.mmrl.ui.component.TopAppBar
@@ -69,6 +61,7 @@ import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListProgressBarItem
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.navigation.MainRoute
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -123,259 +116,262 @@ fun HomeScreen(
                 },
                 scrollBehavior = scrollBehavior
             )
-        }, contentWindowInsets = WindowInsets.none
+        },
+        contentWindowInsets = WindowInsets.none
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            val compressedCardModifier: ModifierScopeUnit = {
-                column = Modifier.padding(vertical = 16.dp)
-            }
-
-            val compressedCardModifierRow: ModifierScopeUnit = {
-                surface = Modifier.weight(1f)
-                column = Modifier.padding(vertical = 16.dp)
-            }
-
-            when {
-                userPreferences.workingMode.isRoot -> RootItem(
-                    developerMode = userPreferences.developerMode,
-                    viewModel = viewModel,
-                    onClick = {
-                        workingModeBottomSheet = true
-                    }
-                )
-
-                userPreferences.workingMode.isNonRoot -> NonRootItem(
-                    developerMode = userPreferences.developerMode,
-                    onClick = {
-                        workingModeBottomSheet = true
-                    }
-                )
-            }
-
-            if (userPreferences.checkAppUpdates) {
-                var changelog by remember { mutableStateOf<List<Changelog>?>(null) }
-                LaunchedEffect(Unit) {
-                    runRequest {
-                        withContext(Dispatchers.IO) {
-                            val api = IMMRLApiManager.build()
-                            return@withContext api.changelog.execute()
-                        }
-                    }.onSuccess { list ->
-                        changelog = list
-                    }.onFailure {
-                        Timber.e(it, "unable to get changelog")
-                    }
-
+        this@Scaffold.ResponsiveContent {
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState())
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                val compressedCardModifier: ModifierScopeUnit = {
+                    column = Modifier.padding(vertical = 16.dp)
                 }
 
-                changelog?.let {
-                    val latest = it.first()
+                val compressedCardModifierRow: ModifierScopeUnit = {
+                    surface = Modifier.weight(1f)
+                    column = Modifier.padding(vertical = 16.dp)
+                }
 
-                    var changelogSheet by remember { mutableStateOf(false) }
-                    if (changelogSheet) {
-                        ChangelogBottomSheet(
-                            changelog = latest,
-                            onClose = { changelogSheet = false })
+                when {
+                    userPreferences.workingMode.isRoot -> RootItem(
+                        developerMode = userPreferences.developerMode,
+                        viewModel = viewModel,
+                        onClick = {
+                            workingModeBottomSheet = true
+                        }
+                    )
+
+                    userPreferences.workingMode.isNonRoot -> NonRootItem(
+                        developerMode = userPreferences.developerMode,
+                        onClick = {
+                            workingModeBottomSheet = true
+                        }
+                    )
+                }
+
+                if (userPreferences.checkAppUpdates) {
+                    var changelog by remember { mutableStateOf<List<Changelog>?>(null) }
+                    LaunchedEffect(Unit) {
+                        runRequest {
+                            withContext(Dispatchers.IO) {
+                                val api = IMMRLApiManager.build()
+                                return@withContext api.changelog.execute()
+                            }
+                        }.onSuccess { list ->
+                            changelog = list
+                        }.onFailure {
+                            Timber.e(it, "unable to get changelog")
+                        }
+
                     }
 
-                    AnimatedVisibility(
-                        visible = if (latest.preRelease) {
-                            userPreferences.checkAppUpdatesPreReleases && latest.versionCode > context.managerVersion.second
-                        } else {
-                            latest.versionCode > context.managerVersion.second
-                        },
-                        enter = fadeIn() + expandVertically(),
-                        exit = shrinkVertically() + fadeOut()
-                    ) {
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxWidth(),
-                            color = MaterialTheme.colorScheme.outlineVariant,
-                            shape = RoundedCornerShape(15.dp),
+                    changelog?.let {
+                        val latest = it.first()
+
+                        var changelogSheet by remember { mutableStateOf(false) }
+                        if (changelogSheet) {
+                            ChangelogBottomSheet(
+                                changelog = latest,
+                                onClose = { changelogSheet = false })
+                        }
+
+                        AnimatedVisibility(
+                            visible = if (latest.preRelease) {
+                                userPreferences.checkAppUpdatesPreReleases && latest.versionCode > context.managerVersion.second
+                            } else {
+                                latest.versionCode > context.managerVersion.second
+                            },
+                            enter = fadeIn() + expandVertically(),
+                            exit = shrinkVertically() + fadeOut()
                         ) {
-                            Column(
+                            Surface(
                                 modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        changelogSheet = true
-                                    }
+                                    .fillMaxWidth(),
+                                color = MaterialTheme.colorScheme.outlineVariant,
+                                shape = RoundedCornerShape(15.dp),
                             ) {
-                                ListItem(
-                                    title = stringResource(
-                                        R.string.new_version_available, latest.versionName
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            changelogSheet = true
+                                        }
+                                ) {
+                                    ListItem(
+                                        title = stringResource(
+                                            R.string.new_version_available, latest.versionName
+                                        )
                                     )
-                                )
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            Card(
-                modifier = compressedCardModifier
-            ) {
-                val uname = Os.uname()
+                Card(
+                    modifier = compressedCardModifier
+                ) {
+                    val uname = Os.uname()
 
-                ListItem(
-                    contentPaddingValues = listItemContentPaddingValues,
-                    icon = R.drawable.cookie_man,
-                    title = stringResource(R.string.kernel),
-                    desc = uname.release
-                )
-
-                ListItem(
-                    contentPaddingValues = listItemContentPaddingValues,
-                    icon = R.drawable.launcher_outline,
-                    title = stringResource(R.string.manager_version),
-                    desc = "${context.managerVersion.first} (${context.managerVersion.second})"
-                )
-
-                ListItem(
-                    contentPaddingValues = listItemContentPaddingValues,
-                    icon = R.drawable.fingerprint,
-                    title = stringResource(R.string.fingerprint),
-                    desc = if (userPreferences.hideFingerprintInHome) {
-                        stringResource(id = R.string.hidden)
-                    } else {
-                        Build.FINGERPRINT
-                    }
-                )
-
-                ListItem(
-                    contentPaddingValues = listItemContentPaddingValues,
-                    icon = R.drawable.cpu_2,
-                    title = stringResource(R.string.architecture),
-                    desc = Os.uname().machine
-                )
-
-                SELinuxStatus(
-                    contentPaddingValues = listItemContentPaddingValues
-                )
-
-                if (viewModel.platform.isKernelSuOrNext) {
                     ListItem(
                         contentPaddingValues = listItemContentPaddingValues,
-                        icon = R.drawable.user_outlined,
-                        title = "SuperUser Apps",
-                        desc = viewModel.superUserCount.toString()
+                        icon = R.drawable.cookie_man,
+                        title = stringResource(R.string.kernel),
+                        desc = uname.release
+                    )
+
+                    ListItem(
+                        contentPaddingValues = listItemContentPaddingValues,
+                        icon = R.drawable.launcher_outline,
+                        title = stringResource(R.string.manager_version),
+                        desc = "${context.managerVersion.first} (${context.managerVersion.second})"
+                    )
+
+                    ListItem(
+                        contentPaddingValues = listItemContentPaddingValues,
+                        icon = R.drawable.fingerprint,
+                        title = stringResource(R.string.fingerprint),
+                        desc = if (userPreferences.hideFingerprintInHome) {
+                            stringResource(id = R.string.hidden)
+                        } else {
+                            Build.FINGERPRINT
+                        }
+                    )
+
+                    ListItem(
+                        contentPaddingValues = listItemContentPaddingValues,
+                        icon = R.drawable.cpu_2,
+                        title = stringResource(R.string.architecture),
+                        desc = Os.uname().machine
+                    )
+
+                    SELinuxStatus(
+                        contentPaddingValues = listItemContentPaddingValues
+                    )
+
+                    if (viewModel.platform.isKernelSuOrNext) {
+                        ListItem(
+                            contentPaddingValues = listItemContentPaddingValues,
+                            icon = R.drawable.user_outlined,
+                            title = "SuperUser Apps",
+                            desc = viewModel.superUserCount.toString()
+                        )
+                    }
+                }
+
+                viewModel.isProviderAlive.takeTrue {
+                    userPreferences.developerMode.takeTrue {
+                        Card(
+                            modifier = compressedCardModifier
+                        ) {
+                            ListItem(
+                                contentPaddingValues = listItemContentPaddingValues,
+                                title = stringResource(R.string.home_root_provider_version_name),
+                                desc = viewModel.versionName
+                            )
+
+                            ListItem(
+                                contentPaddingValues = listItemContentPaddingValues,
+                                title = stringResource(R.string.home_root_provider_se_linux_context),
+                                desc = viewModel.seLinuxContext
+                            )
+                        }
+                    }
+                }
+
+                if (viewModel.platform.isValid) {
+                    viewModel.analytics(context).nullable {
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Card(
+                                modifier = compressedCardModifierRow
+                            ) {
+                                ListItem(
+                                    contentPaddingValues = listItemContentPaddingValues,
+                                    desc = stringResource(R.string.home_installed_modules),
+                                    title = it.totalModules.toString()
+                                )
+
+                            }
+                            Card(
+                                modifier = compressedCardModifierRow
+                            ) {
+                                ListItem(
+                                    contentPaddingValues = listItemContentPaddingValues,
+                                    desc = stringResource(R.string.home_updated_modules),
+                                    title = it.totalUpdated.toString()
+                                )
+
+                            }
+                        }
+
+                        Card(
+                            modifier = compressedCardModifier
+                        ) {
+                            ListProgressBarItem(
+                                contentPaddingValues = listItemContentPaddingValues,
+                                progressBarModifier = Modifier
+                                    .weight(1f),
+                                startDesc = it.totalModulesUsageBytes.toFormattedFileSize(),
+                                endDesc = it.totalDeviceStorageBytes.toFormattedFileSize(),
+                                title = stringResource(id = R.string.home_storage_usage),
+                                progress = it.totalStorageUsage,
+                            )
+
+                        }
+
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            Card(
+                                modifier = compressedCardModifierRow
+                            ) {
+                                ListItem(
+                                    contentPaddingValues = listItemContentPaddingValues,
+                                    desc = stringResource(R.string.home_enabled_modules),
+                                    title = it.totalEnabled.toString()
+                                )
+
+                            }
+
+                            Card(
+                                modifier = compressedCardModifierRow
+                            ) {
+                                ListItem(
+                                    contentPaddingValues = listItemContentPaddingValues,
+                                    desc = stringResource(R.string.home_disabled_modules),
+                                    title = it.totalDisabled.toString()
+                                )
+
+                            }
+                        }
+                    }
+                }
+
+                Card(
+                    modifier = compressedCardModifier,
+                    onClick = {
+                        browser.openUri("https://github.com/sponsors/DerGoogler")
+                    }
+                ) {
+                    ListItem(
+                        contentPaddingValues = listItemContentPaddingValues,
+                        itemTextStyle = ListItemDefaults.itemStyle.copy(
+                            titleTextColor = Color.Unspecified,
+                            descTextColor = Color.Unspecified,
+                            titleTextStyle = MaterialTheme.typography.bodyLarge,
+                            descTextStyle = MaterialTheme.typography.bodyMedium
+                        ),
+                        title = stringResource(R.string.home_support_title),
+                        desc = stringResource(R.string.home_support_content)
                     )
                 }
-            }
-
-            viewModel.isProviderAlive.takeTrue {
-                userPreferences.developerMode.takeTrue {
-                    Card(
-                        modifier = compressedCardModifier
-                    ) {
-                        ListItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            title = stringResource(R.string.home_root_provider_version_name),
-                            desc = viewModel.versionName
-                        )
-
-                        ListItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            title = stringResource(R.string.home_root_provider_se_linux_context),
-                            desc = viewModel.seLinuxContext
-                        )
-                    }
-                }
-            }
-
-            if (viewModel.platform.isValid) {
-                viewModel.analytics(context).nullable {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Card(
-                            modifier = compressedCardModifierRow
-                        ) {
-                            ListItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                desc = stringResource(R.string.home_installed_modules),
-                                title = it.totalModules.toString()
-                            )
-
-                        }
-                        Card(
-                            modifier = compressedCardModifierRow
-                        ) {
-                            ListItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                desc = stringResource(R.string.home_updated_modules),
-                                title = it.totalUpdated.toString()
-                            )
-
-                        }
-                    }
-
-                    Card(
-                        modifier = compressedCardModifier
-                    ) {
-                        ListProgressBarItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            progressBarModifier = Modifier
-                                .weight(1f),
-                            startDesc = it.totalModulesUsageBytes.toFormattedFileSize(),
-                            endDesc = it.totalDeviceStorageBytes.toFormattedFileSize(),
-                            title = stringResource(id = R.string.home_storage_usage),
-                            progress = it.totalStorageUsage,
-                        )
-
-                    }
-
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Card(
-                            modifier = compressedCardModifierRow
-                        ) {
-                            ListItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                desc = stringResource(R.string.home_enabled_modules),
-                                title = it.totalEnabled.toString()
-                            )
-
-                        }
-
-                        Card(
-                            modifier = compressedCardModifierRow
-                        ) {
-                            ListItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                desc = stringResource(R.string.home_disabled_modules),
-                                title = it.totalDisabled.toString()
-                            )
-
-                        }
-                    }
-                }
-            }
-
-            Card(
-                modifier = compressedCardModifier,
-                onClick = {
-                    browser.openUri("https://github.com/sponsors/DerGoogler")
-                }
-            ) {
-                ListItem(
-                    contentPaddingValues = listItemContentPaddingValues,
-                    itemTextStyle = ListItemDefaults.itemStyle.copy(
-                        titleTextColor = Color.Unspecified,
-                        descTextColor = Color.Unspecified,
-                        titleTextStyle = MaterialTheme.typography.bodyLarge,
-                        descTextStyle = MaterialTheme.typography.bodyMedium
-                    ),
-                    title = stringResource(R.string.home_support_title),
-                    desc = stringResource(R.string.home_support_content)
-                )
             }
         }
     }

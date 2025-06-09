@@ -14,7 +14,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -51,6 +50,7 @@ import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.InstallViewModel
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import kotlinx.coroutines.launch
 
 @Composable

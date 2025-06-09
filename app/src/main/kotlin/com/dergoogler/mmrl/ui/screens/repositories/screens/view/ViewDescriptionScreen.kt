@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
@@ -37,6 +36,7 @@ import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.viewmodel.ModuleViewModel
 import androidx.navigation.NavHostController
 import com.dergoogler.mmrl.ui.activity.webui.interfaces.MarkdownInterface
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.webui.client.WXClient
 import com.dergoogler.mmrl.webui.handler.internalPathHandler
@@ -99,31 +99,33 @@ fun ViewDescriptionScreen(
                 enter = fadeIn(),
                 exit = fadeOut()
             ) {
-                AndroidView(
-                    factory = {
-                        val options = WebUIOptions(
-                            context = it,
-                            isDarkMode = userPrefs.isDarkMode(),
-                            colorScheme = userPrefs.colorScheme(it),
-                        )
-
-                        val assetsLoader = wxAssetLoader(
-                            handlers = buildList {
-                                add("/internal/" to internalPathHandler(options, Insets.None))
-                            }
-                        )
-
-                        WebUIView(options).apply {
-                            webViewClient = WXClient(options, assetsLoader)
-                            addJavascriptInterface<MarkdownInterface>(
-                                arrayOf(readme),
-                                arrayOf(String::class.java)
+                this@Scaffold.ResponsiveContent {
+                    AndroidView(
+                        factory = {
+                            val options = WebUIOptions(
+                                context = it,
+                                isDarkMode = userPrefs.isDarkMode(),
+                                colorScheme = userPrefs.colorScheme(it),
                             )
+
+                            val assetsLoader = wxAssetLoader(
+                                handlers = buildList {
+                                    add("/internal/" to internalPathHandler(options, Insets.None))
+                                }
+                            )
+
+                            WebUIView(options).apply {
+                                webViewClient = WXClient(options, assetsLoader)
+                                addJavascriptInterface<MarkdownInterface>(
+                                    arrayOf(readme),
+                                    arrayOf(String::class.java)
+                                )
+                            }
+                        }, update = {
+                            it.loadUrl(launchUrl)
                         }
-                    }, update = {
-                        it.loadUrl(launchUrl)
-                    }
-                )
+                    )
+                }
             }
         }
     }

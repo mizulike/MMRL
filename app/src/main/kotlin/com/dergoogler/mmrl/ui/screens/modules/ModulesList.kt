@@ -47,12 +47,13 @@ import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.ui.activity.terminal.action.ActionActivity
 import com.dergoogler.mmrl.ui.component.DropdownMenu
 import com.dergoogler.mmrl.ui.component.button.FilledTonalDoubleButton
+import com.dergoogler.mmrl.ui.component.scaffold.ScaffoldScope
 import com.dergoogler.mmrl.webui.model.WebUIConfig
 import com.dergoogler.mmrl.webui.model.WebUIConfig.Companion.webUiConfig
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 
 @Composable
-fun ModulesList(
+fun ScaffoldScope.ModulesList(
     list: List<LocalModule>,
     state: LazyListState,
     onDownload: (LocalModule, VersionItem, Boolean) -> Unit,
@@ -60,24 +61,23 @@ fun ModulesList(
 ) = Box(
     modifier = Modifier.fillMaxSize()
 ) {
-    val browser = LocalUriHandler.current
-    val context = LocalContext.current
-
-    LazyColumn(
-        state = state,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        items(
-            items = list,
-            key = { it.id }
-        ) { module ->
-            ModuleItem(
-                module = module,
-                viewModel = viewModel,
-                onDownload = onDownload,
-            )
+    this@ModulesList.ResponsiveContent {
+        LazyColumn(
+            state = state,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            items(
+                items = list,
+                key = { it.id }
+            ) { module ->
+                ModuleItem(
+                    module = module,
+                    viewModel = viewModel,
+                    onDownload = onDownload,
+                )
+            }
         }
     }
 

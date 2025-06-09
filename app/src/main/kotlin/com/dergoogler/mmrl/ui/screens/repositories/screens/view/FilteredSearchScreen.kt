@@ -7,7 +7,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -27,7 +26,6 @@ import com.dergoogler.mmrl.ui.component.HtmlText
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.PageIndicator
 import com.dergoogler.mmrl.ui.component.TopAppBar
-import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.screens.repositories.screens.repository.ModulesList
@@ -38,6 +36,7 @@ import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.ext.toDecodedUrl
 import com.dergoogler.mmrl.ext.toEncodedUrl
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 
 @Composable
 fun FilteredSearchScreen(
@@ -110,7 +109,7 @@ fun FilteredSearchScreen(
                 )
             }
 
-            ModulesList(
+            this@Scaffold.ModulesList(
                 before = {
                     HtmlText(
                         modifier = Modifier.padding(vertical = 8.dp),

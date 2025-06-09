@@ -18,7 +18,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
@@ -58,6 +57,8 @@ import com.dergoogler.mmrl.viewmodel.RepositoriesViewModel
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
 import com.dergoogler.mmrl.ui.component.TopAppBarIcon
+import com.dergoogler.mmrl.ui.component.scaffold.ResponsiveScaffold
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.navigation.MainRoute
 import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
 import com.dergoogler.mmrl.ui.providable.LocalMainNavController
@@ -185,7 +186,7 @@ fun RepositoriesScreen(
                 isRefreshing = state.isRefreshing,
                 onRefresh = viewModel::getRepoAll
             ) {
-                RepositoriesList(
+                this@Scaffold.RepositoriesList(
                     list = list,
                     state = listSate,
                     delete = viewModel::delete,

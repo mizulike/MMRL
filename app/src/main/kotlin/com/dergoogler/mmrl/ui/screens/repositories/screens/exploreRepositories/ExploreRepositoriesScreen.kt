@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -29,8 +28,7 @@ import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
-import com.dergoogler.mmrl.ui.component.ScaffoldDefaults
-import com.dergoogler.mmrl.ui.component.SettingsScaffold
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.items.RepoCard
 import kotlinx.coroutines.Dispatchers
@@ -68,28 +66,30 @@ fun ExploreRepositoriesScreen() {
         },
         contentWindowInsets = WindowInsets.none
     ) { innerPadding ->
-        AnimatedVisibility(
-            visible = exploreRepositories == null, enter = fadeIn(), exit = fadeOut()
-        ) {
-            Loading()
-        }
+        this@Scaffold.ResponsiveContent {
+            AnimatedVisibility(
+                visible = exploreRepositories == null, enter = fadeIn(), exit = fadeOut()
+            ) {
+                Loading()
+            }
 
-        AnimatedVisibility(
-            visible = exploreRepositories != null, enter = fadeIn(), exit = fadeOut()
-        ) {
-            exploreRepositories.nullable { er ->
-                LazyColumn(
-                    modifier = Modifier.padding(innerPadding),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    contentPadding = PaddingValues(16.dp)
-                ) {
-                    items(
-                        items = er,
-                        key = { it.url }
-                    ) { repo ->
-                        RepoCard(
-                            repo = repo
-                        )
+            AnimatedVisibility(
+                visible = exploreRepositories != null, enter = fadeIn(), exit = fadeOut()
+            ) {
+                exploreRepositories.nullable { er ->
+                    LazyColumn(
+                        modifier = Modifier.padding(innerPadding),
+                        verticalArrangement = Arrangement.spacedBy(16.dp),
+                        contentPadding = PaddingValues(16.dp)
+                    ) {
+                        items(
+                            items = er,
+                            key = { it.url }
+                        ) { repo ->
+                            RepoCard(
+                                repo = repo
+                            )
+                        }
                     }
                 }
             }

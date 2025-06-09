@@ -15,6 +15,7 @@ import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.PageIndicator
 import com.dergoogler.mmrl.ui.component.SearchTopBar
+import com.dergoogler.mmrl.ui.component.scaffold.ResponsiveScaffold
 import com.dergoogler.mmrl.viewmodel.SearchViewModel
 
 @Composable
@@ -24,7 +25,7 @@ fun SearchScreen(viewModel: SearchViewModel) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val listState = rememberLazyListState()
 
-    Scaffold(
+    ResponsiveScaffold(
         topBar = {
             SearchTopBar(
                 isSearch = true,

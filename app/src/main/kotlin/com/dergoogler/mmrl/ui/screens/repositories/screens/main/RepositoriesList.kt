@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.ui.screens.repositories.screens.main
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.requiredHeightIn
@@ -18,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -27,46 +29,57 @@ import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.screens.repositories.screens.main.items.ExploreReposCard
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
+import com.dergoogler.mmrl.ui.component.scaffold.ScaffoldScope
+import com.dergoogler.mmrl.ui.component.scrollbar.VerticalFastScrollbar
 
 @Composable
-fun RepositoriesList(
+fun ScaffoldScope.RepositoriesList(
     list: List<RepoState>,
     state: LazyListState,
     delete: (RepoState) -> Unit,
     getUpdate: (RepoState, (Throwable) -> Unit) -> Unit,
+) = Box(
+    modifier = Modifier.fillMaxSize()
 ) {
     val navController = LocalNavController.current
 
-    LazyColumn(
-        state = state,
-        modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp),
-    ) {
-        item {
-            ExploreReposCard()
-        }
+    this@RepositoriesList.ResponsiveContent {
+        LazyColumn(
+            state = state,
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            item {
+                ExploreReposCard()
+            }
 
-        items(
-            items = list,
-            key = { it.url }
-        ) { repo ->
-            RepositoryItem(
-                repo = repo,
-                onClick = {
-                    navController.navigateSingleTopTo(
-                        route = RepositoriesScreen.RepositoryView.route,
-                        args = mapOf(
-                            "repoName" to repo.name,
-                            "repoUrl" to repo.url
+            items(
+                items = list,
+                key = { it.url }
+            ) { repo ->
+                RepositoryItem(
+                    repo = repo,
+                    onClick = {
+                        navController.navigateSingleTopTo(
+                            route = RepositoriesScreen.RepositoryView.route,
+                            args = mapOf(
+                                "repoName" to repo.name,
+                                "repoUrl" to repo.url
+                            )
                         )
-                    )
-                },
-                onUpdate = getUpdate,
-                onDelete = delete,
-            )
+                    },
+                    onUpdate = getUpdate,
+                    onDelete = delete,
+                )
+            }
         }
     }
+
+    VerticalFastScrollbar(
+        state = state,
+        modifier = Modifier.align(Alignment.CenterEnd)
+    )
 }
 
 @Composable

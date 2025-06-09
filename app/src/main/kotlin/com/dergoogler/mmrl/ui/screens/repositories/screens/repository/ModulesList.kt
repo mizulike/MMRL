@@ -18,6 +18,7 @@ import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.panicString
 import com.dergoogler.mmrl.model.online.OnlineModule
 import com.dergoogler.mmrl.model.state.OnlineState
+import com.dergoogler.mmrl.ui.component.scaffold.ScaffoldScope
 import com.dergoogler.mmrl.ui.component.scrollbar.VerticalFastScrollbar
 import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
 import com.dergoogler.mmrl.ui.providable.LocalModule
@@ -26,7 +27,7 @@ import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 
 @Composable
-fun ModulesList(
+fun ScaffoldScope.ModulesList(
     before: @Composable (() -> Unit)? = null,
     after: @Composable (() -> Unit)? = null,
     list: List<Pair<OnlineState, OnlineModule>>,
@@ -40,51 +41,53 @@ fun ModulesList(
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
-        LazyColumn(
-            state = state,
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = PaddingValues(if (menu.repoListMode == RepoListMode.Compact) 0.dp else 16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            before?.let {
-                item {
-                    it()
+        this@ModulesList.ResponsiveContent {
+            LazyColumn(
+                state = state,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(if (menu.repoListMode == RepoListMode.Compact) 0.dp else 16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                before?.let {
+                    item {
+                        it()
+                    }
                 }
-            }
 
-            items(
-                items = list,
-                key = { it.second.id }
-            ) { (moduleState, module) ->
-                CompositionLocalProvider(
-                    LocalModuleState provides moduleState,
-                    LocalModule provides module
-                ) {
-                    val click = {
-                        navController.navigateSingleTopTo(
-                            route = RepositoriesScreen.View.route,
-                            args = mapOf(
-                                "moduleId" to module.id,
-                                "repoUrl" to arguments.panicString("repoUrl")
+                items(
+                    items = list,
+                    key = { it.second.id }
+                ) { (moduleState, module) ->
+                    CompositionLocalProvider(
+                        LocalModuleState provides moduleState,
+                        LocalModule provides module
+                    ) {
+                        val click = {
+                            navController.navigateSingleTopTo(
+                                route = RepositoriesScreen.View.route,
+                                args = mapOf(
+                                    "moduleId" to module.id,
+                                    "repoUrl" to arguments.panicString("repoUrl")
+                                )
                             )
-                        )
-                    }
+                        }
 
-                    when (menu.repoListMode) {
-                        RepoListMode.Compact -> ModuleItemCompact(
-                            onClick = click
-                        )
+                        when (menu.repoListMode) {
+                            RepoListMode.Compact -> ModuleItemCompact(
+                                onClick = click
+                            )
 
-                        RepoListMode.Detailed -> ModuleItemDetailed(
-                            onClick = click
-                        )
+                            RepoListMode.Detailed -> ModuleItemDetailed(
+                                onClick = click
+                            )
+                        }
                     }
                 }
-            }
 
-            after?.let {
-                item {
-                    it()
+                after?.let {
+                    item {
+                        it()
+                    }
                 }
             }
         }

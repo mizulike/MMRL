@@ -11,7 +11,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -54,84 +54,86 @@ fun ThankYouScreen(
         },
         contentWindowInsets = WindowInsets.none
     ) { innerPadding ->
-        LazyVerticalGrid(
-            modifier = Modifier
-                .padding(innerPadding)
-                .navigationBarsPadding(),
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            if (sponsors.isNotNullOrEmpty()) {
-                item(span = { GridItemSpan(2) }) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        HorizontalDividerWithText(
-                            text = stringResource(
-                                R.string.sponsors
-                            ),
-                            thickness = 0.9.dp
-                        )
-
-                        Text(
-                            text = stringResource(
-                                R.string.have_been_total_sponsored,
-                                vm.totalSponsorAmount.toDollars()
-                            ),
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                color = MaterialTheme.colorScheme.outline
+        this@Scaffold.ResponsiveContent {
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .navigationBarsPadding(),
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+            ) {
+                if (sponsors.isNotNullOrEmpty()) {
+                    item(span = { GridItemSpan(2) }) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            HorizontalDividerWithText(
+                                text = stringResource(
+                                    R.string.sponsors
+                                ),
+                                thickness = 0.9.dp
                             )
+
+                            Text(
+                                text = stringResource(
+                                    R.string.have_been_total_sponsored,
+                                    vm.totalSponsorAmount.toDollars()
+                                ),
+                                style = MaterialTheme.typography.titleSmall.copy(
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            )
+                        }
+                    }
+
+                    itemsIndexed(
+                        items = sponsors,
+                        key = { _, it -> it.name }
+                    ) { index, it ->
+                        MemberCard(
+                            member = it,
+                            index = index
                         )
                     }
                 }
 
-                itemsIndexed(
-                    items = sponsors,
-                    key = { _, it -> it.name }
-                ) { index, it ->
-                    MemberCard(
-                        member = it,
-                        index = index
-                    )
-                }
-            }
-
-            if (contributors.isNotNullOrEmpty()) {
-                item(span = { GridItemSpan(2) }) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        HorizontalDividerWithText(
-                            text = stringResource(
-                                R.string.contributors
-                            ),
-                            thickness = 0.9.dp
-                        )
-
-                        Text(
-                            text = stringResource(
-                                R.string.total_community_contributions,
-                                vm.totalContributionsCount
-                            ),
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                color = MaterialTheme.colorScheme.outline
+                if (contributors.isNotNullOrEmpty()) {
+                    item(span = { GridItemSpan(2) }) {
+                        Column(
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally
+                        ) {
+                            HorizontalDividerWithText(
+                                text = stringResource(
+                                    R.string.contributors
+                                ),
+                                thickness = 0.9.dp
                             )
+
+                            Text(
+                                text = stringResource(
+                                    R.string.total_community_contributions,
+                                    vm.totalContributionsCount
+                                ),
+                                style = MaterialTheme.typography.titleSmall.copy(
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            )
+                        }
+                    }
+
+                    itemsIndexed(
+                        items = contributors,
+                        key = { _, it -> it.name }
+                    ) { index, it ->
+                        MemberCard(
+                            member = it,
+                            index = index
                         )
                     }
-                }
-
-                itemsIndexed(
-                    items = contributors,
-                    key = { _, it -> it.name }
-                ) { index, it ->
-                    MemberCard(
-                        member = it,
-                        index = index
-                    )
                 }
             }
         }

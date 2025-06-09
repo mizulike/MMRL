@@ -37,7 +37,6 @@ import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -99,7 +98,6 @@ import com.dergoogler.mmrl.ui.component.listItem.ListCollapseItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemTextStyle
 import com.dergoogler.mmrl.ui.navigation.graphs.RepositoriesScreen
-import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalPanicArguments
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.InstallConfirmDialog
@@ -123,6 +121,7 @@ import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
 import com.dergoogler.mmrl.ui.screens.repositories.screens.view.items.OtherSourcesItem
@@ -404,582 +403,616 @@ fun NewViewScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) },
         contentWindowInsets = WindowInsets.none
     ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .let {
-                    if (repositoryMenu.showCover && module.hasCover) {
-                        Modifier
-                    } else {
-                        it.padding(innerPadding)
-                    }
-                }
-                .verticalScroll(rememberScrollState())
-        ) {
-            module.cover.nullable(repositoryMenu.showCover) {
-                if (it.isNotEmpty()) {
-                    Cover(
-                        modifier = Modifier.fadingEdge(
-                            Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black
-                                ),
-                                startY = Float.POSITIVE_INFINITY,
-                                endY = 0f
-                            )
-                        ),
-                        url = it,
-                    )
-                }
-            }
-
+        this@Scaffold.ResponsiveContent {
             Column(
                 modifier = Modifier
-                    .systemBarsPaddingEnd()
-            ) {
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.Top
-                ) {
-                    if (repositoryMenu.showIcon) {
-                        if (module.icon.isNotNullOrBlank()) {
-                            AsyncImage(
-                                model = module.icon,
-                                modifier = Modifier
-                                    .size(60.dp)
-                                    .clip(RoundedCornerShape(20)),
-                                contentDescription = null
-                            )
+                    .let {
+                        if (repositoryMenu.showCover && module.hasCover) {
+                            Modifier
                         } else {
-                            Logo(
-                                icon = R.drawable.box,
-                                modifier = Modifier.size(60.dp),
-                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                shape = RoundedCornerShape(20)
-                            )
+                            it.padding(innerPadding)
                         }
-
-                        Spacer(modifier = Modifier.width(16.dp))
                     }
-
-                    Column(
-                        modifier = Modifier.weight(1f)
-                    ) {
-                        TextWithIcon(
-                            style = TextWithIconDefaults.style.copy(
-                                textStyle = MaterialTheme.typography.titleLarge,
-                                iconTint = MaterialTheme.colorScheme.surfaceTint,
-                                iconScaling = 1.0f,
-                                rightIcon = true,
-                                maxLines = 2,
-                                overflow = TextOverflow.Ellipsis
+                    .verticalScroll(rememberScrollState())
+            ) {
+                module.cover.nullable(repositoryMenu.showCover) {
+                    if (it.isNotEmpty()) {
+                        Cover(
+                            modifier = Modifier.fadingEdge(
+                                Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        Color.Black
+                                    ),
+                                    startY = Float.POSITIVE_INFINITY,
+                                    endY = 0f
+                                )
                             ),
-                            text = module.name,
-                            icon = module.isVerified nullable R.drawable.rosette_discount_check,
-                        )
-
-                        Spacer(modifier = Modifier.height(4.dp))
-
-                        Text(
-                            modifier = Modifier.clickable(
-                                onClick = {
-                                    navController.navigateSingleTopTo(
-                                        route = RepositoriesScreen.RepoSearch.route,
-                                        args = mapOf(
-                                            "type" to "author",
-                                            "value" to module.author,
-                                            "repoUrl" to repoUrl
-                                        )
-                                    )
-                                }
-                            ),
-                            text = module.author,
-                            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.surfaceTint),
-                            maxLines = 2,
-                            overflow = TextOverflow.Ellipsis
+                            url = it,
                         )
                     }
                 }
 
-                Spacer(modifier = Modifier.height(16.dp))
-
-                Row(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.Top,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                Column(
+                    modifier = Modifier
+                        .systemBarsPaddingEnd()
                 ) {
-                    local?.let {
-                        val ops by remember(
-                            userPreferences.useShellForModuleStateChange,
-                            it,
-                            it.state
-                        ) {
-                            derivedStateOf {
-                                viewModel.createModuleOps(
-                                    userPreferences.useShellForModuleStateChange,
-                                    it
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        if (repositoryMenu.showIcon) {
+                            if (module.icon.isNotNullOrBlank()) {
+                                AsyncImage(
+                                    model = module.icon,
+                                    modifier = Modifier
+                                        .size(60.dp)
+                                        .clip(RoundedCornerShape(20)),
+                                    contentDescription = null
                                 )
+                            } else {
+                                Logo(
+                                    icon = R.drawable.box,
+                                    modifier = Modifier.size(60.dp),
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    shape = RoundedCornerShape(20)
+                                )
+                            }
+
+                            Spacer(modifier = Modifier.width(16.dp))
+                        }
+
+                        Column(
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            TextWithIcon(
+                                style = TextWithIconDefaults.style.copy(
+                                    textStyle = MaterialTheme.typography.titleLarge,
+                                    iconTint = MaterialTheme.colorScheme.surfaceTint,
+                                    iconScaling = 1.0f,
+                                    rightIcon = true,
+                                    maxLines = 2,
+                                    overflow = TextOverflow.Ellipsis
+                                ),
+                                text = module.name,
+                                icon = module.isVerified nullable R.drawable.rosette_discount_check,
+                            )
+
+                            Spacer(modifier = Modifier.height(4.dp))
+
+                            Text(
+                                modifier = Modifier.clickable(
+                                    onClick = {
+                                        navController.navigateSingleTopTo(
+                                            route = RepositoriesScreen.RepoSearch.route,
+                                            args = mapOf(
+                                                "type" to "author",
+                                                "value" to module.author,
+                                                "repoUrl" to repoUrl
+                                            )
+                                        )
+                                    }
+                                ),
+                                text = module.author,
+                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.surfaceTint),
+                                maxLines = 2,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    Row(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        verticalAlignment = Alignment.Top,
+                        horizontalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        local?.let {
+                            val ops by remember(
+                                userPreferences.useShellForModuleStateChange,
+                                it,
+                                it.state
+                            ) {
+                                derivedStateOf {
+                                    viewModel.createModuleOps(
+                                        userPreferences.useShellForModuleStateChange,
+                                        it
+                                    )
+                                }
+                            }
+
+                            OutlinedButton(
+                                enabled = viewModel.isProviderAlive && (!userPreferences.useShellForModuleStateChange || it.state != State.REMOVE),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                                onClick = ops.change
+                            ) {
+                                val style = LocalTextStyle.current
+                                val progressSize =
+                                    with(density) { style.fontSize.toDp() * 1.0f }
+
+                                if (ops.isOpsRunning) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(progressSize),
+                                        color = MaterialTheme.colorScheme.onPrimary,
+                                        strokeWidth = 2.dp
+                                    )
+                                } else {
+                                    Text(
+                                        text = stringResource(
+                                            id = if (it.state == State.REMOVE) {
+                                                R.string.module_restore
+                                            } else {
+                                                R.string.module_remove
+                                            }
+                                        ),
+                                        maxLines = 1
+                                    )
+                                }
                             }
                         }
 
-                        OutlinedButton(
-                            enabled = viewModel.isProviderAlive && (!userPreferences.useShellForModuleStateChange || it.state != State.REMOVE),
+                        val buttonTextResId = when {
+                            local == null -> R.string.module_install
+                            lastVersionItem != null && module.versionCode > local.versionCode -> R.string.module_update
+                            else -> R.string.module_reinstall
+                        }
+
+                        Button(
+                            enabled = viewModel.isProviderAlive && lastVersionItem != null && !module.isBlacklisted,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f),
-                            onClick = ops.change
+                            onClick = {
+                                installConfirm = true
+                            },
                         ) {
-                            val style = LocalTextStyle.current
-                            val progressSize =
-                                with(density) { style.fontSize.toDp() * 1.0f }
-
-                            if (ops.isOpsRunning) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(progressSize),
-                                    color = MaterialTheme.colorScheme.onPrimary,
-                                    strokeWidth = 2.dp
-                                )
-                            } else {
-                                Text(
-                                    text = stringResource(
-                                        id = if (it.state == State.REMOVE) {
-                                            R.string.module_restore
-                                        } else {
-                                            R.string.module_remove
-                                        }
-                                    ),
-                                    maxLines = 1
-                                )
-                            }
+                            Text(
+                                text = stringResource(id = buttonTextResId),
+                                maxLines = 1
+                            )
                         }
                     }
 
-                    val buttonTextResId = when {
-                        local == null -> R.string.module_install
-                        lastVersionItem != null && module.versionCode > local.versionCode -> R.string.module_update
-                        else -> R.string.module_reinstall
-                    }
+                    val progress = lastVersionItem?.let {
+                        viewModel.getProgress(it)
+                    } ?: 0f
 
-                    Button(
-                        enabled = viewModel.isProviderAlive && lastVersionItem != null && !module.isBlacklisted,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
-                        onClick = {
-                            installConfirm = true
-                        },
-                    ) {
-                        Text(
-                            text = stringResource(id = buttonTextResId),
-                            maxLines = 1
+                    if (progress != 0f) {
+                        LinearProgressIndicator(
+                            progress = { progress },
+                            strokeCap = StrokeCap.Round,
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
+                                .height(0.9.dp)
+                                .fillMaxWidth()
+                        )
+                    } else {
+                        HorizontalDivider(
+                            modifier = Modifier.padding(vertical = 16.dp),
+                            thickness = 0.9.dp
                         )
                     }
-                }
 
-                val progress = lastVersionItem?.let {
-                    viewModel.getProgress(it)
-                } ?: 0f
+                    module.hasBlacklist {
+                        var open by remember { mutableStateOf(false) }
+                        if (open) {
+                            BlacklistBottomSheet(
+                                module = it,
+                                onClose = { open = false })
+                        }
 
-                if (progress != 0f) {
-                    LinearProgressIndicator(
-                        progress = { progress },
-                        strokeCap = StrokeCap.Round,
-                        modifier = Modifier
-                            .padding(vertical = 16.dp)
-                            .height(0.9.dp)
-                            .fillMaxWidth()
-                    )
-                } else {
-                    HorizontalDivider(
-                        modifier = Modifier.padding(vertical = 16.dp),
-                        thickness = 0.9.dp
-                    )
-                }
-
-                module.hasBlacklist {
-                    var open by remember { mutableStateOf(false) }
-                    if (open) {
-                        BlacklistBottomSheet(
-                            module = it,
-                            onClose = { open = false })
-                    }
-
-                    Alert(
-                        icon = R.drawable.alert_circle_filled,
-                        title = stringResource(R.string.blacklisted),
-                        backgroundColor = MaterialTheme.colorScheme.errorContainer,
-                        textColor = MaterialTheme.colorScheme.onErrorContainer,
-                        clickTagColor = MaterialTheme.colorScheme.error,
-                        message = stringResource(R.string.blacklisted_desc),
-                        modifier = Modifier.padding(horizontal = 16.dp),
-                        onDescTagClick = { tag ->
-                            when (tag) {
-                                "more" -> {
-                                    open = true
+                        Alert(
+                            icon = R.drawable.alert_circle_filled,
+                            title = stringResource(R.string.blacklisted),
+                            backgroundColor = MaterialTheme.colorScheme.errorContainer,
+                            textColor = MaterialTheme.colorScheme.onErrorContainer,
+                            clickTagColor = MaterialTheme.colorScheme.error,
+                            message = stringResource(R.string.blacklisted_desc),
+                            modifier = Modifier.padding(horizontal = 16.dp),
+                            onDescTagClick = { tag ->
+                                when (tag) {
+                                    "more" -> {
+                                        open = true
+                                    }
                                 }
                             }
-                        }
-                    )
-                }
-
-                manager.isNotSupportedRootVersion(viewModel.versionCode) { min ->
-                    if (min == -1) {
-                        Alert(
-                            title = stringResource(id = R.string.view_module_unsupported),
-                            backgroundColor = MaterialTheme.colorScheme.errorContainer,
-                            textColor = MaterialTheme.colorScheme.onErrorContainer,
-                            message = stringResource(id = R.string.view_module_unsupported_desc),
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    } else {
-                        Alert(
-                            title = stringResource(id = R.string.view_module_low_root_version),
-                            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                            textColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                            message = stringResource(id = R.string.view_module_low_root_version_desc),
-                            modifier = Modifier.padding(horizontal = 16.dp)
                         )
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                    manager.isNotSupportedRootVersion(viewModel.versionCode) { min ->
+                        if (min == -1) {
+                            Alert(
+                                title = stringResource(id = R.string.view_module_unsupported),
+                                backgroundColor = MaterialTheme.colorScheme.errorContainer,
+                                textColor = MaterialTheme.colorScheme.onErrorContainer,
+                                message = stringResource(id = R.string.view_module_unsupported_desc),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        } else {
+                            Alert(
+                                title = stringResource(id = R.string.view_module_low_root_version),
+                                backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                                textColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                message = stringResource(id = R.string.view_module_low_root_version_desc),
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        }
 
-                manager.isNotSupportedDevice {
-                    Alert(
-                        title = stringResource(id = R.string.view_module_unsupported_device),
-                        backgroundColor = MaterialTheme.colorScheme.errorContainer,
-                        textColor = MaterialTheme.colorScheme.onErrorContainer,
-                        message = stringResource(id = R.string.view_module_unsupported_device_desc),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                manager.isNotSupportedArch {
-                    Alert(
-                        title = stringResource(id = R.string.view_module_unsupported_arch),
-                        backgroundColor = MaterialTheme.colorScheme.errorContainer,
-                        textColor = MaterialTheme.colorScheme.onErrorContainer,
-                        message = stringResource(id = R.string.view_module_unsupported_arch_desc),
-                        modifier = Modifier.padding(horizontal = 16.dp)
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                module.note.hasValidMessage {
-                    if (it.hasTitle && it.isDeprecated) {
-                        Alert(
-                            icon = R.drawable.alert_triangle,
-                            backgroundColor = MaterialTheme.colorScheme.errorContainer,
-                            textColor = MaterialTheme.colorScheme.onErrorContainer,
-                            title = it.title,
-                            message = it.message!!,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
-                    } else {
-                        Alert(
-                            title = it.title,
-                            message = it.message!!,
-                            modifier = Modifier.padding(horizontal = 16.dp)
-                        )
+                        Spacer(modifier = Modifier.height(16.dp))
                     }
 
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
+                    manager.isNotSupportedDevice {
+                        Alert(
+                            title = stringResource(id = R.string.view_module_unsupported_device),
+                            backgroundColor = MaterialTheme.colorScheme.errorContainer,
+                            textColor = MaterialTheme.colorScheme.onErrorContainer,
+                            message = stringResource(id = R.string.view_module_unsupported_device_desc),
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
 
-                if (!module.readme.isNullOrBlank()) {
-                    ListButtonItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        iconToRight = true,
-                        icon = R.drawable.arrow_right,
-                        title = stringResource(R.string.view_module_about_this_module),
-                        onClick = {
-                            navController.navigateSingleTopTo(
-                                route = RepositoriesScreen.Description.route,
-                                args = mapOf(
-                                    "moduleId" to module.id,
-                                    "repoUrl" to repoUrl
-                                )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    manager.isNotSupportedArch {
+                        Alert(
+                            title = stringResource(id = R.string.view_module_unsupported_arch),
+                            backgroundColor = MaterialTheme.colorScheme.errorContainer,
+                            textColor = MaterialTheme.colorScheme.onErrorContainer,
+                            message = stringResource(id = R.string.view_module_unsupported_arch_desc),
+                            modifier = Modifier.padding(horizontal = 16.dp)
+                        )
+
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
+
+                    module.note.hasValidMessage {
+                        if (it.hasTitle && it.isDeprecated) {
+                            Alert(
+                                icon = R.drawable.alert_triangle,
+                                backgroundColor = MaterialTheme.colorScheme.errorContainer,
+                                textColor = MaterialTheme.colorScheme.onErrorContainer,
+                                title = it.title,
+                                message = it.message!!,
+                                modifier = Modifier.padding(horizontal = 16.dp)
+                            )
+                        } else {
+                            Alert(
+                                title = it.title,
+                                message = it.message!!,
+                                modifier = Modifier.padding(horizontal = 16.dp)
                             )
                         }
-                    )
-                } else {
-                    ListItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        title = stringResource(R.string.view_module_about_this_module),
-                    )
-                }
 
-                Text(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    text = module.description
-                        ?: stringResource(R.string.view_module_no_description),
-                    style = MaterialTheme.typography.bodyMedium.apply {
-                        if (module.description.isNullOrBlank()) {
-                            copy(
-                                fontStyle = FontStyle.Italic
-                            )
-                        }
-                    },
-                    color = MaterialTheme.colorScheme.outline
-                )
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
 
-                module.hasCategories {
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    LazyRow(
-                        state = categoriesLazyListState,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
-                    ) {
-                        items(it.size) { category ->
-                            AssistChip(
-                                onClick = {
-                                    navController.navigateSingleTopTo(
-                                        route = RepositoriesScreen.RepoSearch.route,
-                                        args = mapOf(
-                                            "type" to "category",
-                                            "value" to it[category],
-                                            "repoUrl" to repoUrl
-                                        )
+                    if (!module.readme.isNullOrBlank()) {
+                        ListButtonItem(
+                            contentPaddingValues = listItemContentPaddingValues,
+                            iconToRight = true,
+                            icon = R.drawable.arrow_right,
+                            title = stringResource(R.string.view_module_about_this_module),
+                            onClick = {
+                                navController.navigateSingleTopTo(
+                                    route = RepositoriesScreen.Description.route,
+                                    args = mapOf(
+                                        "moduleId" to module.id,
+                                        "repoUrl" to repoUrl
                                     )
-                                },
-                                label = { Text(it[category]) }
-                            )
-                        }
+                                )
+                            }
+                        )
+                    } else {
+                        ListItem(
+                            contentPaddingValues = listItemContentPaddingValues,
+                            title = stringResource(R.string.view_module_about_this_module),
+                        )
                     }
-                }
 
-                module.hasScreenshots { screens ->
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                        text = module.description
+                            ?: stringResource(R.string.view_module_no_description),
+                        style = MaterialTheme.typography.bodyMedium.apply {
+                            if (module.description.isNullOrBlank()) {
+                                copy(
+                                    fontStyle = FontStyle.Italic
+                                )
+                            }
+                        },
+                        color = MaterialTheme.colorScheme.outline
+                    )
 
-                    LazyRow(
-                        state = screenshotsLazyListState,
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+                    module.hasCategories {
+                        Spacer(modifier = Modifier.height(8.dp))
 
-                    ) {
-                        itemsIndexed(
-                            items = screens,
-                        ) { index, screen ->
-                            val interactionSource = remember { MutableInteractionSource() }
-
-                            AsyncImage(
-                                model = screen,
-                                contentDescription = null,
-                                modifier = Modifier
-                                    .height(160.dp)
-                                    .clickable(
-                                        interactionSource = interactionSource,
-                                        indication = ripple(),
-                                        onClick = {
-                                            ScreenshotsPreviewActivity.start(
-                                                context,
-                                                screens,
-                                                index
+                        LazyRow(
+                            state = categoriesLazyListState,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+                        ) {
+                            items(it.size) { category ->
+                                AssistChip(
+                                    onClick = {
+                                        navController.navigateSingleTopTo(
+                                            route = RepositoriesScreen.RepoSearch.route,
+                                            args = mapOf(
+                                                "type" to "category",
+                                                "value" to it[category],
+                                                "repoUrl" to repoUrl
                                             )
-                                        }
-                                    )
-                                    .aspectRatio(9f / 16f)
-                                    .clip(RoundedCornerShape(10.dp)),
-                                contentScale = ContentScale.Crop
-                            )
-                        }
-                    }
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                ListCollapseItem(
-                    contentPaddingValues = listItemContentPaddingValues,
-                    iconToRight = true,
-                    title = stringResource(R.string.view_module_module_support)
-                ) {
-                    module.donate?.ifNotNullOrBlank {
-                        ListButtonItem(
-                            icon = R.drawable.currency_dollar,
-                            contentPaddingValues = PaddingValues(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                            itemTextStyle = subListItemStyle,
-                            title = stringResource(id = R.string.view_module_donate),
-                            desc = stringResource(id = R.string.view_module_donate_desc),
-                            onClick = {
-                                browser.openUri(it)
-                            }
-                        )
-                    }
-
-                    ListButtonItem(
-                        icon = R.drawable.brand_git,
-                        contentPaddingValues = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
-                        itemTextStyle = subListItemStyle,
-                        title = stringResource(id = R.string.view_module_source),
-                        onClick = {
-                            browser.openUri(module.track.source)
-                        }
-                    )
-
-                    module.homepage?.ifNotNullOrBlank {
-                        ListButtonItem(
-                            icon = R.drawable.world_www,
-                            contentPaddingValues = PaddingValues(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                            itemTextStyle = subListItemStyle,
-                            title = stringResource(id = R.string.view_module_homepage),
-                            onClick = {
-                                browser.openUri(it)
-                            }
-                        )
-                    }
-
-                    module.support?.ifNotNullOrBlank {
-                        ListButtonItem(
-                            icon = R.drawable.heart_handshake,
-                            contentPaddingValues = PaddingValues(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                            itemTextStyle = subListItemStyle,
-                            title = stringResource(id = R.string.view_module_support),
-                            onClick = {
-                                browser.openUri(it)
-                            }
-                        )
-                    }
-                }
-
-                module.permissions.ifNotEmpty {
-                    ListCollapseItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        iconToRight = true,
-                        title = stringResource(R.string.view_module_features),
-                        base = {
-                            labels = listOf {
-                                LabelItem(
-                                    text = stringResource(
-                                        R.string.view_module_section_count,
-                                        it.size
-                                    )
+                                        )
+                                    },
+                                    label = { Text(it[category]) }
                                 )
                             }
                         }
-                    ) {
-                        PermissionItem(
-                            itemTextStyle = subListItemStyle,
-                            contentPaddingValues = PaddingValues(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                            permissions = it
-                        )
                     }
-                }
 
-                module.track.antifeatures.ifNotEmpty {
-                    ListCollapseItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        iconToRight = true,
-                        title = stringResource(R.string.view_module_antifeatures),
-                        base = {
-                            labels = listOf {
-                                LabelItem(
-                                    text = stringResource(
-                                        R.string.view_module_section_count,
-                                        it.size
-                                    )
+                    module.hasScreenshots { screens ->
+                        Spacer(modifier = Modifier.height(16.dp))
+
+                        LazyRow(
+                            state = screenshotsLazyListState,
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            contentPadding = PaddingValues(start = 16.dp, end = 16.dp)
+
+                        ) {
+                            itemsIndexed(
+                                items = screens,
+                            ) { index, screen ->
+                                val interactionSource = remember { MutableInteractionSource() }
+
+                                AsyncImage(
+                                    model = screen,
+                                    contentDescription = null,
+                                    modifier = Modifier
+                                        .height(160.dp)
+                                        .clickable(
+                                            interactionSource = interactionSource,
+                                            indication = ripple(),
+                                            onClick = {
+                                                ScreenshotsPreviewActivity.start(
+                                                    context,
+                                                    screens,
+                                                    index
+                                                )
+                                            }
+                                        )
+                                        .aspectRatio(9f / 16f)
+                                        .clip(RoundedCornerShape(10.dp)),
+                                    contentScale = ContentScale.Crop
                                 )
                             }
                         }
-                    ) {
-                        AntiFeaturesItem(
-                            itemTextStyle = subListItemStyle,
-                            contentPaddingValues = PaddingValues(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                            antifeatures = it
-                        )
                     }
-                }
 
-                requires.ifNotEmpty { requiredIds ->
+                    Spacer(modifier = Modifier.height(16.dp))
+
                     ListCollapseItem(
                         contentPaddingValues = listItemContentPaddingValues,
                         iconToRight = true,
-                        title = stringResource(R.string.view_module_dependencies),
-                        base = {
-                            labels = listOf {
-                                LabelItem(
-                                    text = stringResource(
-                                        R.string.view_module_section_count,
-                                        requiredIds.size
-                                    )
-                                )
-                            }
-                        }
+                        title = stringResource(R.string.view_module_module_support)
                     ) {
-                        requiredIds.forEach { onlineModule ->
-                            // val parts = requiredId.split("@")
-
-                            // val id = parts[0]
-                            // val version = (parts.getOrElse(1) { "-1" }).toInt()
-
+                        module.donate?.ifNotNullOrBlank {
                             ListButtonItem(
+                                icon = R.drawable.currency_dollar,
                                 contentPaddingValues = PaddingValues(
                                     vertical = 8.dp,
                                     horizontal = 16.dp
                                 ),
                                 itemTextStyle = subListItemStyle,
-                                title = onlineModule.name,
-                                desc = onlineModule.versionCode.toString(),
+                                title = stringResource(id = R.string.view_module_donate),
+                                desc = stringResource(id = R.string.view_module_donate_desc),
                                 onClick = {
-//                                navController.navigateSingleTopTo(
-//                                    ModuleViewModel.putModule(onlineModule, moduleArgs.url),
-//                                    launchSingleTop = false
-//                                )
+                                    browser.openUri(it)
+                                }
+                            )
+                        }
+
+                        ListButtonItem(
+                            icon = R.drawable.brand_git,
+                            contentPaddingValues = PaddingValues(
+                                vertical = 8.dp,
+                                horizontal = 16.dp
+                            ),
+                            itemTextStyle = subListItemStyle,
+                            title = stringResource(id = R.string.view_module_source),
+                            onClick = {
+                                browser.openUri(module.track.source)
+                            }
+                        )
+
+                        module.homepage?.ifNotNullOrBlank {
+                            ListButtonItem(
+                                icon = R.drawable.world_www,
+                                contentPaddingValues = PaddingValues(
+                                    vertical = 8.dp,
+                                    horizontal = 16.dp
+                                ),
+                                itemTextStyle = subListItemStyle,
+                                title = stringResource(id = R.string.view_module_homepage),
+                                onClick = {
+                                    browser.openUri(it)
+                                }
+                            )
+                        }
+
+                        module.support?.ifNotNullOrBlank {
+                            ListButtonItem(
+                                icon = R.drawable.heart_handshake,
+                                contentPaddingValues = PaddingValues(
+                                    vertical = 8.dp,
+                                    horizontal = 16.dp
+                                ),
+                                itemTextStyle = subListItemStyle,
+                                title = stringResource(id = R.string.view_module_support),
+                                onClick = {
+                                    browser.openUri(it)
                                 }
                             )
                         }
                     }
-                }
 
-                viewModel.otherSources.ifNotEmpty {
-                    ListItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        title = stringResource(R.string.from_other_repositories),
+                    module.permissions.ifNotEmpty {
+                        ListCollapseItem(
+                            contentPaddingValues = listItemContentPaddingValues,
+                            iconToRight = true,
+                            title = stringResource(R.string.view_module_features),
+                            base = {
+                                labels = listOf {
+                                    LabelItem(
+                                        text = stringResource(
+                                            R.string.view_module_section_count,
+                                            it.size
+                                        )
+                                    )
+                                }
+                            }
+                        ) {
+                            PermissionItem(
+                                itemTextStyle = subListItemStyle,
+                                contentPaddingValues = PaddingValues(
+                                    vertical = 8.dp,
+                                    horizontal = 16.dp
+                                ),
+                                permissions = it
+                            )
+                        }
+                    }
+
+                    module.track.antifeatures.ifNotEmpty {
+                        ListCollapseItem(
+                            contentPaddingValues = listItemContentPaddingValues,
+                            iconToRight = true,
+                            title = stringResource(R.string.view_module_antifeatures),
+                            base = {
+                                labels = listOf {
+                                    LabelItem(
+                                        text = stringResource(
+                                            R.string.view_module_section_count,
+                                            it.size
+                                        )
+                                    )
+                                }
+                            }
+                        ) {
+                            AntiFeaturesItem(
+                                itemTextStyle = subListItemStyle,
+                                contentPaddingValues = PaddingValues(
+                                    vertical = 8.dp,
+                                    horizontal = 16.dp
+                                ),
+                                antifeatures = it
+                            )
+                        }
+                    }
+
+                    requires.ifNotEmpty { requiredIds ->
+                        ListCollapseItem(
+                            contentPaddingValues = listItemContentPaddingValues,
+                            iconToRight = true,
+                            title = stringResource(R.string.view_module_dependencies),
+                            base = {
+                                labels = listOf {
+                                    LabelItem(
+                                        text = stringResource(
+                                            R.string.view_module_section_count,
+                                            requiredIds.size
+                                        )
+                                    )
+                                }
+                            }
+                        ) {
+                            requiredIds.forEach { onlineModule ->
+                                // val parts = requiredId.split("@")
+
+                                // val id = parts[0]
+                                // val version = (parts.getOrElse(1) { "-1" }).toInt()
+
+                                ListButtonItem(
+                                    contentPaddingValues = PaddingValues(
+                                        vertical = 8.dp,
+                                        horizontal = 16.dp
+                                    ),
+                                    itemTextStyle = subListItemStyle,
+                                    title = onlineModule.name,
+                                    desc = onlineModule.versionCode.toString(),
+                                    onClick = {
+//                                navController.navigateSingleTopTo(
+//                                    ModuleViewModel.putModule(onlineModule, moduleArgs.url),
+//                                    launchSingleTop = false
+//                                )
+                                    }
+                                )
+                            }
+                        }
+                    }
+
+                    viewModel.otherSources.ifNotEmpty {
+                        ListItem(
+                            contentPaddingValues = listItemContentPaddingValues,
+                            title = stringResource(R.string.from_other_repositories),
+                        )
+
+                        OtherSourcesItem(viewModel.otherSources)
+                    }
+
+                    // Information section
+                    HorizontalDivider(
+                        modifier = Modifier.padding(vertical = 16.dp),
+                        thickness = 0.9.dp
                     )
 
-                    OtherSourcesItem(viewModel.otherSources)
-                }
+                    userPreferences.developerMode.takeTrue {
+                        ModuleInfoListItem(
+                            title = R.string.view_module_module_id,
+                            desc = module.id
+                        )
+                    }
 
-                // Information section
-                HorizontalDivider(
-                    modifier = Modifier.padding(vertical = 16.dp),
-                    thickness = 0.9.dp
-                )
-
-                userPreferences.developerMode.takeTrue {
+                    module.license.ifNotNullOrBlank {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 14.dp),
+                        ) {
+                            Text(
+                                style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.outline),
+                                modifier = Modifier.weight(1f),
+                                text = stringResource(id = R.string.view_module_license)
+                            )
+                            LicenseItem(licenseId = it)
+                        }
+                    }
                     ModuleInfoListItem(
-                        title = R.string.view_module_module_id,
-                        desc = module.id
+                        title = R.string.view_module_version,
+                        desc = "${module.version} (${module.versionCode})"
                     )
-                }
+                    lastVersionItem?.let {
+                        ModuleInfoListItem(
+                            title = R.string.view_module_last_updated,
+                            desc = it.timestamp.toFormattedDateSafely
+                        )
+                    }
+                    module.size?.let {
+                        ModuleInfoListItem(
+                            title = R.string.view_module_file_size,
+                            desc = it.toFormattedFileSize()
+                        )
+                    }
 
-                module.license.ifNotNullOrBlank {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -988,118 +1021,92 @@ fun NewViewScreen(
                         Text(
                             style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.outline),
                             modifier = Modifier.weight(1f),
-                            text = stringResource(id = R.string.view_module_license)
+                            text = stringResource(id = R.string.view_module_provided_by)
                         )
-                        LicenseItem(licenseId = it)
+
+                        Text(
+                            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.surfaceTint),
+                            modifier = Modifier.clickable(
+                                onClick = { viewTrackBottomSheet = true }
+                            ),
+                            text = viewModel.repo.name,
+                        )
                     }
-                }
-                ModuleInfoListItem(
-                    title = R.string.view_module_version,
-                    desc = "${module.version} (${module.versionCode})"
-                )
-                lastVersionItem?.let {
-                    ModuleInfoListItem(
-                        title = R.string.view_module_last_updated,
-                        desc = it.timestamp.toFormattedDateSafely
-                    )
-                }
-                module.size?.let {
-                    ModuleInfoListItem(
-                        title = R.string.view_module_file_size,
-                        desc = it.toFormattedFileSize()
-                    )
-                }
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp, vertical = 14.dp),
-                ) {
-                    Text(
-                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.outline),
-                        modifier = Modifier.weight(1f),
-                        text = stringResource(id = R.string.view_module_provided_by)
-                    )
-
-                    Text(
-                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.surfaceTint),
-                        modifier = Modifier.clickable(
-                            onClick = { viewTrackBottomSheet = true }
-                        ),
-                        text = viewModel.repo.name,
-                    )
-                }
-
-                manager.min?.let {
-                    ModuleInfoListItem(
-                        title = R.string.view_module_required_root_version,
-                        desc = it.toString()
-                    )
-                }
-
-                module.minApi?.let {
-                    ModuleInfoListItem(
-                        title = R.string.view_module_required_os,
-                        desc = stringResource(
-                            R.string.view_module_required_os_value, when (it) {
-                                Build.VERSION_CODES.JELLY_BEAN -> "4.1"
-                                Build.VERSION_CODES.JELLY_BEAN_MR1 -> "4.2"
-                                Build.VERSION_CODES.JELLY_BEAN_MR2 -> "4.3"
-                                Build.VERSION_CODES.KITKAT -> "4.4"
-                                Build.VERSION_CODES.KITKAT_WATCH -> "4.4"
-                                Build.VERSION_CODES.LOLLIPOP -> "5.0"
-                                Build.VERSION_CODES.LOLLIPOP_MR1 -> "5.1"
-                                Build.VERSION_CODES.M -> "6.0"
-                                Build.VERSION_CODES.N -> "7.0"
-                                Build.VERSION_CODES.N_MR1 -> "7.1"
-                                Build.VERSION_CODES.O -> "8.0"
-                                Build.VERSION_CODES.O_MR1 -> "8.1"
-                                Build.VERSION_CODES.P -> "9.0"
-                                Build.VERSION_CODES.Q -> "10"
-                                Build.VERSION_CODES.R -> "11"
-                                Build.VERSION_CODES.S -> "12"
-                                Build.VERSION_CODES.S_V2 -> "12"
-                                Build.VERSION_CODES.TIRAMISU -> "13"
-                                Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> "14"
-                                else -> "[Sdk: $it]"
-                            }
+                    manager.min?.let {
+                        ModuleInfoListItem(
+                            title = R.string.view_module_required_root_version,
+                            desc = it.toString()
                         )
-                    )
-                }
+                    }
 
-                module.track.added?.let {
-                    ModuleInfoListItem(
-                        title = R.string.view_module_added_on,
-                        desc = it.toFormattedDateSafely
-                    )
-                }
+                    module.minApi?.let {
+                        ModuleInfoListItem(
+                            title = R.string.view_module_required_os,
+                            desc = stringResource(
+                                R.string.view_module_required_os_value, when (it) {
+                                    Build.VERSION_CODES.JELLY_BEAN -> "4.1"
+                                    Build.VERSION_CODES.JELLY_BEAN_MR1 -> "4.2"
+                                    Build.VERSION_CODES.JELLY_BEAN_MR2 -> "4.3"
+                                    Build.VERSION_CODES.KITKAT -> "4.4"
+                                    Build.VERSION_CODES.KITKAT_WATCH -> "4.4"
+                                    Build.VERSION_CODES.LOLLIPOP -> "5.0"
+                                    Build.VERSION_CODES.LOLLIPOP_MR1 -> "5.1"
+                                    Build.VERSION_CODES.M -> "6.0"
+                                    Build.VERSION_CODES.N -> "7.0"
+                                    Build.VERSION_CODES.N_MR1 -> "7.1"
+                                    Build.VERSION_CODES.O -> "8.0"
+                                    Build.VERSION_CODES.O_MR1 -> "8.1"
+                                    Build.VERSION_CODES.P -> "9.0"
+                                    Build.VERSION_CODES.Q -> "10"
+                                    Build.VERSION_CODES.R -> "11"
+                                    Build.VERSION_CODES.S -> "12"
+                                    Build.VERSION_CODES.S_V2 -> "12"
+                                    Build.VERSION_CODES.TIRAMISU -> "13"
+                                    Build.VERSION_CODES.UPSIDE_DOWN_CAKE -> "14"
+                                    else -> "[Sdk: $it]"
+                                }
+                            )
+                        )
+                    }
 
-                local?.let { loc ->
-                    ListCollapseItem(
-                        contentPaddingValues = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
-                        iconToRight = true,
-                        itemTextStyle = subListItemStyle.copy(titleTextColor = MaterialTheme.colorScheme.surfaceTint),
-                        title = stringResource(R.string.module_installed)
-                    ) {
-                        userPreferences.developerMode.takeTrue {
+                    module.track.added?.let {
+                        ModuleInfoListItem(
+                            title = R.string.view_module_added_on,
+                            desc = it.toFormattedDateSafely
+                        )
+                    }
+
+                    local?.let { loc ->
+                        ListCollapseItem(
+                            contentPaddingValues = PaddingValues(
+                                vertical = 8.dp,
+                                horizontal = 16.dp
+                            ),
+                            iconToRight = true,
+                            itemTextStyle = subListItemStyle.copy(titleTextColor = MaterialTheme.colorScheme.surfaceTint),
+                            title = stringResource(R.string.module_installed)
+                        ) {
+                            userPreferences.developerMode.takeTrue {
+                                ModuleInfoListItem(
+                                    title = R.string.view_module_module_id,
+                                    desc = loc.id.toString()
+                                )
+                            }
+
                             ModuleInfoListItem(
-                                title = R.string.view_module_module_id,
-                                desc = loc.id.toString()
+                                title = R.string.view_module_version,
+                                desc = "${loc.version} (${loc.versionCode})"
+                            )
+                            ModuleInfoListItem(
+                                title = R.string.view_module_last_updated,
+                                desc = loc.lastUpdated.toFormattedDateSafely
                             )
                         }
-
-                        ModuleInfoListItem(
-                            title = R.string.view_module_version,
-                            desc = "${loc.version} (${loc.versionCode})"
-                        )
-                        ModuleInfoListItem(
-                            title = R.string.view_module_last_updated,
-                            desc = loc.lastUpdated.toFormattedDateSafely
-                        )
                     }
-                }
 
-                Spacer(modifier = Modifier.navigationBarsPadding())
+                    Spacer(modifier = Modifier.navigationBarsPadding())
+                }
             }
         }
     }
