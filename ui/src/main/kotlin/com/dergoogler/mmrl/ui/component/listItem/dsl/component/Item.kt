@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.ui.component.listItem.dsl.component
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.padding
@@ -49,11 +50,12 @@ import kotlin.math.max
 fun ListScope.Item(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    contentPadding: PaddingValues = contentPaddingValues,
     content: @Composable ListItemScope.() -> Unit,
 ) {
     val instance = remember {
         ListItemScopeInstance(
-            contentPaddingValues = contentPaddingValues,
+            contentPaddingValues = contentPadding,
             iconSize = iconSize
         )
     }
@@ -64,7 +66,7 @@ fun ListScope.Item(
         content = { instance.content() },
         modifier = modifier
             .alpha(if (enabled) 1f else 0.5f)
-            .padding(contentPaddingValues)
+            .padding(contentPadding)
     ) { measurables, constraints ->
         // 1. Find all measurable slots
         val startMeasurable = measurables.firstOrNull { it.layoutId == ListItemSlot.Start }
@@ -76,13 +78,13 @@ fun ListScope.Item(
         // 2. Measure start content
         val startPlaceable = startMeasurable?.measure(constraints)
         val startWidth = startPlaceable?.width ?: 0
-        val startPaddingPx = contentPaddingValues.calculateStartPadding(layoutDirection).roundToPx()
+        val startPaddingPx = contentPadding.calculateStartPadding(layoutDirection).roundToPx()
         val startSpacerWidth = if (startPlaceable != null) startPaddingPx else 0
 
         // 3. Measure end content
         val endPlaceable = endMeasurable?.measure(constraints)
         val endWidth = endPlaceable?.width ?: 0
-        val endPaddingPx = contentPaddingValues.calculateEndPadding(layoutDirection).roundToPx()
+        val endPaddingPx = contentPadding.calculateEndPadding(layoutDirection).roundToPx()
         val endSpacerWidth = if (endPlaceable != null) endPaddingPx else 0
 
         // 4. Calculate available width for text

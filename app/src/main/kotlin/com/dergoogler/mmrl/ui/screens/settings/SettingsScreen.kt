@@ -29,6 +29,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.List
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Button
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialog
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
@@ -124,16 +125,14 @@ fun SettingsScreen() {
                 title = R.string.settings_resources,
                 desc = R.string.settings_resources_desc
             )
-
             val manager =
                 FeaturedManager.managers.find { userPreferences.workingMode == it.workingMode }
 
             manager.nullable { mng ->
-                ListRadioCheckItem(
-                    icon = mng.icon,
+                RadioDialog(
                     title = stringResource(id = R.string.platform),
-                    desc = stringResource(mng.name),
-                    options = FeaturedManager.managers.map { it.toRadioOption() },
+                    selection = mng.workingMode,
+                    options = FeaturedManager.managers.map { it.toRadioDialogItem() },
                     onConfirm = {
                         confirm(
                             ConfirmData(
@@ -149,10 +148,13 @@ fun SettingsScreen() {
                             )
                         )
                     },
-                    value = mng.workingMode
-                )
+                ) {
+                    Icon(painter = painterResource(mng.icon))
+                    Title(R.string.platform)
+                    Description(mng.name)
+                }
             }
-
+            
             NavButton(
                 route = SettingsScreen.Changelog.route,
                 icon = R.drawable.files,

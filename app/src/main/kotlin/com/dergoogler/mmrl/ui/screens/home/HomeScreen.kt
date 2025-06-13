@@ -223,7 +223,7 @@ fun HomeScreen(
                     val uname = Os.uname()
 
                     List(
-                        contentPaddingValues = listItemContentPaddingValues
+                        contentPadding = listItemContentPaddingValues
                     ) {
                         Item {
                             Icon(painter = painterResource(R.drawable.cookie_man))

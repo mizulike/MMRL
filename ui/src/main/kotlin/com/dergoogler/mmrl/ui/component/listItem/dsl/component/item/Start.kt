@@ -3,8 +3,8 @@ package com.dergoogler.mmrl.ui.component.listItem.dsl.component.item
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 
 /**
  * A composable function that creates a [Box] with a modifier that aligns its content to the start.
@@ -14,8 +14,8 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
  *                The content is scoped to [BoxScope] to allow for further customization within the box.
  */
 @Composable
-fun ListItemScope.Start(content: @Composable BoxScope.() -> Unit) {
-    Box(modifier = Modifier.start()) {
-        content()
-    }
-}
+fun ListItemScope.Start(content: @Composable BoxScope.() -> Unit) =
+    Slot(
+        slot = ListItemSlot.Start,
+        content = content
+    )

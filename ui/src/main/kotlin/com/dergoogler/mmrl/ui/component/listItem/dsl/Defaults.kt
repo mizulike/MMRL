@@ -24,10 +24,10 @@ interface BaseListScope {
 @LayoutScopeMarker
 @Immutable
 interface ListItemScope : BaseListScope {
-    fun Modifier.title(): Modifier
-    fun Modifier.description(): Modifier
-    fun Modifier.start(): Modifier
-    fun Modifier.end(): Modifier
+    fun Modifier.layoutSlot(
+        slot: ListItemSlot,
+        disallow: List<ListItemSlot> = emptyList(),
+    ): Modifier
 }
 
 @LayoutScopeMarker
@@ -43,8 +43,14 @@ internal class ListItemScopeInstance(
     override val contentPaddingValues: PaddingValues,
     override val iconSize: Dp,
 ) : ListItemScope {
-    override fun Modifier.title(): Modifier = layoutId(ListItemSlot.Title)
-    override fun Modifier.description(): Modifier = layoutId(ListItemSlot.Description)
-    override fun Modifier.start(): Modifier = layoutId(ListItemSlot.Start)
-    override fun Modifier.end(): Modifier = layoutId(ListItemSlot.End)
+    override fun Modifier.layoutSlot(
+        slot: ListItemSlot,
+        disallow: List<ListItemSlot>,
+    ): Modifier {
+        if (disallow.contains(slot)) {
+            throw IllegalStateException("Slot $slot is not allowed in this scope")
+        }
+
+        return this.layoutId(slot)
+    }
 }

@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 
 /**
  * Title component used in a list item.
@@ -27,11 +28,15 @@ fun ListItemScope.Title(
         color = LocalContentColor.current
     )
 
-    Box(modifier = Modifier.title()) {
-        ProvideTextStyle(style) {
-            content()
+    Slot(
+        slot = ListItemSlot.Title,
+        content = {
+            ProvideTextStyle(style) {
+                content()
+            }
+
         }
-    }
+    )
 }
 
 /**

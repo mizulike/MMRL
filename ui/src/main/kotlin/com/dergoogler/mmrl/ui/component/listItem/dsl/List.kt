@@ -14,18 +14,18 @@ val DefaultIconSize = 24.dp
  * A composable function that displays a list of items using a DSL.
  *
  * @param modifier The modifier to be applied to the list.
- * @param contentPaddingValues The padding to be applied to the content of the list.
+ * @param contentPadding The padding to be applied to the content of the list.
  * @param content The content of the list, defined using the [ListScope] DSL.
  */
 @Composable
 fun List(
     modifier: Modifier = Modifier,
-    contentPaddingValues: PaddingValues = DefaultContentPaddingValues,
+    contentPadding: PaddingValues = DefaultContentPaddingValues,
     content: @Composable ListScope.() -> Unit,
 ) {
     val instance = remember {
         ListScopeInstance(
-            contentPaddingValues = contentPaddingValues,
+            contentPaddingValues = contentPadding,
             iconSize = DefaultIconSize
         )
     }

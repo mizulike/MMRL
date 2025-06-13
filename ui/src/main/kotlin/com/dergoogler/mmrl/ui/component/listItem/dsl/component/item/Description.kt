@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.ext.toStyleMarkup
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 
 /**
  * A description for the list item.
@@ -27,11 +28,14 @@ fun ListItemScope.Description(content: @Composable BoxScope.() -> Unit) {
         color = MaterialTheme.colorScheme.outline
     )
 
-    Box(modifier = Modifier.description()) {
-        ProvideTextStyle(style) {
-            content()
+    Slot(
+        slot = ListItemSlot.Description,
+        content = {
+            ProvideTextStyle(style) {
+                content()
+            }
         }
-    }
+    )
 }
 
 

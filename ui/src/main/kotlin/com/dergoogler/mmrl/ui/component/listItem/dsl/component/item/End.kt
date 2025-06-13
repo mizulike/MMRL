@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 
 /**
  * Composable function that defines the end slot of a list item.
@@ -15,8 +16,8 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
  *                The content is placed within a `Box` that is aligned to the end.
  */
 @Composable
-fun ListItemScope.End(content: @Composable BoxScope.() -> Unit) {
-    Box(modifier = Modifier.end()) {
-        content()
-    }
-}
+fun ListItemScope.End(content: @Composable BoxScope.() -> Unit) =
+    Slot(
+        slot = ListItemSlot.End,
+        content = content
+    )
