@@ -18,14 +18,12 @@ fun DeveloperScreen() {
     SettingsScaffold(
         title = R.string.settings_developer
     ) {
-        List {
-            Switch(
-                checked = userPreferences.developerMode,
-                onChange = viewModel::setDeveloperMode,
-            ) {
-                Title(R.string.settings_developer_mode)
-                Description(R.string.settings_developer_mode_desc)
-            }
+        Switch(
+            checked = userPreferences.developerMode,
+            onChange = viewModel::setDeveloperMode,
+        ) {
+            Title(R.string.settings_developer_mode)
+            Description(R.string.settings_developer_mode_desc)
         }
     }
 }

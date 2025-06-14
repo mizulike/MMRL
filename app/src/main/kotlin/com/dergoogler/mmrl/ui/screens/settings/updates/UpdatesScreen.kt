@@ -61,137 +61,134 @@ fun UpdatesScreen() {
     SettingsScaffold(
         title = R.string.settings_updates,
     ) {
+        Section {
+            Button(
+                onClick = {
+                    val intent =
+                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                            putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                        }
 
-        List {
-            Section {
-                Button(
-                    onClick = {
-                        val intent =
-                            Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
-                            }
+                    if (intent.resolveActivity(context.packageManager) != null) {
+                        context.startActivity(intent, null)
+                    } else {
+                        Toast.makeText(
+                            context,
+                            "Cannot open notification settings",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            ) {
+                Title(R.string.settings_open_notification_settings)
+            }
+        }
 
-                        if (intent.resolveActivity(context.packageManager) != null) {
-                            context.startActivity(intent, null)
-                        } else {
-                            Toast.makeText(
+        Section(
+            title = stringResource(id = R.string.settings_app)
+        ) {
+
+            Switch(
+                checked = userPreferences.checkAppUpdates,
+                onChange = viewModel::setCheckAppUpdates
+            ) {
+                Title(R.string.settings_check_app_updates)
+                Description(R.string.settings_check_app_updates_desc)
+            }
+
+            Switch(
+                checked = userPreferences.checkAppUpdatesPreReleases,
+                enabled = userPreferences.checkAppUpdates,
+                onChange = viewModel::setCheckAppUpdatesPreReleases
+            ) {
+                Title(R.string.settings_include_preleases)
+            }
+        }
+
+        Section(
+            title = stringResource(id = R.string.page_repository)
+        ) {
+            Switch(
+                checked = RepositoryService.isActive,
+                onChange = {
+                    scope.launch {
+                        if (it) {
+                            RepositoryService.start(
                                 context,
-                                "Cannot open notification settings",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                    }
-                ) {
-                    Title(R.string.settings_open_notification_settings)
-                }
-            }
-
-            Section(
-                title = stringResource(id = R.string.settings_app)
-            ) {
-
-                Switch(
-                    checked = userPreferences.checkAppUpdates,
-                    onChange = viewModel::setCheckAppUpdates
-                ) {
-                    Title(R.string.settings_check_app_updates)
-                    Description(R.string.settings_check_app_updates_desc)
-                }
-
-                Switch(
-                    checked = userPreferences.checkAppUpdatesPreReleases,
-                    enabled = userPreferences.checkAppUpdates,
-                    onChange = viewModel::setCheckAppUpdatesPreReleases
-                ) {
-                    Title(R.string.settings_include_preleases)
-                }
-            }
-
-            Section(
-                title = stringResource(id = R.string.page_repository)
-            ) {
-                Switch(
-                    checked = RepositoryService.isActive,
-                    onChange = {
-                        scope.launch {
-                            if (it) {
-                                RepositoryService.start(
-                                    context,
-                                    userPreferences.autoUpdateReposInterval
-                                )
-                                snackbarHost.showSnackbar(context.getString(R.string.repository_service_started))
-                            } else {
-                                RepositoryService.stop(context)
-                                while (RepositoryService.isActive) {
-                                    delay(100)
-                                }
-                                snackbarHost.showSnackbar(context.getString(R.string.repository_service_stopped))
+                                userPreferences.autoUpdateReposInterval
+                            )
+                            snackbarHost.showSnackbar(context.getString(R.string.repository_service_started))
+                        } else {
+                            RepositoryService.stop(context)
+                            while (RepositoryService.isActive) {
+                                delay(100)
                             }
+                            snackbarHost.showSnackbar(context.getString(R.string.repository_service_stopped))
                         }
                     }
-                ) {
-                    Title(R.string.settings_auto_update_repos)
-                    Description(R.string.settings_auto_update_repos_desc)
                 }
-
-                RadioDialog(
-                    selection = userPreferences.autoUpdateReposInterval,
-                    options = optionsOfHours,
-                    onConfirm = {
-                        viewModel.setAutoUpdateReposInterval(it.value)
-                    }
-                ) {
-                    Title(R.string.settings_repo_update_interval)
-                    Description(
-                        R.string.settings_repo_update_interval_desc,
-                        userPreferences.autoUpdateReposInterval
-                    )
-                }
+            ) {
+                Title(R.string.settings_auto_update_repos)
+                Description(R.string.settings_auto_update_repos_desc)
             }
 
-            Section(
-                title = stringResource(id = R.string.page_modules)
+            RadioDialog(
+                selection = userPreferences.autoUpdateReposInterval,
+                options = optionsOfHours,
+                onConfirm = {
+                    viewModel.setAutoUpdateReposInterval(it.value)
+                }
             ) {
+                Title(R.string.settings_repo_update_interval)
+                Description(
+                    R.string.settings_repo_update_interval_desc,
+                    userPreferences.autoUpdateReposInterval
+                )
+            }
+        }
 
-                Switch(
-                    checked = ModuleService.isActive,
-                    enabled = viewModel.isProviderAlive && ProviderService.isActive,
-                    onChange = {
-                        scope.launch {
-                            if (it) {
-                                ModuleService.start(
-                                    context,
-                                    userPreferences.autoUpdateReposInterval
-                                )
-                                snackbarHost.showSnackbar(context.getString(R.string.module_service_started))
-                            } else {
-                                ModuleService.stop(context)
-                                while (ModuleService.isActive) {
-                                    delay(100)
-                                }
-                                snackbarHost.showSnackbar(context.getString(R.string.module_service_stopped))
+        Section(
+            title = stringResource(id = R.string.page_modules)
+        ) {
+
+            Switch(
+                checked = ModuleService.isActive,
+                enabled = viewModel.isProviderAlive && ProviderService.isActive,
+                onChange = {
+                    scope.launch {
+                        if (it) {
+                            ModuleService.start(
+                                context,
+                                userPreferences.autoUpdateReposInterval
+                            )
+                            snackbarHost.showSnackbar(context.getString(R.string.module_service_started))
+                        } else {
+                            ModuleService.stop(context)
+                            while (ModuleService.isActive) {
+                                delay(100)
                             }
+                            snackbarHost.showSnackbar(context.getString(R.string.module_service_stopped))
                         }
                     }
-                ) {
-                    Title(R.string.settings_check_modules_update)
-                    Description(R.string.settings_check_modules_update_desc)
                 }
+            ) {
+                Title(R.string.settings_check_modules_update)
+                Description(R.string.settings_check_modules_update_desc)
+            }
 
-                RadioDialog(
-                    selection = userPreferences.checkModuleUpdatesInterval,
-                    options = optionsOfHours,
-                    enabled = viewModel.isProviderAlive && ModuleService.isActive && ProviderService.isActive,
-                    onConfirm = {
-                        viewModel.setCheckModuleUpdatesInterval(it.value)
-                    }
-                ) {
-                    Title(R.string.settings_check_modules_update_interval)
-                    Description(
-                        R.string.settings_check_modules_update_interval_desc,
-                        userPreferences.checkModuleUpdatesInterval
-                    )
+            RadioDialog(
+                selection = userPreferences.checkModuleUpdatesInterval,
+                options = optionsOfHours,
+                enabled = viewModel.isProviderAlive && ModuleService.isActive && ProviderService.isActive,
+                onConfirm = {
+                    viewModel.setCheckModuleUpdatesInterval(it.value)
                 }
+            ) {
+                Title(R.string.settings_check_modules_update_interval)
+                Description(
+                    R.string.settings_check_modules_update_interval_desc,
+                    userPreferences.checkModuleUpdatesInterval
+                )
             }
         }
     }

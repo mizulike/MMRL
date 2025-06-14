@@ -21,6 +21,8 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
+import com.dergoogler.mmrl.ui.component.listItem.dsl.List
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
 import com.dergoogler.mmrl.ui.component.scaffold.ResponsiveScaffold
 import com.dergoogler.mmrl.ui.component.toolbar.ToolbarTitle
 import com.dergoogler.mmrl.ui.providable.LocalNavController
@@ -33,7 +35,7 @@ fun SettingsScaffold(
     actions: @Composable (RowScope.() -> Unit) = {},
     floatingActionButton: @Composable () -> Unit = {},
     absolute: @Composable (BoxScope.() -> Unit) = {},
-    relative: @Composable (ColumnScope.() -> Unit),
+    relative: @Composable (ListScope.() -> Unit),
 ) = SettingsScaffold(
     title = stringResource(id = title),
     modifier = modifier,
@@ -52,7 +54,7 @@ fun SettingsScaffold(
     actions: @Composable (RowScope.() -> Unit) = {},
     floatingActionButton: @Composable () -> Unit = {},
     absolute: @Composable (BoxScope.() -> Unit) = {},
-    relative: @Composable (ColumnScope.() -> Unit),
+    relative: @Composable (ListScope.() -> Unit),
 ) {
     val navController = LocalNavController.current
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
@@ -83,12 +85,10 @@ fun SettingsScaffold(
                 .padding(innerPadding)
                 .then(modifier.box)
         ) {
-            Column(
-                modifier = modifier.column
-                    .systemBarsPaddingEnd(),
-            ) {
-                relative()
-            }
+            List(
+                modifier = modifier.column.systemBarsPaddingEnd(),
+                content = relative
+            )
 
             absolute()
         }
