@@ -1,9 +1,11 @@
 package com.dergoogler.mmrl.ui.component.listItem.dsl
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 
@@ -20,17 +22,22 @@ val DefaultIconSize = 24.dp
 @Composable
 fun List(
     modifier: Modifier = Modifier,
+    verticalArrangement: Arrangement.Vertical = Arrangement.Top,
+    horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     contentPadding: PaddingValues = DefaultContentPaddingValues,
     content: @Composable ListScope.() -> Unit,
+) = Column(
+    modifier = modifier,
+    verticalArrangement = verticalArrangement,
+    horizontalAlignment = horizontalAlignment
 ) {
     val instance = remember {
         ListScopeInstance(
+            columnScope = this,
             contentPaddingValues = contentPadding,
             iconSize = DefaultIconSize
         )
     }
 
-    Column(modifier = modifier) {
-        instance.content()
-    }
+    instance.content()
 }

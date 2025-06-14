@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.ui.component.listItem.dsl
 
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Immutable
@@ -35,9 +36,10 @@ interface ListItemScope : BaseListScope {
 interface ListScope : BaseListScope
 
 internal class ListScopeInstance(
+    private val columnScope: ColumnScope,
     override val contentPaddingValues: PaddingValues,
     override val iconSize: Dp,
-) : ListScope
+) : ListScope, ColumnScope by columnScope
 
 internal class ListItemScopeInstance(
     override val contentPaddingValues: PaddingValues,
