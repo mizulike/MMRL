@@ -99,9 +99,7 @@ private fun <T> ListScope.AlertRadioDialog(
         },
         title = { Text(title) },
         text = {
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(16.dp)
-            ) {
+            LazyColumn {
                 items(
                     items = options,
                 ) { option ->
