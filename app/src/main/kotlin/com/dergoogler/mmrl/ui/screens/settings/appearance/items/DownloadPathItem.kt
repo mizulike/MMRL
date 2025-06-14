@@ -15,9 +15,8 @@ import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const
 import com.dergoogler.mmrl.ui.component.dialog.TextFieldDialog
-import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Button
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import java.io.File
@@ -34,7 +33,7 @@ fun ListScope.DownloadPathItem(
         onConfirm = { if (it != downloadPath) onChange(it) }
     )
 
-    Button(
+    ButtonItem(
         onClick = { edit = true }
     ) {
         Title(R.string.settings_download_path)

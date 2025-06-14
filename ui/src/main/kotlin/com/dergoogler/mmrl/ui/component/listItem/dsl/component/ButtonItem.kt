@@ -25,7 +25,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
  * @param content The content of the button.
  */
 @Composable
-fun ListScope.Button(
+fun ListScope.ButtonItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },

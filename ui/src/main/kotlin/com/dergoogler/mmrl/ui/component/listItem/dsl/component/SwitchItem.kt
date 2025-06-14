@@ -34,7 +34,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.End
  *   This will be placed in the `ListItemScope.Start` or `ListItemScope.Center` position implicitly.
  */
 @Composable
-fun ListScope.Switch(
+fun ListScope.SwitchItem(
     checked: Boolean,
     enabled: Boolean = true,
     onChange: (Boolean) -> Unit,

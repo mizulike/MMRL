@@ -5,18 +5,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.Homepage
-import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.toFormattedDateSafely
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
-import com.dergoogler.mmrl.ui.component.dialog.RadioOptionItem
-import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.ListEditTextItem
-import com.dergoogler.mmrl.ui.component.listItem.ListRadioCheckItem
-import com.dergoogler.mmrl.ui.component.listItem.ListSwitchItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialog
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
+import com.dergoogler.mmrl.ui.screens.settings.NavButton
 
 @Composable
 fun AppearanceScreen() {
@@ -28,28 +29,28 @@ fun AppearanceScreen() {
     SettingsScaffold(
         title = R.string.settings_appearance
     ) {
-
-        ListButtonItem(
-            title = stringResource(id = R.string.settings_app_theme),
-            desc = stringResource(id = R.string.settings_app_theme_desc),
-            onClick = {
-                navController.navigateSingleTopTo(SettingsScreen.AppTheme.route)
-            }
+        NavButton(
+            title = R.string.settings_app_theme,
+            desc = R.string.settings_app_theme_desc,
+            route = SettingsScreen.AppTheme.route
         )
 
-        ListSwitchItem(
-            title = stringResource(id = R.string.settings_text_wrap),
-            desc = stringResource(id = R.string.settings_text_wrap_desc),
+        SwitchItem(
             checked = userPreferences.terminalTextWrap,
             onChange = viewModel::setTerminalTextWrap
-        )
+        ) {
+            Title(R.string.settings_text_wrap)
+            Description(R.string.settings_text_wrap_desc)
 
-        ListSwitchItem(
-            title = stringResource(id = R.string.settings_terminal_line_numbers),
-            desc = stringResource(id = R.string.settings_terminal_line_numbers_desc),
+        }
+
+        SwitchItem(
             checked = userPreferences.showTerminalLineNumbers,
             onChange = viewModel::setShowTerminalLineNumbers
-        )
+        ) {
+            Title(R.string.settings_terminal_line_numbers)
+            Description(R.string.settings_terminal_line_numbers_desc)
+        }
 
         ListEditTextItem(
             title = stringResource(id = R.string.settings_date_pattern),
@@ -65,20 +66,18 @@ fun AppearanceScreen() {
             }
         )
 
-        ListRadioCheckItem(
-            title = stringResource(R.string.settings_homepage),
-            desc = stringResource(R.string.settings_homepage_desc),
-            value = userPreferences.homepage,
+        RadioDialog(
+            selection = userPreferences.homepage,
             options = listOf(
-                RadioOptionItem(
+                RadioDialogItem(
                     value = Homepage.Home,
                     title = stringResource(R.string.page_home)
                 ),
-                RadioOptionItem(
+                RadioDialogItem(
                     value = Homepage.Repositories,
                     title = stringResource(R.string.page_repositorys)
                 ),
-                RadioOptionItem(
+                RadioDialogItem(
                     value = Homepage.Modules,
                     enabled = viewModel.isProviderAlive,
                     title = stringResource(R.string.page_modules)
@@ -87,12 +86,16 @@ fun AppearanceScreen() {
             onConfirm = {
                 viewModel.setHomepage(it.value)
             }
-        )
+        ) {
+            Title(R.string.settings_homepage)
+            Description(R.string.settings_homepage_desc)
+        }
 
-        ListSwitchItem(
-            title = stringResource(id = R.string.settings_enable_toolbar_events),
+        SwitchItem(
             checked = userPreferences.enableToolbarEvents,
             onChange = viewModel::setEnableToolbarEvents
-        )
+        ) {
+            Title(R.string.settings_enable_toolbar_events)
+        }
     }
 }

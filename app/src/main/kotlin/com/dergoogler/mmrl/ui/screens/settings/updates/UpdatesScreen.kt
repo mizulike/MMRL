@@ -13,12 +13,11 @@ import com.dergoogler.mmrl.service.ModuleService
 import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.service.RepositoryService
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
-import com.dergoogler.mmrl.ui.component.listItem.dsl.List
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Button
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialog
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Section
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Switch
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.providable.LocalSettings
@@ -62,7 +61,7 @@ fun UpdatesScreen() {
         title = R.string.settings_updates,
     ) {
         Section {
-            Button(
+            ButtonItem(
                 onClick = {
                     val intent =
                         Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
@@ -88,7 +87,7 @@ fun UpdatesScreen() {
             title = stringResource(id = R.string.settings_app)
         ) {
 
-            Switch(
+            SwitchItem(
                 checked = userPreferences.checkAppUpdates,
                 onChange = viewModel::setCheckAppUpdates
             ) {
@@ -96,7 +95,7 @@ fun UpdatesScreen() {
                 Description(R.string.settings_check_app_updates_desc)
             }
 
-            Switch(
+            SwitchItem(
                 checked = userPreferences.checkAppUpdatesPreReleases,
                 enabled = userPreferences.checkAppUpdates,
                 onChange = viewModel::setCheckAppUpdatesPreReleases
@@ -108,7 +107,7 @@ fun UpdatesScreen() {
         Section(
             title = stringResource(id = R.string.page_repository)
         ) {
-            Switch(
+            SwitchItem(
                 checked = RepositoryService.isActive,
                 onChange = {
                     scope.launch {
@@ -151,7 +150,7 @@ fun UpdatesScreen() {
             title = stringResource(id = R.string.page_modules)
         ) {
 
-            Switch(
+            SwitchItem(
                 checked = ModuleService.isActive,
                 enabled = viewModel.isProviderAlive && ProviderService.isActive,
                 onChange = {

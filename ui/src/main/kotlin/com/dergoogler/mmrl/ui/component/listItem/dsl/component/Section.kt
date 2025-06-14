@@ -9,6 +9,7 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
@@ -39,7 +40,7 @@ fun ListScope.Section(
 
     HorizontalDivider(
         modifier = Modifier.padding(vertical = 8.dp),
-        thickness = 0.9.dp
+        thickness = Dp.Hairline
     )
 }
 

@@ -7,7 +7,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -25,11 +24,10 @@ import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
-import com.dergoogler.mmrl.ui.component.listItem.ListRadioCheckItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.List
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Button
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialog
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
@@ -62,7 +60,7 @@ fun SettingsScreen() {
     ) {
         List {
             context.isPackageInstalled(WebUIXPackageName).takeFalse {
-                Button(
+                ButtonItem(
                     onClick = {
                         browser.openUri(
                             if (BuildConfig.IS_GOOGLE_PLAY_BUILD) {
@@ -131,7 +129,6 @@ fun SettingsScreen() {
 
             manager.nullable { mng ->
                 RadioDialog(
-                    title = stringResource(id = R.string.platform),
                     selection = mng.workingMode,
                     options = FeaturedManager.managers.map { it.toRadioDialogItem() },
                     onConfirm = {
@@ -199,22 +196,24 @@ fun SettingsScreen() {
 }
 
 @Composable
-fun ListScope.NavButton(
+internal fun ListScope.NavButton(
     route: String,
-    @DrawableRes icon: Int,
+    @DrawableRes icon: Int? = null,
     @StringRes title: Int,
     @StringRes desc: Int? = null,
 ) {
     val navController = LocalNavController.current
 
-    Button(
+    ButtonItem(
         onClick = {
             navController.navigateSingleTopTo(route)
         },
         content = {
-            Icon(
-                painter = painterResource(icon)
-            )
+            icon.nullable {
+                Icon(
+                    painter = painterResource(it)
+                )
+            }
             Title(title)
             desc.nullable {
                 Description(it)
@@ -224,7 +223,7 @@ fun ListScope.NavButton(
 }
 
 @Composable
-fun ListScope.LinkButton(
+internal fun ListScope.LinkButton(
     uri: String,
     @DrawableRes icon: Int,
     @StringRes title: Int,
@@ -232,7 +231,7 @@ fun ListScope.LinkButton(
 ) {
     val browser = LocalUriHandler.current
 
-    Button(
+    ButtonItem(
         onClick = {
             browser.openUri(uri)
         },

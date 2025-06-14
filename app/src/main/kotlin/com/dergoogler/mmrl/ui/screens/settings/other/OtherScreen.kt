@@ -6,7 +6,7 @@ import androidx.compose.ui.platform.LocalContext
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Switch
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.providable.LocalSettings
@@ -32,7 +32,7 @@ fun OtherScreen() {
             onChange = viewModel::setDownloadPath
         )
 
-        Switch(
+        SwitchItem(
             checked = userPreferences.useDoh,
             onChange = viewModel::setUseDoh
         ) {
@@ -40,7 +40,7 @@ fun OtherScreen() {
             Description(R.string.settings_doh_desc)
         }
 
-        Switch(
+        SwitchItem(
             checked = ProviderService.isActive,
             onChange = {
                 scope.launch {

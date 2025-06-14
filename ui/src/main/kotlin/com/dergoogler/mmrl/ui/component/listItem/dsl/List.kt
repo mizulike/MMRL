@@ -26,18 +26,20 @@ fun List(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     contentPadding: PaddingValues = DefaultContentPaddingValues,
     content: @Composable ListScope.() -> Unit,
-) = Column(
-    modifier = modifier,
-    verticalArrangement = verticalArrangement,
-    horizontalAlignment = horizontalAlignment
 ) {
-    val instance = remember {
-        ListScopeInstance(
-            columnScope = this,
-            contentPaddingValues = contentPadding,
-            iconSize = DefaultIconSize
-        )
-    }
+    Column(
+        modifier = modifier,
+        verticalArrangement = verticalArrangement,
+        horizontalAlignment = horizontalAlignment
+    ) {
+        val instance = remember {
+            ListScopeInstance(
+                columnScope = this,
+                contentPaddingValues = contentPadding,
+                iconSize = DefaultIconSize
+            )
+        }
 
-    instance.content()
+        instance.content()
+    }
 }

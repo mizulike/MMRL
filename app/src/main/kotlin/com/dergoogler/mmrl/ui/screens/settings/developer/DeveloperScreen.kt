@@ -3,8 +3,7 @@ package com.dergoogler.mmrl.ui.screens.settings.developer
 import androidx.compose.runtime.Composable
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
-import com.dergoogler.mmrl.ui.component.listItem.dsl.List
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Switch
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.providable.LocalSettings
@@ -18,7 +17,7 @@ fun DeveloperScreen() {
     SettingsScaffold(
         title = R.string.settings_developer
     ) {
-        Switch(
+        SwitchItem(
             checked = userPreferences.developerMode,
             onChange = viewModel::setDeveloperMode,
         ) {

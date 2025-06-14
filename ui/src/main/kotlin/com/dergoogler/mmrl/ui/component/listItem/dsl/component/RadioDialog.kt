@@ -1,12 +1,9 @@
 package com.dergoogler.mmrl.ui.component.listItem.dsl.component
 
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
@@ -28,8 +25,10 @@ import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ui.R
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.FromSlot
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Start
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 
@@ -42,7 +41,6 @@ data class RadioDialogItem<T>(
 
 @Composable
 fun <T> ListScope.RadioDialog(
-    title: String = stringResource(R.string.select_a_option),
     selection: T,
     enabled: Boolean = true,
     options: List<RadioDialogItem<T>>,
@@ -51,30 +49,35 @@ fun <T> ListScope.RadioDialog(
 ) {
     var open by remember { mutableStateOf(false) }
 
-    if (open) {
-        AlertRadioDialog<T>(
-            title = title,
-            selection = selection,
-            options = options,
-            onClose = {
-                open = false
-            },
-            onConfirm = onConfirm
-        )
-    }
-
-    Button(
+    ButtonItem(
         enabled = enabled,
         onClick = {
             open = true
         },
-        content = content
+        content = {
+            content()
+
+            if (open) {
+                this@RadioDialog.AlertRadioDialog<T>(
+                    title = {
+                        // TODO: FIX STYLE
+                        FromSlot(ListItemSlot.Title, content)
+                    },
+                    selection = selection,
+                    options = options,
+                    onClose = {
+                        open = false
+                    },
+                    onConfirm = onConfirm
+                )
+            }
+        }
     )
 }
 
 @Composable
 private fun <T> ListScope.AlertRadioDialog(
-    title: String,
+    title: @Composable () -> Unit,
     selection: T,
     options: List<RadioDialogItem<T>>,
     onDismiss: (() -> Unit)? = null,
@@ -97,7 +100,7 @@ private fun <T> ListScope.AlertRadioDialog(
 
             onClose()
         },
-        title = { Text(title) },
+        title = title,
         text = {
             LazyColumn {
                 items(
