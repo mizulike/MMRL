@@ -64,3 +64,17 @@ fun ListItemScope.Title(
 fun ListItemScope.Title(
     @StringRes id: Int,
 ) = this.Title(stringResource(id))
+
+/**
+ * Composable function to display a title within a ListItem.
+ * This overload takes a string resource ID and format arguments,
+ * resolves the string resource, and formats it with the provided arguments.
+ *
+ * @param id The string resource ID for the title text.
+ * @param formatArgs The arguments to be used for formatting the string resource.
+ */
+@Composable
+fun ListItemScope.Title(
+    @StringRes id: Int,
+    vararg formatArgs: Any
+) = this.Title(stringResource(id, formatArgs))

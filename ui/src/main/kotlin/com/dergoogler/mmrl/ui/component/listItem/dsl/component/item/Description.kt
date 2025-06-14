@@ -61,3 +61,16 @@ fun ListItemScope.Description(text: String) {
 fun ListItemScope.Description(
     @StringRes id: Int,
 ) = this.Description(stringResource(id))
+
+
+/**
+ * A description for the list item.
+ *
+ * @param id The string resource ID for the description text.
+ * @param formatArgs The format arguments for the string resource.
+ */
+@Composable
+fun ListItemScope.Description(
+    @StringRes id: Int,
+    vararg formatArgs: Any,
+) = this.Description(stringResource(id, formatArgs))

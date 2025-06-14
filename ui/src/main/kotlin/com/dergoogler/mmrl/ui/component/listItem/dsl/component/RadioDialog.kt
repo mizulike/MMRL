@@ -44,6 +44,7 @@ data class RadioDialogItem<T>(
 fun <T> ListScope.RadioDialog(
     title: String = stringResource(R.string.select_a_option),
     selection: T,
+    enabled: Boolean = true,
     options: List<RadioDialogItem<T>>,
     onConfirm: (RadioDialogItem<T>) -> Unit,
     content: @Composable (ListItemScope.() -> Unit),
@@ -63,6 +64,7 @@ fun <T> ListScope.RadioDialog(
     }
 
     Button(
+        enabled = enabled,
         onClick = {
             open = true
         },
