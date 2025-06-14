@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalSerializationApi::class)
+
 package com.dergoogler.mmrl.datastore.model
 
 import android.content.Context
@@ -23,7 +25,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 
 @Serializable
-data class UserPreferences @OptIn(ExperimentalSerializationApi::class) constructor(
+data class UserPreferences(
     @ProtoNumber(1) val workingMode: WorkingMode = WorkingMode.FIRST_SETUP,
     @ProtoNumber(2) val darkMode: DarkMode = DarkMode.FollowSystem,
     @ProtoNumber(3) val themeColor: Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) Colors.Dynamic.id else Colors.MMRLBase.id,
@@ -68,7 +70,6 @@ data class UserPreferences @OptIn(ExperimentalSerializationApi::class) construct
     @ProtoNumber(36) val enableToolbarEvents: Boolean = true,
     @ProtoNumber(37) val webuiEngine: WebUIEngine = WebUIEngine.PREFER_MODULE,
     @ProtoNumber(38) val showTerminalLineNumbers: Boolean = true,
-
 ) {
     fun isDarkMode() = when (darkMode) {
         DarkMode.AlwaysOff -> false
