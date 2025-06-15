@@ -180,7 +180,7 @@
     <string name="settings_check_modules_update_interval_desc">Select the time interval for checking your installed modules</string>
     <string name="settings_include_preleases">Include Pre-Releases</string>
     <string name="settings_developer_mode">Developer Mode</string>
-    <string name="settings_developer_mode_desc">Shows [color=primary]IDs[color] of modules and more</string>
+    <string name="settings_developer_mode_desc">Shows [color=primary]IDs[/color] of modules and more</string>
     <string name="settings_privacy_policy">Privacy Policy</string>
     <string name="settings_clear_install_terminal">Clear Install Terminal</string>
     <string name="settings_clear_install_terminal_desc">Clear Install Terminal when installing more than one Module</string>
