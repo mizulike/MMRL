@@ -29,8 +29,10 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.FromSlot
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.ProvideTitleTypography
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Start
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
+import com.dergoogler.mmrl.ui.token.TypographyKeyTokens
 
 data class RadioDialogItem<T>(
     val value: T,
@@ -60,8 +62,11 @@ fun <T> ListScope.RadioDialogItem(
             if (open) {
                 this@RadioDialogItem.AlertRadioDialog<T>(
                     title = {
-                        // TODO: FIX STYLE
-                        FromSlot(ListItemSlot.Title, content)
+                        ProvideTitleTypography(
+                            token = TypographyKeyTokens.HeadlineSmall
+                        ) {
+                            this@ButtonItem.FromSlot(ListItemSlot.Title, content)
+                        }
                     },
                     selection = selection,
                     options = options,
@@ -158,5 +163,4 @@ private fun <T> ListScope.AlertRadioDialog(
             }
         }
     )
-
 }
