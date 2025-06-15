@@ -137,7 +137,7 @@ fun ExploreRepositoryScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 item(span = { GridItemSpan(2) }) {
-                    Column(
+                    List(
                         modifier = Modifier
                             .let {
                                 if (repositoriesMenu.showCover && repo.hasCover) {
@@ -250,10 +250,9 @@ fun ExploreRepositoryScreen(
 
 
                             repo.description.nullable {
-                                ListItem(
-                                    contentPaddingValues = listItemContentPaddingValues,
-                                    title = stringResource(R.string.about_this_repository),
-                                )
+                                this@List.Item {
+                                    Title(R.string.about_this_repository)
+                                }
 
                                 Text(
                                     modifier = Modifier.padding(horizontal = 16.dp),
