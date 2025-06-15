@@ -56,7 +56,6 @@ import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.SELinuxStatus
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
-import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
@@ -91,13 +90,6 @@ fun HomeScreen(
     val navController = LocalMainNavController.current
     val userPreferences = LocalUserPreferences.current
     val browser = LocalUriHandler.current
-
-    var workingModeBottomSheet by remember { mutableStateOf(false) }
-    if (workingModeBottomSheet) WorkingModeBottomSheet(
-        onClose = {
-            workingModeBottomSheet = false
-        }
-    )
 
     var openRebootSheet by remember { mutableStateOf(false) }
     if (openRebootSheet) {
@@ -145,16 +137,10 @@ fun HomeScreen(
                     userPreferences.workingMode.isRoot -> RootItem(
                         developerMode = userPreferences.developerMode,
                         viewModel = viewModel,
-                        onClick = {
-                            workingModeBottomSheet = true
-                        }
                     )
 
                     userPreferences.workingMode.isNonRoot -> NonRootItem(
                         developerMode = userPreferences.developerMode,
-                        onClick = {
-                            workingModeBottomSheet = true
-                        }
                     )
                 }
 

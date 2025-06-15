@@ -31,13 +31,11 @@ import com.dergoogler.mmrl.viewmodel.HomeViewModel
 @Composable
 internal fun RootItem(
     developerMode: Boolean = false,
-    onClick: () -> Unit = {},
     viewModel: HomeViewModel,
 ) {
     val platform = viewModel.platform
     val isAlive = viewModel.isProviderAlive
     val versionCode = viewModel.versionCode
-
 
     Card(
         modifier = {
@@ -46,7 +44,6 @@ internal fun RootItem(
         style = CardDefaults.cardStyle.copy(
             containerColor = MaterialTheme.colorScheme.secondaryContainer
         ),
-        onClick = developerMode nullable onClick,
         absolute = {
             developerMode.takeTrue {
                 Surface(

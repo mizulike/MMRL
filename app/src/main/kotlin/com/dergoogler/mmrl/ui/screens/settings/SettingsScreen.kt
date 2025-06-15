@@ -3,10 +3,6 @@ package com.dergoogler.mmrl.ui.screens.settings
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
@@ -20,7 +16,6 @@ import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeFalse
 import com.dergoogler.mmrl.model.local.FeaturedManager
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
-import com.dergoogler.mmrl.ui.component.WorkingModeBottomSheet
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmData
 import com.dergoogler.mmrl.ui.component.dialog.rememberConfirm
 import com.dergoogler.mmrl.ui.component.listItem.dsl.List
@@ -45,13 +40,6 @@ fun SettingsScreen() {
     val browser = LocalUriHandler.current
     val context = LocalContext.current
     val confirm = rememberConfirm(context)
-
-    var workingModeBottomSheet by remember { mutableStateOf(false) }
-    if (workingModeBottomSheet) WorkingModeBottomSheet(
-        onClose = {
-            workingModeBottomSheet = false
-        }
-    )
 
     SettingsScaffold(
         allowNavigateBack = false,

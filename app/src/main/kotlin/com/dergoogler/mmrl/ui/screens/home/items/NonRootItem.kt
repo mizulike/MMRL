@@ -28,7 +28,6 @@ import com.dergoogler.mmrl.ui.component.card.CardDefaults
 @Composable
 internal fun NonRootItem(
     modifier: Modifier = Modifier,
-    onClick: () -> Unit = {},
     developerMode: Boolean = false,
 ) = Card(
     modifier = {
@@ -38,7 +37,6 @@ internal fun NonRootItem(
     style = CardDefaults.cardStyle.copy(
         containerColor = MaterialTheme.colorScheme.secondaryContainer
     ),
-    onClick = developerMode nullable onClick,
     absolute = {
         developerMode.takeTrue {
             Surface(
