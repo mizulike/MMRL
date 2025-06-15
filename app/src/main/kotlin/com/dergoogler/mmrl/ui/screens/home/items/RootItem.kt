@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.ui.screens.home.items
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -22,9 +23,11 @@ import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.model.local.FeaturedManager
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.text.TextRow
+import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.HomeViewModel
 
 @Composable
@@ -32,9 +35,13 @@ internal fun RootItem(
     developerMode: Boolean = false,
     viewModel: HomeViewModel,
 ) {
+    val userPreferences = LocalUserPreferences.current
     val platform = viewModel.platform
     val isAlive = viewModel.isProviderAlive
     val versionCode = viewModel.versionCode
+
+    val manager =
+        FeaturedManager.managers.find { userPreferences.workingMode == it.workingMode }
 
     Card(
         modifier = Modifier.padding(20.dp),
@@ -68,17 +75,7 @@ internal fun RootItem(
             Icon(
                 modifier = Modifier.size(45.dp),
                 painter = painterResource(
-                    id = if (isAlive) {
-                        when {
-                            platform.isMagisk -> R.drawable.magisk_logo
-                            platform.isKernelSU -> R.drawable.kernelsu_logo
-                            platform.isKernelSuNext -> R.drawable.kernelsu_next_logo
-                            platform.isAPatch -> R.drawable.brand_android
-                            else -> R.drawable.circle_check_filled
-                        }
-                    } else {
-                        R.drawable.alert_circle_filled
-                    }
+                    id = getManagerLogo(isAlive, manager)
                 ),
                 contentDescription = null,
                 tint = MaterialTheme.colorScheme.primary
@@ -161,4 +158,17 @@ internal fun RootItem(
             }
         }
     }
+}
+
+private fun getManagerLogo(isAlive: Boolean, manager: FeaturedManager?): Int {
+    if (!isAlive) {
+        return R.drawable.alert_circle_filled
+    }
+
+
+    if (manager == null) {
+        return R.drawable.circle_check_filled
+    }
+
+    return manager.icon
 }
