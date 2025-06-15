@@ -12,7 +12,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 data class FeaturedManager(
     @StringRes val name: Int,
     @DrawableRes val icon: Int,
-    val workingMode: WorkingMode
+    val workingMode: WorkingMode,
 ) {
     @Composable
     fun toRadioOption() = RadioOptionItem(
@@ -51,6 +51,12 @@ data class FeaturedManager(
                     name = R.string.working_mode_apatch_title,
                     icon = com.dergoogler.mmrl.ui.R.drawable.brand_android,
                     workingMode = WorkingMode.MODE_APATCH
+                ),
+
+                FeaturedManager(
+                    name = R.string.working_mode_sukisu_title,
+                    icon = com.dergoogler.mmrl.ui.R.drawable.sukisu_logo,
+                    workingMode = WorkingMode.MODE_SUKISU
                 ),
 
                 FeaturedManager(

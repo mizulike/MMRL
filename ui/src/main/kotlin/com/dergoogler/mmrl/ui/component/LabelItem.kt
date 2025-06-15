@@ -191,6 +191,14 @@ fun MMRLLabel() {
     )
 }
 
+@Composable
+fun SukiSU() {
+    LabelItem(
+        icon = R.drawable.sukisu_logo,
+        text = "SukiSU Ultra"
+    )
+}
+
 @Immutable
 class LabelItemStyle(
     val containerColor: Color,
