@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -41,6 +42,10 @@ import androidx.compose.ui.unit.sp
 import com.dergoogler.mmrl.model.local.FeaturedManager
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.List
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 
 @Composable
 fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
@@ -91,30 +96,17 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
                                 column = Modifier.padding(0.dp)
                             }
                         ) {
-                            Row(
-                                modifier = Modifier
-                                    .toggleable(
-                                        value = selected,
-                                        onValueChange = {
-                                            currentSelection = manager
-                                        },
-                                        role = Role.RadioButton,
-                                        interactionSource = interactionSource,
-                                        indication = ripple()
-                                    )
-                                    .padding(end = 25.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                ListItem(
-                                    modifier = Modifier.weight(1f),
-                                    icon = manager.icon,
-                                    title = stringResource(manager.name)
-                                )
-
-                                RadioButton(
+                            List {
+                                RadioItem(
                                     selected = selected,
-                                    onClick = null
-                                )
+                                    interactionSource = interactionSource,
+                                    onClick = {
+                                        currentSelection = manager
+                                    }
+                                ) {
+                                    Icon(painter = painterResource(manager.icon))
+                                    Title(manager.name)
+                                }
                             }
                         }
                     }
