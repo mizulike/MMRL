@@ -33,7 +33,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
  */
 @Composable
 fun ListItemScope.Description(
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable BoxScope.() -> Unit,
 ) {
     val style = MaterialTheme.typography.bodyMedium.copy(
         color = MaterialTheme.colorScheme.outline
@@ -97,13 +97,15 @@ fun ListItemScope.Description(
     ) {
         Text(text = text)
 
-        Row(
-            modifier = Modifier.padding(top = 5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(2.dp)
-        ) {
-            labels.forEach { label ->
-                label()
+        if (labels.isNotEmpty()) {
+            Row(
+                modifier = Modifier.padding(top = 5.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
+                labels.forEach { label ->
+                    label()
+                }
             }
         }
     }

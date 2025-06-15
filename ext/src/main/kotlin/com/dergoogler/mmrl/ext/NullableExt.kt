@@ -13,7 +13,7 @@ import kotlin.contracts.contract
  */
 infix fun <T> Any?.nullable(param: T): T? = if (this != null) param else null
 
-infix fun <T> List<T>?.emptble(param: List<T>): List<T> = if (this != null) param else emptyList()
+infix fun <T> List<T>?.empty(param: List<T>): List<T> = if (this != null) param else emptyList()
 
 /**
  * Safely invokes a block of code on a nullable receiver if it's not null, otherwise returns null.
