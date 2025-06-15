@@ -8,7 +8,6 @@ import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.ui.component.APatchLabel
 import com.dergoogler.mmrl.ui.component.KernelSuLabel
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialog
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Section
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
@@ -97,7 +96,7 @@ fun ModulesScreen() {
         Section(
             title = stringResource(id = R.string.view_module_features_webui)
         ) {
-            RadioDialog(
+            RadioDialogItem(
                 enabled = viewModel.isProviderAlive,
                 selection = userPreferences.webuiEngine,
                 options = listOf(

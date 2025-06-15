@@ -40,7 +40,7 @@ data class RadioDialogItem<T>(
 )
 
 @Composable
-fun <T> ListScope.RadioDialog(
+fun <T> ListScope.RadioDialogItem(
     selection: T,
     enabled: Boolean = true,
     options: List<RadioDialogItem<T>>,
@@ -58,7 +58,7 @@ fun <T> ListScope.RadioDialog(
             content()
 
             if (open) {
-                this@RadioDialog.AlertRadioDialog<T>(
+                this@RadioDialogItem.AlertRadioDialog<T>(
                     title = {
                         // TODO: FIX STYLE
                         FromSlot(ListItemSlot.Title, content)

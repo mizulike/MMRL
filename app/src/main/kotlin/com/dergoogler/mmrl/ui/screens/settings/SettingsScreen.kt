@@ -10,7 +10,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
@@ -28,7 +27,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.List
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialog
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
@@ -128,7 +127,7 @@ fun SettingsScreen() {
                 FeaturedManager.managers.find { userPreferences.workingMode == it.workingMode }
 
             manager.nullable { mng ->
-                RadioDialog(
+                RadioDialogItem(
                     selection = mng.workingMode,
                     options = FeaturedManager.managers.map { it.toRadioDialogItem() },
                     onConfirm = {

@@ -8,7 +8,6 @@ import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.ext.toFormattedDateSafely
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.listItem.ListEditTextItem
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialog
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
@@ -66,7 +65,7 @@ fun AppearanceScreen() {
             }
         )
 
-        RadioDialog(
+        RadioDialogItem(
             selection = userPreferences.homepage,
             options = listOf(
                 RadioDialogItem(

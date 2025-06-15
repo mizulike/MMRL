@@ -14,7 +14,6 @@ import com.dergoogler.mmrl.service.ProviderService
 import com.dergoogler.mmrl.service.RepositoryService
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialog
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Section
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
@@ -131,7 +130,7 @@ fun UpdatesScreen() {
                 Description(R.string.settings_auto_update_repos_desc)
             }
 
-            RadioDialog(
+            RadioDialogItem(
                 selection = userPreferences.autoUpdateReposInterval,
                 options = optionsOfHours,
                 onConfirm = {
@@ -175,7 +174,7 @@ fun UpdatesScreen() {
                 Description(R.string.settings_check_modules_update_desc)
             }
 
-            RadioDialog(
+            RadioDialogItem(
                 selection = userPreferences.checkModuleUpdatesInterval,
                 options = optionsOfHours,
                 enabled = viewModel.isProviderAlive && ModuleService.isActive && ProviderService.isActive,
