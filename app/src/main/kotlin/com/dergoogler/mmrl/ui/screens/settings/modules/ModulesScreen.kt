@@ -12,6 +12,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Section
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Labels
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -33,10 +34,8 @@ fun ModulesScreen() {
                 onChange = viewModel::setUseShellForModuleStateChange,
             ) {
                 Title(R.string.settings_shell_module_state_change)
-                Description(
-                    id = R.string.settings_shell_module_state_change_desc,
-                    labels = listOf { KernelSuLabel(); APatchLabel() }
-                )
+                Description(R.string.settings_shell_module_state_change_desc)
+                Labels { KernelSuLabel(); APatchLabel() }
             }
 
             SwitchItem(
@@ -45,10 +44,8 @@ fun ModulesScreen() {
                 onChange = viewModel::setUseShellForModuleAction,
             ) {
                 Title(R.string.settings_use_generic_action)
-                Description(
-                    id = R.string.settings_use_generic_action_desc,
-                    labels = listOf { KernelSuLabel(); APatchLabel() }
-                )
+                Description(R.string.settings_use_generic_action_desc)
+                Labels { KernelSuLabel(); APatchLabel() }
             }
         }
 

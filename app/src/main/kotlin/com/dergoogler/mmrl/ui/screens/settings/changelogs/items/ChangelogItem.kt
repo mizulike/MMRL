@@ -27,9 +27,11 @@ import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.MarkdownText
 import com.dergoogler.mmrl.ext.fadingEdge
+import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Labels
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 
 @Composable
@@ -45,18 +47,16 @@ fun ListScope.ChangelogItem(
         onClick = { open = true }
     ) {
         Title(changelog.versionName)
-        Description(
-            text = changelog.versionCode.toString(),
-            labels = if (changelog.preRelease) {
-                listOf {
-                    LabelItem(
-                        text = stringResource(
-                            id = R.string.pre_release
-                        )
+        Description(changelog.versionCode.toString())
+        changelog.preRelease.takeTrue {
+            Labels {
+                LabelItem(
+                    text = stringResource(
+                        id = R.string.pre_release
                     )
-                }
-            } else emptyList()
-        )
+                )
+            }
+        }
     }
 }
 

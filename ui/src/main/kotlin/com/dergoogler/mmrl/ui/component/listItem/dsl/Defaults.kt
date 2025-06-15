@@ -13,7 +13,8 @@ enum class ListItemSlot {
     Start,
     End,
     Title,
-    Description
+    Description,
+    Supporting
 }
 
 enum class DialogItemSlot {
