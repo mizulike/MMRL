@@ -43,9 +43,6 @@ fun RepoCard(
     val repoCover = repo.cover.nullable(menu.showCover) { it }
 
     Card(
-        modifier = {
-            column = Modifier.padding(0.dp)
-        },
         onClick = {
             navController.navigateSingleTopTo(
                 route = RepositoriesScreen.ExploreRepository.route,

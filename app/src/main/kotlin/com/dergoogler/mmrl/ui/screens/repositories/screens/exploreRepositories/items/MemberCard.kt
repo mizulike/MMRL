@@ -40,9 +40,6 @@ fun MemberCard(
     val interactionSource = remember { MutableInteractionSource() }
 
     Card(
-        modifier = {
-            column = Modifier.padding(horizontal = 32.dp, vertical = 48.dp)
-        },
         absolute = {
             index.nullable {
                 if (it < 3) {
@@ -69,7 +66,9 @@ fun MemberCard(
         }
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 32.dp, vertical = 48.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {

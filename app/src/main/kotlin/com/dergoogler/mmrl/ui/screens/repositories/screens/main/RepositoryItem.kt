@@ -78,138 +78,137 @@ fun RepositoryItem(
     val repoCover = repo.cover.nullable(menu.showCover) { it }
 
     Card(
-        modifier = {
-            column = Modifier.padding(0.dp)
-        },
         enabled = repo.compatible,
         onClick = onClick
     ) {
-        repoCover.nullable(menu.showCover) {
-            if (it.isNotEmpty()) {
-                Box(
-                    contentAlignment = Alignment.Center
-                ) {
-                    Cover(
-                        modifier = Modifier.fadingEdge(
-                            brush = Brush.verticalGradient(
-                                colors = listOf(
-                                    Color.Transparent,
-                                    Color.Black,
+        Column {
+            repoCover.nullable(menu.showCover) {
+                if (it.isNotEmpty()) {
+                    Box(
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Cover(
+                            modifier = Modifier.fadingEdge(
+                                brush = Brush.verticalGradient(
+                                    colors = listOf(
+                                        Color.Transparent,
+                                        Color.Black,
+                                    ),
+                                    startY = Float.POSITIVE_INFINITY,
+                                    endY = 0f
                                 ),
-                                startY = Float.POSITIVE_INFINITY,
-                                endY = 0f
                             ),
-                        ),
-                        url = it,
-                    )
+                            url = it,
+                        )
 
-                    menu.showModulesCount.takeTrue {
-                        Box(
-                            modifier = Modifier
-                                .absolutePadding(
-                                    top = 16.dp,
-                                    right = 16.dp
-                                )
-                                .align(Alignment.TopEnd),
-                        ) {
-                            ModuleCountLabelItem(repo)
+                        menu.showModulesCount.takeTrue {
+                            Box(
+                                modifier = Modifier
+                                    .absolutePadding(
+                                        top = 16.dp,
+                                        right = 16.dp
+                                    )
+                                    .align(Alignment.TopEnd),
+                            ) {
+                                ModuleCountLabelItem(repo)
+                            }
                         }
                     }
                 }
             }
-        }
 
-        Row(
-            modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
-            verticalAlignment = Alignment.Top
-        ) {
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .alpha(alpha),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+            Row(
+                modifier = Modifier.padding(top = 16.dp, start = 16.dp, end = 16.dp),
+                verticalAlignment = Alignment.Top
             ) {
-                Text(
-                    text = repo.name,
-                    style = MaterialTheme.typography.titleSmall
-                        .copy(fontWeight = FontWeight.Bold),
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis,
-                    textDecoration = textDecoration
-                )
-
-                menu.showUpdatedTime.takeTrue {
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .alpha(alpha),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
                     Text(
-                        text = stringResource(
-                            id = R.string.module_update_at,
-                            repo.timestamp.toFormattedDateSafely
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.outline,
+                        text = repo.name,
+                        style = MaterialTheme.typography.titleSmall
+                            .copy(fontWeight = FontWeight.Bold),
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis,
                         textDecoration = textDecoration
                     )
+
+                    menu.showUpdatedTime.takeTrue {
+                        Text(
+                            text = stringResource(
+                                id = R.string.module_update_at,
+                                repo.timestamp.toFormattedDateSafely
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.outline,
+                            textDecoration = textDecoration
+                        )
+                    }
+                }
+
+                if (repoCover == null && menu.showModulesCount) {
+                    ModuleCountLabelItem(repo)
                 }
             }
 
-            if (repoCover == null && menu.showModulesCount) {
-                ModuleCountLabelItem(repo)
-            }
-        }
-
-        repo.description.nullable {
-            Text(
-                modifier = Modifier
-                    .alpha(alpha = alpha)
-                    .padding(top = 16.dp)
-                    .padding(horizontal = 16.dp),
-                text = it,
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.outline
-            )
-        }
-
-        HorizontalDivider(
-            thickness = 1.5.dp,
-            color = MaterialTheme.colorScheme.surface,
-            modifier = Modifier.padding(top = 8.dp)
-        )
-
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            var open by remember { mutableStateOf(false) }
-            if (open) {
-                BottomSheetForItem(
-                    repo = repo,
-                    onDelete = delete,
-                    onClose = { open = false }
+            repo.description.nullable {
+                Text(
+                    modifier = Modifier
+                        .alpha(alpha = alpha)
+                        .padding(top = 16.dp)
+                        .padding(horizontal = 16.dp),
+                    text = it,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.outline
                 )
             }
 
-            CardButtonItem(
-                icon = R.drawable.share,
-                enabled = isEnabled,
-                onClick = { context.shareText(repo.url) }
+            HorizontalDivider(
+                thickness = 1.5.dp,
+                color = MaterialTheme.colorScheme.surface,
+                modifier = Modifier.padding(top = 8.dp)
             )
 
-            Spacer(Modifier.weight(1f))
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                var open by remember { mutableStateOf(false) }
+                if (open) {
+                    BottomSheetForItem(
+                        repo = repo,
+                        onDelete = delete,
+                        onClose = { open = false }
+                    )
+                }
 
-            CardButtonItem(
-                icon = R.drawable.at,
-                label = R.string.repo_options,
-                onClick = { open = true },
-                enabled = isEnabled
-            )
+                CardButtonItem(
+                    icon = R.drawable.share,
+                    enabled = isEnabled,
+                    onClick = { context.shareText(repo.url) }
+                )
 
-            CardButtonItem(
-                icon = R.drawable.cloud_download,
-                label = R.string.repo_options_update,
-                onClick = update,
-                enabled = isEnabled
-            )
+                Spacer(Modifier.weight(1f))
+
+                CardButtonItem(
+                    icon = R.drawable.at,
+                    label = R.string.repo_options,
+                    onClick = { open = true },
+                    enabled = isEnabled
+                )
+
+                CardButtonItem(
+                    icon = R.drawable.cloud_download,
+                    label = R.string.repo_options_update,
+                    onClick = update,
+                    enabled = isEnabled
+                )
+            }
         }
     }
 }

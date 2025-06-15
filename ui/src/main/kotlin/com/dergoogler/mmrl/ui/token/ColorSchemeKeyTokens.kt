@@ -1,10 +1,15 @@
 package com.dergoogler.mmrl.ui.token
 
 import androidx.compose.material3.ColorScheme
+import androidx.compose.material3.LocalTonalElevationEnabled
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.compositeOver
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
+import kotlin.math.ln
 
 enum class ColorSchemeKeyTokens {
     Background,
@@ -100,4 +105,22 @@ fun ColorScheme.fromToken(value: ColorSchemeKeyTokens): Color {
         ColorSchemeKeyTokens.TertiaryContainer -> tertiaryContainer
         else -> Color.Unspecified
     }
+}
+
+@Composable
+fun ColorScheme.applyTonalElevation(backgroundColor: Color, elevation: Dp): Color {
+    val tonalElevationEnabled = LocalTonalElevationEnabled.current
+    return if (backgroundColor == surface && tonalElevationEnabled) {
+        surfaceColorAtElevation(elevation)
+    } else {
+        backgroundColor
+    }
+}
+
+fun ColorScheme.surfaceColorAtElevation(
+    elevation: Dp,
+): Color {
+    if (elevation == 0.dp) return surface
+    val alpha = ((4.5f * ln(elevation.value + 1)) + 2f) / 100f
+    return surfaceTint.copy(alpha = alpha).compositeOver(surface)
 }

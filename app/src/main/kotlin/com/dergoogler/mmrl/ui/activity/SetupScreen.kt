@@ -91,11 +91,7 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
                         val selected =
                             remember(currentSelection) { currentSelection == manager }
 
-                        Card(
-                            modifier = {
-                                column = Modifier.padding(0.dp)
-                            }
-                        ) {
+                        Card {
                             List {
                                 RadioItem(
                                     selected = selected,

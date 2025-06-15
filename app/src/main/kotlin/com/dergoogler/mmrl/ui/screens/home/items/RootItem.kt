@@ -24,7 +24,6 @@ import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.card.Card
-import com.dergoogler.mmrl.ui.component.card.CardDefaults
 import com.dergoogler.mmrl.ui.component.text.TextRow
 import com.dergoogler.mmrl.viewmodel.HomeViewModel
 
@@ -38,12 +37,8 @@ internal fun RootItem(
     val versionCode = viewModel.versionCode
 
     Card(
-        modifier = {
-            column = Modifier.padding(20.dp)
-        },
-        style = CardDefaults.cardStyle.copy(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
-        ),
+        modifier = Modifier.padding(20.dp),
+        color = MaterialTheme.colorScheme.secondaryContainer,
         absolute = {
             developerMode.takeTrue {
                 Surface(

@@ -7,6 +7,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +24,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ExperimentalComposeApi
@@ -30,8 +33,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
@@ -49,6 +54,7 @@ import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.takeTrue
+import com.dergoogler.mmrl.ext.toStyleMarkup
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
@@ -124,15 +130,6 @@ fun HomeScreen(
                     .padding(16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                val compressedCardModifier: ModifierScopeUnit = {
-                    column = Modifier.padding(vertical = 16.dp)
-                }
-
-                val compressedCardModifierRow: ModifierScopeUnit = {
-                    surface = Modifier.weight(1f)
-                    column = Modifier.padding(vertical = 16.dp)
-                }
-
                 when {
                     userPreferences.workingMode.isRoot -> RootItem(
                         developerMode = userPreferences.developerMode,
@@ -170,41 +167,33 @@ fun HomeScreen(
                                 onClose = { changelogSheet = false })
                         }
 
-                        AnimatedVisibility(
-                            visible = if (latest.preRelease) {
-                                userPreferences.checkAppUpdatesPreReleases && latest.versionCode > context.managerVersion.second
-                            } else {
-                                latest.versionCode > context.managerVersion.second
-                            },
-                            enter = fadeIn() + expandVertically(),
-                            exit = shrinkVertically() + fadeOut()
+//                        AnimatedVisibility(
+//                            visible = if (latest.preRelease) {
+//                                userPreferences.checkAppUpdatesPreReleases && latest.versionCode > context.managerVersion.second
+//                            } else {
+//                                latest.versionCode > context.managerVersion.second
+//                            },
+//                            enter = fadeIn() + expandVertically(),
+//                            exit = shrinkVertically() + fadeOut()
+//                        ) {
+                        Card(
+                            modifier = Modifier.padding(vertical = 16.dp, horizontal = 25.dp),
+                            absoluteAlignment = Alignment.Center,
+                            color = MaterialTheme.colorScheme.outlineVariant,
                         ) {
-                            Surface(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.outlineVariant,
-                                shape = RoundedCornerShape(15.dp),
-                            ) {
-                                Column(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable {
-                                            changelogSheet = true
-                                        }
-                                ) {
-                                    ListItem(
-                                        title = stringResource(
-                                            R.string.new_version_available, latest.versionName
-                                        )
-                                    )
-                                }
-                            }
+                            Text(
+                                stringResource(
+                                    R.string.new_version_available,
+                                    latest.versionName
+                                ).toStyleMarkup()
+                            )
                         }
+//                        }
                     }
                 }
 
                 Card(
-                    modifier = compressedCardModifier
+                    modifier = Modifier.padding(vertical = 16.dp)
                 ) {
                     val uname = Os.uname()
 
@@ -253,7 +242,7 @@ fun HomeScreen(
                 viewModel.isProviderAlive.takeTrue {
                     userPreferences.developerMode.takeTrue {
                         Card(
-                            modifier = compressedCardModifier
+                            modifier = Modifier.padding(vertical = 16.dp)
                         ) {
                             ListItem(
                                 contentPaddingValues = listItemContentPaddingValues,
@@ -276,7 +265,9 @@ fun HomeScreen(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Card(
-                                modifier = compressedCardModifierRow
+                                modifier = Modifier
+                                    .padding(vertical = 16.dp)
+                                    .weight(1f)
                             ) {
                                 ListItem(
                                     contentPaddingValues = listItemContentPaddingValues,
@@ -286,7 +277,9 @@ fun HomeScreen(
 
                             }
                             Card(
-                                modifier = compressedCardModifierRow
+                                modifier = Modifier
+                                    .padding(vertical = 16.dp)
+                                    .weight(1f)
                             ) {
                                 ListItem(
                                     contentPaddingValues = listItemContentPaddingValues,
@@ -298,25 +291,28 @@ fun HomeScreen(
                         }
 
                         Card(
-                            modifier = compressedCardModifier
+                            modifier = Modifier
+                                .padding(vertical = 16.dp)
                         ) {
-                            ListProgressBarItem(
-                                contentPaddingValues = listItemContentPaddingValues,
-                                progressBarModifier = Modifier
-                                    .weight(1f),
-                                startDesc = it.totalModulesUsageBytes.toFormattedFileSize(),
-                                endDesc = it.totalDeviceStorageBytes.toFormattedFileSize(),
-                                title = stringResource(id = R.string.home_storage_usage),
-                                progress = it.totalStorageUsage,
-                            )
-
+                            Column {
+                                ListProgressBarItem(
+                                    contentPaddingValues = listItemContentPaddingValues,
+                                    progressBarModifier = Modifier.fillMaxWidth(),
+                                    startDesc = it.totalModulesUsageBytes.toFormattedFileSize(),
+                                    endDesc = it.totalDeviceStorageBytes.toFormattedFileSize(),
+                                    title = stringResource(id = R.string.home_storage_usage),
+                                    progress = it.totalStorageUsage,
+                                )
+                            }
                         }
 
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
                             Card(
-                                modifier = compressedCardModifierRow
+                                modifier = Modifier
+                                    .padding(vertical = 16.dp)
+                                    .weight(1f)
                             ) {
                                 ListItem(
                                     contentPaddingValues = listItemContentPaddingValues,
@@ -327,7 +323,9 @@ fun HomeScreen(
                             }
 
                             Card(
-                                modifier = compressedCardModifierRow
+                                modifier = Modifier
+                                    .padding(vertical = 16.dp)
+                                    .weight(1f)
                             ) {
                                 ListItem(
                                     contentPaddingValues = listItemContentPaddingValues,
@@ -341,7 +339,9 @@ fun HomeScreen(
                 }
 
                 Card(
-                    modifier = compressedCardModifier,
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .weight(1f),
                     onClick = {
                         browser.openUri("https://github.com/sponsors/DerGoogler")
                     }

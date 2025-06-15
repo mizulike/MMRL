@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.ui.screens.modules
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -112,164 +113,155 @@ fun ModuleItem(
     }
 
     Card(
-        modifier = {
-            if (isBlacklisted) {
-                surface = this.surface.then(
-                    Modifier.border(
-                        width = 1.dp,
-                        color = MaterialTheme.colorScheme.errorContainer,
-                        shape = cardStyle.shape
-                    )
-                )
-            }
-
-            column = Modifier.padding(0.dp)
-        },
-        style = cardStyle.copy(
-            boxContentAlignment = Alignment.Center,
+        border = isBlacklisted nullable BorderStroke(
+            width = 1.dp,
+            color = MaterialTheme.colorScheme.errorContainer
         ),
+        absoluteAlignment = Alignment.Center,
         absolute = {
             indicator?.invoke(this)
         },
         onClick = clicker
     ) {
-        module.config.cover.nullable(menu.showCover) {
-            val file = SuFile(module.id.moduleDir, it)
+        Column {
+            module.config.cover.nullable(menu.showCover) {
+                val file = SuFile(module.id.moduleDir, it)
 
-            file.exists {
-                LocalCover(
-                    modifier = Modifier.fadingEdge(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black,
+                file.exists {
+                    LocalCover(
+                        modifier = Modifier.fadingEdge(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Black,
+                                ),
+                                startY = Float.POSITIVE_INFINITY,
+                                endY = 0f
                             ),
-                            startY = Float.POSITIVE_INFINITY,
-                            endY = 0f
                         ),
-                    ),
-                    inputStream = it.newInputStream(),
-                )
-            }
-        }
-
-        Row(
-            modifier = Modifier.padding(all = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .alpha(alpha = alpha)
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                TextWithIcon(
-                    text = module.config.name ?: module.name,
-                    icon = canWenUIAccessed nullable R.drawable.sandbox,
-                    style = TextWithIconDefaults.style.copy(textStyle = MaterialTheme.typography.titleSmall)
-                )
-
-                Text(
-                    text = stringResource(
-                        id = R.string.module_version_author,
-                        module.versionDisplay, module.author
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    textDecoration = decoration,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                if (module.lastUpdated != 0L && menu.showUpdatedTime) {
-                    Text(
-                        text = stringResource(
-                            id = R.string.module_update_at,
-                            module.lastUpdated.toFormattedDateSafely
-                        ),
-                        style = MaterialTheme.typography.bodySmall,
-                        textDecoration = decoration,
-                        color = MaterialTheme.colorScheme.outline
+                        inputStream = it.newInputStream(),
                     )
                 }
             }
 
-            switch?.invoke()
-        }
+            Row(
+                modifier = Modifier.padding(all = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Column(
+                    modifier = Modifier
+                        .alpha(alpha = alpha)
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
+                    TextWithIcon(
+                        text = module.config.name ?: module.name,
+                        icon = canWenUIAccessed nullable R.drawable.sandbox,
+                        style = TextWithIconDefaults.style.copy(textStyle = MaterialTheme.typography.titleSmall)
+                    )
 
-        val description = if (module.config.description != null) {
-            module.config.description!!.toStyleMarkup()
-        } else {
-            AnnotatedString(module.description)
-        }
+                    Text(
+                        text = stringResource(
+                            id = R.string.module_version_author,
+                            module.versionDisplay, module.author
+                        ),
+                        style = MaterialTheme.typography.bodySmall,
+                        textDecoration = decoration,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
 
-        Text(
-            modifier = Modifier
-                .alpha(alpha = alpha)
-                .padding(horizontal = 16.dp),
-            text = description,
-            style = MaterialTheme.typography.bodySmall,
-            maxLines = 5,
-            overflow = TextOverflow.Ellipsis,
-            textDecoration = decoration,
-            color = MaterialTheme.colorScheme.outline
-        )
+                    if (module.lastUpdated != 0L && menu.showUpdatedTime) {
+                        Text(
+                            text = stringResource(
+                                id = R.string.module_update_at,
+                                module.lastUpdated.toFormattedDateSafely
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            textDecoration = decoration,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
+                }
 
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            userPreferences.developerMode.takeTrue {
+                switch?.invoke()
+            }
+
+            val description = if (module.config.description != null) {
+                module.config.description!!.toStyleMarkup()
+            } else {
+                AnnotatedString(module.description)
+            }
+
+            Text(
+                modifier = Modifier
+                    .alpha(alpha = alpha)
+                    .padding(horizontal = 16.dp),
+                text = description,
+                style = MaterialTheme.typography.bodySmall,
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis,
+                textDecoration = decoration,
+                color = MaterialTheme.colorScheme.outline
+            )
+
+            Row(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                userPreferences.developerMode.takeTrue {
+                    LabelItem(
+                        text = module.id.id,
+                        upperCase = false
+                    )
+                }
+
                 LabelItem(
-                    text = module.id.id,
-                    upperCase = false
+                    text = module.size.toFormattedFileSize(),
+                    style = LabelItemDefaults.style.copy(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                    )
                 )
             }
 
-            LabelItem(
-                text = module.size.toFormattedFileSize(),
-                style = LabelItemDefaults.style.copy(
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+            when {
+                indeterminate -> LinearProgressIndicator(
+                    strokeCap = StrokeCap.Round,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .height(2.dp)
+                        .fillMaxWidth()
                 )
-            )
-        }
 
-        when {
-            indeterminate -> LinearProgressIndicator(
-                strokeCap = StrokeCap.Round,
+                progress != 0f -> LinearProgressIndicator(
+                    progress = { progress },
+                    strokeCap = StrokeCap.Round,
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .height(1.5.dp)
+                        .fillMaxWidth()
+                )
+
+                else -> HorizontalDivider(
+                    thickness = 1.5.dp,
+                    color = MaterialTheme.colorScheme.surface,
+                    modifier = Modifier.padding(top = 8.dp)
+                )
+            }
+
+            Row(
                 modifier = Modifier
-                    .padding(top = 8.dp)
-                    .height(2.dp)
-                    .fillMaxWidth()
-            )
-
-            progress != 0f -> LinearProgressIndicator(
-                progress = { progress },
-                strokeCap = StrokeCap.Round,
-                modifier = Modifier
-                    .padding(top = 8.dp)
-                    .height(1.5.dp)
-                    .fillMaxWidth()
-            )
-
-            else -> HorizontalDivider(
-                thickness = 1.5.dp,
-                color = MaterialTheme.colorScheme.surface,
-                modifier = Modifier.padding(top = 8.dp)
-            )
-        }
-
-        Row(
-            modifier = Modifier
-                .padding(horizontal = 16.dp, vertical = 8.dp)
-                .fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            startTrailingButton?.invoke(this)
-            Spacer(modifier = Modifier.weight(1f))
-            trailingButton.invoke(this)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                startTrailingButton?.invoke(this)
+                Spacer(modifier = Modifier.weight(1f))
+                trailingButton.invoke(this)
+            }
         }
     }
 }

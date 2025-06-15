@@ -47,171 +47,166 @@ fun ModuleItemDetailed(
     val module = LocalModule.current
     val state = LocalModuleState.current
 
-    val context = LocalContext.current
     val userPreferences = LocalUserPreferences.current
     val menu = userPreferences.repositoryMenu
     val hasLabel =
         (state.hasLicense && menu.showLicense) || state.installed || (module.track.hasAntifeatures && menu.showAntiFeatures)
     val isVerified = module.isVerified && menu.showVerified
 
-
     Card(
         enabled = enabled,
-        modifier = {
-            column = Modifier.padding(0.dp)
-        },
-        style = CardDefaults.cardStyle.copy(
-            boxContentAlignment = Alignment.Center,
-        ),
+        absoluteAlignment = Alignment.Center,
         onClick = onClick
     ) {
-        module.cover.nullable(menu.showCover) {
-            if (it.isNotEmpty()) {
-                Cover(
-                    modifier = Modifier.fadingEdge(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                Color.Transparent,
-                                Color.Black,
+        Column {
+            module.cover.nullable(menu.showCover) {
+                if (it.isNotEmpty()) {
+                    Cover(
+                        modifier = Modifier.fadingEdge(
+                            brush = Brush.verticalGradient(
+                                colors = listOf(
+                                    Color.Transparent,
+                                    Color.Black,
+                                ),
+                                startY = Float.POSITIVE_INFINITY,
+                                endY = 0f
                             ),
-                            startY = Float.POSITIVE_INFINITY,
-                            endY = 0f
                         ),
-                    ),
-                    url = it,
-                )
+                        url = it,
+                    )
+                }
             }
-        }
 
-        Row(
-            modifier = Modifier.padding(all = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(
-                modifier = Modifier
-                    .alpha(alpha = alpha)
-                    .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(2.dp)
+            Row(
+                modifier = Modifier.padding(all = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Column(
+                    modifier = Modifier
+                        .alpha(alpha = alpha)
+                        .weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                ) {
 
 
-                TextWithIcon(
-                    style = TextWithIconDefaults.style.copy(
-                        textStyle = MaterialTheme.typography.titleSmall.copy(
-                            textDecoration = decoration
+                    TextWithIcon(
+                        style = TextWithIconDefaults.style.copy(
+                            textStyle = MaterialTheme.typography.titleSmall.copy(
+                                textDecoration = decoration
+                            ),
+                            iconTint = MaterialTheme.colorScheme.surfaceTint,
+                            iconScaling = 1.0f,
+                            rightIcon = true,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         ),
-                        iconTint = MaterialTheme.colorScheme.surfaceTint,
-                        iconScaling = 1.0f,
-                        rightIcon = true,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    ),
-                    text = module.name,
-                    icon = isVerified nullable R.drawable.rosette_discount_check,
-                )
+                        text = module.name,
+                        icon = isVerified nullable R.drawable.rosette_discount_check,
+                    )
 
-                Text(
-                    text = stringResource(
-                        id = R.string.module_version_author,
-                        module.versionDisplay,
-                        module.author
-                    ),
-                    style = MaterialTheme.typography.bodySmall,
-                    textDecoration = decoration,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                if (menu.showUpdatedTime) {
                     Text(
                         text = stringResource(
-                            id = R.string.module_update_at,
-                            state.lastUpdated.toFormattedDateSafely
+                            id = R.string.module_version_author,
+                            module.versionDisplay,
+                            module.author
                         ),
                         style = MaterialTheme.typography.bodySmall,
                         textDecoration = decoration,
-                        color = MaterialTheme.colorScheme.outline
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
+
+                    if (menu.showUpdatedTime) {
+                        Text(
+                            text = stringResource(
+                                id = R.string.module_update_at,
+                                state.lastUpdated.toFormattedDateSafely
+                            ),
+                            style = MaterialTheme.typography.bodySmall,
+                            textDecoration = decoration,
+                            color = MaterialTheme.colorScheme.outline
+                        )
+                    }
                 }
             }
-        }
 
-        Text(
-            modifier = Modifier
-                .alpha(alpha = alpha)
-                .padding(end = 16.dp, bottom = 16.dp, start = 16.dp),
-            text = module.description
-                ?: stringResource(R.string.view_module_no_description),
-            maxLines = 5,
-            overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.bodySmall.apply {
-                if (module.description.isNullOrBlank()) {
-                    copy(
-                        fontStyle = FontStyle.Italic
-                    )
-                }
-            },
-            textDecoration = decoration,
-            color = MaterialTheme.colorScheme.outline
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        if (hasLabel) {
-            Row(
+            Text(
                 modifier = Modifier
-                    .padding(end = 16.dp, bottom = 16.dp, start = 16.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                module.categories.nullable {
-                    if (it.isNotNullOrEmpty()) {
-                        LabelItem(
-                            icon = R.drawable.category,
-                            text = it.first(),
-                            style = LabelItemDefaults.style.copy(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
+                    .alpha(alpha = alpha)
+                    .padding(end = 16.dp, bottom = 16.dp, start = 16.dp),
+                text = module.description
+                    ?: stringResource(R.string.view_module_no_description),
+                maxLines = 5,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodySmall.apply {
+                    if (module.description.isNullOrBlank()) {
+                        copy(
+                            fontStyle = FontStyle.Italic
                         )
                     }
-                }
+                },
+                textDecoration = decoration,
+                color = MaterialTheme.colorScheme.outline
+            )
 
-                module.license.nullable(menu.showLicense) {
-                    LabelItem(
-                        icon = R.drawable.tag,
-                        text = it
-                    )
-                }
-
-                module.track.antifeatures.nullable(menu.showAntiFeatures) {
-                    if (it.isNotEmpty()) {
-                        LabelItem(
-                            icon = R.drawable.alert_triangle,
-                            text = stringResource(id = R.string.view_module_antifeatures),
-                            style = LabelItemDefaults.style.copy(
-                                containerColor = MaterialTheme.colorScheme.onTertiary,
-                                contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
-                            )
-                        )
-                    }
-                }
-
-                when {
-                    state.updatable ->
-                        LabelItem(
-                            text = stringResource(id = R.string.module_new),
-                            style = LabelItemDefaults.style.copy(
-                                containerColor = MaterialTheme.colorScheme.error,
-                                contentColor = MaterialTheme.colorScheme.onError
-                            )
-                        )
-
-                    state.installed ->
-                        LabelItem(text = stringResource(id = R.string.module_installed))
-                }
-            }
             Spacer(modifier = Modifier.weight(1f))
+
+            if (hasLabel) {
+                Row(
+                    modifier = Modifier
+                        .padding(end = 16.dp, bottom = 16.dp, start = 16.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(4.dp)
+                ) {
+                    module.categories.nullable {
+                        if (it.isNotNullOrEmpty()) {
+                            LabelItem(
+                                icon = R.drawable.category,
+                                text = it.first(),
+                                style = LabelItemDefaults.style.copy(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer
+                                )
+                            )
+                        }
+                    }
+
+                    module.license.nullable(menu.showLicense) {
+                        LabelItem(
+                            icon = R.drawable.tag,
+                            text = it
+                        )
+                    }
+
+                    module.track.antifeatures.nullable(menu.showAntiFeatures) {
+                        if (it.isNotEmpty()) {
+                            LabelItem(
+                                icon = R.drawable.alert_triangle,
+                                text = stringResource(id = R.string.view_module_antifeatures),
+                                style = LabelItemDefaults.style.copy(
+                                    containerColor = MaterialTheme.colorScheme.onTertiary,
+                                    contentColor = MaterialTheme.colorScheme.onTertiaryContainer,
+                                )
+                            )
+                        }
+                    }
+
+                    when {
+                        state.updatable ->
+                            LabelItem(
+                                text = stringResource(id = R.string.module_new),
+                                style = LabelItemDefaults.style.copy(
+                                    containerColor = MaterialTheme.colorScheme.error,
+                                    contentColor = MaterialTheme.colorScheme.onError
+                                )
+                            )
+
+                        state.installed ->
+                            LabelItem(text = stringResource(id = R.string.module_installed))
+                    }
+                }
+                Spacer(modifier = Modifier.weight(1f))
+            }
         }
     }
 }
