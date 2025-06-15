@@ -1,22 +1,18 @@
 package com.dergoogler.mmrl.ui.screens.settings.appearance
 
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.Homepage
 import com.dergoogler.mmrl.ext.toFormattedDateSafely
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
-import com.dergoogler.mmrl.ui.component.listItem.ListEditTextItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.TextEditDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.DialogDescription
-import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.DialogSupportingText
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
-import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ui.providable.LocalSettings
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ui.screens.settings.NavButton
@@ -25,8 +21,6 @@ import com.dergoogler.mmrl.ui.screens.settings.NavButton
 fun AppearanceScreen() {
     val viewModel = LocalSettings.current
     val userPreferences = LocalUserPreferences.current
-
-    val navController = LocalNavController.current
 
     SettingsScaffold(
         title = R.string.settings_appearance
