@@ -4,27 +4,33 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.material3.contentColorFor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.toStyleMarkup
 import com.dergoogler.mmrl.ui.component.card.Card
+import com.dergoogler.mmrl.ui.component.text.TextWithIcon
+import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 
 @Composable
 fun Alert(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.secondaryContainer,
-    textColor: Color = MaterialTheme.colorScheme.onSecondaryContainer,
+    textColor: Color = contentColorFor(backgroundColor),
     title: String?,
     message: String,
-    clickTagColor: Color = MaterialTheme.colorScheme.surfaceTint,
     @DrawableRes icon: Int? = null,
-    onDescTagClick: (String) -> Unit = {},
 ) = Card(
-    modifier = modifier.fillMaxWidth(),
+    modifier = modifier
+        .padding(vertical = 16.dp, horizontal = 25.dp)
+        .fillMaxWidth(),
     color = backgroundColor,
     contentColor = textColor,
 ) {
@@ -35,21 +41,20 @@ fun Alert(
             TextWithIcon(
                 text = it,
                 icon = icon,
-                style = MaterialTheme.typography.titleMedium.copy(
-                    color = textColor,
-                    fontWeight = FontWeight.Bold,
-
+                style = TextWithIconDefaults.style.copy(
+                    textStyle = MaterialTheme.typography.titleMedium.copy(
+                        color = textColor,
+                        fontWeight = FontWeight.Bold
                     ),
-                tint = textColor,
-                spacing = 16f
+                    spacing = 8.dp,
+                    iconTint = textColor
+                )
             )
         }
 
-        MarkdownText(
-            text = message,
+        Text(
+            text = message.toStyleMarkup(),
             style = MaterialTheme.typography.bodyMedium.copy(color = textColor),
-            clickTagColor = clickTagColor,
-            onTagClick = onDescTagClick
         )
     }
 }

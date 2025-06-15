@@ -8,65 +8,113 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
+import java.util.Stack
+
+data class StyleState(
+    val color: Color? = null,
+    val bg: Color? = null,
+    val bold: Boolean = false,
+    val italic: Boolean = false,
+    val underline: Boolean = false,
+)
 
 @Composable
 fun String.toStyleMarkup(): AnnotatedString {
     val builder = AnnotatedString.Builder()
-    val regex = Regex("""\[(color|bg|bold|italic|underline)(=([^]]+))?]""")
+    val tagRegex = Regex("""\[(\/?)(color|bg|bold|italic|underline)(?:=([^\]]+))?]""")
+    val matches = tagRegex.findAll(this).toList()
 
-    var lastIndex = 0
-    var currentColor: Color? = null
-    var currentBg: Color? = null
-    var isBold = false
-    var isItalic = false
-    var isUnderline = false
+    var index = 0
 
-    regex.findAll(this).forEach { match ->
-        val start = match.range.first
 
-        if (lastIndex < start) {
+    val stateStack = Stack<StyleState>()
+    stateStack.push(StyleState())
+
+    while (index < this.length) {
+        val match = matches.firstOrNull { it.range.first == index }
+        if (match != null) {
+            val isClosing = match.groupValues[1] == "/"
+            val tag = match.groupValues[2]
+            val value = match.groupValues[3]
+
+            if (isClosing) {
+                if (stateStack.size > 1) {
+                    stateStack.pop()
+                } else {
+                    // invalid unmatched closing tag — render literally
+                    builder.append(match.value)
+                }
+            } else {
+                val closingTag = "[/${tag}]"
+                val closingIndex = this.indexOf(closingTag, match.range.last + 1)
+                if (closingIndex != -1) {
+                    val prev = stateStack.peek()
+                    val newState = when (tag) {
+                        "color" -> prev.copy(color = colorFromName(value))
+                        "bg" -> prev.copy(bg = colorFromName(value))
+                        "bold" -> prev.copy(bold = true)
+                        "italic" -> prev.copy(italic = true)
+                        "underline" -> prev.copy(underline = true)
+                        else -> prev
+                    }
+                    stateStack.push(newState)
+
+                    val innerTextStart = match.range.last + 1
+                    val innerTextEnd = closingIndex
+
+                    val innerText = this.substring(innerTextStart, innerTextEnd)
+                    builder.append(
+                        innerText.toStyleMarkupInner(newState)
+                    )
+
+                    stateStack.pop()
+                    index = closingIndex + closingTag.length
+                    continue
+                } else {
+                    // no closing tag — treat as literal
+                    builder.append(match.value)
+                }
+            }
+            index = match.range.last + 1
+        } else {
+            val nextTag = matches.firstOrNull { it.range.first > index }
+            val end = nextTag?.range?.first ?: this.length
+            val text = this.substring(index, end)
+            val current = stateStack.peek()
             builder.append(
                 AnnotatedString(
-                    this.substring(lastIndex, start),
+                    text,
                     spanStyle = SpanStyle(
-                        color = currentColor ?: Color.Unspecified,
-                        background = currentBg ?: Color.Unspecified,
-                        fontWeight = if (isBold) FontWeight.Bold else null,
-                        fontStyle = if (isItalic) FontStyle.Italic else null,
-                        textDecoration = if (isUnderline) TextDecoration.Underline else null
+                        color = current.color ?: Color.Unspecified,
+                        background = current.bg ?: Color.Unspecified,
+                        fontWeight = if (current.bold) FontWeight.Bold else null,
+                        fontStyle = if (current.italic) FontStyle.Italic else null,
+                        textDecoration = if (current.underline) TextDecoration.Underline else null
                     )
                 )
             )
+            index = end
         }
-
-        // Parse tag
-        when (match.groupValues[1]) {
-            "color" -> currentColor = colorFromName(match.groupValues[3])
-            "bg" -> currentBg = colorFromName(match.groupValues[3])
-            "bold" -> isBold = true
-            "italic" -> isItalic = true
-            "underline" -> isUnderline = true
-        }
-
-        lastIndex = match.range.last + 1
     }
 
-    // Remaining text
-    if (lastIndex < this.length) {
-        builder.append(
-            AnnotatedString(
-                this.substring(lastIndex),
-                spanStyle = SpanStyle(
-                    color = currentColor ?: Color.Unspecified,
-                    background = currentBg ?: Color.Unspecified,
-                    fontWeight = if (isBold) FontWeight.Bold else null,
-                    fontStyle = if (isItalic) FontStyle.Italic else null,
-                    textDecoration = if (isUnderline) TextDecoration.Underline else null
-                )
+    return builder.toAnnotatedString()
+}
+
+@Composable
+private fun String.toStyleMarkupInner(state: StyleState): AnnotatedString {
+    val builder = AnnotatedString.Builder()
+    builder.append(
+        AnnotatedString(
+            this,
+            spanStyle = SpanStyle(
+                color = state.color ?: Color.Unspecified,
+                background = state.bg ?: Color.Unspecified,
+                fontWeight = if (state.bold) FontWeight.Bold else null,
+                fontStyle = if (state.italic) FontStyle.Italic else null,
+                textDecoration = if (state.underline) TextDecoration.Underline else null
             )
         )
-    }
-
+    )
     return builder.toAnnotatedString()
 }
 

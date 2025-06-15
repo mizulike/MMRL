@@ -624,16 +624,8 @@ fun NewViewScreen(
                             title = stringResource(R.string.blacklisted),
                             backgroundColor = MaterialTheme.colorScheme.errorContainer,
                             textColor = MaterialTheme.colorScheme.onErrorContainer,
-                            clickTagColor = MaterialTheme.colorScheme.error,
                             message = stringResource(R.string.blacklisted_desc),
                             modifier = Modifier.padding(horizontal = 16.dp),
-                            onDescTagClick = { tag ->
-                                when (tag) {
-                                    "more" -> {
-                                        open = true
-                                    }
-                                }
-                            }
                         )
                     }
 

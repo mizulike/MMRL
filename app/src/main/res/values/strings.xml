@@ -296,7 +296,7 @@
     <string name="kernel">Kernel</string>
     <string name="manager_version">Manager Version</string>
     <string name="fingerprint">Fingerprint</string>
-    <string name="new_version_available">New version [color=primary]%s[color] is available, click to upgrade.</string>
+    <string name="new_version_available">New version [italic]%s[/italic] is available, click to upgrade.</string>
     <string name="hidden">Hidden</string>
     <string name="pre_release">Pre-release</string>
     <string name="unsafe_url_redirecting">Unsafe URL: %1$s. Redirecting…</string>
@@ -312,7 +312,7 @@
     <string name="learn_more">Learn more</string>
     <string name="sponsors">Sponsors</string>
     <string name="blacklisted">Blacklisted</string>
-    <string name="blacklisted_desc">This module has been blacklisted by MMRL. Installation is disabled to ensure your security. If you still want to install this module, you can disable blacklist alerts in the settings by navigating to **Settings → Security → Blacklist Alerts**.\n@more(Learn more)</string>
+    <string name="blacklisted_desc">This module has been blacklisted by MMRL. Installation is disabled to ensure your security. If you still want to install this module, you can disable blacklist alerts in the settings by navigating to [bold]Settings → Security → Blacklist Alerts[/bold].</string>
     <string name="settings_blacklist_alerts">Blacklist Alerts</string>
     <string name="settings_blacklist_alerts_desc">Display an alert for local and explore modules, and additionally block the installation of any blacklisted modules</string>
     <string name="page_repositorys">Repos</string>
@@ -413,6 +413,6 @@
     <string name="settings_terminal_line_numbers">Line Numbers</string>
     <string name="settings_terminal_line_numbers_desc">Shows line numbers on the left side of the terminal</string>
     <string name="super_user_apps">SuperUser Apps</string>
-    <string name="settings_date_pattern_dialog_desc">The date will be parsed as [color=primary]%1$s[color]</string>
+    <string name="settings_date_pattern_dialog_desc">The date will be parsed as [color=primary]%1$s[/color]</string>
     <string name="view_module_permissions">Permissions</string>
 </resources>

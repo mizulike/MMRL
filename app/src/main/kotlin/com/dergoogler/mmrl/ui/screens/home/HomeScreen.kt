@@ -53,12 +53,14 @@ import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.onClick
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.ext.toStyleMarkup
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.stub.IMMRLApiManager
+import com.dergoogler.mmrl.ui.component.Alert
 import com.dergoogler.mmrl.ui.component.SELinuxStatus
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
@@ -167,28 +169,29 @@ fun HomeScreen(
                                 onClose = { changelogSheet = false })
                         }
 
-//                        AnimatedVisibility(
-//                            visible = if (latest.preRelease) {
-//                                userPreferences.checkAppUpdatesPreReleases && latest.versionCode > context.managerVersion.second
-//                            } else {
-//                                latest.versionCode > context.managerVersion.second
-//                            },
-//                            enter = fadeIn() + expandVertically(),
-//                            exit = shrinkVertically() + fadeOut()
-//                        ) {
-                        Card(
-                            modifier = Modifier.padding(vertical = 16.dp, horizontal = 25.dp),
-                            absoluteAlignment = Alignment.Center,
-                            color = MaterialTheme.colorScheme.outlineVariant,
+                        AnimatedVisibility(
+                            visible = if (latest.preRelease) {
+                                userPreferences.checkAppUpdatesPreReleases && latest.versionCode > context.managerVersion.second
+                            } else {
+                                latest.versionCode > context.managerVersion.second
+                            },
+                            enter = fadeIn() + expandVertically(),
+                            exit = shrinkVertically() + fadeOut()
                         ) {
-                            Text(
-                                stringResource(
-                                    R.string.new_version_available,
-                                    latest.versionName
-                                ).toStyleMarkup()
-                            )
+
+                        Alert(
+                            modifier = Modifier.onClick {
+                                changelogSheet = true
+                            },
+                            backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
+                            title = "Update available!",
+                            message = stringResource(
+                                R.string.new_version_available,
+                                latest.versionName
+                            ),
+                            icon = R.drawable.cloud_download,
+                        )
                         }
-//                        }
                     }
                 }
 
@@ -297,7 +300,7 @@ fun HomeScreen(
                             Column {
                                 ListProgressBarItem(
                                     contentPaddingValues = listItemContentPaddingValues,
-                                    progressBarModifier = Modifier.fillMaxWidth(),
+                                    progressBarModifier = Modifier.weight(1f),
                                     startDesc = it.totalModulesUsageBytes.toFormattedFileSize(),
                                     endDesc = it.totalDeviceStorageBytes.toFormattedFileSize(),
                                     title = stringResource(id = R.string.home_storage_usage),
