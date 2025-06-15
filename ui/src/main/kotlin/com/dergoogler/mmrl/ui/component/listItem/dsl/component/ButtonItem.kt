@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.ui.component.listItem.dsl.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -30,17 +31,19 @@ fun ListScope.ButtonItem(
     modifier: Modifier = Modifier,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     enabled: Boolean = true,
+    contentPadding: PaddingValues = contentPaddingValues,
     content: @Composable ListItemScope.() -> Unit,
 ) {
     this.Item(
-        modifier = Modifier
+        contentPadding = contentPadding,
+        modifier = modifier
             .clickable(
+                enabled = enabled,
                 interactionSource = interactionSource,
                 role = Role.Button,
                 indication = ripple(),
                 onClick = onClick
-            )
-            .then(modifier),
+            ),
         enabled = enabled,
         content = content
     )

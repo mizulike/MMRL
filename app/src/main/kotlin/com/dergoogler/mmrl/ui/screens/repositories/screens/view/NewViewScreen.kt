@@ -58,6 +58,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -121,6 +122,15 @@ import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.ui.component.listItem.dsl.List
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.CollapseItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Item
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Labels
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.ui.providable.LocalBulkInstall
@@ -152,6 +162,7 @@ fun NewViewScreen(
     val repoUrl = arguments.panicString("repoUrl")
 
     val listItemContentPaddingValues = PaddingValues(vertical = 16.dp, horizontal = 16.dp)
+    val subListItemContentPaddingValues = PaddingValues(vertical = 8.dp, horizontal = 16.dp)
 
     val screenshotsLazyListState = rememberLazyListState()
     val categoriesLazyListState = rememberLazyListState()
@@ -436,9 +447,8 @@ fun NewViewScreen(
 
                 Column(
                     modifier = Modifier
-                        .systemBarsPaddingEnd()
+                        .systemBarsPaddingEnd(),
                 ) {
-
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Row(
@@ -693,28 +703,32 @@ fun NewViewScreen(
 
                         Spacer(modifier = Modifier.height(16.dp))
                     }
-
-                    if (!module.readme.isNullOrBlank()) {
-                        ListButtonItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            iconToRight = true,
-                            icon = R.drawable.arrow_right,
-                            title = stringResource(R.string.view_module_about_this_module),
-                            onClick = {
-                                navController.navigateSingleTopTo(
-                                    route = RepositoriesScreen.Description.route,
-                                    args = mapOf(
-                                        "moduleId" to module.id,
-                                        "repoUrl" to repoUrl
+                    List(
+                        contentPadding = listItemContentPaddingValues
+                    ) {
+                        if (!module.readme.isNullOrBlank()) {
+                            ButtonItem(
+                                onClick = {
+                                    navController.navigateSingleTopTo(
+                                        route = RepositoriesScreen.Description.route,
+                                        args = mapOf(
+                                            "moduleId" to module.id,
+                                            "repoUrl" to repoUrl
+                                        )
                                     )
+                                }
+                            ) {
+                                Icon(
+                                    slot = ListItemSlot.End,
+                                    painter = painterResource(id = R.drawable.arrow_right)
                                 )
+                                Title(R.string.view_module_about_this_module)
                             }
-                        )
-                    } else {
-                        ListItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            title = stringResource(R.string.view_module_about_this_module),
-                        )
+                        } else {
+                            Item {
+                                Title(R.string.view_module_about_this_module)
+                            }
+                        }
                     }
 
                     Text(
@@ -801,173 +815,172 @@ fun NewViewScreen(
 
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    ListCollapseItem(
-                        contentPaddingValues = listItemContentPaddingValues,
-                        iconToRight = true,
-                        title = stringResource(R.string.view_module_module_support)
+                    List(
+                        contentPadding = listItemContentPaddingValues
                     ) {
-                        module.donate?.ifNotNullOrBlank {
-                            ListButtonItem(
-                                icon = R.drawable.currency_dollar,
-                                contentPaddingValues = PaddingValues(
-                                    vertical = 8.dp,
-                                    horizontal = 16.dp
-                                ),
-                                itemTextStyle = subListItemStyle,
-                                title = stringResource(id = R.string.view_module_donate),
-                                desc = stringResource(id = R.string.view_module_donate_desc),
-                                onClick = {
-                                    browser.openUri(it)
-                                }
-                            )
-                        }
-
-                        ListButtonItem(
-                            icon = R.drawable.brand_git,
-                            contentPaddingValues = PaddingValues(
-                                vertical = 8.dp,
-                                horizontal = 16.dp
-                            ),
-                            itemTextStyle = subListItemStyle,
-                            title = stringResource(id = R.string.view_module_source),
-                            onClick = {
-                                browser.openUri(module.track.source)
-                            }
-                        )
-
-                        module.homepage?.ifNotNullOrBlank {
-                            ListButtonItem(
-                                icon = R.drawable.world_www,
-                                contentPaddingValues = PaddingValues(
-                                    vertical = 8.dp,
-                                    horizontal = 16.dp
-                                ),
-                                itemTextStyle = subListItemStyle,
-                                title = stringResource(id = R.string.view_module_homepage),
-                                onClick = {
-                                    browser.openUri(it)
-                                }
-                            )
-                        }
-
-                        module.support?.ifNotNullOrBlank {
-                            ListButtonItem(
-                                icon = R.drawable.heart_handshake,
-                                contentPaddingValues = PaddingValues(
-                                    vertical = 8.dp,
-                                    horizontal = 16.dp
-                                ),
-                                itemTextStyle = subListItemStyle,
-                                title = stringResource(id = R.string.view_module_support),
-                                onClick = {
-                                    browser.openUri(it)
-                                }
-                            )
-                        }
-                    }
-
-                    module.permissions.ifNotEmpty {
-                        ListCollapseItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            iconToRight = true,
-                            title = stringResource(R.string.view_module_features),
-                            base = {
-                                labels = listOf {
-                                    LabelItem(
-                                        text = stringResource(
-                                            R.string.view_module_section_count,
-                                            it.size
-                                        )
-                                    )
-                                }
-                            }
+                        CollapseItem(
+                            meta = { icon, rotation ->
+                                Title(R.string.view_module_module_support)
+                                Icon(
+                                    slot = ListItemSlot.End,
+                                    modifier = Modifier
+                                        .graphicsLayer(rotationZ = rotation),
+                                    painter = painterResource(id = icon),
+                                )
+                            },
                         ) {
-                            PermissionItem(
-                                itemTextStyle = subListItemStyle,
-                                contentPaddingValues = PaddingValues(
-                                    vertical = 8.dp,
-                                    horizontal = 16.dp
-                                ),
-                                permissions = it
-                            )
-                        }
-                    }
-
-                    module.track.antifeatures.ifNotEmpty {
-                        ListCollapseItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            iconToRight = true,
-                            title = stringResource(R.string.view_module_antifeatures),
-                            base = {
-                                labels = listOf {
-                                    LabelItem(
-                                        text = stringResource(
-                                            R.string.view_module_section_count,
-                                            it.size
-                                        )
-                                    )
-                                }
-                            }
-                        ) {
-                            AntiFeaturesItem(
-                                itemTextStyle = subListItemStyle,
-                                contentPaddingValues = PaddingValues(
-                                    vertical = 8.dp,
-                                    horizontal = 16.dp
-                                ),
-                                antifeatures = it
-                            )
-                        }
-                    }
-
-                    requires.ifNotEmpty { requiredIds ->
-                        ListCollapseItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            iconToRight = true,
-                            title = stringResource(R.string.view_module_dependencies),
-                            base = {
-                                labels = listOf {
-                                    LabelItem(
-                                        text = stringResource(
-                                            R.string.view_module_section_count,
-                                            requiredIds.size
-                                        )
-                                    )
-                                }
-                            }
-                        ) {
-                            requiredIds.forEach { onlineModule ->
-                                // val parts = requiredId.split("@")
-
-                                // val id = parts[0]
-                                // val version = (parts.getOrElse(1) { "-1" }).toInt()
-
-                                ListButtonItem(
-                                    contentPaddingValues = PaddingValues(
-                                        vertical = 8.dp,
-                                        horizontal = 16.dp
-                                    ),
-                                    itemTextStyle = subListItemStyle,
-                                    title = onlineModule.name,
-                                    desc = onlineModule.versionCode.toString(),
+                            module.donate.ifNotNullOrBlank {
+                                ButtonItem(
+                                    contentPadding = subListItemContentPaddingValues,
                                     onClick = {
-//                                navController.navigateSingleTopTo(
-//                                    ModuleViewModel.putModule(onlineModule, moduleArgs.url),
-//                                    launchSingleTop = false
-//                                )
+                                        browser.openUri(it)
                                     }
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.currency_dollar))
+                                    Title(R.string.view_module_donate)
+                                    Description(R.string.view_module_donate_desc)
+                                }
+                            }
+
+                            ButtonItem(
+                                contentPadding = subListItemContentPaddingValues,
+                                onClick = {
+                                    browser.openUri(module.track.source)
+                                }
+                            ) {
+                                Icon(painter = painterResource(id = R.drawable.brand_git))
+                                Title(R.string.view_module_source)
+                            }
+
+                            module.homepage.ifNotNullOrBlank {
+                                ButtonItem(
+                                    contentPadding = subListItemContentPaddingValues,
+                                    onClick = {
+                                        browser.openUri(it)
+                                    }
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.world_www))
+                                    Title(R.string.view_module_homepage)
+                                }
+                            }
+
+                            module.support?.ifNotNullOrBlank {
+                                ButtonItem(
+                                    contentPadding = subListItemContentPaddingValues,
+                                    onClick = {
+                                        browser.openUri(it)
+                                    }
+                                ) {
+                                    Icon(painter = painterResource(id = R.drawable.heart_handshake))
+                                    Title(R.string.view_module_support)
+                                }
+                            }
+                        }
+
+                        module.permissions.ifNotEmpty {
+                            CollapseItem(
+                                meta = { icon, rotation ->
+                                    Title(R.string.view_module_permissions)
+                                    Icon(
+                                        slot = ListItemSlot.End,
+                                        modifier = Modifier
+                                            .graphicsLayer(rotationZ = rotation),
+                                        painter = painterResource(id = icon),
+                                    )
+                                    Labels {
+                                        LabelItem(
+                                            text = stringResource(
+                                                R.string.view_module_section_count,
+                                                it.size
+                                            )
+                                        )
+                                    }
+                                },
+                            ) {
+                                PermissionItem(
+                                    contentPadding = subListItemContentPaddingValues,
+                                    permissions = it
                                 )
                             }
                         }
-                    }
 
-                    viewModel.otherSources.ifNotEmpty {
-                        ListItem(
-                            contentPaddingValues = listItemContentPaddingValues,
-                            title = stringResource(R.string.from_other_repositories),
-                        )
+                        module.track.antifeatures.ifNotEmpty {
+                            CollapseItem(
+                                meta = { icon, rotation ->
+                                    Title(R.string.view_module_antifeatures)
+                                    Icon(
+                                        slot = ListItemSlot.End,
+                                        modifier = Modifier
+                                            .graphicsLayer(rotationZ = rotation),
+                                        painter = painterResource(id = icon),
+                                    )
+                                    Labels {
+                                        LabelItem(
+                                            text = stringResource(
+                                                R.string.view_module_section_count,
+                                                it.size
+                                            )
+                                        )
+                                    }
+                                },
+                            ) {
+                                AntiFeaturesItem(
+                                    contentPadding = subListItemContentPaddingValues,
+                                    antifeatures = it
+                                )
+                            }
+                        }
 
-                        OtherSourcesItem(viewModel.otherSources)
+                        requires.ifNotEmpty { requiredIds ->
+                            CollapseItem(
+                                meta = { icon, rotation ->
+                                    Title(R.string.view_module_antifeatures)
+                                    Icon(
+                                        slot = ListItemSlot.End,
+                                        modifier = Modifier
+                                            .graphicsLayer(rotationZ = rotation),
+                                        painter = painterResource(id = icon),
+                                    )
+                                    Labels {
+                                        LabelItem(
+                                            text = stringResource(
+                                                R.string.view_module_section_count,
+                                                requiredIds.size
+                                            )
+                                        )
+                                    }
+                                },
+                            ) {
+                                requiredIds.forEach { onlineModule ->
+                                    // val parts = requiredId.split("@")
+
+                                    // val id = parts[0]
+                                    // val version = (parts.getOrElse(1) { "-1" }).toInt()
+
+                                    ButtonItem(
+                                        contentPadding = subListItemContentPaddingValues,
+                                        onClick = {
+                                            //                                navController.navigateSingleTopTo(
+//                                    ModuleViewModel.putModule(onlineModule, moduleArgs.url),
+//                                    launchSingleTop = false
+//                                )
+                                        }
+                                    ) {
+                                        Title(onlineModule.name)
+                                        Description(onlineModule.versionCode.toString())
+                                    }
+                                }
+                            }
+                        }
+
+                        viewModel.otherSources.ifNotEmpty {
+                            ListItem(
+                                contentPaddingValues = listItemContentPaddingValues,
+                                title = stringResource(R.string.from_other_repositories),
+                            )
+
+                            OtherSourcesItem(viewModel.otherSources)
+                        }
                     }
 
                     // Information section
@@ -1078,31 +1091,44 @@ fun NewViewScreen(
                         )
                     }
 
+
                     local?.let { loc ->
-                        ListCollapseItem(
-                            contentPaddingValues = PaddingValues(
+                        List(
+                            contentPadding = PaddingValues(
                                 vertical = 8.dp,
                                 horizontal = 16.dp
-                            ),
-                            iconToRight = true,
-                            itemTextStyle = subListItemStyle.copy(titleTextColor = MaterialTheme.colorScheme.surfaceTint),
-                            title = stringResource(R.string.module_installed)
+                            )
                         ) {
-                            userPreferences.developerMode.takeTrue {
+                            CollapseItem(
+                                meta = { icon, rotation ->
+                                    Title(
+                                        id = R.string.module_installed,
+                                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.surfaceTint)
+                                    )
+                                    Icon(
+                                        slot = ListItemSlot.End,
+                                        modifier = Modifier
+                                            .graphicsLayer(rotationZ = rotation),
+                                        painter = painterResource(id = icon),
+                                    )
+                                }
+                            ) {
+                                userPreferences.developerMode.takeTrue {
+                                    ModuleInfoListItem(
+                                        title = R.string.view_module_module_id,
+                                        desc = loc.id.toString()
+                                    )
+                                }
+
                                 ModuleInfoListItem(
-                                    title = R.string.view_module_module_id,
-                                    desc = loc.id.toString()
+                                    title = R.string.view_module_version,
+                                    desc = "${loc.version} (${loc.versionCode})"
+                                )
+                                ModuleInfoListItem(
+                                    title = R.string.view_module_last_updated,
+                                    desc = loc.lastUpdated.toFormattedDateSafely
                                 )
                             }
-
-                            ModuleInfoListItem(
-                                title = R.string.view_module_version,
-                                desc = "${loc.version} (${loc.versionCode})"
-                            )
-                            ModuleInfoListItem(
-                                title = R.string.view_module_last_updated,
-                                desc = loc.lastUpdated.toFormattedDateSafely
-                            )
                         }
                     }
 
@@ -1136,26 +1162,6 @@ private fun ModuleInfoListItem(
         )
     }
 }
-
-@Composable
-private fun FeatureListItem(
-    feature: Boolean?,
-    @StringRes key: Int,
-    @StringRes value: Int,
-    rootSolutions: List<@Composable RowScope.() -> Unit>? = null,
-    itemTextStyle: ListItemTextStyle,
-) {
-    if (feature.isNullOrFalse()) return
-
-    ListItem(
-        contentPaddingValues = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
-        itemTextStyle = itemTextStyle,
-        title = stringResource(id = key),
-        desc = stringResource(id = value),
-        base = { labels = rootSolutions }
-    )
-}
-
 
 @Composable
 private fun TopBar(

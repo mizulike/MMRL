@@ -36,6 +36,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.model.state.RepoState
@@ -43,7 +44,6 @@ import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.Cover
 import com.dergoogler.mmrl.ui.component.LabelItem
 import com.dergoogler.mmrl.ui.component.card.Card
-import com.dergoogler.mmrl.ui.component.listItem.ListButtonItem
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 import com.dergoogler.mmrl.ext.fadingEdge
@@ -51,6 +51,10 @@ import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.shareText
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
+import com.dergoogler.mmrl.ui.component.listItem.dsl.List
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
@@ -185,7 +189,7 @@ fun RepositoryItem(
                 )
             }
 
-            ButtonItem(
+            CardButtonItem(
                 icon = R.drawable.share,
                 enabled = isEnabled,
                 onClick = { context.shareText(repo.url) }
@@ -193,14 +197,14 @@ fun RepositoryItem(
 
             Spacer(Modifier.weight(1f))
 
-            ButtonItem(
+            CardButtonItem(
                 icon = R.drawable.at,
                 label = R.string.repo_options,
                 onClick = { open = true },
                 enabled = isEnabled
             )
 
-            ButtonItem(
+            CardButtonItem(
                 icon = R.drawable.cloud_download,
                 label = R.string.repo_options_update,
                 onClick = update,
@@ -215,7 +219,6 @@ private fun BottomSheetForItem(
     repo: RepoState, onDelete: () -> Unit, onClose: () -> Unit,
 ) = BottomSheet(onDismissRequest = onClose) {
     val browser = LocalUriHandler.current
-    val userPreferences = LocalUserPreferences.current
 
     Column(
         modifier = Modifier
@@ -265,51 +268,61 @@ private fun BottomSheetForItem(
         )
     }
 
-    Column(
+    List(
         modifier = Modifier
             .padding(bottom = 18.dp),
     ) {
         repo.support.nullable {
-            ListButtonItem(
-                icon = R.drawable.brand_git,
-                title = stringResource(id = R.string.repo_options_support),
-                onClick = { browser.openUri(it) })
+            ButtonItem(
+                onClick = { browser.openUri(it) }
+            ) {
+                this.Icon(painter = painterResource(id = R.drawable.brand_git))
+                Title(R.string.repo_options_support)
+            }
         }
 
         repo.donate.nullable {
-            ListButtonItem(
-                icon = R.drawable.heart_handshake,
-                title = stringResource(id = R.string.repo_options_donate),
+            ButtonItem(
                 onClick = { browser.openUri(it) }
-            )
+            ) {
+                this.Icon(painter = painterResource(id = R.drawable.heart_handshake))
+                Title(R.string.repo_options_donate)
+            }
         }
 
         repo.website.nullable {
-            ListButtonItem(
-                icon = R.drawable.world_www,
-                title = stringResource(id = R.string.repo_options_website),
+            ButtonItem(
                 onClick = { browser.openUri(it) }
-            )
+            ) {
+                this.Icon(painter = painterResource(id = R.drawable.world_www))
+                Title(R.string.repo_options_website)
+            }
         }
 
         repo.submission.nullable {
-            ListButtonItem(
-                icon = R.drawable.cloud_upload,
-                title = stringResource(id = R.string.repo_options_submission),
+            ButtonItem(
                 onClick = { browser.openUri(it) }
-            )
+            ) {
+                this.Icon(painter = painterResource(id = R.drawable.cloud_upload))
+                Title(R.string.repo_options_submission)
+            }
         }
 
-        ListButtonItem(
-            icon = R.drawable.trash,
-            title = stringResource(id = R.string.repo_options_delete),
-            onClick = onDelete
+        HorizontalDivider(
+            thickness = Dp.Hairline
         )
+
+        ButtonItem(
+            onClick = onDelete
+        ) {
+            this.Icon(painter = painterResource(id = R.drawable.trash))
+            Title(R.string.repo_options_delete)
+        }
     }
 }
 
 @Composable
-private fun ButtonItem(
+private fun CardButtonItem(
     @DrawableRes icon: Int,
     @StringRes label: Int? = null,
     onClick: () -> Unit,

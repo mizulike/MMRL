@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -61,6 +62,11 @@ import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.systemBarsPaddingEnd
 import com.dergoogler.mmrl.ext.toDecodedUrl
+import com.dergoogler.mmrl.ui.component.listItem.dsl.List
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.ButtonItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.Item
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import kotlinx.coroutines.launch
 
@@ -259,25 +265,30 @@ fun ExploreRepositoryScreen(
 
                             Spacer(modifier = Modifier.height(8.dp))
 
-                            repo.modulesCount.nullable {
-                                ListItem(
-                                    icon = R.drawable.keyframes,
-                                    title = pluralStringResource(
-                                        id = R.plurals.module_count_explore_repo,
-                                        count = it,
-                                        it
-                                    ),
-                                )
-                            }
-
-                            repo.donate.nullable {
-                                ListButtonItem(
-                                    icon = R.drawable.currency_dollar,
-                                    title = stringResource(id = R.string.view_module_donate),
-                                    onClick = {
-                                        browser.openUri(it)
+                            List {
+                                repo.modulesCount.nullable {
+                                    Item {
+                                        Icon(painter = painterResource(id = R.drawable.keyframes))
+                                        Title(
+                                            pluralStringResource(
+                                                id = R.plurals.module_count_explore_repo,
+                                                count = it,
+                                                it
+                                            )
+                                        )
                                     }
-                                )
+                                }
+
+                                repo.donate.nullable {
+                                    ButtonItem(
+                                        onClick = {
+                                            browser.openUri(it)
+                                        }
+                                    ) {
+                                        Icon(painter = painterResource(id = R.drawable.currency_dollar))
+                                        Title(R.string.view_module_donate)
+                                    }
+                                }
                             }
                         }
                     }

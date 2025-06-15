@@ -38,7 +38,7 @@ fun ListScope.Item(
         content = { instance.content() },
         modifier = modifier
             .alpha(if (enabled) 1f else 0.5f)
-            .padding(contentPadding)
+            .padding(instance.contentPaddingValues),
     ) { measurables, constraints ->
 
         val startMeasurable = measurables.firstOrNull { it.layoutId == ListItemSlot.Start }
@@ -49,12 +49,12 @@ fun ListScope.Item(
 
         val startPlaceable = startMeasurable?.measure(constraints)
         val startWidth = startPlaceable?.width ?: 0
-        val startPaddingPx = contentPadding.calculateStartPadding(layoutDirection).roundToPx()
+        val startPaddingPx = instance.contentPaddingValues.calculateStartPadding(layoutDirection).roundToPx()
         val startSpacerWidth = if (startPlaceable != null) startPaddingPx else 0
 
         val endPlaceable = endMeasurable?.measure(constraints)
         val endWidth = endPlaceable?.width ?: 0
-        val endPaddingPx = contentPadding.calculateEndPadding(layoutDirection).roundToPx()
+        val endPaddingPx = instance.contentPaddingValues.calculateEndPadding(layoutDirection).roundToPx()
         val endSpacerWidth = if (endPlaceable != null) endPaddingPx else 0
 
         val textMaxWidth = constraints.maxWidth - startWidth - startSpacerWidth - endWidth - endSpacerWidth

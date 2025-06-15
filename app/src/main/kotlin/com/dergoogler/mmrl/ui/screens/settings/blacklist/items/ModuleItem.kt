@@ -103,11 +103,11 @@ fun BlacklistBottomSheet(
         }
 
 
-        module.antifeatures?.let {
-            if (it.isNotEmpty()) {
-                AntiFeaturesItem(antifeatures = it)
-            }
-        }
+//        module.antifeatures?.let {
+//            if (it.isNotEmpty()) {
+//                AntiFeaturesItem(antifeatures = it)
+//            }
+//        }
 
         Spacer(modifier = Modifier.height(10.dp))
 

@@ -22,6 +22,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.DefaultIconSize
  */
 @Composable
 fun ListItemScope.Icon(
+    modifier: Modifier = Modifier,
     painter: Painter,
     size: Dp = iconSize,
     slot: ListItemSlot = ListItemSlot.Start,
@@ -30,7 +31,7 @@ fun ListItemScope.Icon(
     disallow = listOf(ListItemSlot.Title, ListItemSlot.Description),
     content = {
         Icon(
-            modifier = Modifier.size(size),
+            modifier = Modifier.size(size).then(modifier),
             painter = painter,
             contentDescription = null,
             tint = LocalContentColor.current

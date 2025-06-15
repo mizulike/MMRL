@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 import com.dergoogler.mmrl.ui.token.LocalTypography
@@ -31,11 +32,12 @@ fun ListItemScope.Title(
 @Composable
 fun ListItemScope.Title(
     text: String,
+    style: TextStyle = LocalTextStyle.current,
 ) = Title {
     val titleStyle = LocalTitleStyle.current
-    val style = LocalTextStyle.current.merge(LocalTypography.current.fromToken(titleStyle))
+    val textStyle = LocalTypography.current.fromToken(titleStyle).merge(style)
 
-    ProvideTextStyle(style) {
+    ProvideTextStyle(textStyle) {
         Text(text)
     }
 }
@@ -43,13 +45,15 @@ fun ListItemScope.Title(
 @Composable
 fun ListItemScope.Title(
     @StringRes id: Int,
-) = Title(stringResource(id))
+    style: TextStyle = LocalTextStyle.current,
+) = Title(stringResource(id), style)
 
 @Composable
 fun ListItemScope.Title(
     @StringRes id: Int,
+    style: TextStyle = LocalTextStyle.current,
     vararg formatArgs: Any,
-) = Title(stringResource(id, formatArgs))
+) = Title(stringResource(id, formatArgs), style)
 
 val LocalTitleStyle = staticCompositionLocalOf {
     TypographyKeyTokens.BodyLarge
