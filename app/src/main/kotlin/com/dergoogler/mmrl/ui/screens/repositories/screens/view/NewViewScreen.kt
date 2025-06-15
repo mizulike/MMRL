@@ -1095,7 +1095,12 @@ fun NewViewScreen(
                                 meta = { icon, rotation ->
                                     Title(
                                         id = R.string.module_installed,
-                                        style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.surfaceTint)
+                                        styleTransform = {
+                                            val newStyle =
+                                                MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.surfaceTint)
+
+                                            it.merge(newStyle)
+                                        }
                                     )
                                     Icon(
                                         slot = ListItemSlot.End,

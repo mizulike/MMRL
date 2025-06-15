@@ -32,12 +32,16 @@ fun ListItemScope.Title(
 @Composable
 fun ListItemScope.Title(
     text: String,
-    style: TextStyle = LocalTextStyle.current,
+    styleTransform: (@Composable (TextStyle) -> TextStyle)? = null,
 ) = Title {
     val titleStyle = LocalTitleStyle.current
-    val textStyle = LocalTypography.current.fromToken(titleStyle).merge(style)
+    val textStyle = LocalTypography.current.fromToken(titleStyle)
 
-    ProvideTextStyle(textStyle) {
+    val finalTextStyle = if (styleTransform != null) {
+        styleTransform(textStyle)
+    } else textStyle
+
+    ProvideTextStyle(finalTextStyle) {
         Text(text)
     }
 }
@@ -45,15 +49,15 @@ fun ListItemScope.Title(
 @Composable
 fun ListItemScope.Title(
     @StringRes id: Int,
-    style: TextStyle = LocalTextStyle.current,
-) = Title(stringResource(id), style)
+    styleTransform: (@Composable (TextStyle) -> TextStyle)? = null,
+) = Title(stringResource(id), styleTransform)
 
 @Composable
 fun ListItemScope.Title(
     @StringRes id: Int,
-    style: TextStyle = LocalTextStyle.current,
+    styleTransform: (@Composable (TextStyle) -> TextStyle)? = null,
     vararg formatArgs: Any,
-) = Title(stringResource(id, formatArgs), style)
+) = Title(stringResource(id, formatArgs), styleTransform)
 
 val LocalTitleStyle = staticCompositionLocalOf {
     TypographyKeyTokens.BodyLarge

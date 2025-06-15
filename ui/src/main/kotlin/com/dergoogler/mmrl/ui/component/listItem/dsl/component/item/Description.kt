@@ -7,6 +7,7 @@ import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import com.dergoogler.mmrl.ext.toStyleMarkup
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
@@ -22,16 +23,21 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
  */
 @Composable
 fun ListItemScope.Description(
+    styleTransform: (@Composable (TextStyle) -> TextStyle)? = null,
     content: @Composable BoxScope.() -> Unit,
 ) {
-    val style = MaterialTheme.typography.bodyMedium.copy(
+    val baseTextStyle = MaterialTheme.typography.bodyMedium.copy(
         color = MaterialTheme.colorScheme.outline
     )
+
+    val finalTextStyle = if (styleTransform != null) {
+        styleTransform(baseTextStyle)
+    } else baseTextStyle
 
     Slot(
         slot = ListItemSlot.Description,
         content = {
-            ProvideTextStyle(style) {
+            ProvideTextStyle(finalTextStyle) {
                 content()
             }
         }
@@ -45,8 +51,11 @@ fun ListItemScope.Description(
  * @param text The description text. Supports style markup.
  */
 @Composable
-fun ListItemScope.Description(text: String) {
-    this.Description {
+fun ListItemScope.Description(
+    text: String,
+    styleTransform: (@Composable (TextStyle) -> TextStyle)? = null,
+) {
+    this.Description(styleTransform) {
         Text(text.toStyleMarkup())
     }
 }
@@ -60,7 +69,8 @@ fun ListItemScope.Description(text: String) {
 @Composable
 fun ListItemScope.Description(
     @StringRes id: Int,
-) = this.Description(stringResource(id))
+    styleTransform: (@Composable (TextStyle) -> TextStyle)? = null,
+) = this.Description(stringResource(id), styleTransform)
 
 
 /**
@@ -73,5 +83,6 @@ fun ListItemScope.Description(
 fun ListItemScope.Description(
     @StringRes id: Int,
     vararg formatArgs: Any,
-) = this.Description(stringResource(id, *formatArgs))
+    styleTransform: (@Composable (TextStyle) -> TextStyle)? = null,
+) = this.Description(stringResource(id, *formatArgs), styleTransform)
 
