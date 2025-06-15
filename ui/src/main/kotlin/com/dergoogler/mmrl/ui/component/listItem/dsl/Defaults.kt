@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.Dp
 
@@ -13,6 +14,12 @@ enum class ListItemSlot {
     End,
     Title,
     Description
+}
+
+enum class DialogItemSlot {
+    Description,
+    SupportingText,
+    TextField,
 }
 
 @LayoutScopeMarker
@@ -26,8 +33,8 @@ interface BaseListScope {
 @Immutable
 interface ListItemScope : BaseListScope {
     fun Modifier.layoutSlot(
-        slot: ListItemSlot,
-        disallow: List<ListItemSlot> = emptyList(),
+        slot: Any,
+        disallow: List<Any> = emptyList(),
     ): Modifier
 }
 
@@ -46,8 +53,8 @@ internal class ListItemScopeInstance(
     override val iconSize: Dp,
 ) : ListItemScope {
     override fun Modifier.layoutSlot(
-        slot: ListItemSlot,
-        disallow: List<ListItemSlot>,
+        slot: Any,
+        disallow: List<Any>,
     ): Modifier {
         if (disallow.contains(slot)) {
             throw IllegalStateException("Slot $slot is not allowed in this scope")

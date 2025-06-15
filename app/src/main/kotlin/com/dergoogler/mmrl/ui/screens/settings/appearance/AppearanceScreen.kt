@@ -10,7 +10,10 @@ import com.dergoogler.mmrl.ui.component.SettingsScaffold
 import com.dergoogler.mmrl.ui.component.listItem.ListEditTextItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.SwitchItem
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.TextEditDialogItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Description
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.DialogDescription
+import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.DialogSupportingText
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
 import com.dergoogler.mmrl.ui.navigation.graphs.SettingsScreen
 import com.dergoogler.mmrl.ui.providable.LocalNavController
@@ -51,19 +54,18 @@ fun AppearanceScreen() {
             Description(R.string.settings_terminal_line_numbers_desc)
         }
 
-        ListEditTextItem(
-            title = stringResource(id = R.string.settings_date_pattern),
-            desc = stringResource(id = R.string.settings_date_pattern_desc),
-            dialog = {
-                desc = {
-                    Text(text = System.currentTimeMillis().toFormattedDateSafely(it))
-                }
-            },
+        TextEditDialogItem(
             value = userPreferences.datePattern,
             onConfirm = {
                 viewModel.setDatePattern(it)
             }
-        )
+        ) {
+            Title(R.string.settings_date_pattern)
+            Description(R.string.settings_date_pattern_desc)
+
+            val date = System.currentTimeMillis().toFormattedDateSafely(it)
+            DialogDescription(R.string.settings_date_pattern_dialog_desc, date)
+        }
 
         RadioDialogItem(
             selection = userPreferences.homepage,

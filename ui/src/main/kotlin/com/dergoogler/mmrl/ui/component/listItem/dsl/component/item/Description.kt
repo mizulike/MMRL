@@ -32,7 +32,9 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
  *                This lambda is executed within a [BoxScope], allowing for flexible layout options.
  */
 @Composable
-fun ListItemScope.Description(content: @Composable BoxScope.() -> Unit) {
+fun ListItemScope.Description(
+    content: @Composable BoxScope.() -> Unit
+) {
     val style = MaterialTheme.typography.bodyMedium.copy(
         color = MaterialTheme.colorScheme.outline
     )
@@ -82,7 +84,7 @@ fun ListItemScope.Description(
 fun ListItemScope.Description(
     @StringRes id: Int,
     vararg formatArgs: Any,
-) = this.Description(stringResource(id, formatArgs))
+) = this.Description(stringResource(id, *formatArgs))
 
 @Composable
 fun ListItemScope.Description(
@@ -122,7 +124,7 @@ fun ListItemScope.Description(
     vararg formatArgs: Any,
     labels: List<@Composable () -> Unit>,
 ) = Description(
-    text = stringResource(id, formatArgs),
+    text = stringResource(id, *formatArgs),
     labels = labels
 )
 
@@ -171,7 +173,8 @@ fun ListItemScope.Description(
     vararg formatArgs: Any,
     onLearnMore: () -> Unit,
 ) = Description(
-    text = stringResource(id, formatArgs),
+    text = stringResource(id, *formatArgs),
     learnMoreText = learnMoreText,
     onLearnMore = onLearnMore
 )
+

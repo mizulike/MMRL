@@ -12,8 +12,8 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 
 @Composable
 fun ListItemScope.Slot(
-    slot: ListItemSlot,
-    disallow: List<ListItemSlot> = emptyList(),
+    slot: Any,
+    disallow: List<Any> = emptyList(),
     content: @Composable BoxScope.() -> Unit,
 ) {
     Box(modifier = Modifier.layoutSlot(slot, disallow)) {
@@ -23,7 +23,7 @@ fun ListItemScope.Slot(
 
 @Composable
 fun ListItemScope.FromSlot(
-    slot: ListItemSlot,
+    slot: Any,
     content: @Composable ListItemScope.() -> Unit,
 ) = SubcomposeLayout { constraints ->
     val measurables = subcompose(slot) {

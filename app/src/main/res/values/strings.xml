@@ -413,4 +413,5 @@
     <string name="settings_terminal_line_numbers">Line Numbers</string>
     <string name="settings_terminal_line_numbers_desc">Shows line numbers on the left side of the terminal</string>
     <string name="super_user_apps">SuperUser Apps</string>
+    <string name="settings_date_pattern_dialog_desc">The date will be parsed as [color=primary]%1$s[color]</string>
 </resources>
