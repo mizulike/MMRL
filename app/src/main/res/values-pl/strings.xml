@@ -6,7 +6,7 @@
     <string name="view_module_version_dialog_desc">Chcesz zainstalować czy pobrać tę wersję modułu\?</string>
     <string name="settings_delete_zip">Usuwaj plik zip</string>
     <string name="settings_delete_zip_desc">Usuwa plik zip modułu (za pomocą roota) po pomyślnej instalacji</string>
-    <string name="app_theme_palette">Paleta barw</string>
+    <string name="app_theme_palette">Paleta motywów</string>
     <string name="setup_non_root_title">Bez roota</string>
     <string name="install_flashing">Wgrywanie</string>
     <string name="install_done">Ukończona</string>
@@ -35,10 +35,10 @@
     <string name="settings_non_root_desc">Funkcjonalność jest ograniczona</string>
     <string name="settings_app_theme">Motyw aplikacji</string>
     <string name="settings_app_theme_desc">Zmień paletę barw i kolor tła motywu</string>
-    <string name="app_theme_dark_theme">Tło aplikacji</string>
-    <string name="app_theme_dark_theme_auto">Automatyczne</string>
-    <string name="app_theme_dark_theme_light">Jasne</string>
-    <string name="app_theme_dark_theme_dark">Ciemne</string>
+    <string name="app_theme_dark_theme">Ciemny motyw</string>
+    <string name="app_theme_dark_theme_auto">Auto</string>
+    <string name="app_theme_dark_theme_light">Jasny</string>
+    <string name="app_theme_dark_theme_dark">Ciemny</string>
     <string name="repo_modules">Ilość modułów: %d</string>
     <string name="repo_options_update">Zaktualizuj</string>
     <string name="repo_options_delete">Usuń</string>
@@ -54,7 +54,7 @@
     <string name="message_download_success">Pobieranie zakończone sukcesem</string>
     <string name="message_loading">Wczytywanie…</string>
     <string name="notification_name_download">Usługa pobierania</string>
-    <string name="search_empty">Nic nie znaleziono</string>
+    <string name="search_empty">Pusta lista</string>
     <string name="search_placeholder">Wyszukaj…</string>
     <string name="unknown_error">Nieznany błąd</string>
     <string name="view_module_source">Kod źródłowy</string>
@@ -266,7 +266,7 @@
     <string name="home_root_provider_se_linux_context">Kontekst SELinux</string>
     <string name="home_root_provider_version_name">Nazwa wersji dostawcy root</string>
     <string name="settings_root_version">Wersja: %s</string>
-    <string name="invalid_ip">To nie jest prawidłowy lokalny adres!</string>
+    <string name="invalid_ip">To nie jest prawidłowa domena lokalna!</string>
     <string name="settings_webui_remote_url">Zdalny adres WebUI</string>
     <string name="settings_developer">Opcje programisty</string>
     <string name="settings_webui_remote_url_desc">Aby ułatwić debugowanie, podaj lokalny adres, dla przykładu http://localhost. Zobacz powyższy alert, aby zobaczyć więcej.</string>
@@ -359,7 +359,7 @@
     <string name="select_your_platform">Wybierz swoją platformę</string>
     <string name="continue_with">Kontynuuj z %1$s</string>
     <string name="select">Wybierz</string>
-    <string name="welcome">Witaj!</string>
+    <string name="welcome">Witamy!</string>
     <string name="setup_root_note">Aby uzyskać dostęp do wszystkich funkcji MMRL, wymagane jest zrootowane urządzenie z Androidem. MMRL nie udostępnia instrukcji rootowania i nie ponosi odpowiedzialności za jakiekolwiek szkody, które mogą wystąpić podczas procesu rootowania lub z powodu korzystania z samego MMRL.</string>
     <string name="platform">Platforma</string>
     <string name="change_platform">Zmień platformę</string>
