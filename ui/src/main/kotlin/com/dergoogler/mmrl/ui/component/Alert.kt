@@ -35,6 +35,7 @@ fun Alert(
     contentColor = textColor,
 ) {
     Column(
+        modifier = Modifier.relative(),
         verticalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         title.nullable {

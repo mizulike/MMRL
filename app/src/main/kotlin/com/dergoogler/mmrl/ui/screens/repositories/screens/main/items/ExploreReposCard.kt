@@ -35,8 +35,8 @@ fun ExploreReposCard() {
         },
         modifier = Modifier.fillMaxWidth().padding(20.dp)
     ) {
-
         Row(
+            modifier = Modifier.relative(),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

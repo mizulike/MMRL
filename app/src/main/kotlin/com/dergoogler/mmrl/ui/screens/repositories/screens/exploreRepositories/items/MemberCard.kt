@@ -30,6 +30,7 @@ import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.toDecodedUrl
+import com.dergoogler.mmrl.ui.component.card.Absolute
 
 @Composable
 fun MemberCard(
@@ -39,34 +40,33 @@ fun MemberCard(
     val browser = LocalUriHandler.current
     val interactionSource = remember { MutableInteractionSource() }
 
-    Card(
-        absolute = {
-            index.nullable {
-                if (it < 3) {
-                    Surface(
-                        shape = RoundedCornerShape(
-                            topEnd = 20.dp,
-                            bottomStart = 15.dp,
-                            bottomEnd = 0.dp
-                        ),
-                        color = MaterialTheme.colorScheme.primary,
+    Card {
+        index.nullable {
+            if (it < 3) {
+                Surface(
+                    shape = RoundedCornerShape(
+                        topEnd = 20.dp,
+                        //bottomStart = 15.dp,
+                        bottomStart = 0.dp,
+                        bottomEnd = 0.dp
+                    ),
+                    color = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.absolute(Alignment.TopEnd)
+                ) {
+                    Text(
+                        text = "#${it + 1}",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier
-                            .align(Alignment.TopEnd)
-                    ) {
-                        Text(
-                            text = "#${it + 1}",
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            modifier = Modifier
-                                .padding(horizontal = 16.dp, vertical = 8.dp)
-                        )
-                    }
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                    )
                 }
             }
         }
-    ) {
+
         Column(
             modifier = Modifier
+                .relative()
                 .fillMaxWidth()
                 .padding(horizontal = 32.dp, vertical = 48.dp),
             horizontalAlignment = Alignment.CenterHorizontally,

@@ -55,10 +55,11 @@ fun ModuleItemDetailed(
 
     Card(
         enabled = enabled,
-        absoluteAlignment = Alignment.Center,
         onClick = onClick
     ) {
-        Column {
+        Column(
+            modifier = Modifier.relative()
+        ) {
             module.cover.nullable(menu.showCover) {
                 if (it.isNotEmpty()) {
                     Cover(

@@ -10,6 +10,7 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.LocalContentColor
@@ -18,6 +19,7 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -36,12 +38,61 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.applyAlpha
-import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ui.token.applyTonalElevation
 
 enum class CardSlot {
     Relative,
     Absolute
+}
+
+@Immutable
+internal data class CardLayoutId(
+    val slot: CardSlot,
+    val alignment: Alignment? = null,
+)
+
+@LayoutScopeMarker
+@Immutable
+interface CardScope {
+    fun Modifier.absolute(alignment: Alignment = Alignment.TopStart): Modifier
+    fun Modifier.relative(): Modifier
+}
+
+internal class CardScopeInstance : CardScope {
+    override fun Modifier.absolute(alignment: Alignment) =
+        layoutId(CardLayoutId(slot = CardSlot.Absolute, alignment = alignment))
+
+    override fun Modifier.relative() = layoutId(CardLayoutId(slot = CardSlot.Relative))
+}
+
+internal class CardAbsoluteScopeInstance(
+    private val cardScope: CardScope,
+    private val boxScope: BoxScope,
+) : CardScope by cardScope, BoxScope by boxScope
+
+@Composable
+fun CardScope.Relative(
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit,
+) = Box(
+    modifier = Modifier
+        .relative()
+        .then(modifier),
+    content = content
+)
+
+@Composable
+fun CardScope.Absolute(
+    modifier: Modifier = Modifier,
+    alignment: Alignment = Alignment.TopStart,
+    content: @Composable CardScope.() -> Unit,
+) = Box(
+    modifier = Modifier
+        .absolute(alignment = alignment)
+        .then(modifier)
+) {
+    val instance = remember { CardAbsoluteScopeInstance(this@Absolute, this) }
+    instance.content()
 }
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -58,12 +109,12 @@ fun Card(
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
     onClick: (() -> Unit)? = null,
     onLongClick: (() -> Unit)? = null,
-    absoluteAlignment: Alignment = Alignment.TopStart,
-    absolute: @Composable (BoxScope.() -> Unit)? = null,
-    relative: @Composable BoxScope.() -> Unit,
+    content: @Composable CardScope.() -> Unit,
 ) {
+    val instance = remember { CardScopeInstance() }
     val isHovered by interactionSource.collectIsHoveredAsState()
     val absoluteElevation = LocalAbsoluteTonalElevation.current + tonalElevation
+
     val clickableModifier = if (onClick != null || onLongClick != null) {
         Modifier
             .combinedClickable(
@@ -74,9 +125,7 @@ fun Card(
                 indication = ripple()
             )
             .hoverable(interactionSource)
-    } else {
-        Modifier
-    }
+    } else Modifier
 
     val hoveredBorder = if (isHovered) {
         BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary)
@@ -105,35 +154,38 @@ fun Card(
                 .then(clickableModifier)
                 .pointerInput(Unit) {}
                 .then(modifier),
-            content = {
-                Box(modifier = Modifier.layoutId(CardSlot.Relative)) {
-                    relative()
-                }
-                absolute.nullable {
-                    Box(modifier = Modifier.layoutId(CardSlot.Absolute)) {
-                        it()
-                    }
-                }
-            }
+            content = { instance.content() }
         ) { measurables, constraints ->
-            val relativeMeasurable = measurables.firstOrNull { it.layoutId == CardSlot.Relative }
-            val absoluteMeasurable = measurables.firstOrNull { it.layoutId == CardSlot.Absolute }
+            val relativeMeasurable = measurables.firstOrNull {
+                (it.layoutId as? CardLayoutId)?.slot == CardSlot.Relative
+            }
+            val absoluteMeasurables = measurables.filter {
+                (it.layoutId as? CardLayoutId)?.slot == CardSlot.Absolute
+            }
 
             val relativePlaceable = relativeMeasurable?.measure(constraints)
-            val absolutePlaceable = absoluteMeasurable?.measure(constraints)
+            val absolutePlaceables = absoluteMeasurables.map { it to it.measure(constraints) }
 
-            val width = maxOf(relativePlaceable?.width ?: 0, absolutePlaceable?.width ?: 0)
-            val height = maxOf(relativePlaceable?.height ?: 0, absolutePlaceable?.height ?: 0)
+            val width = maxOf(
+                relativePlaceable?.width ?: 0,
+                absolutePlaceables.maxOfOrNull { it.second.width } ?: 0
+            )
+            val height = maxOf(
+                relativePlaceable?.height ?: 0,
+                absolutePlaceables.maxOfOrNull { it.second.height } ?: 0
+            )
 
             layout(width, height) {
                 relativePlaceable?.placeRelative(0, 0)
 
-                absolutePlaceable.nullable { placeable ->
-                    val childSize = IntSize(placeable.width, placeable.height)
+                absolutePlaceables.forEach { (measurable, placeable) ->
+                    val layoutId = measurable.layoutId as? CardLayoutId
+                    val alignment = layoutId?.alignment ?: Alignment.TopStart
 
+                    val childSize = IntSize(placeable.width, placeable.height)
                     val parentSize = IntSize(width, height)
 
-                    val position = absoluteAlignment.align(
+                    val position = alignment.align(
                         size = childSize,
                         space = parentSize,
                         layoutDirection = layoutDirection
@@ -159,9 +211,7 @@ fun Modifier.card(
                 shape = shape,
                 clip = false
             )
-        } else {
-            Modifier
-        }
+        } else Modifier
     )
     .then(if (border != null) Modifier.border(border, shape) else Modifier)
     .background(color = backgroundColor, shape = shape)

@@ -44,32 +44,31 @@ internal fun RootItem(
         FeaturedManager.managers.find { userPreferences.workingMode == it.workingMode }
 
     Card(
-        modifier = Modifier.padding(20.dp),
         color = MaterialTheme.colorScheme.secondaryContainer,
-        absolute = {
-            developerMode.takeTrue {
-                Surface(
-                    shape = RoundedCornerShape(
-                        topEnd = 20.dp,
-                        bottomStart = 15.dp,
-                        bottomEnd = 0.dp
-                    ),
-                    color = MaterialTheme.colorScheme.primary,
+    ) {
+        developerMode.takeTrue {
+            Surface(
+                shape = RoundedCornerShape(
+                    topEnd = 20.dp,
+                    bottomStart = 15.dp,
+                    bottomEnd = 0.dp
+                ),
+                color = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .absolute(Alignment.TopEnd)
+            ) {
+                Text(
+                    text = "USER!DEV",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
                     modifier = Modifier
-                        .align(Alignment.TopEnd)
-                ) {
-                    Text(
-                        text = "USER!DEV",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 8.dp)
-                    )
-                }
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                )
             }
         }
-    ) {
+
         Row(
+            modifier = Modifier.relative().padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

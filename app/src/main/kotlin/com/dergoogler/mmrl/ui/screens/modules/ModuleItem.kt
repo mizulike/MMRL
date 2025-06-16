@@ -67,6 +67,8 @@ import com.dergoogler.mmrl.platform.model.ModId.Companion.moduleDir
 import com.dergoogler.mmrl.ui.component.BottomSheet
 import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.LocalCover
+import com.dergoogler.mmrl.ui.component.card.Absolute
+import com.dergoogler.mmrl.ui.component.card.CardScope
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.utils.WebUIXPackageName
 import com.dergoogler.mmrl.utils.launchWebUI
@@ -82,7 +84,7 @@ fun ModuleItem(
     alpha: Float = 1f,
     decoration: TextDecoration = TextDecoration.None,
     switch: @Composable() (() -> Unit?)? = null,
-    indicator: @Composable() (BoxScope.() -> Unit?)? = null,
+    indicator: @Composable() (CardScope.() -> Unit?)? = null,
     startTrailingButton: @Composable() (RowScope.() -> Unit)? = null,
     trailingButton: @Composable() (RowScope.() -> Unit),
     isBlacklisted: Boolean = false,
@@ -117,13 +119,19 @@ fun ModuleItem(
             width = 1.dp,
             color = MaterialTheme.colorScheme.errorContainer
         ),
-        absoluteAlignment = Alignment.Center,
-        absolute = {
-            indicator?.invoke(this)
-        },
         onClick = clicker
     ) {
-        Column {
+        indicator.nullable {
+            Absolute(
+                alignment = Alignment.Center,
+            ) {
+                it()
+            }
+        }
+
+        Column(
+            modifier = Modifier.relative(),
+        ) {
             module.config.cover.nullable(menu.showCover) {
                 val file = SuFile(module.id.moduleDir, it)
 

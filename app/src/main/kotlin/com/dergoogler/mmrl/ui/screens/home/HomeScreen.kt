@@ -71,6 +71,7 @@ import com.dergoogler.mmrl.ui.component.SELinuxStatus
 import com.dergoogler.mmrl.ui.component.TopAppBar
 import com.dergoogler.mmrl.ui.component.TopAppBarEventIcon
 import com.dergoogler.mmrl.ui.component.card.Card
+import com.dergoogler.mmrl.ui.component.card.Relative
 import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.ListItemDefaults
 import com.dergoogler.mmrl.ui.component.listItem.ListProgressBarItem
@@ -211,8 +212,9 @@ fun HomeScreen(
                         modifier = Modifier.padding(vertical = 16.dp)
                     ) {
                         val uname = Os.uname()
-                        Column {
-
+                        Column(
+                            modifier = Modifier.relative()
+                        ) {
                             scope.Item {
                                 Icon(painter = painterResource(R.drawable.cookie_man))
                                 Title(R.string.kernel)
@@ -259,14 +261,18 @@ fun HomeScreen(
                             Card(
                                 modifier = Modifier.padding(vertical = 16.dp)
                             ) {
-                                scope.Item {
-                                    Title(R.string.home_root_provider_version_name)
-                                    Description(viewModel.versionName)
-                                }
+                                Column(
+                                    modifier = Modifier.relative()
+                                ) {
+                                    scope.Item {
+                                        Title(R.string.home_root_provider_version_name)
+                                        Description(viewModel.versionName)
+                                    }
 
-                                scope.Item {
-                                    Title(R.string.home_root_provider_se_linux_context)
-                                    Description(viewModel.seLinuxContext)
+                                    scope.Item {
+                                        Title(R.string.home_root_provider_se_linux_context)
+                                        Description(viewModel.seLinuxContext)
+                                    }
                                 }
                             }
                         }
@@ -282,9 +288,11 @@ fun HomeScreen(
                                         .padding(vertical = 16.dp)
                                         .weight(1f)
                                 ) {
-                                    scope.Item {
-                                        Title(R.string.home_installed_modules)
-                                        Description(it.totalModules.toString())
+                                    Relative {
+                                        scope.Item {
+                                            Title(R.string.home_installed_modules)
+                                            Description(it.totalModules.toString())
+                                        }
                                     }
                                 }
 
@@ -293,9 +301,11 @@ fun HomeScreen(
                                         .padding(vertical = 16.dp)
                                         .weight(1f)
                                 ) {
-                                    scope.Item {
-                                        Title(R.string.home_updated_modules)
-                                        Description(it.totalUpdated.toString())
+                                    Relative {
+                                        scope.Item {
+                                            Title(R.string.home_updated_modules)
+                                            Description(it.totalUpdated.toString())
+                                        }
                                     }
                                 }
                             }
@@ -304,31 +314,33 @@ fun HomeScreen(
                                 modifier = Modifier
                                     .padding(vertical = 16.dp)
                             ) {
-                                scope.Item {
-                                    Title(R.string.home_storage_usage)
+                                Relative {
+                                    scope.Item {
+                                        Title(R.string.home_storage_usage)
 
-                                    Description {
-                                        Row(
-                                            verticalAlignment = Alignment.CenterVertically,
-                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                                        ) {
-                                            Text(
-                                                text = it.totalModulesUsageBytes.toFormattedFileSize(),
-                                            )
+                                        Description {
+                                            Row(
+                                                verticalAlignment = Alignment.CenterVertically,
+                                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                Text(
+                                                    text = it.totalModulesUsageBytes.toFormattedFileSize(),
+                                                )
 
-                                            LinearProgressIndicator(
-                                                progress = {
-                                                    it.totalStorageUsage
-                                                },
-                                                modifier = Modifier
-                                                    .height(10.dp)
-                                                    .weight(1f),
-                                                drawStopIndicator = {}
-                                            )
-                                            
-                                            Text(
-                                                text = it.totalDeviceStorageBytes.toFormattedFileSize(),
-                                            )
+                                                LinearProgressIndicator(
+                                                    progress = {
+                                                        it.totalStorageUsage
+                                                    },
+                                                    modifier = Modifier
+                                                        .height(10.dp)
+                                                        .weight(1f),
+                                                    drawStopIndicator = {}
+                                                )
+
+                                                Text(
+                                                    text = it.totalDeviceStorageBytes.toFormattedFileSize(),
+                                                )
+                                            }
                                         }
                                     }
                                 }
@@ -342,9 +354,11 @@ fun HomeScreen(
                                         .padding(vertical = 16.dp)
                                         .weight(1f)
                                 ) {
-                                    scope.Item {
-                                        Title(R.string.home_enabled_modules)
-                                        Description(it.totalEnabled.toString())
+                                    Relative {
+                                        scope.Item {
+                                            Title(R.string.home_enabled_modules)
+                                            Description(it.totalEnabled.toString())
+                                        }
                                     }
                                 }
 
@@ -353,9 +367,11 @@ fun HomeScreen(
                                         .padding(vertical = 16.dp)
                                         .weight(1f)
                                 ) {
-                                    scope.Item {
-                                        Title(R.string.home_disabled_modules)
-                                        Description(it.totalDisabled.toString())
+                                    Relative {
+                                        scope.Item {
+                                            Title(R.string.home_disabled_modules)
+                                            Description(it.totalDisabled.toString())
+                                        }
                                     }
                                 }
                             }
@@ -370,22 +386,24 @@ fun HomeScreen(
                             browser.openUri("https://github.com/sponsors/DerGoogler")
                         }
                     ) {
-                        scope.Item {
-                            Title(
-                                id = R.string.home_support_title,
-                                styleTransform = {
-                                    val newStyle = it.copy(color = Color.Unspecified)
-                                    it.merge(newStyle)
-                                }
-                            )
+                        Relative {
+                            scope.Item {
+                                Title(
+                                    id = R.string.home_support_title,
+                                    styleTransform = {
+                                        val newStyle = it.copy(color = Color.Unspecified)
+                                        it.merge(newStyle)
+                                    }
+                                )
 
-                            Description(
-                                id = R.string.home_support_content,
-                                styleTransform = {
-                                    val newStyle = it.copy(color = Color.Unspecified)
-                                    it.merge(newStyle)
-                                }
-                            )
+                                Description(
+                                    id = R.string.home_support_content,
+                                    styleTransform = {
+                                        val newStyle = it.copy(color = Color.Unspecified)
+                                        it.merge(newStyle)
+                                    }
+                                )
+                            }
                         }
                     }
                 }

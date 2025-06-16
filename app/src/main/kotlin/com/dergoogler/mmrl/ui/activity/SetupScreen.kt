@@ -92,7 +92,9 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
                             remember(currentSelection) { currentSelection == manager }
 
                         Card {
-                            List {
+                            List(
+                                modifier = Modifier.relative()
+                            ) {
                                 RadioItem(
                                     selected = selected,
                                     interactionSource = interactionSource,

@@ -81,7 +81,9 @@ fun RepositoryItem(
         enabled = repo.compatible,
         onClick = onClick
     ) {
-        Column {
+        Column(
+            modifier = Modifier.relative()
+        ) {
             repoCover.nullable(menu.showCover) {
                 if (it.isNotEmpty()) {
                     Box(
