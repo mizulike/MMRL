@@ -14,7 +14,6 @@
     <string name="working_mode_kernelsu_desc">OverlayFS kullanarak sistemsiz modül desteği, kullanıcı alanı uygulamaları üzerinde gelişmiş kontrol ve özelleştirilebilir root ayrıcalıkları sunan bir çekirdek tabanlı root çözümü.</string>
     <string name="working_mode_magisk_desc">Android özelleştirmesi için araçlar seti, root erişimi, modül desteği, önyükleme imajı değişikliği ve Zygisk ile işlem düzeyinde kod yürütme.</string>
     <string name="working_mode_shizuku_desc">Uygulamaların tam root erişimi olmadan sistem düzeyinde komutları yürütmesine izin veren izin tabanlı bir çözüm. Sui veya Shizuku\'dan yetki gerektirir, belirli işlemler için yükseltilmiş ayrıcalıkları etkinleştirirken sistem bütünlüğünü korur.</string>
-
     <!-- Yükleme -->
     <string name="install_screen_title">Yükleme</string>
     <string name="install_flashing">Yükleniyor</string>
