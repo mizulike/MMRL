@@ -39,7 +39,7 @@ class ActionViewModel @Inject constructor(
         Timber.d("ActionViewModel initialized")
     }
 
-    suspend fun runAction(scope: CoroutineScope, modId: ModId) {
+    suspend fun runAction(modId: ModId) = withContext(Dispatchers.IO) {
         val module = localModule(modId.toString())
         val userPreferences = userPreferencesRepository.data.first()
         event = Event.LOADING
@@ -47,19 +47,19 @@ class ActionViewModel @Inject constructor(
         if (module == null) {
             event = Event.FAILED
             log(R.string.module_not_found)
-            return
+            return@withContext
         }
 
         if (!module.hasAction) {
             event = Event.FAILED
             log(R.string.this_module_don_t_have_an_action)
-            return
+            return@withContext
         }
 
         if (module.state == State.DISABLE || module.state == State.REMOVE) {
             event = Event.FAILED
             log(R.string.module_is_disabled_or_removed_unable_to_execute_action)
-            return
+            return@withContext
         }
 
         val result = action(modId, userPreferences.useShellForModuleAction)
