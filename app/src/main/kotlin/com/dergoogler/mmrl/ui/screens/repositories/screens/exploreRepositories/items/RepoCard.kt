@@ -30,7 +30,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.fadingEdge
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.nullable
-import com.dergoogler.mmrl.ui.component.card.Relative
+import com.dergoogler.mmrl.ui.component.card.component.Relative
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
 
 @Composable
@@ -51,7 +51,9 @@ fun RepoCard(
             )
         }
     ) {
-        Relative {
+        Column(
+            modifier = Modifier.relative()
+        ) {
             repoCover.nullable(menu.showCover) {
                 if (it.isNotEmpty()) {
                     Box(

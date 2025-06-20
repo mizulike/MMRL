@@ -6,11 +6,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.hoverable
+import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
-import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.LocalContentColor
@@ -19,7 +17,6 @@ import androidx.compose.material3.contentColorFor
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
@@ -40,61 +37,33 @@ import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.ext.applyAlpha
 import com.dergoogler.mmrl.ui.token.applyTonalElevation
 
-enum class CardSlot {
-    Relative,
-    Absolute
-}
-
-@Immutable
-internal data class CardLayoutId(
-    val slot: CardSlot,
-    val alignment: Alignment? = null,
-)
-
-@LayoutScopeMarker
-@Immutable
-interface CardScope {
-    fun Modifier.absolute(alignment: Alignment = Alignment.TopStart): Modifier
-    fun Modifier.relative(): Modifier
-}
-
-internal class CardScopeInstance : CardScope {
-    override fun Modifier.absolute(alignment: Alignment) =
-        layoutId(CardLayoutId(slot = CardSlot.Absolute, alignment = alignment))
-
-    override fun Modifier.relative() = layoutId(CardLayoutId(slot = CardSlot.Relative))
-}
-
-internal class CardAbsoluteScopeInstance(
-    private val cardScope: CardScope,
-    private val boxScope: BoxScope,
-) : CardScope by cardScope, BoxScope by boxScope
-
-@Composable
-fun CardScope.Relative(
-    modifier: Modifier = Modifier,
-    content: @Composable BoxScope.() -> Unit,
-) = Box(
-    modifier = Modifier
-        .relative()
-        .then(modifier),
-    content = content
-)
-
-@Composable
-fun CardScope.Absolute(
-    modifier: Modifier = Modifier,
-    alignment: Alignment = Alignment.TopStart,
-    content: @Composable CardScope.() -> Unit,
-) = Box(
-    modifier = Modifier
-        .absolute(alignment = alignment)
-        .then(modifier)
-) {
-    val instance = remember { CardAbsoluteScopeInstance(this@Absolute, this) }
-    instance.content()
-}
-
+/**
+ * A Composable function that creates a card with customizable appearance and behavior.
+ *
+ * This card supports relative and absolute positioning of its content, click and long-click
+ * interactions, and Material Design styling options like color, shape, elevation, and border.
+ *
+ * @param modifier The modifier to be applied to the card.
+ * @param enabled Controls the enabled state of the card. When `false`, the card will appear
+ * dimmed and will not be interactive.
+ * @param color The background color of the card.
+ * @param contentColor The preferred color for content inside the card.
+ * @param shape The shape of the card's container.
+ * @param tonalElevation The tonal elevation of the card. This is used to apply a subtle overlay
+ * color that indicates the card's elevation.
+ * @param shadowElevation The shadow elevation of the card. This creates a visual shadow effect
+ * beneath the card.
+ * @param border Optional border to draw around the card.
+ * @param interactionSource The [MutableInteractionSource] representing the stream of
+ * [Interaction]s for this card. You can create and pass in your own `remember`ed
+ * instance to observe [Interaction]s and customize the appearance / behavior of this card in
+ * different states.
+ * @param onClick Optional lambda to be invoked when the card is clicked.
+ * @param onLongClick Optional lambda to be invoked when the card is long-clicked.
+ * @param content The content to be displayed inside the card. This lambda receives a [CardScope]
+ * which provides modifiers for positioning child elements (e.g., `Modifier.relative()`,
+ * `Modifier.absolute()`).
+ */
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Card(

@@ -30,7 +30,6 @@ import dev.dergoogler.mmrl.compat.core.LocalUriHandler
 import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.toDecodedUrl
-import com.dergoogler.mmrl.ui.component.card.Absolute
 
 @Composable
 fun MemberCard(
