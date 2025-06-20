@@ -46,7 +46,6 @@ import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.ext.fadingEdge
 import com.dergoogler.mmrl.ext.isPackageInstalled
-import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.local.State
 import com.dergoogler.mmrl.model.local.versionDisplay
 import com.dergoogler.mmrl.ui.component.LabelItem
@@ -54,6 +53,7 @@ import com.dergoogler.mmrl.ui.component.text.TextWithIcon
 import com.dergoogler.mmrl.ui.component.card.Card
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.ext.nullable
+import com.dergoogler.mmrl.ext.rememberTrue
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.ext.toStyleMarkup
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.config
@@ -67,6 +67,7 @@ import com.dergoogler.mmrl.ui.component.LocalCover
 import com.dergoogler.mmrl.ui.component.card.component.Absolute
 import com.dergoogler.mmrl.ui.component.card.CardScope
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
+import com.dergoogler.mmrl.ui.providable.LocalStoredModule
 import com.dergoogler.mmrl.utils.WebUIXPackageName
 import com.dergoogler.mmrl.utils.launchWebUI
 import com.dergoogler.mmrl.utils.toFormattedDateSafely
@@ -75,7 +76,6 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ModuleItem(
-    module: LocalModule,
     progress: Float,
     indeterminate: Boolean = false,
     alpha: Float = 1f,
@@ -91,18 +91,27 @@ fun ModuleItem(
     val menu = userPreferences.modulesMenu
     val context = LocalContext.current
 
+    val module = LocalStoredModule.current
+
     var requiredAppBottomSheet by remember { mutableStateOf(false) }
 
-    val canWenUIAccessed =
+    val canWenUIAccessed = remember(isProviderAlive, module) {
         isProviderAlive && module.hasWebUI && module.state != State.REMOVE
+    }
 
-    val clicker: (() -> Unit)? = canWenUIAccessed nullable jump@{
-        if (!context.isPackageInstalled(WebUIXPackageName)) {
-            requiredAppBottomSheet = true
-            return@jump
+    val isWebUIXNotInstalled = remember(context) {
+        !context.isPackageInstalled(WebUIXPackageName)
+    }
+
+    val clicker: (() -> Unit)? = remember(canWenUIAccessed) {
+        canWenUIAccessed nullable jump@{
+            if (isWebUIXNotInstalled) {
+                requiredAppBottomSheet = true
+                return@jump
+            }
+
+            userPreferences.launchWebUI(context, module.id)
         }
-
-        userPreferences.launchWebUI(context, module.id)
     }
 
     if (requiredAppBottomSheet) {
@@ -216,7 +225,7 @@ fun ModuleItem(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                userPreferences.developerMode.takeTrue {
+                userPreferences.developerMode.rememberTrue {
                     LabelItem(
                         text = module.id.id,
                         upperCase = false

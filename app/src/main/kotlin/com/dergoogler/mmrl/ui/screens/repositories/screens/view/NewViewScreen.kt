@@ -250,6 +250,8 @@ fun NewViewScreen(
         }
     )
 
+    val isBlacklisted by module.isBlacklisted
+
     var versionSelectBottomSheet by remember { mutableStateOf(false) }
     if (versionSelectBottomSheet) VersionSelectBottomSheet(
         onClose = { versionSelectBottomSheet = false },
@@ -258,7 +260,7 @@ fun NewViewScreen(
         isProviderAlive = viewModel.isProviderAlive,
         getProgress = { viewModel.getProgress(it) },
         onDownload = download,
-        isBlacklisted = module.isBlacklisted
+        isBlacklisted = isBlacklisted
     )
 
     var viewTrackBottomSheet by remember { mutableStateOf(false) }
@@ -576,7 +578,7 @@ fun NewViewScreen(
                         }
 
                         Button(
-                            enabled = viewModel.isProviderAlive && lastVersionItem != null && !module.isBlacklisted,
+                            enabled = viewModel.isProviderAlive && lastVersionItem != null && ! isBlacklisted,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .weight(1f),

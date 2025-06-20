@@ -139,6 +139,7 @@ fun ModulesScreen(
                     state = listState,
                     viewModel = viewModel,
                     onDownload = download,
+                    isProviderAlive = viewModel.isProviderAlive,
                 )
             }
         }

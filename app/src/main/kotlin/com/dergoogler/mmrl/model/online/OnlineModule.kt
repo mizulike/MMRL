@@ -1,6 +1,7 @@
 package com.dergoogler.mmrl.model.online
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import com.dergoogler.mmrl.ext.isNotNullOrEmpty
 import com.dergoogler.mmrl.platform.Platform
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
@@ -152,6 +153,6 @@ inline fun <R> OnlineModule.hasCategories(block: (List<String>) -> R): R? {
 inline fun <R> OnlineModule.hasBlacklist(block: (Blacklist) -> R): R? =
     Blacklist.hasBlacklist(blacklist, block)
 
-val OnlineModule.isBlacklisted: Boolean
+val OnlineModule.isBlacklisted: State<Boolean>
     @Composable get() = Blacklist.isBlacklisted(blacklist)
 
