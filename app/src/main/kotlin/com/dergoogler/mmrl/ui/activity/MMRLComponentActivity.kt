@@ -23,6 +23,7 @@ import androidx.navigation.compose.rememberNavController
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.compat.PermissionCompat
 import com.dergoogler.mmrl.datastore.UserPreferencesRepository
+import com.dergoogler.mmrl.ext.compose.providable.LocalActivity
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
 import com.dergoogler.mmrl.ui.providable.LocalLifecycle
@@ -195,6 +196,7 @@ fun BaseContent(
         navController = navController,
         themeColor = preferences.themeColor,
         providerValues = arrayOf(
+            LocalActivity provides activity,
             LocalSettings provides hiltViewModel<SettingsViewModel>(activity),
             LocalUserPreferences provides preferences,
             dev.dergoogler.mmrl.compat.core.LocalUriHandler provides MMRLUriHandlerImpl(
