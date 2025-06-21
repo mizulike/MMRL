@@ -14,7 +14,6 @@
     <string name="working_mode_kernelsu_desc">OverlayFS kullanarak sistemsiz modül desteği, kullanıcı alanı uygulamaları üzerinde gelişmiş kontrol ve özelleştirilebilir root ayrıcalıkları sunan bir çekirdek tabanlı root çözümü.</string>
     <string name="working_mode_magisk_desc">Android özelleştirmesi için araçlar seti, root erişimi, modül desteği, önyükleme imajı değişikliği ve Zygisk ile işlem düzeyinde kod yürütme.</string>
     <string name="working_mode_shizuku_desc">Uygulamaların tam root erişimi olmadan sistem düzeyinde komutları yürütmesine izin veren izin tabanlı bir çözüm. Sui veya Shizuku\'dan yetki gerektirir, belirli işlemler için yükseltilmiş ayrıcalıkları etkinleştirirken sistem bütünlüğünü korur.</string>
-
     <!-- Yükleme -->
     <string name="install_screen_title">Yükleme</string>
     <string name="install_flashing">Yükleniyor</string>
@@ -92,7 +91,7 @@
     <string name="view_module_provided_by">Tarafından Sağlandı</string>
     <string name="view_module_added_on">Eklendi</string>
     <string name="view_module_about_this_module">Bu Modül Hakkında</string>
-    <string name="view_module_section_count">%1$s+</string>
+    <string name="view_module_section_count">+%1$s</string>
     <string name="view_module_donate">Bağış Yap</string>
     <string name="view_module_donate_desc">Bu modül geliştiricisine bir kahve bağışlayarak destek olun! ☕</string>
     <string name="view_module_module_id">Modül Kimliği</string>
@@ -149,7 +148,7 @@
     <string name="settings_non_root_desc">İşlevsellik sınırlı</string>
     <!-- Uygulama -->
     <string name="settings_app_theme">Uygulama Teması</string>
-    <string name="settings_app_theme_desc">Renk şemasını ve gece modunu değiştirin</string>
+    <string name="settings_app_theme_desc">Renk düzenini ve gece modunu değiştirin</string>
     <string name="settings_download_path">İndirme Yolu</string>
     <string name="settings_delete_zip">Zip Dosyasını Sil</string>
     <string name="settings_delete_zip_desc">Modülün yüklenmesi başarılı olduktan sonra zip dosyasını siler, bu Süper Kullanıcı tarafından yürütülecektir</string>
@@ -194,11 +193,11 @@
     <string name="settings_developer">Geliştirici</string>
     <string name="settings_developer_desc">Geliştiriciler için hata ayıklama araçları</string>
     <string name="settings_webui_remote_url">WebUI Uzak URL</string>
-    <string name="settings_webui_remote_url_desc">Hata ayıklamayı basitleştirmek için http://localhost gibi bir yerel alan adı sağlayın. Daha fazlası için yukarıdaki uyarıya bakın.</string>
+    <string name="settings_webui_remote_url_desc">Hata ayıklamayı kolaylaştırmak için http://localhost gibi yerel bir alan adı sağlayın. Daha fazla bilgi için yukarıdaki uyarıya bakınız.</string>
     <string name="settings_webui_remote_url_alert_desc">WebUI, tüm modüller için artık belirttiğiniz adresi kullanacak, SSL hatalarını atlayacak ve /data/adb/modules/{ID}/webroot\'a erişimi devre dışı bırakacaktır. Bu özelliği kullanmak için yerel bir öz-imzalı web sunucusu gerekir, bu özellik sadece hata ayıklama amacıyla tasarlanmıştır, günlük kullanım için değildir ve kendi sorumluluğunuzda kullanılır.</string>
     <!-- Uygulama Teması -->
     <string name="app_theme_palette">Tema Paleti</string>
-    <string name="app_theme_dark_theme">Karanlık Tema</string>
+    <string name="app_theme_dark_theme">Koyu Tema</string>
     <string name="app_theme_dark_theme_auto">Otomatik</string>
     <string name="app_theme_dark_theme_light">Açık</string>
     <string name="app_theme_dark_theme_dark">Koyu</string>
@@ -309,7 +308,7 @@
     <string name="action_screen_cancel_text">Bu eylemi iptal etmek istediğinizden emin misiniz?</string>
     <string name="settings_use_generic_action">Genel Eylemi Kullan</string>
     <string name="settings_use_generic_action_desc">Çoğu root sağlayıcısı, bir eylem CLI komutu desteklemez. Bunun yerine genel bir betik kullanabilirsiniz</string>
-    <string name="learn_more">Daha Fazla Bilgi</string>
+    <string name="learn_more">Daha fazla bilgi edin</string>
     <string name="sponsors">Sponsorlar</string>
     <string name="blacklisted">Kara Listeye Alındı</string>
     <string name="blacklisted_desc">Bu modül MMRL tarafından kara listeye alındı. Güvenliğinizi sağlamak için yükleme devre dışı bırakıldı. Yine de bu modülü yüklemek istiyorsanız, ayarlardan kara liste uyarılarını devre dışı bırakabilirsiniz. Bunu yapmak için **Ayarlar → Güvenlik → Kara Liste Uyarıları**\'na gidin.\n@more(Daha fazla bilgi)</string>
@@ -380,5 +379,9 @@
     <string name="missing_mod_id">Bir Modül Kimliği tanımlanmadı</string>
     <string name="are_you_sure_you_want_to_exit">Çıkmak istediğinizden emin misiniz?</string>
     <string name="exit">Çıkış</string>
-    <string name="says">%1$s diyor</string>
+    <string name="says">%1$s şöyle diyor</string>
+    <string name="working_mode_sukisu_title">SukiSU Ultra</string>
+    <string name="settings_webui_engine_desc">Tercih ettiğiniz motoru seçin</string>
+    <string name="settings_webui_engine">WebUI Motoru</string>
+    <string name="settings_webui_engine_wx">WebUI X</string>
 </resources>

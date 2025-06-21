@@ -79,7 +79,7 @@
     <string name="view_module_provided_by">提供元</string>
     <string name="view_module_added_on">追加日</string>
     <string name="view_module_about_this_module">このモジュールについて</string>
-    <string name="view_module_section_count">%1$s+</string>
+    <string name="view_module_section_count">+%1$s</string>
     <string name="view_module_donate">寄付</string>
     <string name="view_module_donate_desc">このモジュールの開発者にコーヒーをご馳走して愛を伝えましょう！ ☕</string>
     <string name="view_module_module_id">モジュール ID</string>
@@ -128,7 +128,7 @@
     <string name="settings_non_root_desc">機能が制限されています</string>
     <!-- App -->
     <string name="settings_app_theme">アプリテーマ</string>
-    <string name="settings_app_theme_desc">カラースキームとナイトモードを変更します。</string>
+    <string name="settings_app_theme_desc">カラースキームとナイトモードを変更します</string>
     <string name="settings_download_path">ダウンロードのパス</string>
     <string name="settings_delete_zip">Zip ファイルの削除</string>
     <string name="settings_delete_zip_desc">インストールの成功後にモジュールの Zip ファイルを削除します (スーパーユーザー権限が必須)。</string>
@@ -139,7 +139,7 @@
     <string name="settings_blacklist">ブラックリスト</string>
     <string name="settings_blacklist_desc">クローズドソースまたは危険な可能性のあるモジュールの一覧</string>
     <string name="settings_date_pattern">日付のパターン</string>
-    <string name="settings_date_pattern_desc">日付形式を変更します。</string>
+    <string name="settings_date_pattern_desc">独自の日付形式を使用します</string>
     <string name="settings_updates">更新</string>
     <string name="settings_updates_desc">更新プロセスに関する設定を管理します</string>
     <string name="settings_homepage">アプリホームページ</string>
@@ -158,11 +158,11 @@
     <string name="settings_check_modules_update_interval_desc">インストールされたモジュールを自動で確認する間隔を設定します。</string>
     <string name="settings_include_preleases">プレリリースを含める</string>
     <string name="settings_developer_mode">開発者モード</string>
-    <string name="settings_developer_mode_desc">モジュール ID などを表示します。</string>
+    <string name="settings_developer_mode_desc">モジュール [color=primary]ID[/color] などを表示します。</string>
     <string name="settings_privacy_policy">プライバシーポリシー</string>
     <string name="settings_clear_install_terminal">ターミナルログを消去</string>
     <string name="settings_clear_install_terminal_desc">複数のモジュールをインストール時にインストールターミナルのログを消去します。</string>
-    <string name="settings_shell_module_state_change">状態にシェルを使用する</string>
+    <string name="settings_shell_module_state_change">状態にシェルを使用</string>
     <string name="settings_shell_module_state_change_desc">モジュールディレクトリにファイルを作成する代わりにシェルを使用します (一度有効化すると復元ボタンが使用不可能になります)。</string>
     <!-- App Theme -->
     <string name="app_theme_palette">テーマパレット</string>
@@ -253,7 +253,7 @@
     <string name="kernel">カーネル</string>
     <string name="manager_version">マネージャーのバージョン</string>
     <string name="fingerprint">フィンガープリント</string>
-    <string name="new_version_available">新しいバージョン %s が利用可能です。タップで更新します。</string>
+    <string name="new_version_available">新しいバージョン [italic]%s[/italic] が利用可能です。タップで更新します。</string>
     <string name="hidden">非表示</string>
     <string name="pre_release">プレリリース</string>
     <string name="unsafe_url_redirecting">安全でない URL: %1$s にリダイレクト中…</string>
@@ -292,7 +292,7 @@
     <string name="settings_developer_desc">開発者向けデバッグツール</string>
     <string name="working_mode_kernelsu_next_desc">Magic Mount のサポート、ユーザー空間アプリに対する強化された制御とカスタマイズ可能な root 権限を備えた、高度なカーネルベースの root ソリューションです。</string>
     <string name="working_mode_magisk_desc">Android カスタマイズ用のツールスイートです。root アクセス、モジュールのサポートと boot イメージの変更、Zygisk によるプロセスレベルのコード実行を提供します。</string>
-    <string name="settings_webui_remote_url_desc">デバッグを簡素化するには、http://localhost などのローカルドメインを指定します。詳細については、上記のアラートを参照してください。</string>
+    <string name="settings_webui_remote_url_desc">デバッグを簡素化するために http://localhost などのローカルドメインを指定してください。詳細は上記のアラートをご確認ください</string>
     <string name="install_screen_cancel_text">インストールをキャンセルしてもよろしいですか？</string>
     <string name="action_screen_cancel_title">アクションをキャンセルしますか？</string>
     <string name="menu_pin_action">アクションをピン留め</string>
@@ -305,12 +305,12 @@
     <string name="settings_blacklist_alerts">ブラックリストアラート</string>
     <string name="settings_blacklist_alerts_desc">ローカルのモジュールとモジュールを探すでアラートを表示してブラックリストに登録済みのモジュールのインストールをブロックします。</string>
     <string name="install_screen_cancel_title">インストールをキャンセルしますか？</string>
-    <string name="settings_use_generic_action">一般的なアクションを使用する</string>
+    <string name="settings_use_generic_action">一般的なアクションを使用</string>
     <string name="working_mode_apatch_desc">Android カーネルとシステムのパッチを適用します。Magisk やカーネル関数のインジェクションに類似したモジュールをサポートする新しい root ソリューション (inline-hook と syscall-table-hook が必要) です。KernelSU から派生および変更がされています。</string>
     <string name="working_mode_kernelsu_desc">ユーザー空間アプリに対する強化された制御とカスタマイズ可能な root 権限、OverlayFS を使用した Systemless モジュールのサポートを提供するカーネルベースの root ソリューションです。</string>
     <string name="settings_webui_remote_url_alert_desc">WebUI はすべてのモジュールに対して、提供されたアドレスを一貫して使用してSSL エラーをバイパスし、/data/adb/modules/{ID}/webroot へのアクセスを無効化するようになりました。この機能を使用するには、自己署名されたローカル Web サーバーが必要です。この機能はデバッグを目的としており、日常的な使用を意図した物ではありません。自己責任で使用してください。</string>
     <string name="settings_use_generic_action_desc">ほとんどの root プロバイダーはアクション CLI コマンドをサポートしていません。代わりに汎用スクリプトを使用できます。</string>
-    <string name="blacklisted_desc">このモジュールは、MMRL によってブラックリストに登録されています。セキュリティを確保するためにインストールは無効化されています。それでもインストールする場合は、 **設定 → セキュリティ → ブラックリストアラート**でブラックリストアラートを停止することができます。\n@詳細を表示</string>
+    <string name="blacklisted_desc">このモジュールは、MMRL によってブラックリストに登録されています。セキュリティを確保するためにインストールは無効化されています。それでもインストールする場合は、[bold]設定 → セキュリティ → ブラックリストアラート[/bold]でブラックリストアラートを停止することができます。</string>
     <string name="page_repositorys">リポジトリ</string>
     <string name="menu_show_modules_count">モジュールの数を表示</string>
     <string name="settings_modules_permissions">モジュールと権限</string>
@@ -395,4 +395,23 @@
     <string name="drawer_general">一般</string>
     <string name="unable_to_perform_reboot_task">再起動のタスクを実行できません</string>
     <string name="settings_enable_toolbar_events">ツールバーイベントを有効化する</string>
+    <string name="architecture">アーキテクチャ</string>
+    <string name="view_module_no_description">説明はありません。</string>
+    <string name="create_webui_shortcut">WebUI ショートカットを作成</string>
+    <string name="remove_webui_shortcut">WebUI ショートカットを削除</string>
+    <string name="external_app_required_desc">MMRL は、ユーザーエクスペリエンスの向上と WebUI 機能の強化のために専用の外部アプリ「WebUI X: Portable」を導入しました。パフォーマンスの向上、セキュリティの強化と WebUI 機能の定期的な更新が可能になります。モジュールの WebUI に引き続きアクセスするには、WebUI X: Portable をインストールする必要があります。Google Play ストアから MMRL をインストールしたユーザーは、Google Play ストア上の WebUI X: Portable にリダイレクトされます。</string>
+    <string name="settings_webui_engine_wx">WebUI X</string>
+    <string name="settings_webui_engine">WebUI エンジン</string>
+    <string name="settings_webui_engine_desc">お好みのエンジンを選択してください</string>
+    <string name="super_user_apps">スーパーユーザーアプリ</string>
+    <string name="settings_webui_engine_ksu">KSU WebUI</string>
+    <string name="settings_webui_engine_prefer_module">モジュールの構成によって定義</string>
+    <string name="menu_sort_option_size">サイズ</string>
+    <string name="settings_try_wxp">WebUI X: Portable をお試しください！</string>
+    <string name="external_app_required_title">外部アプリが必要です</string>
+    <string name="settings_terminal_line_numbers">行番号</string>
+    <string name="settings_terminal_line_numbers_desc">ターミナルの左側に行番号を表示します。</string>
+    <string name="working_mode_sukisu_title">SukiSU Ultra</string>
+    <string name="settings_date_pattern_dialog_desc">日付は次のように解析されます: [color=primary]%1$s[/color]</string>
+    <string name="view_module_permissions">権限</string>
 </resources>
