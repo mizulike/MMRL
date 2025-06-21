@@ -50,6 +50,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
+        with:
+            fetch-depth: 0
 
       - name: Download Release APK
         uses: actions/download-artifact@v4
@@ -109,7 +111,7 @@ jobs:
           echo -e "PLATFORMS<<EOF\n${PLATFORMS}EOF" >> $GITHUB_ENV
 
       - name: Upload files to Telegram
-        if: inputs.send_telegram == 'true'
+        if: github.event.inputs.send_telegram == 'true'
         uses: xz-dev/TelegramFileUploader@v1.1.1
         with:
           to-who: '@MMRLCI'
@@ -136,7 +138,7 @@ jobs:
           BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
 
       - name: Check if release exists
-        if: inputs.send_github == 'true'
+        if: github.event.inputs.send_github == 'true'
         id: check_release
         run: |
           if gh release view v${{ env.VERSION }} --repo ${{ github.repository }} > /dev/null 2>&1; then
@@ -148,7 +150,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         
       - name: Create GitHub Release
-        if: steps.check_release.outputs.exists == 'false' && inputs.send_github == 'true'
+        if: steps.check_release.outputs.exists == 'false' && github.event.inputs.send_github == 'true'
         id: create_release
         uses: actions/create-release@v1
         with:
@@ -210,6 +212,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
+        with:
+            fetch-depth: 0
     
       - name: Set up signing key
         run: |
