@@ -16,36 +16,29 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.absolutePadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.ripple
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.dergoogler.mmrl.model.local.FeaturedManager
 import com.dergoogler.mmrl.ui.component.card.Card
-import com.dergoogler.mmrl.ui.component.listItem.ListItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.List
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.RadioItem
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Icon
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Title
+import com.dergoogler.mmrl.ui.component.text.BBCodeText
 
 @Composable
 fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
@@ -140,10 +133,10 @@ fun SetupScreen(setWorkingMode: (WorkingMode) -> Unit) {
 
                     Spacer(Modifier.height(16.dp))
 
-                    Text(
+                    BBCodeText(
                         text = stringResource(R.string.setup_root_note),
                         style = MaterialTheme.typography.bodySmall,
-                        modifier = Modifier.alpha(.3f)
+                        color = MaterialTheme.colorScheme.outlineVariant,
                     )
                 }
             }
