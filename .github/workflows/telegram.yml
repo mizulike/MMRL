@@ -17,8 +17,8 @@ on:
         required: true
 
 jobs:
-  release:
-    name: Release
+  release-tg:
+    name: Release TG
     runs-on: ubuntu-latest
     outputs:
     steps:
