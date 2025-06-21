@@ -104,7 +104,7 @@
     <string name="view_module_install_confirm_title">Install this Module?</string>
     <string name="view_module_install_confirm_confirm_deps">Install (deps)</string>
     <string name="view_module_install_confirm_confirm">Install</string>
-    <string name="view_module_install_confirm_desc">Are you sure that you want to install [color=surface_tint]%1$s[/color]</string>
+    <string name="view_module_install_confirm_desc">Are you sure that you want to install [color=surface_tint]%1$s[/color]?</string>
     <string name="view_module_install_confirm_desc_deps">Are you sure that you want to install [color=surface_tint]%1$s[/color]? This module requires also:</string>
     <string name="view_module_low_root_version">Root Version to low!</string>
     <string name="view_module_low_root_version_desc">Seems like that you have a too old root provider version. Check if there are any updates for your root provider.</string>
@@ -416,4 +416,5 @@
     <string name="super_user_apps">SuperUser Apps</string>
     <string name="settings_date_pattern_dialog_desc">The date will be parsed as [color=primary]%1$s[/color]</string>
     <string name="view_module_permissions">Permissions</string>
+    <string name="settings_always_show_update_alert">Always Show Update Alert</string>
 </resources>
