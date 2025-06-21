@@ -46,7 +46,7 @@ jobs:
     if: github.event.inputs.send_github == 'true'
     name: Release to GitHub    
     needs: [build-release, build-debug]
-    uses: ./.github/workflows/release/github.yml
+    uses: ./.github/workflows/github.yml
     with:
       title: ${{ inputs.title }}
       message: ${{ inputs.message }}
@@ -58,7 +58,7 @@ jobs:
     if: github.event.inputs.send_telegram == 'true'
     name: Release to Telegram    
     needs: [build-release, build-debug]
-    uses: ./.github/workflows/release/telegram.yml
+    uses: ./.github/workflows/telegram.yml
     with:
       title: ${{ inputs.title }}
       message: ${{ inputs.message }}
