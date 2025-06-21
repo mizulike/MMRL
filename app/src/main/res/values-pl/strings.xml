@@ -227,7 +227,7 @@
     <string name="pre_release">Wersja wstępna</string>
     <string name="view_module_install_confirm_title">Zainstalować ten moduł?</string>
     <string name="settings_shell_module_state_change">Użyj powłoki dla stanów</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[Czy na pewno chcesz zainstalować <font color=\"%1$s\">%2$s</font>?]]></string>
+    <string name="view_module_install_confirm_desc">Czy na pewno chcesz zainstalować [color=surface_tint]%1$s[/color]?</string>
     <string name="settings_shell_module_state_change_desc">Używa powłoki zamiast tworzenia plików w katalogu modułu. Po włączeniu nie będzie można użyć przycisku przywracania z powodu ograniczeń.</string>
     <string name="view_module_install_confirm_confirm_deps">Instaluj (zależności)</string>
     <string name="view_module_install_confirm_confirm">Instaluj</string>
@@ -353,13 +353,13 @@
     <string name="missing_mod_id">Nie zdefiniowano ID modułu</string>
     <string name="exit">Wyjdź</string>
     <string name="are_you_sure_you_want_to_exit">Czy na pewno chcesz wyjść?</string>
-    <string name="says">%1$s mówi</string>
+    <string name="says">%1$s twierdzi</string>
     <string name="shortcut_not_supported">Urządzenie lub launcher nie obsługuje skrótów</string>
     <string name="select_your_platform">Wybierz swoją platformę</string>
     <string name="continue_with">Kontynuuj z %1$s</string>
     <string name="select">Wybierz</string>
     <string name="welcome">Witamy!</string>
-    <string name="setup_root_note">Aby uzyskać dostęp do wszystkich funkcji MMRL, wymagane jest zrootowane urządzenie z Androidem. MMRL nie udostępnia instrukcji rootowania i nie ponosi odpowiedzialności za jakiekolwiek szkody, które mogą wystąpić podczas procesu rootowania lub z powodu korzystania z samego MMRL.</string>
+    <string name="setup_root_note">Aby uzyskać dostęp do wszystkich funkcji MMRL, wymagane jest zrootowane urządzenie z Androidem. MMRL nie udostępnia instrukcji rootowania i nie ponosi odpowiedzialności za jakiekolwiek szkody, które mogą wystąpić podczas procesu rootowania lub z powodu korzystania z samego MMRL.\n\n[link=https://mmrl.dev/legal/privacy]Polityka prywatności[/link] • [link=https://mmrl.dev/legal/terms] Warunki korzystania z aplikacji[/link]</string>
     <string name="platform">Platforma</string>
     <string name="change_platform">Zmień platformę</string>
     <string name="page_search">Szukaj</string>
@@ -389,4 +389,6 @@
     <string name="settings_date_pattern_dialog_desc">Data zostanie przetworzona jako [color=primary]%1$s[/color]</string>
     <string name="view_module_permissions">Uprawnienia</string>
     <string name="working_mode_sukisu_title">SukiSU Ultra</string>
+    <string name="view_module_install_confirm_desc_deps">Czy na pewno chcesz zainstalować [color=surface_tint]%1$s[/color]? Ten moduł wymaga także:</string>
+    <string name="settings_always_show_update_alert">Zawsze pokazuj alert o aktualizacji</string>
 </resources>
