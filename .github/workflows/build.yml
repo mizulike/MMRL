@@ -62,12 +62,14 @@ jobs:
           echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Find mapping file
+        if: inputs.buildType != 'Debug'
         id: normal_mapping
         run: |
           MAPPING_PATH=$(find app/build/outputs/mapping/${{ env.BUILD_TYPE_CASED }} -name "mapping.txt" | head -n 1)
           echo "MAPPING_PATH=$MAPPING_PATH" >> $GITHUB_OUTPUT
 
       - name: Upload mapping as artifact
+        if: inputs.buildType != 'Debug'
         uses: actions/upload-artifact@v4.6.2
         with:
           name: mapping
