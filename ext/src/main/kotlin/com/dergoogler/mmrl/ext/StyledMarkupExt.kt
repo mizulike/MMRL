@@ -121,7 +121,6 @@ private fun applyStyle(builder: AnnotatedString.Builder, text: String, style: St
         fontWeight = if (style.bold) FontWeight.Bold else FontWeight.Normal,
         fontStyle = if (style.italic) FontStyle.Italic else FontStyle.Normal,
         textDecoration = if (style.underline) TextDecoration.Underline else null,
-        drawStyle = Stroke(width = 2f)
     )
 
     if (style.link != null) {
