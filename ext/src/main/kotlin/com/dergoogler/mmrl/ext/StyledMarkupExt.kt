@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.ext
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -43,7 +44,7 @@ private data class StyleState(
 @Composable
 fun String.toStyleMarkup(): AnnotatedString {
     // The regex now also validates the tag names for better parsing.
-    val tagRegex = Regex("""\[(/?)(color|link|bg|bold|italic|underline)(?:=([^]]+))?]""")
+    val tagRegex = Regex("""\[(/?)(color|link|bg|bold|b|italic|i|underline|u)(?:=([^]]+))?]""")
     val matches = tagRegex.findAll(this)
 
     // The styleStack keeps track of nested styles.
@@ -75,15 +76,26 @@ fun String.toStyleMarkup(): AnnotatedString {
                 val newStyle = when (tag) {
                     "color" -> current.copy(tag = tag, color = colorFromName(value))
                     "bg" -> current.copy(tag = tag, bg = colorFromName(value))
-                    "bold" -> current.copy(tag = tag, bold = true)
-                    "italic" -> current.copy(tag = tag, italic = true)
-                    "underline" -> current.copy(tag = tag, underline = true)
+
+                    "b",
+                    "bold",
+                        -> current.copy(tag = tag, bold = true)
+
+                    "i",
+                    "italic",
+                        -> current.copy(tag = tag, italic = true)
+
+                    "u",
+                    "underline",
+                        -> current.copy(tag = tag, underline = true)
+
                     "link" -> current.copy(
                         tag = tag,
                         link = value,
                         color = MaterialTheme.colorScheme.primary, // Apply link style
                         underline = true
                     )
+
                     else -> current
                 }
                 styleStack.push(newStyle)
@@ -108,7 +120,8 @@ private fun applyStyle(builder: AnnotatedString.Builder, text: String, style: St
         background = style.bg,
         fontWeight = if (style.bold) FontWeight.Bold else FontWeight.Normal,
         fontStyle = if (style.italic) FontStyle.Italic else FontStyle.Normal,
-        textDecoration = if (style.underline) TextDecoration.Underline else null
+        textDecoration = if (style.underline) TextDecoration.Underline else null,
+        drawStyle = Stroke(width = 2f)
     )
 
     if (style.link != null) {

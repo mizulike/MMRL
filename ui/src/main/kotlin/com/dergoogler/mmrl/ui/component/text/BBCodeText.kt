@@ -13,6 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.TextLayoutResult
@@ -90,30 +91,31 @@ fun BBCodeText(
 
     BasicText(
         text = annotatedString,
-        modifier = Modifier
-            .pointerInput(Unit) {
-                detectTapGestures { offset ->
-                    layoutResult?.let { layout ->
-                        val position = layout.getOffsetForPosition(offset)
+        modifier = modifier.pointerInput(Unit) {
+            awaitPointerEventScope {
+                while (true) {
+                    val event = awaitPointerEvent(PointerEventPass.Initial)
+                    if (event.changes.any { it.pressed }) {
+                        val offset = event.changes.first().position
+                        layoutResult?.let { layout ->
+                            val position = layout.getOffsetForPosition(offset)
 
-                        val ann = annotatedString
-                            .getStringAnnotations(
-                                tag = "URL", start = position, end = position
-                            )
-                            .firstOrNull()
+                            val ann = annotatedString
+                                .getStringAnnotations(tag = "URL", start = position, end = position)
+                                .firstOrNull()
 
-                        ann.nullable {
-                            if (onLinkClick != null) {
-                                onLinkClick(it.item)
-                                return@nullable
+                            ann?.let {
+                                if (onLinkClick != null) {
+                                    onLinkClick(it.item)
+                                } else {
+                                    handler.openUri(it.item)
+                                }
                             }
-
-                            handler.openUri(it.item)
                         }
                     }
                 }
             }
-            .then(modifier),
+        },
         style = style.merge(
             color = textColor,
             fontSize = fontSize,
