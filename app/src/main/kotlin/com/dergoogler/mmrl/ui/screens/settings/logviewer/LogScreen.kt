@@ -49,16 +49,16 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.dergoogler.mmrl.R
+import com.dergoogler.mmrl.ext.compose.providable.LocalActivity
 import com.dergoogler.mmrl.service.LogcatService
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.component.scrollbar.VerticalFastScrollbar
-import com.dergoogler.mmrl.ui.providable.LocalLifecycle
-import com.dergoogler.mmrl.ui.providable.LocalLifecycleScope
 import com.dergoogler.mmrl.ui.providable.LocalNavController
 import com.dergoogler.mmrl.ext.none
-import com.dergoogler.mmrl.ui.providable.LocalMainNavController
+import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.utils.log.LogText
 import com.dergoogler.mmrl.utils.log.LogText.Companion.toTextPriority
 import com.dergoogler.mmrl.utils.log.Logcat
@@ -107,8 +107,8 @@ fun LogScreen() {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     val state = rememberLazyListState()
     var priority by remember { mutableStateOf("DEBUG") }
-    val lifecycleScope = LocalLifecycleScope.current
-    val lifecycle = LocalLifecycle.current
+
+    val activity = LocalActivity.current as MMRLComponentActivity
 
     val console by remember {
         derivedStateOf {
@@ -118,20 +118,22 @@ fun LogScreen() {
         }
     }
 
-    DisposableEffect(lifecycleScope) {
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                LogcatService.isActive
-                    .collect { isActive ->
-                        if (!isActive) {
-                            LogcatService.start(context)
+    with(activity) {
+        DisposableEffect(lifecycleScope) {
+            lifecycleScope.launch {
+                lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                    LogcatService.isActive
+                        .collect { isActive ->
+                            if (!isActive) {
+                                LogcatService.start(context)
+                            }
                         }
-                    }
+                }
             }
-        }
 
-        onDispose {
-            LogcatService.stop(context)
+            onDispose {
+                LogcatService.stop(context)
+            }
         }
     }
 
@@ -156,7 +158,7 @@ fun LogScreen() {
                 reverseLayout = true
             ) {
                 items(console) { value ->
-                    Column{
+                    Column {
                         LogItem(value)
                         HorizontalDivider(
                             color = MaterialTheme.colorScheme.surfaceColorAtElevation(3.dp)
@@ -180,7 +182,7 @@ private fun TopBar(
     scrollBehavior: TopAppBarScrollBehavior,
 ) = NavigateUpTopBar(
     title = stringResource(id = R.string.settings_log_viewer),
-    navController = LocalMainNavController.current,
+    navController = LocalNavController.current,
     actions = {
         val context = LocalContext.current
         IconButton(
