@@ -70,6 +70,7 @@ data class UserPreferences(
     @ProtoNumber(36) val enableToolbarEvents: Boolean = true,
     @ProtoNumber(37) val webuiEngine: WebUIEngine = WebUIEngine.PREFER_MODULE,
     @ProtoNumber(38) val showTerminalLineNumbers: Boolean = true,
+    @ProtoNumber(39) val devAlwaysShowUpdateAlert: Boolean = false,
 ) {
     fun isDarkMode() = when (darkMode) {
         DarkMode.AlwaysOff -> false
@@ -89,6 +90,17 @@ data class UserPreferences(
         ProtoBuf.encodeToByteArray(this)
     )
 
+    @OptIn(ExperimentalContracts::class)
+    fun developerMode(
+        also: UserPreferences.() -> Boolean,
+    ): Boolean {
+        contract {
+            callsInPlace(also, InvocationKind.AT_MOST_ONCE)
+        }
+
+        return developerMode && also()
+    }
+
     companion object {
         val PUBLIC_DOWNLOADS: File = Environment.getExternalStoragePublicDirectory(
             Environment.DIRECTORY_DOWNLOADS
@@ -98,49 +110,4 @@ data class UserPreferences(
         fun decodeFrom(input: InputStream): UserPreferences =
             ProtoBuf.decodeFromByteArray(input.readBytes())
     }
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun <R> UserPreferences.developerMode(block: UserPreferences.() -> R): R? {
-    contract {
-        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return if (developerMode) block() else null
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun <R> UserPreferences.developerMode(
-    also: UserPreferences.() -> Boolean,
-    block: UserPreferences.() -> R,
-): R? {
-    contract {
-        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return if (developerMode && also()) block() else null
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun UserPreferences.developerMode(
-    also: UserPreferences.() -> Boolean,
-): Boolean {
-    contract {
-        callsInPlace(also, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return developerMode && also()
-}
-
-@OptIn(ExperimentalContracts::class)
-inline fun <R> UserPreferences.developerMode(
-    also: UserPreferences.() -> Boolean,
-    default: R,
-    block: UserPreferences.() -> R,
-): R {
-    contract {
-        callsInPlace(block, InvocationKind.AT_MOST_ONCE)
-    }
-
-    return if (developerMode && also()) block() else default
 }

@@ -9,6 +9,8 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.Interaction
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.LocalAbsoluteTonalElevation
 import androidx.compose.material3.LocalContentColor
@@ -72,6 +74,7 @@ fun Card(
     color: Color = MaterialTheme.colorScheme.surface,
     contentColor: Color = contentColorFor(color),
     shape: Shape = RoundedCornerShape(20.dp),
+    outsideContentPadding: PaddingValues = PaddingValues(0.dp),
     tonalElevation: Dp = 1.dp,
     shadowElevation: Dp = 0.dp,
     border: BorderStroke? = null,
@@ -106,6 +109,7 @@ fun Card(
     ) {
         Layout(
             modifier = Modifier
+                .padding(outsideContentPadding)
                 .card(
                     shape = shape,
                     backgroundColor = MaterialTheme.colorScheme.applyTonalElevation(

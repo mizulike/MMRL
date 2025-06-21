@@ -613,6 +613,8 @@ fun NewViewScreen(
                         )
                     }
 
+                    val alertPadding = PaddingValues(horizontal = 16.dp)
+
                     module.hasBlacklist {
                         var open by remember { mutableStateOf(false) }
                         if (open) {
@@ -627,7 +629,7 @@ fun NewViewScreen(
                             backgroundColor = MaterialTheme.colorScheme.errorContainer,
                             textColor = MaterialTheme.colorScheme.onErrorContainer,
                             message = stringResource(R.string.blacklisted_desc),
-                            modifier = Modifier.padding(horizontal = 16.dp),
+                            outsideContentPadding = alertPadding,
                         )
                     }
 
@@ -638,7 +640,7 @@ fun NewViewScreen(
                                 backgroundColor = MaterialTheme.colorScheme.errorContainer,
                                 textColor = MaterialTheme.colorScheme.onErrorContainer,
                                 message = stringResource(id = R.string.view_module_unsupported_desc),
-                                modifier = Modifier.padding(horizontal = 16.dp)
+                                outsideContentPadding = alertPadding,
                             )
                         } else {
                             Alert(
@@ -646,7 +648,7 @@ fun NewViewScreen(
                                 backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
                                 textColor = MaterialTheme.colorScheme.onTertiaryContainer,
                                 message = stringResource(id = R.string.view_module_low_root_version_desc),
-                                modifier = Modifier.padding(horizontal = 16.dp)
+                                outsideContentPadding = alertPadding,
                             )
                         }
 
@@ -659,7 +661,7 @@ fun NewViewScreen(
                             backgroundColor = MaterialTheme.colorScheme.errorContainer,
                             textColor = MaterialTheme.colorScheme.onErrorContainer,
                             message = stringResource(id = R.string.view_module_unsupported_device_desc),
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            outsideContentPadding = alertPadding,
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -671,7 +673,7 @@ fun NewViewScreen(
                             backgroundColor = MaterialTheme.colorScheme.errorContainer,
                             textColor = MaterialTheme.colorScheme.onErrorContainer,
                             message = stringResource(id = R.string.view_module_unsupported_arch_desc),
-                            modifier = Modifier.padding(horizontal = 16.dp)
+                            outsideContentPadding = alertPadding,
                         )
 
                         Spacer(modifier = Modifier.height(16.dp))
@@ -685,13 +687,13 @@ fun NewViewScreen(
                                 textColor = MaterialTheme.colorScheme.onErrorContainer,
                                 title = it.title,
                                 message = it.message!!,
-                                modifier = Modifier.padding(horizontal = 16.dp)
+                                outsideContentPadding = alertPadding,
                             )
                         } else {
                             Alert(
                                 title = it.title,
                                 message = it.message!!,
-                                modifier = Modifier.padding(horizontal = 16.dp)
+                                outsideContentPadding = alertPadding,
                             )
                         }
 

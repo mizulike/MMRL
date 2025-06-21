@@ -43,8 +43,8 @@ fun SecurityScreen() {
         }
 
         SwitchItem(
-            checked = userPreferences.hideFingerprintInHome,
-            onChange = viewModel::setHideFingerprintInHome
+            checked = userPreferences.strictMode,
+            onChange = viewModel::setStrictMode
         ) {
             Title(R.string.settings_strict_mode)
         }

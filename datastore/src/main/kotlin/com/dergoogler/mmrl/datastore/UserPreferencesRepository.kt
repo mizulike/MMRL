@@ -113,6 +113,9 @@ class UserPreferencesRepository @Inject constructor(
     suspend fun setShowTerminalLineNumbers(value: Boolean) =
         userPreferencesDataSource.setShowTerminalLineNumbers(value)
 
+    suspend fun setDevAlwaysShowUpdateAlert(value: Boolean) =
+        userPreferencesDataSource.setDevAlwaysShowUpdateAlert(value)
+
     suspend fun setEnableToolbarEvents(value: Boolean) =
         userPreferencesDataSource.setEnableToolbarEvents(value)
 

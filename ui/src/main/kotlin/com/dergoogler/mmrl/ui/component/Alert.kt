@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.ui.component
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -26,11 +27,16 @@ fun Alert(
     textColor: Color = contentColorFor(backgroundColor),
     title: String?,
     message: String,
+    outsideContentPadding: PaddingValues = PaddingValues(0.dp),
+    onClick: (() -> Unit)? = null,
     @DrawableRes icon: Int? = null,
 ) = Card(
-    modifier = modifier
+    onClick = onClick,
+    modifier = Modifier
         .padding(vertical = 16.dp, horizontal = 25.dp)
-        .fillMaxWidth(),
+        .fillMaxWidth()
+        .then(modifier),
+    outsideContentPadding = outsideContentPadding,
     color = backgroundColor,
     contentColor = textColor,
 ) {

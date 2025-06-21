@@ -48,7 +48,6 @@ import com.dergoogler.mmrl.ext.managerVersion
 import com.dergoogler.mmrl.ext.navigateSingleTopTo
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.ext.nullable
-import com.dergoogler.mmrl.ext.onClick
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
@@ -162,17 +161,16 @@ fun HomeScreen(
                         }
 
                         AnimatedVisibility(
-                            visible = if (latest.preRelease) {
+                            visible = userPreferences.developerMode { devAlwaysShowUpdateAlert } || (if (latest.preRelease) {
                                 userPreferences.checkAppUpdatesPreReleases && latest.versionCode > context.managerVersion.second
                             } else {
                                 latest.versionCode > context.managerVersion.second
-                            },
+                            }),
                             enter = fadeIn() + expandVertically(),
                             exit = shrinkVertically() + fadeOut()
                         ) {
-
                             Alert(
-                                modifier = Modifier.onClick {
+                                onClick = {
                                     changelogSheet = true
                                 },
                                 backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,

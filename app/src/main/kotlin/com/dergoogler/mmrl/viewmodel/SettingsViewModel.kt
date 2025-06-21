@@ -250,6 +250,12 @@ class SettingsViewModel @Inject constructor(
         }
     }
 
+    fun setDevAlwaysShowUpdateAlert(value: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.setDevAlwaysShowUpdateAlert(value)
+        }
+    }
+
     fun setWebUIEngine(value: WebUIEngine) {
         viewModelScope.launch {
             userPreferencesRepository.setWebUIEngine(value)
