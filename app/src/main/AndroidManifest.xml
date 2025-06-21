@@ -11,8 +11,8 @@
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
     <uses-permission android:name="com.android.launcher.permission.INSTALL_SHORTCUT" />
 
-    <uses-permission android:name="com.dergoogler.mmrl.permission.WEBUI_X" />
-    <uses-permission android:name="com.dergoogler.mmrl.permission.WEBUI_LEGACY" />
+    <uses-permission android:name="${webuiPermissionId}.permission.WEBUI_X" />
+    <uses-permission android:name="${webuiPermissionId}.permission.WEBUI_LEGACY" />
 
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
@@ -32,6 +32,15 @@
         tools:node="remove" />
 
     <queries>
+        <package android:name="com.topjohnwu.magisk" />
+        <package android:name="io.github.huskydg.magisk" />
+        <package android:name="me.weishu.kernelsu" />
+        <package android:name="me.bmax.apatch" />
+        <package android:name="com.rifsxd.ksunext" />
+        <package android:name="com.sukisu.ultra" />
+        <package android:name="com.dergoogler.mmrl.wx" />
+        <package android:name="com.dergoogler.mmrl.wx.debug" />
+
         <intent>
             <action android:name="android.settings.APP_NOTIFICATION_SETTINGS" />
         </intent>

@@ -14,13 +14,13 @@ plugins {
 }
 
 val baseAppName = "MMRL"
-val baseModConfName = "ModConf"
+val mmrlBaseApplicationId = "com.dergoogler.mmrl"
 
 val appVersion = commitCount + 31320
 
 android {
     compileSdk = 35
-    namespace = "com.dergoogler.mmrl"
+    namespace = mmrlBaseApplicationId
 
     defaultConfig {
         applicationId = namespace
@@ -71,7 +71,6 @@ android {
                 "proguard-rules.pro"
             )
             resValue("string", "app_name", baseAppName)
-            resValue("string", "modconf_activity", baseModConfName)
             buildConfigField("Boolean", "IS_DEV_VERSION", "false")
             buildConfigField("Boolean", "IS_GOOGLE_PLAY_BUILD", "false")
             isDebuggable = false
@@ -79,6 +78,8 @@ android {
             versionNameSuffix = "-release"
             renderscriptOptimLevel = 3
             multiDexEnabled = true
+
+            manifestPlaceholders["webuiPermissionId"] = mmrlBaseApplicationId
         }
 
         create("playstore") {
@@ -115,7 +116,6 @@ android {
 
         debug {
             resValue("string", "app_name", "$baseAppName Debug")
-            resValue("string", "modconf_activity", "$baseModConfName Debug")
             buildConfigField("Boolean", "IS_DEV_VERSION", "true")
             buildConfigField("Boolean", "IS_GOOGLE_PLAY_BUILD", "false")
             applicationIdSuffix = ".debug"
@@ -125,6 +125,8 @@ android {
             renderscriptOptimLevel = 0
             isMinifyEnabled = false
             multiDexEnabled = true
+
+            manifestPlaceholders["webuiPermissionId"] = "$mmrlBaseApplicationId.debug"
         }
 
         create("debugMin") {

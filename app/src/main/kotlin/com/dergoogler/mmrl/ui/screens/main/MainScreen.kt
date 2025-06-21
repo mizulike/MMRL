@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
+import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.ext.none
 import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
@@ -45,10 +46,17 @@ fun MainScreen() {
     LaunchedEffect(Unit) {
         if (PlatformManager.platform.isNotNonRoot) {
             launcher.launch(
-                arrayOf(
-                    "com.dergoogler.mmrl.permission.WEBUI_X",
-                    "com.dergoogler.mmrl.permission.WEBUI_LEGACY"
-                )
+                if (BuildConfig.IS_DEV_VERSION) {
+                    arrayOf(
+                        "com.dergoogler.mmrl.debug.permission.WEBUI_X",
+                        "com.dergoogler.mmrl.debug.permission.WEBUI_LEGACY"
+                    )
+                } else {
+                    arrayOf(
+                        "com.dergoogler.mmrl.permission.WEBUI_X",
+                        "com.dergoogler.mmrl.permission.WEBUI_LEGACY"
+                    )
+                }
             )
         }
 
