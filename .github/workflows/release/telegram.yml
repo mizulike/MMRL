@@ -1,0 +1,84 @@
+name: Release to Telegram
+
+on:
+  workflow_call:
+    inputs:
+      title:
+        type: string
+        required: true
+      message:
+        type: string
+        required: true
+      releaseAssetName:
+        type: string
+        required: true
+      debugAssetName:
+        type: string
+        required: true
+
+jobs:
+  release:
+    name: Release
+    runs-on: ubuntu-latest
+    outputs:
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+            fetch-depth: 0
+
+      - name: Download Release APK
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.event.inputs.releaseAssetName }}
+          path: release-apk
+
+      - name: Download Debug APK
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ github.event.inputs.debugAssetName }}
+          path: debug-apk
+
+      - name: Find Release APK
+        id: find_release_apk
+        run: |
+          APK_PATH=$(find release-apk -name "*.apk" | head -n 1)
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
+
+      - name: Find Debug APK
+        id: find_debug_apk
+        run: |
+          APK_PATH=$(find debug-apk -name "*.apk" | head -n 1)
+          echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
+
+      - name: Get commit info and build timestamp
+        id: meta
+        run: |
+          BUILD_DATE=$(date +"%Y-%m-%d %H:%M:%S")
+          COMMIT_COUNT=$(git rev-list --count HEAD)
+          VERSION=$((31320 + COMMIT_COUNT))
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
+
+      - name: Upload files to Telegram
+        uses: xz-dev/TelegramFileUploader@v1.1.1
+        with:
+          to-who: '@MMRLCI'
+          message: |
+              ${{ inputs.title }}
+              #ci_${{ env.VERSION }}
+              
+              Build on ${{ env.BUILD_DATE }}.
+
+              **What's new?**
+              
+              ${{ inputs.message }}
+   
+              [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+          files: |
+            ${{ steps.find_release_apk.outputs.APK_PATH }}
+            ${{ steps.find_debug_apk.outputs.APK_PATH }}
+        env:
+          API_ID: ${{ secrets.API_ID }}
+          API_HASH: ${{ secrets.API_HASH }}
+          BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
