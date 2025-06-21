@@ -1,0 +1,9 @@
+MMRL to aplikacja na Androida, która pomaga zarządzać własnym repozytorium modułów.
+
+Cechy:
+- Zarządzanie repozytorium modułów
+- Obsługa wielu repozytoriów
+- Obsługa Magisk i KernelSU
+- Jetpack Compose i Material Design 3
+
+https://github.com/DerGoogler/MMRL
