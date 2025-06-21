@@ -37,6 +37,7 @@ import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.ext.toDecodedUrl
 import com.dergoogler.mmrl.ext.toEncodedUrl
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
+import com.dergoogler.mmrl.ui.component.text.BBCodeText
 
 @Composable
 fun FilteredSearchScreen(
@@ -111,12 +112,11 @@ fun FilteredSearchScreen(
 
             this@Scaffold.ModulesList(
                 before = {
-                    HtmlText(
+                    BBCodeText(
                         modifier = Modifier.padding(vertical = 8.dp),
                         text = pluralStringResource(
                             id = R.plurals.search_results,
                             count = list.size,
-                            MaterialTheme.colorScheme.surfaceTint.toArgb(),
                             list.size
                         )
                     )

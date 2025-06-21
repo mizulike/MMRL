@@ -124,7 +124,6 @@
     <string name="view_module_install_confirm_confirm_deps">Instalar (deps)</string>
     <string name="view_module_install_confirm_confirm">Instalar</string>
     <string name="view_module_install_confirm_desc"><![CDATA[Tem certeza de que deseja instalar <font color=\"%1$s\">%2$s ?]]></string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[Tem certeza de que deseja instalar <font color=\"%1$s\">%2$s</font>? Esse módulo requer também:]]></string>
     <string name="module_reinstall">Reinstalar</string>
     <string name="module_update">Atualizar</string>
     <string name="settings_resources">Recursos</string>

@@ -103,7 +103,6 @@
     <string name="view_module_install_confirm_confirm_deps">Yükle (bağımlılıklar)</string>
     <string name="view_module_install_confirm_confirm">Yükle</string>
     <string name="view_module_install_confirm_desc"><![CDATA[Bu modülü yüklemek istediğinizden emin misiniz <font color=\"%1$s\">%2$s</font>?]]></string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[Bu modülü yüklemek istediğinizden emin misiniz <font color=\"%1$s\">%2$s</font>? Bu modül ayrıca şunları gerektirir:]]></string>
     <string name="view_module_low_root_version">Root Sürümü Çok Eski!</string>
     <string name="view_module_low_root_version_desc">Root sağlayıcı sürümünüzün çok eski olduğu görünüyor. Root sağlayıcınız için herhangi bir güncelleme olup olmadığını kontrol edin.</string>
     <string name="view_module_required_root_version">Gerekli Root Sürümü</string>

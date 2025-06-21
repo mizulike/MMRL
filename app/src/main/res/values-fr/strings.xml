@@ -336,7 +336,6 @@
     <string name="view_module_type">Type : %s</string>
     <string name="view_module_added_on">Ajouté le</string>
     <string name="view_module_install_confirm_desc"><![CDATA[Êtes-vous sûr(e) de vouloir installer <font color=\"%1$s\">%2$s</font> ?]]></string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[Êtes-vous sûr(e) de vouloir installer <font color=\"%1$s\">%2$s</font> ? Ce module requiert également :]]></string>
     <string name="selected">Sélectionné</string>
     <string name="repository_service_stopped">Service de dépôt arrêté</string>
     <string name="keep">Garder</string>

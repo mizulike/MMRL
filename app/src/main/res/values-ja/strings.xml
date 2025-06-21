@@ -91,7 +91,6 @@
     <string name="view_module_install_confirm_confirm_deps">インストール (一部)</string>
     <string name="view_module_install_confirm_confirm">インストール</string>
     <string name="view_module_install_confirm_desc"><![CDATA[<font color=\"%1$s\">%2$s</font> をインストールしてもよろしいですか？]]></string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[<font color=\"%1$s\">%2$s</font> をインストールしてもよろしいですか？このモジュールは以下も必要です:]]></string>
     <!-- Modules -->
     <string name="modules_empty">モジュールが見つかりません</string>
     <!-- Module Item -->

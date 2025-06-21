@@ -87,7 +87,6 @@
     <string name="install_logs_saved">Jurnale salvate</string>
     <string name="install_logs_save_failed">Salvare eșuată: %s</string>
     <string name="module_update">Actualizare</string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[Sigur dorești să instalezi <font color="%1$s">%2$s</font>? Acest modul necesită și:]]></string>
     <string name="view_module_features_action">Acțiuni</string>
     <string name="view_module_low_root_version_desc">Se pare că ai o versiune prea veche a furnizorului de root. Verifică dacă există actualizări pentru furnizorul tău de root.</string>
     <string name="view_module_low_root_version">Versiune root prea mică!</string>

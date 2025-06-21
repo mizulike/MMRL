@@ -104,8 +104,8 @@
     <string name="view_module_install_confirm_title">Install this Module?</string>
     <string name="view_module_install_confirm_confirm_deps">Install (deps)</string>
     <string name="view_module_install_confirm_confirm">Install</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[Are you sure that you want to install <font color=\"%1$s\">%2$s</font>?]]></string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[Are you sure that you want to install <font color=\"%1$s\">%2$s</font>? This module requires also:]]></string>
+    <string name="view_module_install_confirm_desc">Are you sure that you want to install [color=surface_tint]%1$s[/color]</string>
+    <string name="view_module_install_confirm_desc_deps">Are you sure that you want to install [color=surface_tint]%1$s[/color]? This module requires also:</string>
     <string name="view_module_low_root_version">Root Version to low!</string>
     <string name="view_module_low_root_version_desc">Seems like that you have a too old root provider version. Check if there are any updates for your root provider.</string>
     <string name="view_module_required_root_version">Required Root Version</string>

@@ -256,7 +256,6 @@
     <string name="bulk_module_install">成批型模組安裝</string>
     <string name="unsafe_url_redirecting">截獲不安全網址：%1$s。正在進行重新導向⋯⋯</string>
     <string name="view_module_install_confirm_title">是否安裝模組？</string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[你是否要安裝<font color=\"%1$s\">「%2$s」</font>？本模組另需使用的相依部分：]]></string>
     <string name="view_module_low_root_version">­授權版本過舊！</string>
     <string name="view_module_unsupported_device">裝置未受支援</string>
     <string name="view_module_unsupported_arch_desc">你的裝置不支援開發人員所維護的處理器架構版本。</string>

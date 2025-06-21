@@ -18,6 +18,7 @@ import com.dergoogler.mmrl.ui.component.BulletList
 import com.dergoogler.mmrl.ui.component.HtmlText
 import com.dergoogler.mmrl.ext.ifNotEmpty
 import com.dergoogler.mmrl.ext.isNotNullOrEmpty
+import com.dergoogler.mmrl.ui.component.text.BBCodeText
 
 @Composable
 fun InstallConfirmDialog(
@@ -34,10 +35,9 @@ fun InstallConfirmDialog(
         text = {
             Column {
                 if (requires.isNotNullOrEmpty()) {
-                    HtmlText(
+                    BBCodeText(
                         text = stringResource(
                             R.string.view_module_install_confirm_desc_deps,
-                            MaterialTheme.colorScheme.surfaceTint.toArgb(),
                             name
                         )
                     )
@@ -48,10 +48,9 @@ fun InstallConfirmDialog(
                         items = requires.map { it.name },
                     )
                 } else {
-                    HtmlText(
+                    BBCodeText(
                         text = stringResource(
                             R.string.view_module_install_confirm_desc,
-                            MaterialTheme.colorScheme.surfaceTint.toArgb(),
                             name
                         )
                     )

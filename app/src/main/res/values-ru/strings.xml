@@ -263,7 +263,6 @@
     <string name="sponsors">Спонсоры</string>
     <string name="page_home">Главная</string>
     <string name="view_module_license">Лицензия</string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[Вы уверены, что хотите установить <font color=\"%1$s\">%2$s</font>? Этот модуль также требует:]]></string>
     <string name="settings_hide_fingerprint_desc">Неважно, настоящий он или поддельный</string>
     <string name="settings_include_preleases">Включить предварительные релизы</string>
     <string name="settings_developer_mode">Режим разработчика</string>

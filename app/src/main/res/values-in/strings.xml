@@ -89,7 +89,6 @@
     <string name="view_module_update_notify">Beritahu</string>
     <string name="setup_non_root_desc">Tidak membutuhkan izin Root, hanya menyediakan fitur men-download modul</string>
     <string name="view_module_unsupported_desc">Sepertinya perangkat Anda tidak mendukung versi modul ini. Memasang modul ini dapat membahayakan perangkat anda!</string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[Apakah Anda yakin ingin memasang <font color=\"%1$s\">%2$s</font>? Modul ini juga memerlukan:]]></string>
     <string name="settings_changelo_desc">Semua perubahan terkini dalam MMRL</string>
     <string name="menu_sort_repolistmode_compact">Susun Rapat</string>
     <string name="settings_open_notification_settings">Buka Setelan Notifikasi</string>

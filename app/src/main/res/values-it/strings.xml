@@ -121,7 +121,6 @@
     <string name="view_module_donate_desc">Mostra un po\' di affetto a questo sviluppatore di moduli offrendogli un caffè! ☕</string>
     <string name="view_module_install_confirm_title">Installare questo modulo?</string>
     <string name="view_module_install_confirm_confirm_deps">Installa (dipendenze)</string>
-    <string name="view_module_install_confirm_desc_deps"><![CDATA[Sei sicuro di voler installare <font color=\"%1$s\">%2$s</font>? Questo modulo richiede anche:]]></string>
     <string name="view_module_unsupported_device_desc">Sembra che il tuo dispositivo non sia supportato da questo modulo o sia stato escluso.</string>
     <string name="view_module_added_on">Aggiunto su</string>
     <string name="view_module_module_id">ID Modulo</string>
