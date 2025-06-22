@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.ui.component.listItem.dsl
 
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
@@ -43,6 +44,10 @@ interface ListItemScope : BaseListScope {
 
 @LayoutScopeMarker
 @Immutable
+interface ListItemSlotScope : BaseListScope
+
+@LayoutScopeMarker
+@Immutable
 interface ListScope : BaseListScope
 
 internal class ListScopeInstance(
@@ -66,5 +71,11 @@ internal class ListItemScopeInstance(
         return this.layoutId(slot)
     }
 }
+
+internal class ListItemSlotScopeInstance(
+    private val boxScope: BoxScope,
+    override val contentPaddingValues: PaddingValues,
+    override val iconSize: Dp,
+) : ListItemSlotScope, BoxScope by boxScope
 
 val LocalListItemEnabled = staticCompositionLocalOf { true }

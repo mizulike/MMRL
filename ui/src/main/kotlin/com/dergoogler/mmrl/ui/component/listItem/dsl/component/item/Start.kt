@@ -1,23 +1,25 @@
 package com.dergoogler.mmrl.ui.component.listItem.dsl.component.item
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlotScope
 
 /**
- * A composable function that creates a [Box] with a modifier that aligns its content to the start.
- * This is typically used to place content at the beginning of a [ListItemScope], such as an icon or avatar.
+ * A composable function that defines the content to be placed at the start of a [ListItemScope].
+ * This is typically used for elements like icons, avatars, or checkboxes.
  *
- * @param content The composable content to be displayed within the start-aligned box.
- *                The content is scoped to [BoxScope] to allow for further customization within the box.
+ * The content is scoped to [ListItemSlotScope], providing access to slot-specific modifiers and information.
+ *
+ * @param modifier Optional [Modifier] to be applied to the start slot container.
+ * @param content The composable lambda that defines the UI elements to be displayed in the start slot.
+ *                It is executed within a [ListItemSlotScope].
  */
 @Composable
 fun ListItemScope.Start(
     modifier: Modifier = Modifier,
-    content: @Composable BoxScope.() -> Unit
+    content: @Composable ListItemSlotScope.() -> Unit
 ) =
     Slot(
         modifier = modifier,

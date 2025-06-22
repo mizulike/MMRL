@@ -1,7 +1,6 @@
 package com.dergoogler.mmrl.ui.component.listItem.dsl.component.item
 
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ProvideTextStyle
 import androidx.compose.material3.Text
@@ -11,6 +10,7 @@ import androidx.compose.ui.text.TextStyle
 import com.dergoogler.mmrl.ext.toStyleMarkup
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlotScope
 
 /**
  * A description for the list item.
@@ -24,7 +24,7 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 @Composable
 fun ListItemScope.Description(
     styleTransform: (@Composable (TextStyle) -> TextStyle)? = null,
-    content: @Composable BoxScope.() -> Unit,
+    content: @Composable ListItemSlotScope.() -> Unit,
 ) {
     val baseTextStyle = MaterialTheme.typography.bodyMedium.copy(
         color = MaterialTheme.colorScheme.outline

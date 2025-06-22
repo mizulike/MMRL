@@ -1,27 +1,36 @@
 package com.dergoogler.mmrl.ui.component.listItem.dsl.component.item
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.SubcomposeLayout
 import androidx.compose.ui.layout.layoutId
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
-import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlotScope
+import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlotScopeInstance
 
 @Composable
 fun ListItemScope.Slot(
     slot: Any,
     modifier: Modifier = Modifier,
     disallow: List<Any> = emptyList(),
-    content: @Composable BoxScope.() -> Unit,
+    content: @Composable ListItemSlotScope.() -> Unit,
 ) = Box(
     modifier = Modifier
         .layoutSlot(slot, disallow)
         .then(modifier),
-    content = content
-)
+) {
+    val instance = remember {
+        ListItemSlotScopeInstance(
+            boxScope = this,
+            contentPaddingValues = this@Slot.contentPaddingValues,
+            iconSize = this@Slot.iconSize
+        )
+    }
+
+    instance.content()
+}
 
 @Composable
 fun ListItemScope.FromSlot(
