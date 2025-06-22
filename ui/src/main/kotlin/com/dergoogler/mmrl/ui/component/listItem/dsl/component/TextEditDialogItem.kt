@@ -36,13 +36,18 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.ProvideTitle
 import com.dergoogler.mmrl.ui.component.listItem.dsl.component.item.Slot
 import com.dergoogler.mmrl.ui.token.TypographyKeyTokens
 
+data class TextEditDialogItemData(
+    val value: String,
+    val isError: Boolean
+)
+
 @Composable
 fun ListScope.TextEditDialogItem(
     enabled: Boolean = true,
     value: String,
     onValid: ((String) -> Boolean)? = null,
     onConfirm: (String) -> Unit,
-    content: @Composable (ListItemScope.(String) -> Unit),
+    content: @Composable (ListItemScope.(TextEditDialogItemData) -> Unit),
 ) {
     var open by remember { mutableStateOf(false) }
 
@@ -60,13 +65,20 @@ fun ListScope.TextEditDialogItem(
         }
     }
 
+    val data = remember(value, isError) {
+        TextEditDialogItemData(
+            value = value,
+            isError = isError
+        )
+    }
+
     ButtonItem(
         enabled = enabled,
         onClick = {
             open = true
         },
         content = {
-            content(text)
+            content(data)
 
             if (open) {
                 TextFieldDialog(
@@ -79,7 +91,7 @@ fun ListScope.TextEditDialogItem(
                             token = TypographyKeyTokens.HeadlineSmall
                         ) {
                             FromSlot(ListItemSlot.Title) {
-                                content(text)
+                                content(data)
                             }
                         }
                     },
@@ -106,7 +118,7 @@ fun ListScope.TextEditDialogItem(
                     ) {
                         Layout(
                             content = {
-                                this@ButtonItem.content(text)
+                                this@ButtonItem.content(data)
 
                                 this@ButtonItem.Slot(DialogItemSlot.TextField) {
                                     OutlinedTextField(
@@ -119,10 +131,9 @@ fun ListScope.TextEditDialogItem(
                                         },
                                         singleLine = false,
                                         supportingText = {
-
                                             Layout(
                                                 content = {
-                                                    this@ButtonItem.content(text)
+                                                    this@ButtonItem.content(data)
                                                 }
                                             ) { measurables, constraints ->
                                                 val supportingPlaceable =

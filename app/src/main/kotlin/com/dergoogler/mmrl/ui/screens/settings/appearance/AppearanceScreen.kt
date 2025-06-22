@@ -57,7 +57,7 @@ fun AppearanceScreen() {
             Title(R.string.settings_date_pattern)
             Description(R.string.settings_date_pattern_desc)
 
-            val date = System.currentTimeMillis().toFormattedDateSafely(it)
+            val date = System.currentTimeMillis().toFormattedDateSafely(it.value)
             DialogDescription(R.string.settings_date_pattern_dialog_desc, date)
         }
 
