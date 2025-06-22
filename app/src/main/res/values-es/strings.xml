@@ -236,7 +236,7 @@
     <string name="view_module_features_bootcompleted_sub">Ejecución del script una vez finalizado el arranque</string>
     <string name="view_module_module_support">Soporte de módulos</string>
     <string name="view_module_provided_by">Proporcionado por</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[¿Está seguro de que desea instalar <font color=\"%1$s\">%2$s</font>?]]></string>
+    <string name="view_module_install_confirm_desc">¿Está seguro de que desea instalar [color=surface_tint]%1$s[/color]?</string>
     <string name="settings_reboot_protection">Protección contra reinicio</string>
     <string name="settings_reboot_protection_desc">Si está habilitado, debe confirmar cada reinicio</string>
     <string name="settings_date_pattern_desc">Utilice su propio formato de fecha</string>
