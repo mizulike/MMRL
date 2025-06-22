@@ -16,8 +16,12 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
  *                The content is placed within a `Box` that is aligned to the end.
  */
 @Composable
-fun ListItemScope.End(content: @Composable BoxScope.() -> Unit) =
+fun ListItemScope.End(
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit
+) =
     Slot(
+        modifier = modifier,
         slot = ListItemSlot.End,
         content = content
     )

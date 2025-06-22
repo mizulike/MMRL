@@ -3,6 +3,7 @@ package com.dergoogler.mmrl.ui.component.listItem.dsl.component.item
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemScope
 import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 
@@ -14,8 +15,12 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
  *                The content is scoped to [BoxScope] to allow for further customization within the box.
  */
 @Composable
-fun ListItemScope.Start(content: @Composable BoxScope.() -> Unit) =
+fun ListItemScope.Start(
+    modifier: Modifier = Modifier,
+    content: @Composable BoxScope.() -> Unit
+) =
     Slot(
+        modifier = modifier,
         slot = ListItemSlot.Start,
         content = content
     )

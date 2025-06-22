@@ -13,13 +13,15 @@ import com.dergoogler.mmrl.ui.component.listItem.dsl.ListItemSlot
 @Composable
 fun ListItemScope.Slot(
     slot: Any,
+    modifier: Modifier = Modifier,
     disallow: List<Any> = emptyList(),
     content: @Composable BoxScope.() -> Unit,
-) {
-    Box(modifier = Modifier.layoutSlot(slot, disallow)) {
-        content()
-    }
-}
+) = Box(
+    modifier = Modifier
+        .layoutSlot(slot, disallow)
+        .then(modifier),
+    content = content
+)
 
 @Composable
 fun ListItemScope.FromSlot(
