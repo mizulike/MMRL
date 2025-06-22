@@ -4,10 +4,12 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.LayoutScopeMarker
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.unit.Dp
+import com.dergoogler.mmrl.ui.token.TypographyKeyTokens
 
 enum class ListItemSlot {
     Start,
@@ -64,3 +66,5 @@ internal class ListItemScopeInstance(
         return this.layoutId(slot)
     }
 }
+
+val LocalListItemEnabled = staticCompositionLocalOf { true }
