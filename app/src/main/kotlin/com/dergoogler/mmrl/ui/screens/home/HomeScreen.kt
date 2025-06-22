@@ -174,7 +174,7 @@ fun HomeScreen(
                                     changelogSheet = true
                                 },
                                 backgroundColor = MaterialTheme.colorScheme.tertiaryContainer,
-                                title = "Update available!",
+                                title = stringResource(R.string.update_available),
                                 message = stringResource(
                                     R.string.new_version_available,
                                     latest.versionName
