@@ -12,18 +12,22 @@ import com.dergoogler.mmrl.compat.MediaStoreCompat.getPathForUri
 import com.dergoogler.mmrl.datastore.UserPreferencesRepository
 import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.ext.tmpDir
+import com.dergoogler.mmrl.ext.toFormattedDateSafely
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.online.Blacklist
 import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.content.BulkModule
 import com.dergoogler.mmrl.platform.file.SuFile
+import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
+import com.dergoogler.mmrl.utils.toFormattedDateSafely
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.topjohnwu.superuser.CallbackList
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import java.io.File
@@ -166,6 +170,8 @@ class InstallViewModel @Inject constructor(
         event = if (allSucceeded) Event.SUCCEEDED else Event.FAILED
     }
 
+    private val datePattern = runBlocking { userPreferencesRepository.data.first().datePattern }
+
     private suspend fun loadAndInstallModule(
         uri: Uri,
         allBulkModulesInBatch: List<BulkModule>,
@@ -175,8 +181,21 @@ class InstallViewModel @Inject constructor(
         if (path != null) {
             val moduleInfoFromPath = PlatformManager.moduleManager.getModuleInfo(path)
             if (moduleInfoFromPath != null) {
-                withContext(Dispatchers.Main) {
-                    devLog(R.string.install_view_module_info, moduleInfoFromPath.toString())
+                withContext<Unit>(Dispatchers.Main) {
+                    moduleInfoFromPath.let { mod ->
+                        devLog(R.string.install_view_module_info)
+                        devLog("ID: ${mod.id.id}")
+                        devLog("Name: ${mod.name}")
+                        devLog("Version: ${mod.version}")
+                        devLog("Version Code: ${mod.versionCode}")
+                        devLog("Author: ${mod.author}")
+                        devLog("Description: ${mod.description}")
+                        devLog("Update JSON: ${mod.updateJson}")
+                        devLog("State: ${mod.state}")
+                        devLog("Size: ${mod.size.toFormattedFileSize()}")
+                        devLog("Last Updated: ${mod.lastUpdated.toFormattedDateSafely(datePattern)}")
+                        devLog("::endgroup::")
+                    }
                 }
                 return@withContext install(path, allBulkModulesInBatch, moduleInfoFromPath)
             }

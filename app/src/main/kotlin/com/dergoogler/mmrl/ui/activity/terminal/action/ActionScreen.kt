@@ -15,7 +15,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,18 +31,19 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.app.Event.Companion.isFinished
 import com.dergoogler.mmrl.app.Event.Companion.isLoading
-import com.dergoogler.mmrl.ui.component.Console
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.component.dialog.ConfirmDialog
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.ActionViewModel
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
+import com.dergoogler.mmrl.ui.component.terminal.TerminalView
 import kotlinx.coroutines.launch
 
 @Composable
@@ -62,14 +62,6 @@ fun ActionScreen(
 
     LaunchedEffect(focusRequester) {
         focusRequester.requestFocus()
-    }
-
-    DisposableEffect(Unit) {
-        viewModel.registerReceiver()
-
-        onDispose {
-            viewModel.unregisterReceiver()
-        }
     }
 
     var cancelAction by remember { mutableStateOf(false) }
@@ -157,14 +149,12 @@ fun ActionScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
-        Console(
+        TerminalView(
             list = viewModel.console,
             state = listState,
-            breakList = userPreferences.terminalTextWrap,
-            showLineNumbers = userPreferences.showTerminalLineNumbers,
             modifier = Modifier
                 .padding(it)
-                .fillMaxSize()
+                .fillMaxSize(),
         )
     }
 }

@@ -38,6 +38,7 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.app.Event.Companion.isFinished
@@ -51,6 +52,7 @@ import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
 import com.dergoogler.mmrl.viewmodel.InstallViewModel
 import com.dergoogler.mmrl.ui.activity.MMRLComponentActivity
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
+import com.dergoogler.mmrl.ui.component.terminal.TerminalView
 import kotlinx.coroutines.launch
 
 @Composable
@@ -83,14 +85,6 @@ fun InstallScreen(
 
     LaunchedEffect(focusRequester) {
         focusRequester.requestFocus()
-    }
-
-    DisposableEffect(Unit) {
-        viewModel.registerReceiver()
-
-        onDispose {
-            viewModel.unregisterReceiver()
-        }
     }
 
     val backHandler = {
@@ -205,11 +199,9 @@ fun InstallScreen(
         },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
-        Console(
+        TerminalView(
             list = viewModel.console,
             state = listState,
-            breakList = userPreferences.terminalTextWrap,
-            showLineNumbers = userPreferences.showTerminalLineNumbers,
             modifier = Modifier
                 .padding(it)
                 .fillMaxSize()

@@ -25,6 +25,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
@@ -138,12 +139,12 @@ fun Modifier.fadingEdge(
 fun Modifier.applyAlpha(enabled: Boolean): Modifier = this.alpha(if (enabled) 1f else 0.5f)
 
 fun Modifier.iconSize(
+    density: Density,
     textStyle: TextStyle,
     scaling: Float,
-) = composed {
-    val density = LocalDensity.current
+): Modifier {
     val iconSize = with(density) { textStyle.fontSize.toDp() * scaling }
-    return@composed this.size(iconSize)
+    return this.size(iconSize)
 }
 
 fun Modifier.onClick(

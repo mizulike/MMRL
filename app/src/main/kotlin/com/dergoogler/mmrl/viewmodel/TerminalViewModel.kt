@@ -1,13 +1,9 @@
 package com.dergoogler.mmrl.viewmodel
 
 import android.app.Application
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.IntentFilter
 import android.content.res.Configuration
 import android.content.res.Resources
 import android.net.Uri
-import android.widget.Toast
 import androidx.annotation.MainThread
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
@@ -20,16 +16,18 @@ import com.dergoogler.mmrl.app.Const.CLEAR_CMD
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.datastore.UserPreferencesRepository
 import com.dergoogler.mmrl.model.local.LocalModule
+import com.dergoogler.mmrl.model.terminal.AlertBlock
+import com.dergoogler.mmrl.model.terminal.AlertType
+import com.dergoogler.mmrl.model.terminal.Block
+import com.dergoogler.mmrl.model.terminal.CardBlock
+import com.dergoogler.mmrl.model.terminal.GroupBlock
+import com.dergoogler.mmrl.model.terminal.TextBlock
 import com.dergoogler.mmrl.platform.PlatformManager
-import com.dergoogler.mmrl.platform.stub.IFileManager
-import com.dergoogler.mmrl.platform.stub.IModuleManager
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
-import com.dergoogler.mmrl.ui.activity.terminal.Actions
-import com.dergoogler.mmrl.ui.activity.terminal.ShellBroadcastReceiver
+import com.dergoogler.mmrl.ui.activity.terminal.ActionCommand
 import com.dergoogler.mmrl.utils.createRootShell
 import com.dergoogler.mmrl.utils.initPlatform
-import dev.dergoogler.mmrl.compat.BuildCompat
 import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,22 +46,33 @@ open class TerminalViewModel @Inject constructor(
     modulesRepository: ModulesRepository,
     userPreferencesRepository: UserPreferencesRepository,
 ) : MMRLViewModel(application, localRepository, modulesRepository, userPreferencesRepository) {
+
     protected val logs = mutableListOf<String>()
-    internal val console = mutableStateListOf<String>()
+
+    /**
+     * Instead of plain string lines, console holds parsed blocks,
+     * updated incrementally on every log call.
+     */
+    val console = mutableStateListOf<Block>()
+
     var event by mutableStateOf(Event.LOADING)
         protected set
+
     var shell by mutableStateOf(createRootShell())
         protected set
 
     private val localFlow = MutableStateFlow<LocalModule?>(null)
     val local get() = localFlow.asStateFlow()
 
-    private var receiver: BroadcastReceiver? = null
+    private val commandSet =
+        setOf("group", "endgroup", "card", "endcard", "add-mask", "error", "warning", "notice")
 
-    /**
-     * Deferred that completes after the ViewModel's attempt to initialize the PlatformManager.
-     * Completes with `true` if successful, `false` otherwise.
-     */
+    private var currentGroup: GroupBlock? = null
+    private var currentCard: CardBlock? = null
+    private var lineNumber = 1
+
+    private val masks = mutableListOf<String>()
+
     protected val platformReadyDeferred = CompletableDeferred<Boolean>()
 
     init {
@@ -90,43 +99,11 @@ open class TerminalViewModel @Inject constructor(
         }
     }
 
-    fun registerReceiver() {
-        if (receiver == null) {
-            receiver = ShellBroadcastReceiver(context, console, logs)
-
-            val filter = IntentFilter().apply {
-                addAction(Actions.SET_LAST_LINE)
-                addAction(Actions.REMOVE_LAST_LINE)
-                addAction(Actions.CLEAR_TERMINAL)
-                addAction(Actions.LOG)
-            }
-
-            if (BuildCompat.atLeastT) {
-                context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
-            } else {
-                @Suppress("UnspecifiedRegisterReceiverFlag")
-                context.registerReceiver(receiver, filter)
-            }
-        }
-    }
-
-    fun unregisterReceiver() {
-        if (receiver == null) {
-            Timber.w("ShellBroadcastReceiver is already null")
-            return
-        }
-
-        context.unregisterReceiver(receiver)
-        receiver = null
-    }
-
     override fun onCleared() {
         shell.close()
+        currentCard = null
+        currentGroup = null
         super.onCleared()
-    }
-
-    private fun IntentFilter.addAction(action: Actions) {
-        addAction("${context.packageName}.${action.name}")
     }
 
     fun reboot(reason: String = "") {
@@ -155,6 +132,11 @@ open class TerminalViewModel @Inject constructor(
     private val devMode = runBlocking { userPreferencesRepository.data.first().developerMode }
 
     @MainThread
+    protected fun devLog(message: String) {
+        if (devMode) log(message)
+    }
+
+    @MainThread
     protected fun devLog(@StringRes message: Int, vararg format: Any?) {
         if (devMode) log(message, *format)
     }
@@ -180,9 +162,6 @@ open class TerminalViewModel @Inject constructor(
         )
     }
 
-    /**
-     * Logs a message to the console and the log.
-     */
     @MainThread
     protected fun log(
         message: String,
@@ -191,10 +170,103 @@ open class TerminalViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.Main) {
             if (message.startsWith(CLEAR_CMD)) {
                 console.clear()
+                logs.clear()
+                lineNumber = 1
+                currentGroup = null
+                currentCard = null
+                masks.clear()
             } else {
-                console.add(message)
-                logs.add(log)
+                val command = ActionCommand.tryParseV2(message, commandSet)
+
+                when (command?.command) {
+                    "group" -> {
+                        currentGroup = GroupBlock(
+                            title = command.data.ifBlank { command.properties["title"] },
+                            startLine = lineNumber,
+                            initiallyExpanded = false
+                        )
+                    }
+
+                    "endgroup" -> {
+                        currentGroup?.let { console += it }
+                        currentGroup = null
+                    }
+
+                    "card" -> {
+                        currentCard = CardBlock()
+                    }
+
+                    "endcard" -> {
+                        currentCard?.let { console += it }
+                        currentCard = null
+                    }
+
+                    "add-mask" -> {
+                        command.data.takeIf { it.isNotBlank() }?.let {
+                            masks += it
+                            console += TextBlock(
+                                lineNumber = lineNumber,
+                                text = applyMasks(it)
+                            )
+                        }
+                    }
+
+                    "error" -> {
+                        command.data.takeIf { it.isNotBlank() }?.let {
+                            console += AlertBlock(
+                                lineNumber = lineNumber,
+                                type = AlertType.ERROR,
+                                text = it
+                            )
+                        }
+                    }
+
+                    "warning" -> {
+                        command.data.takeIf { it.isNotBlank() }?.let {
+                            console += AlertBlock(
+                                lineNumber = lineNumber,
+                                type = AlertType.WARNING,
+                                text = it
+                            )
+                        }
+                    }
+
+                    "notice" -> {
+                        command.data.takeIf { it.isNotBlank() }?.let {
+                            console += AlertBlock(
+                                lineNumber = lineNumber,
+                                type = AlertType.NOTICE,
+                                text = it
+                            )
+                        }
+                    }
+
+                    else -> {
+                        val entry = lineNumber to message
+                        when {
+                            currentGroup != null -> currentGroup?.lines?.add(entry)
+                            currentCard != null -> currentCard?.lines?.add(entry)
+                            else -> console += TextBlock(
+                                lineNumber = lineNumber,
+                                text = message
+                            )
+                        }
+                    }
+                }
+
+                logs += log
+                lineNumber++
             }
         }
+    }
+
+    private fun applyMasks(line: String): String {
+        var maskedLine = line
+        for (mask in masks) {
+            if (mask.isNotEmpty()) {
+                maskedLine = maskedLine.replace(mask, "••••••••")
+            }
+        }
+        return maskedLine
     }
 }

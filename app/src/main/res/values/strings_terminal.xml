@@ -6,7 +6,7 @@
     <string name="installation_aborted_due_to_an_error">! Installation aborted due to an error</string>
     <string name="install_view_path">- Path: %1$s</string>
     <string name="copying_zip_to_temp_directory">- Copying zip to temp directory</string>
-    <string name="install_view_module_info">- Module info: [underline]%1$s[/underline]</string>
+    <string name="install_view_module_info">::group::Module info</string>
     <string name="copying_failed">! Copying failed</string>
     <string name="unable_to_gather_module_info">! Unable to gather module info</string>
     <string name="install_view_installing">- Installing [color=primary]%1$s[/color]</string>
