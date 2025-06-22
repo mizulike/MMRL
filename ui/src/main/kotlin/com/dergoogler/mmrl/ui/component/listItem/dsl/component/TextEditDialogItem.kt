@@ -65,9 +65,9 @@ fun ListScope.TextEditDialogItem(
         }
     }
 
-    val data = remember(value, isError) {
+    val data = remember(text, isError) {
         TextEditDialogItemData(
-            value = value,
+            value = text,
             isError = isError
         )
     }
