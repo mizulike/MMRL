@@ -18,7 +18,7 @@ fun ListItemScope.LearnMore(
     onLearnMore: () -> Unit,
 ) {
     val style = MaterialTheme.typography.bodyMedium.copy(
-        color = MaterialTheme.colorScheme.outline
+        color = MaterialTheme.colorScheme.primary
     )
 
     ProvideTextStyle(style) {
