@@ -7,11 +7,13 @@ import androidx.annotation.Keep
 import com.dergoogler.mmrl.platform.file.SuFile
 import com.squareup.moshi.JsonClass
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 @Keep
 @Parcelize
+@Serializable
 @JsonClass(generateAdapter = true)
 data class ModId(
     val id: String,

@@ -80,6 +80,8 @@ dependencies {
     implementation(libs.androidx.compose.runtime)
     implementation(libs.apache.commons.compress)
     implementation(libs.square.retrofit.moshi)
+    implementation(libs.kotlinx.serialization.json)
+    implementation(libs.kotlinx.serialization.protobuf)
     implementation(libs.square.moshi)
     ksp(libs.square.moshi.kotlin)
 }
