@@ -355,7 +355,7 @@
     <string name="are_you_sure_you_want_to_exit">Czy na pewno chcesz wyjść?</string>
     <string name="says">%1$s twierdzi</string>
     <string name="shortcut_not_supported">Urządzenie lub launcher nie obsługuje skrótów</string>
-    <string name="select_your_platform">Wybierz swoją platformę</string>
+    <string name="select_your_platform">Wybierz platformę</string>
     <string name="continue_with">Kontynuuj z %1$s</string>
     <string name="select">Wybierz</string>
     <string name="welcome">Witamy!</string>
@@ -376,7 +376,7 @@
     <string name="create_webui_shortcut">Utwórz skrót WebUI</string>
     <string name="external_app_required_desc">W celu zwiększenia komfortu użytkowania i zapewnienia bardziej niezawodnych funkcji WebUI, MMRL wykorzystuje teraz dedykowaną aplikację zewnętrzną: WebUI X: Portable. Pozwala to na lepszą wydajność, zwiększone bezpieczeństwo i częstsze aktualizacje funkcji WebUI. Musisz zainstalować WebUI X: Portable, aby kontynuować dostęp do WebUI dla swoich modułów. Użytkownicy, którzy zainstalowali MMRL za pośrednictwem Sklepu Google Play, zostaną przekierowani na stronę Sklepu Google Play dla WebUI X: Portable.</string>
     <string name="settings_webui_engine_wx">WebUI X</string>
-    <string name="settings_webui_engine_prefer_module">Zdefiniowany przez konferencję modułu</string>
+    <string name="settings_webui_engine_prefer_module">Zdefiniowany przez konfigurację modułu</string>
     <string name="settings_webui_engine">Silnik WebUI</string>
     <string name="settings_webui_engine_ksu">WebUI KSU</string>
     <string name="menu_sort_option_size">Rozmiar</string>
@@ -386,9 +386,10 @@
     <string name="external_app_required_title">Wymagana aplikacja zewnętrzna</string>
     <string name="settings_terminal_line_numbers">Numery linii</string>
     <string name="super_user_apps">Aplikacje Superuser</string>
-    <string name="settings_date_pattern_dialog_desc">Data zostanie przetworzona jako [color=primary]%1$s[/color]</string>
+    <string name="settings_date_pattern_dialog_desc">Data będzie przetworzona jako\n[color=primary]%1$s[/color]</string>
     <string name="view_module_permissions">Uprawnienia</string>
     <string name="working_mode_sukisu_title">SukiSU Ultra</string>
     <string name="view_module_install_confirm_desc_deps">Czy na pewno chcesz zainstalować [color=surface_tint]%1$s[/color]? Ten moduł wymaga także:</string>
     <string name="settings_always_show_update_alert">Zawsze pokazuj alert o aktualizacji</string>
+    <string name="update_available">Dostępna aktualizacja!</string>
 </resources>
