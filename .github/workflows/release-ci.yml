@@ -35,35 +35,26 @@ jobs:
       buildType: 'Release'
     secrets: inherit
 
-  build-debug:
-    name: Build Debug
-    uses: ./.github/workflows/build.yml
-    with:
-      buildType: 'Debug'
-    secrets: inherit
-
   release-github:
     if: github.event.inputs.send_github == 'true'
     name: Release to GitHub    
-    needs: [build-release, build-debug]
+    needs: [build-release]
     uses: ./.github/workflows/github.yml
     with:
       title: ${{ inputs.title }}
       message: ${{ inputs.message }}
       releaseAssetName: ${{ needs.build-release.outputs.release-name }}
-      debugAssetName: ${{ needs.build-debug.outputs.release-name }}
     secrets: inherit
 
   release-telegram:
     if: github.event.inputs.send_telegram == 'true'
     name: Release to Telegram    
-    needs: [build-release, build-debug]
+    needs: [build-release]
     uses: ./.github/workflows/telegram.yml
     with:
       title: ${{ inputs.title }}
       message: ${{ inputs.message }}
       releaseAssetName: ${{ needs.build-release.outputs.release-name }}
-      debugAssetName: ${{ needs.build-debug.outputs.release-name }}
     secrets: inherit
 
   playstore:

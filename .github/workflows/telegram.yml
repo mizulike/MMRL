@@ -12,9 +12,6 @@ on:
       releaseAssetName:
         type: string
         required: true
-      debugAssetName:
-        type: string
-        required: true
 
 jobs:
   release-tg:
@@ -32,22 +29,10 @@ jobs:
           name: ${{ github.event.inputs.releaseAssetName }}
           path: release-apk
 
-      - name: Download Debug APK
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ github.event.inputs.debugAssetName }}
-          path: debug-apk
-
       - name: Find Release APK
         id: find_release_apk
         run: |
           APK_PATH=$(find release-apk -name "*.apk" | head -n 1)
-          echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
-
-      - name: Find Debug APK
-        id: find_debug_apk
-        run: |
-          APK_PATH=$(find debug-apk -name "*.apk" | head -n 1)
           echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Get commit info and build timestamp
