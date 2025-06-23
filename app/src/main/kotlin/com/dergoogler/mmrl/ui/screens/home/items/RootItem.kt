@@ -68,7 +68,9 @@ internal fun RootItem(
         }
 
         Row(
-            modifier = Modifier.relative().padding(20.dp),
+            modifier = Modifier
+                .relative()
+                .padding(20.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -120,13 +122,7 @@ internal fun RootItem(
                         stringResource(
                             id = R.string.settings_root_provider,
                             stringResource(
-                                id = when {
-                                    platform.isMagisk -> R.string.working_mode_magisk_title
-                                    platform.isKernelSU -> R.string.working_mode_kernelsu_title
-                                    platform.isKernelSuNext -> R.string.working_mode_kernelsu_next_title
-                                    platform.isAPatch -> R.string.working_mode_apatch_title
-                                    else -> R.string.settings_root_none
-                                }
+                                id = manager?.name ?: R.string.settings_root_none
                             )
                         )
                     } else {
