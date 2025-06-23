@@ -174,99 +174,108 @@ open class TerminalViewModel @Inject constructor(
                 lineNumber = 1
                 currentGroup = null
                 currentCard = null
-                masks.clear()
-            } else {
-                val command = ActionCommand.tryParseV2(message, commandSet)
 
-                when (command?.command) {
-                    "group" -> {
-                        currentGroup = GroupBlock(
-                            title = command.data.ifBlank { command.properties["title"] },
-                            startLine = lineNumber,
-                            initiallyExpanded = false
+                // Should we clear masks?
+                // masks.clear()
+                return@launch
+
+            }
+
+            val command = ActionCommand.tryParseV2(message, commandSet)
+
+            when (command?.command) {
+                "group" -> {
+                    currentGroup = GroupBlock(
+                        title = command.data.ifBlank { command.properties["title"] },
+                        startLine = lineNumber,
+                        initiallyExpanded = false
+                    )
+                }
+
+                "endgroup" -> {
+                    currentGroup?.let { console += it }
+                    currentGroup = null
+                }
+
+                "card" -> {
+                    currentCard = CardBlock()
+                }
+
+                "endcard" -> {
+                    currentCard?.let { console += it }
+                    currentCard = null
+                }
+
+                "add-mask" -> {
+                    command.data.takeIf { it.isNotBlank() }?.let { masks += it }
+                }
+
+                "error" -> {
+                    command.data.takeIf { it.isNotBlank() }?.let {
+                        console += AlertBlock(
+                            lineNumber = lineNumber,
+                            type = AlertType.ERROR,
+                            text = it.applyMasks()
                         )
-                    }
-
-                    "endgroup" -> {
-                        currentGroup?.let { console += it }
-                        currentGroup = null
-                    }
-
-                    "card" -> {
-                        currentCard = CardBlock()
-                    }
-
-                    "endcard" -> {
-                        currentCard?.let { console += it }
-                        currentCard = null
-                    }
-
-                    "add-mask" -> {
-                        command.data.takeIf { it.isNotBlank() }?.let {
-                            masks += it
-                            console += TextBlock(
-                                lineNumber = lineNumber,
-                                text = applyMasks(it)
-                            )
-                        }
-                    }
-
-                    "error" -> {
-                        command.data.takeIf { it.isNotBlank() }?.let {
-                            console += AlertBlock(
-                                lineNumber = lineNumber,
-                                type = AlertType.ERROR,
-                                text = it
-                            )
-                        }
-                    }
-
-                    "warning" -> {
-                        command.data.takeIf { it.isNotBlank() }?.let {
-                            console += AlertBlock(
-                                lineNumber = lineNumber,
-                                type = AlertType.WARNING,
-                                text = it
-                            )
-                        }
-                    }
-
-                    "notice" -> {
-                        command.data.takeIf { it.isNotBlank() }?.let {
-                            console += AlertBlock(
-                                lineNumber = lineNumber,
-                                type = AlertType.NOTICE,
-                                text = it
-                            )
-                        }
-                    }
-
-                    else -> {
-                        val entry = lineNumber to message
-                        when {
-                            currentGroup != null -> currentGroup?.lines?.add(entry)
-                            currentCard != null -> currentCard?.lines?.add(entry)
-                            else -> console += TextBlock(
-                                lineNumber = lineNumber,
-                                text = message
-                            )
-                        }
                     }
                 }
 
-                logs += log
-                lineNumber++
+                "warning" -> {
+                    command.data.takeIf { it.isNotBlank() }?.let {
+                        console += AlertBlock(
+                            lineNumber = lineNumber,
+                            type = AlertType.WARNING,
+                            text = it.applyMasks()
+                        )
+                    }
+                }
+
+                "notice" -> {
+                    command.data.takeIf { it.isNotBlank() }?.let {
+                        console += AlertBlock(
+                            lineNumber = lineNumber,
+                            type = AlertType.NOTICE,
+                            text = it.applyMasks()
+                        )
+                    }
+                }
+
+                else -> {
+                    val entry = lineNumber to message.applyMasks()
+                    when {
+                        currentGroup != null -> {
+                            currentGroup?.lines?.add(entry)
+                        }
+
+                        currentCard != null -> {
+                            currentCard?.lines?.add(entry)
+                        }
+
+                        else -> {
+
+                            console += TextBlock(
+                                lineNumber = lineNumber,
+                                text = message.applyMasks()
+                            )
+                        }
+                    }
+                    
+                    // don't log commands since it could expose masks
+                    logs += log.applyMasks()
+                }
             }
+
+            lineNumber++
         }
     }
 
-    private fun applyMasks(line: String): String {
-        var maskedLine = line
+    private fun String.applyMasks(): String {
+        var maskedString = this
         for (mask in masks) {
             if (mask.isNotEmpty()) {
-                maskedLine = maskedLine.replace(mask, "••••••••")
+                maskedString = maskedString.replace(mask, "••••••••")
             }
         }
-        return maskedLine
+        return maskedString
     }
 }
