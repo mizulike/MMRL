@@ -245,7 +245,7 @@
     <string name="view_module_share">Поделиться</string>
     <string name="view_module_install_confirm_title">Установить этот модуль?</string>
     <string name="view_module_install_confirm_confirm_deps">Установить (зав.)</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[Вы уверены, что хотите установить <font color=\"%1$s\">%2$s</font>?]]></string>
+    <string name="view_module_install_confirm_desc">Вы уверены, что хотите установить [color=surface_tint]%1$s[/color]?</string>
     <string name="view_module_low_root_version">Версия Root ниже требуемой!</string>
     <string name="settings_modules_handlers">Обработчики</string>
     <string name="settings_modules_installer">Установщик</string>

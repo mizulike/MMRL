@@ -247,7 +247,7 @@
     <string name="hidden">已隱藏</string>
     <string name="pre_release">預先發布版本</string>
     <string name="view_module_install_confirm_confirm">安裝</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[你是否要安裝<font color=\"%1$s\">「%2$s」</font>？]]></string>
+    <string name="view_module_install_confirm_desc">你是否要安裝[color=surface_tint]「%1$s」[/color]？</string>
     <string name="view_module_install_confirm_confirm_deps">安裝（相依模組）</string>
     <string name="settings_shell_module_state_change">以系統外殼管理模組</string>
     <string name="settings_shell_module_state_change_desc">選擇以系統外殼進行模組管理，而非逕自在模組目錄建立檔案。選項啟用後，你將無法使用復原按鈕。</string>
