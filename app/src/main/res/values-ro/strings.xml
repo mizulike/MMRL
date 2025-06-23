@@ -162,7 +162,7 @@
     <string name="view_module_dependencies">Dependențe</string>
     <string name="view_module_install_confirm_title">Instalează acest Modul?</string>
     <string name="view_module_install_confirm_confirm">Instalează</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[Ești sigur că dorești să instalezi asta <font color=\"%1$s\">%2$s</font>?]]></string>
+    <string name="view_module_install_confirm_desc">Ești sigur că dorești să instalezi asta [color=surface_tint]%1$s[/color]?</string>
     <string name="settings_other">Altele</string>
     <string name="settings_changelog">Jurnalul modificărilor</string>
     <string name="settings_changelo_desc">Toate modificările actuale din MMRL</string>

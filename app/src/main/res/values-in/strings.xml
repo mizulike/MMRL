@@ -203,7 +203,7 @@
     <string name="view_module_required_os_value">Android %1$s atau lebih baru</string>
     <string name="view_module_share">Bagikan</string>
     <string name="view_module_install_confirm_title">Pasang Modul Ini?</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[Apakah Anda yakin ingin memasang <font color=\"%1$s\">%2$s</font>?]]></string>
+    <string name="view_module_install_confirm_desc">Apakah Anda yakin ingin memasang [color=surface_tint]%1$s[/color]?</string>
     <string name="view_module_dependencies">Dependensi</string>
     <string name="view_module_required_os">OS yang diperlukan</string>
     <string name="module_reinstall">Install Ulang</string>

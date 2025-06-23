@@ -125,7 +125,7 @@
     <string name="view_module_added_on">Aggiunto su</string>
     <string name="view_module_module_id">ID Modulo</string>
     <string name="view_module_required_os">Sistema operativo richiesto</string>
-    <string name="view_module_install_confirm_desc"><![CDATA[Sei sicuro di voler installare <font color=\"%1$s\">%2$s</font>?]]></string>
+    <string name="view_module_install_confirm_desc">Sei sicuro di voler installare [color=surface_tint]%1$s[/color]?</string>
     <string name="view_module_low_root_version">Versione Root troppo bassa!</string>
     <string name="view_module_required_root_version">Versione root richiesta</string>
     <string name="view_module_unsupported_device">Dispositivo non supportato</string>

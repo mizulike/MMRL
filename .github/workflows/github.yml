@@ -24,19 +24,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
         with:
-            fetch-depth: 0
+          fetch-depth: 0
+
+      - name: Clean APK output directory
+        run: |
+          rm -rf apk-out
+          mkdir -p apk-out
 
       - name: Download Release APK
         uses: actions/download-artifact@v4
         with:
           name: ${{ github.event.inputs.releaseAssetName }}
-          path: release-apk
+          path: apk-out
 
       - name: Download Debug APK
         uses: actions/download-artifact@v4
         with:
           name: ${{ github.event.inputs.debugAssetName }}
-          path: debug-apk
+          path: apk-out
 
       - name: Download Mappings
         uses: actions/download-artifact@v4
@@ -44,16 +49,37 @@ jobs:
           name: mapping
           path: mapping
 
+      - name: Warn if multiple APKs
+        run: |
+          release_count=$(find apk-out -type f -name "${{ github.event.inputs.releaseAssetName }}.apk" | wc -l)
+          debug_count=$(find apk-out -type f -name "${{ github.event.inputs.debugAssetName }}.apk" | wc -l)
+          if [ "$release_count" -gt 1 ]; then
+            echo "::warning::$release_count Release APKs found with name '${{ github.event.inputs.releaseAssetName }}.apk', uploading only the first one."
+          fi
+          if [ "$debug_count" -gt 1 ]; then
+            echo "::warning::$debug_count Debug APKs found with name '${{ github.event.inputs.debugAssetName }}.apk', uploading only the first one."
+          fi
+
       - name: Find Release APK
         id: find_release_apk
         run: |
-          APK_PATH=$(find release-apk -name "*.apk" | head -n 1)
+          APK_NAME="${{ github.event.inputs.releaseAssetName }}"
+          APK_PATH=$(find apk-out -type f -name "${APK_NAME}.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find apk-out -type f -name "*.apk" | head -n 1)
+            echo "::warning::Could not find APK matching name '$APK_NAME.apk', using first found: $APK_PATH"
+          fi
           echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Find Debug APK
         id: find_debug_apk
         run: |
-          APK_PATH=$(find debug-apk -name "*.apk" | head -n 1)
+          APK_NAME="${{ github.event.inputs.debugAssetName }}"
+          APK_PATH=$(find apk-out -type f -name "${APK_NAME}.apk" | head -n 1)
+          if [ -z "$APK_PATH" ]; then
+            APK_PATH=$(find apk-out -type f -name "*.apk" | head -n 1)
+            echo "::warning::Could not find APK matching name '$APK_NAME.apk', using first found: $APK_PATH"
+          fi
           echo "APK_PATH=$APK_PATH" >> $GITHUB_OUTPUT
 
       - name: Find mapping file
@@ -109,7 +135,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.find_release_apk.outputs.APK_PATH }}
-          asset_name: release.apk
+          asset_name: ${{ github.event.inputs.releaseAssetName }}
           asset_content_type: application/vnd.android.package-archive
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -120,7 +146,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{ steps.find_debug_apk.outputs.APK_PATH }}
-          asset_name: debug.apk
+          asset_name: ${{ github.event.inputs.debugAssetName }}
           asset_content_type: application/vnd.android.package-archive
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
