@@ -24,16 +24,13 @@ fun Line(
     content: @Composable RowScope.() -> Unit,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .then(modifier),
+        modifier = Modifier.fillMaxWidth().then(modifier),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         LineNumber(index)
         content()
     }
 }
-
 
 @Composable
 fun RowScope.LineNumber(number: Int?) {

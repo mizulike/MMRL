@@ -1,11 +1,8 @@
 package com.dergoogler.mmrl.ui.component.terminal
 
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -24,16 +21,14 @@ import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 fun GroupBlockView(group: GroupBlock) {
     var expanded by remember { mutableStateOf(group.initiallyExpanded) }
 
+    val width = LocalTerminalWidth.current
     val style = LocalTextStyle.current
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .animateContentSize()
-    ) {
+    Column {
         if (group.title != null) {
             Line(
                 modifier = Modifier
+                    .width(width)
                     .clickable { expanded = !expanded },
                 index = group.startLine
             ) {

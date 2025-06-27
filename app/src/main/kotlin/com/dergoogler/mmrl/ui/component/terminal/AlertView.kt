@@ -1,7 +1,7 @@
 package com.dergoogler.mmrl.ui.component.terminal
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -33,8 +33,12 @@ fun AlertView(block: AlertBlock) {
             AlertType.ERROR -> "Error"
         }
 
+    val width = LocalTerminalWidth.current
+
     Line(
-        modifier = Modifier.background(color.copy(alpha = 0.09f)),
+        modifier = Modifier
+            .width(width)
+            .background(color.copy(alpha = 0.09f)),
         index = block.lineNumber
     ) {
         BBCodeText(
