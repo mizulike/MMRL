@@ -23,8 +23,11 @@ class EndGroup : Command {
     override val name: String = "endgroup"
 
     override fun run(action: ActionCommand, terminal: Terminal) {
+
         with(terminal) {
-            currentGroup?.let { console += it }
+            currentGroup?.let {
+                console += it
+            }
             currentGroup = null
         }
     }

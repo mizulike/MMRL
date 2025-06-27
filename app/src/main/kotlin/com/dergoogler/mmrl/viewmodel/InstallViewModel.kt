@@ -61,7 +61,7 @@ class InstallViewModel @Inject constructor(
             if (msg == null) return
 
             viewModelScope.launch {
-                log(msg)
+                devLog(msg)
             }
         }
     }

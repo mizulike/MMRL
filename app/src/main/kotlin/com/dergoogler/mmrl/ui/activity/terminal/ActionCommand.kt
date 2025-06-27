@@ -31,6 +31,7 @@ class Terminal {
     var currentGroup: GroupBlock? = null
     var currentCard: CardBlock? = null
     var lineNumber = 1
+    var lineAdded: Boolean = true
     val masks = mutableListOf<String>()
     var event by mutableStateOf(Event.LOADING)
 

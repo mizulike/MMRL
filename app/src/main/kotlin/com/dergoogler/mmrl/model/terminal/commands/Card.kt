@@ -20,7 +20,9 @@ class EndCard : Command {
 
     override fun run(action: ActionCommand, terminal: Terminal) {
         with(terminal) {
-            currentCard?.let { console += it }
+            currentCard?.let {
+                console += it
+            }
             currentCard = null
         }
     }

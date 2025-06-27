@@ -24,6 +24,7 @@ import com.dergoogler.mmrl.model.terminal.commands.EndGroup
 import com.dergoogler.mmrl.model.terminal.commands.Error
 import com.dergoogler.mmrl.model.terminal.commands.Group
 import com.dergoogler.mmrl.model.terminal.commands.Notice
+import com.dergoogler.mmrl.model.terminal.commands.ReplaceSelf
 import com.dergoogler.mmrl.model.terminal.commands.Warning
 import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -60,7 +61,10 @@ open class TerminalViewModel @Inject constructor(
     protected val platformReadyDeferred = CompletableDeferred<Boolean>()
 
     private val commands =
-        listOf(Group(), EndGroup(), Card(), EndCard(), AddMask(), Notice(), Warning(), Error())
+        listOf(
+            Group(), EndGroup(), Card(), EndCard(), AddMask(), Notice(), Warning(), Error(),
+            ReplaceSelf()
+        )
 
     init {
         viewModelScope.launch {
@@ -161,11 +165,8 @@ open class TerminalViewModel @Inject constructor(
                 terminal.lineNumber = 1
                 terminal.currentGroup = null
                 terminal.currentCard = null
-
-                // Should we clear masks?
-                // masks.clear()
+                terminal.lineAdded = true
                 return@launch
-
             }
 
             val maskedMessage = terminal.applyMasks(message)
@@ -181,13 +182,19 @@ open class TerminalViewModel @Inject constructor(
                 emitLogLine(maskedMessage)
                 logs += maskedLog
                 terminal.lineNumber++
-                Log.d("TerminalViewModel", "sa;dkfjls;dkf}")
+                terminal.lineAdded = true
                 return@launch
             }
 
-            terminal.lineNumber++
+            // Only increment if the command added a new line
+            if (terminal.lineAdded) {
+                terminal.lineNumber++
+            }
+            // Reset the flag for next line
+            terminal.lineAdded = true
         }
     }
+
 
     private fun emitLogLine(text: String) {
         with(terminal) {
