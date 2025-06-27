@@ -26,11 +26,12 @@ fun AlertView(block: AlertBlock) {
         AlertType.ERROR -> "red"
     }
 
-    val type = when (block.type) {
-        AlertType.NOTICE -> "Notice"
-        AlertType.WARNING -> "Warning"
-        AlertType.ERROR -> "Error"
-    }
+    val type = block.title
+        ?: when (block.type) {
+            AlertType.NOTICE -> "Notice"
+            AlertType.WARNING -> "Warning"
+            AlertType.ERROR -> "Error"
+        }
 
     Line(
         modifier = Modifier.background(color.copy(alpha = 0.09f)),

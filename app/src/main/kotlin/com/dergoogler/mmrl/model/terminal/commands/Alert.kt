@@ -26,10 +26,13 @@ abstract class Alerts(
         terminal: Terminal,
     ) {
         with(terminal) {
+            val title = action.properties["title"]
+
             action.data.takeIf { it.isNotBlank() }?.let {
                 console += AlertBlock(
                     lineNumber = lineNumber,
                     type = type,
+                    title = title,
                     text = it.fixNewLines.applyMasks
                 )
             }

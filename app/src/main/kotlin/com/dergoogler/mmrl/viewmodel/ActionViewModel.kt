@@ -7,6 +7,7 @@ import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.datastore.UserPreferencesRepository
+import com.dergoogler.mmrl.model.terminal.ScriptError
 import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.platform.content.LocalModule.Companion.hasAction
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -48,7 +49,16 @@ class ActionViewModel @Inject constructor(
     private val stderrCallbackList = object : CallbackList<String?>() {
         override fun onAddElement(msg: String?) {
             msg?.let {
-                viewModelScope.launch { devLog(it) }
+                viewModelScope.launch {
+                    val error = ScriptError.fromString(it)
+
+                    if (error != null) {
+                        devLog("::error title=${error.title}::At Line ${error.lineNumber}: ${error.message}")
+                        return@launch
+                    }
+
+                    devLog(it)
+                }
             }
         }
     }
@@ -87,37 +97,38 @@ class ActionViewModel @Inject constructor(
         terminal.event = if (success) Event.SUCCEEDED else Event.FAILED
     }
 
-    private suspend fun executeAction(modId: ModId, legacy: Boolean): Boolean = withContext(Dispatchers.Default) {
-        val shellEnv = listOf(
-            "export PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:\$PATH",
-            "export MMRL=true",
-            "export MMRL_VER=${BuildConfig.VERSION_NAME}",
-            "export MMRL_VER_CODE=${BuildConfig.VERSION_CODE}",
-            "export BOOTMODE=true",
-            "export ARCH=${Build.SUPPORTED_ABIS.firstOrNull().orEmpty()}",
-            "export API=${Build.VERSION.SDK_INT}",
-            "export IS64BIT=${Build.SUPPORTED_64_BIT_ABIS.isNotEmpty()}"
-        )
+    private suspend fun executeAction(modId: ModId, legacy: Boolean): Boolean =
+        withContext(Dispatchers.Default) {
+            val shellEnv = listOf(
+                "export PATH=/data/adb/ap/bin:/data/adb/ksu/bin:/data/adb/magisk:\$PATH",
+                "export MMRL=true",
+                "export MMRL_VER=${BuildConfig.VERSION_NAME}",
+                "export MMRL_VER_CODE=${BuildConfig.VERSION_CODE}",
+                "export BOOTMODE=true",
+                "export ARCH=${Build.SUPPORTED_ABIS.firstOrNull().orEmpty()}",
+                "export API=${Build.VERSION.SDK_INT}",
+                "export IS64BIT=${Build.SUPPORTED_64_BIT_ABIS.isNotEmpty()}"
+            )
 
-        val cmds = if (legacy || platform.isMagisk) {
-            shellEnv + "busybox sh /data/adb/modules/$modId/action.sh"
-        } else {
-            listOf(PlatformManager.moduleManager.getActionCommand(modId))
-        }
-
-        val result = terminal.shell.newJob()
-            .add(*cmds.toTypedArray())
-            .to(stdoutCallbackList, stderrCallbackList)
-            .exec()
-
-        if (result.isSuccess) {
-            return@withContext true
-        } else {
-            withContext(Dispatchers.Main) {
-                log(R.string.execution_failed_try_to_use_shell_for_the_action_execution_settings_module_use_shell_for_module_action)
-                result.err.forEach { devLog("::error::$it") }
+            val cmds = if (legacy || platform.isMagisk) {
+                shellEnv + "busybox sh /data/adb/modules/$modId/action.sh"
+            } else {
+                listOf(PlatformManager.moduleManager.getActionCommand(modId))
             }
-            return@withContext false
+
+            val result = terminal.shell.newJob()
+                .add(*cmds.toTypedArray())
+                .to(stdoutCallbackList, stderrCallbackList)
+                .exec()
+
+            if (result.isSuccess) {
+                return@withContext true
+            } else {
+                withContext(Dispatchers.Main) {
+                    log(R.string.execution_failed_try_to_use_shell_for_the_action_execution_settings_module_use_shell_for_module_action)
+                    result.err.forEach { devLog("::error::$it") }
+                }
+                return@withContext false
+            }
         }
-    }
 }
