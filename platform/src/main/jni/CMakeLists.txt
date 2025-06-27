@@ -7,7 +7,7 @@ set(CMAKE_CXX_FLAGS_RELEASE ${CMAKE_C_FLAGS_RELEASE})
 set(CMAKE_C_FLAGS_RELWITHDEBINFO ${CMAKE_C_FLAGS_RELEASE})
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO ${CMAKE_C_FLAGS_RELWITHDEBINFO})
 
-add_link_options("-Wl,--build-id=none")
+add_link_options("-Wl,--build-id=none,-z,max-page-size=16384")
 
 include_directories(include)
 
