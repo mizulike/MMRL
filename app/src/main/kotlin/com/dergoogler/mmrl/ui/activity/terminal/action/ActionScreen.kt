@@ -66,8 +66,8 @@ fun ActionScreen(
 
     var cancelAction by remember { mutableStateOf(false) }
 
-    val shell = viewModel.shell
-    val event = viewModel.event
+    val shell = viewModel.terminal.shell
+    val event = viewModel.terminal.event
 
     val allowCancel = userPreferences.allowCancelAction
 
@@ -150,7 +150,7 @@ fun ActionScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
         TerminalView(
-            list = viewModel.console,
+            list = viewModel.terminal.console,
             state = listState,
             modifier = Modifier
                 .padding(it)

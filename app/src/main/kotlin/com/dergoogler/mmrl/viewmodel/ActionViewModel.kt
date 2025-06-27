@@ -14,10 +14,8 @@ import com.dergoogler.mmrl.repository.ModulesRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.dergoogler.mmrl.platform.content.State
 import com.dergoogler.mmrl.platform.model.ModId
-import com.dergoogler.mmrl.utils.initPlatform
 import com.topjohnwu.superuser.CallbackList
 import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -42,29 +40,29 @@ class ActionViewModel @Inject constructor(
     suspend fun runAction(modId: ModId) = withContext(Dispatchers.IO) {
         val module = localModule(modId.toString())
         val userPreferences = userPreferencesRepository.data.first()
-        event = Event.LOADING
+        terminal.event = Event.LOADING
 
         if (module == null) {
-            event = Event.FAILED
+            terminal.event = Event.FAILED
             log(R.string.module_not_found)
             return@withContext
         }
 
         if (!module.hasAction) {
-            event = Event.FAILED
+            terminal.event = Event.FAILED
             log(R.string.this_module_don_t_have_an_action)
             return@withContext
         }
 
         if (module.state == State.DISABLE || module.state == State.REMOVE) {
-            event = Event.FAILED
+            terminal.event = Event.FAILED
             log(R.string.module_is_disabled_or_removed_unable_to_execute_action)
             return@withContext
         }
 
         val result = action(modId, userPreferences.useShellForModuleAction)
 
-        event = if (result) {
+        terminal.event = if (result) {
             Event.SUCCEEDED
         } else {
             Event.FAILED
@@ -111,7 +109,7 @@ class ActionViewModel @Inject constructor(
                 listOf(PlatformManager.moduleManager.getActionCommand(modId))
             }
 
-            val result = shell.newJob().add(*cmds.toTypedArray()).to(stdout, stderr).exec()
+            val result = terminal.shell.newJob().add(*cmds.toTypedArray()).to(stdout, stderr).exec()
 
             if (result.isSuccess) {
                 actionResult.complete(true)

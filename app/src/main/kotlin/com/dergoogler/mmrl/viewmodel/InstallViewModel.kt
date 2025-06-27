@@ -21,7 +21,6 @@ import com.dergoogler.mmrl.platform.file.SuFile
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
 import com.dergoogler.mmrl.repository.LocalRepository
 import com.dergoogler.mmrl.repository.ModulesRepository
-import com.dergoogler.mmrl.utils.toFormattedDateSafely
 import dagger.hilt.android.lifecycle.HiltViewModel
 import com.topjohnwu.superuser.CallbackList
 import kotlinx.coroutines.Dispatchers
@@ -70,18 +69,18 @@ class InstallViewModel @Inject constructor(
     suspend fun installModules(uris: List<Uri>) {
         if (!platformReadyDeferred.await()) {
             log(R.string.platform_initialization_failed_cannot_install)
-            event = Event.FAILED
+            terminal.event = Event.FAILED
             return
         }
 
         if (!PlatformManager.isAlive) {
             log(R.string.platform_not_alive_cannot_install)
-            event = Event.FAILED
+            terminal.event = Event.FAILED
             return
         }
 
         val userPreferences = userPreferencesRepository.data.first()
-        event = Event.LOADING
+        terminal.event = Event.LOADING
         var allSucceeded = true
 
         val processedModules = mutableListOf<Pair<Uri, BulkModule?>>()
@@ -131,7 +130,7 @@ class InstallViewModel @Inject constructor(
                 if (Blacklist.isBlacklisted(userPreferences.blacklistAlerts, blacklist)) {
                     withContext(Dispatchers.Main) {
                         log(R.string.cannot_install_blacklisted_modules_settings_security_blacklist_alerts)
-                        event = Event.FAILED
+                        terminal.event = Event.FAILED
                     }
                     allSucceeded = false
                     blacklistedModuleFound = true
@@ -167,7 +166,7 @@ class InstallViewModel @Inject constructor(
                 break
             }
         }
-        event = if (allSucceeded) Event.SUCCEEDED else Event.FAILED
+        terminal.event = if (allSucceeded) Event.SUCCEEDED else Event.FAILED
     }
 
     private val datePattern = runBlocking { userPreferencesRepository.data.first().datePattern }
@@ -204,7 +203,7 @@ class InstallViewModel @Inject constructor(
         withContext(Dispatchers.Main) { log(R.string.copying_zip_to_temp_directory) }
         val tmpFile = context.copyToDir(uri, context.tmpDir) ?: run {
             withContext(Dispatchers.Main) {
-                event = Event.FAILED
+                terminal.event = Event.FAILED
                 log(context.getString(R.string.copying_failed))
             }
             return@withContext false
@@ -213,7 +212,7 @@ class InstallViewModel @Inject constructor(
         val moduleInfoFromTmp = PlatformManager.moduleManager.getModuleInfo(tmpFile.path)
         if (moduleInfoFromTmp == null) {
             withContext(Dispatchers.Main) {
-                event = Event.FAILED
+                terminal.event = Event.FAILED
                 log(R.string.unable_to_gather_module_info)
             }
             tmpFile.delete()
@@ -255,14 +254,14 @@ class InstallViewModel @Inject constructor(
             log(R.string.install_view_installing, zipFile.name)
         }
 
-        if (!shell.isAlive) {
+        if (!terminal.shell.isAlive) {
             withContext(Dispatchers.Main) {
                 log("Error: Shell is not alive. Cannot execute installation.")
             }
             return@withContext false
         }
 
-        val result = shell.newJob()
+        val result = terminal.shell.newJob()
             .add(*cmds.toTypedArray())
             .to(stdoutCallbackList, stderrCallbackList)
             .exec()
@@ -279,7 +278,7 @@ class InstallViewModel @Inject constructor(
                 log("Error: Installation failed for ${zipFile.name}. Exit code: ${result.code}")
                 result.err.forEach { log("Shell Error: $it") }
             }
-            if (module != null && !shell.isAlive) {
+            if (module != null && !terminal.shell.isAlive) {
                 withContext(Dispatchers.IO) {
                     runCatching {
                         SuFile("/data/adb/modules_update/${module.id}").deleteRecursively()

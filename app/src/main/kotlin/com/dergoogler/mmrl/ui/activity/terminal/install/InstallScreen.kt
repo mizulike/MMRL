@@ -71,15 +71,15 @@ fun InstallScreen(
     val isScrollingUp by listState.isScrollingUp()
     val showFab by remember {
         derivedStateOf {
-            isScrollingUp && viewModel.event.isSucceeded
+            isScrollingUp && viewModel.terminal.event.isSucceeded
         }
     }
 
     var confirmReboot by remember { mutableStateOf(false) }
     var cancelInstall by remember { mutableStateOf(false) }
 
-    val shell = viewModel.shell
-    val event = viewModel.event
+    val shell = viewModel.terminal.shell
+    val event = viewModel.terminal.event
 
     val allowCancel = userPreferences.allowCancelInstall
 
@@ -200,7 +200,7 @@ fun InstallScreen(
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) {
         TerminalView(
-            list = viewModel.console,
+            list = viewModel.terminal.console,
             state = listState,
             modifier = Modifier
                 .padding(it)

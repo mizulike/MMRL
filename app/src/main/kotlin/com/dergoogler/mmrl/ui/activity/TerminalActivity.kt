@@ -21,7 +21,7 @@ open class TerminalActivity<T : TerminalViewModel> : MMRLComponentActivity() {
                 cancel(message)
             }
 
-            viewModel.shell.close()
+            viewModel.terminal.shell.close()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to cancel job", e)
         }
