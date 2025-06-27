@@ -30,7 +30,7 @@ abstract class Alerts(
                 console += AlertBlock(
                     lineNumber = lineNumber,
                     type = type,
-                    text = applyMasks(it)
+                    text = it.fixNewLines.applyMasks
                 )
             }
         }

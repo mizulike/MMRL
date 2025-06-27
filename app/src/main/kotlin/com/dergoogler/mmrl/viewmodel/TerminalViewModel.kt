@@ -158,43 +158,42 @@ open class TerminalViewModel @Inject constructor(
         message: String,
         log: String = message,
     ) {
-        viewModelScope.launch(Dispatchers.Main) {
-            if (message.startsWith(CLEAR_CMD)) {
-                terminal.console.clear()
-                logs.clear()
-                terminal.lineNumber = 1
-                terminal.currentGroup = null
-                terminal.currentCard = null
-                terminal.lineAdded = true
-                return@launch
-            }
+        with(terminal) {
+            viewModelScope.launch(Dispatchers.Main) {
+                if (message.startsWith(CLEAR_CMD)) {
+                    console.clear()
+                    logs.clear()
+                    lineNumber = 1
+                    currentGroup = null
+                    currentCard = null
+                    lineAdded = true
+                    return@launch
+                }
 
-            val maskedMessage = terminal.applyMasks(message)
-            val maskedLog = terminal.applyMasks(log)
+                val maskedMessage = message.fixNewLines.applyMasks
+                val maskedLog = log.fixNewLines.applyMasks
 
-            val command = ActionCommand.tryParseV2AndRun(
-                message = message,
-                terminal = terminal,
-                registeredCommands = commands,
-            )
+                val command = ActionCommand.tryParseV2AndRun(
+                    message = message,
+                    terminal = this@with,
+                    registeredCommands = commands,
+                )
 
-            if (!command) {
-                emitLogLine(maskedMessage)
+                if (!command) {
+                    emitLogLine(maskedMessage)
+                }
+
                 logs += maskedLog
-                terminal.lineNumber++
-                terminal.lineAdded = true
-                return@launch
-            }
 
-            // Only increment if the command added a new line
-            if (terminal.lineAdded) {
-                terminal.lineNumber++
+                if (lineAdded) {
+                    lineNumber++
+                }
+
+                // Reset the flag for next line
+                lineAdded = true
             }
-            // Reset the flag for next line
-            terminal.lineAdded = true
         }
     }
-
 
     private fun emitLogLine(text: String) {
         with(terminal) {

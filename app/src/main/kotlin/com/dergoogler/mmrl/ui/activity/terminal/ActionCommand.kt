@@ -35,8 +35,8 @@ class Terminal {
     val masks = mutableListOf<String>()
     var event by mutableStateOf(Event.LOADING)
 
-    fun applyMasks(data: String): String {
-        var maskedString = data
+    val String.applyMasks get(): String {
+        var maskedString = this
         for (mask in masks) {
             if (mask.isNotEmpty()) {
                 maskedString = maskedString.replace(mask, "••••••••")
@@ -44,6 +44,9 @@ class Terminal {
         }
         return maskedString
     }
+
+    val String.fixNewLines get(): String =
+        this.replace("""\\n""".toRegex(), "\n").replace(Regex("\r\n|\r|\n"), "\n")
 }
 
 class ActionCommand private constructor(val command: String) {

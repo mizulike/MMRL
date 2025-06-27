@@ -11,7 +11,7 @@ class Group : Command {
     override fun run(action: ActionCommand, terminal: Terminal) {
         with(terminal) {
             currentGroup = GroupBlock(
-                title = action.data.ifBlank { action.properties["title"] },
+                title = action.data.ifBlank { action.properties["title"] }?.fixNewLines,
                 startLine = lineNumber,
                 initiallyExpanded = false
             )

@@ -29,13 +29,13 @@ class ReplaceSelf : Command {
 
                 if (index >= 0) {
                     val oldBlock = console[index] as TextBlock
-                    val newBlock = TextBlock(oldBlock.lineNumber, data, key = key)
+                    val newBlock = TextBlock(oldBlock.lineNumber, data.fixNewLines, key = key)
                     if (oldBlock != newBlock) {
                         console[index] = newBlock
                     }
                     lineAdded = false // replaced existing line → no new line added
                 } else {
-                    console += TextBlock(lineNumber, data, key = key)
+                    console += TextBlock(lineNumber, data.fixNewLines, key = key)
                     lineAdded = true  // new line added
                 }
             } ?: run {
