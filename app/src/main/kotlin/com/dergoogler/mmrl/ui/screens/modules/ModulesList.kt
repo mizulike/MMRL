@@ -65,7 +65,7 @@ fun ScaffoldScope.ModulesList(
         ) {
             items(
                 items = list,
-                key = { it.id },
+                key = { it.id.id },
                 contentType = { "module_item" }
             ) { module ->
                 CompositionLocalProvider(
