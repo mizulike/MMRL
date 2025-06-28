@@ -411,7 +411,7 @@
     <string name="settings_terminal_line_numbers">行番号</string>
     <string name="settings_terminal_line_numbers_desc">ターミナルの左側に行番号を表示します。</string>
     <string name="working_mode_sukisu_title">SukiSU Ultra</string>
-    <string name="settings_date_pattern_dialog_desc">日付は [color=primary]%1$s[/color] で表示されます</string>
+    <string name="settings_date_pattern_dialog_desc">表示される日付のパターン:\n[color=primary]%1$s[/color]</string>
     <string name="view_module_permissions">権限</string>
     <string name="view_module_install_confirm_desc_deps">[color=surface_tint]%1$s[/color] をインストールしてもよろしいですか？このモジュールはこちらも必要です:</string>
     <string name="settings_always_show_update_alert">更新アラートを常に表示する</string>
