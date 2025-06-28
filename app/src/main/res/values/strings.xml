@@ -421,4 +421,6 @@
     <string name="settings_terminal">Terminal</string>
     <string name="settings_behavior">Behavior</string>
     <string name="settings_terminal_desc">Tailor the terminal to suit your preferences</string>
+    <string name="hook_mode">Hook Mode</string>
+    <string name="kpm_support">KPM Support</string>
 </resources>

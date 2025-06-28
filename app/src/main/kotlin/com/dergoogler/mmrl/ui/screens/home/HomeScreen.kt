@@ -261,7 +261,7 @@ fun HomeScreen(
                                     if (viewModel.platform.isKernelSuNext) {
                                         KsuNative.getHookMode().nullable {
                                             scope.Item {
-                                                Title("Hook Mode")
+                                                Title(R.string.hook_mode)
                                                 Description(it)
                                             }
                                         }
@@ -270,14 +270,14 @@ fun HomeScreen(
                                     if (viewModel.platform.isSukiSU) {
                                         KsuNative.getHookType().nullable {
                                             scope.Item {
-                                                Title("Hook Mode")
+                                                Title(R.string.hook_mode)
                                                 Description(it)
                                             }
                                         }
 
                                         scope.Item {
-                                            Title("KPM Support")
-                                            Description(if (KsuNative.isKPMEnabled()) "Yes" else "No")
+                                            Title(R.string.kpm_support)
+                                            Description(if (KsuNative.isKPMEnabled()) android.R.string.yes else android.R.string.no)
                                         }
                                     }
                                 }
