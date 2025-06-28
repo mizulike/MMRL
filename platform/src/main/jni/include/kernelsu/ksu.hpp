@@ -29,7 +29,7 @@ bool grant_root();
 
 bool become_manager(const char *);
 
-static bool is_lkm;
+static bool is_lkm = false;
 
 int get_version();
 
