@@ -9,6 +9,7 @@ import com.dergoogler.mmrl.BuildConfig
 import com.dergoogler.mmrl.datastore.model.UserPreferences
 import com.dergoogler.mmrl.datastore.model.WebUIEngine
 import com.dergoogler.mmrl.ext.toFormattedDateSafely
+import com.dergoogler.mmrl.platform.Platform.Companion.putPlatform
 import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.platform.model.ModuleConfig.Companion.asModuleConfig
@@ -65,6 +66,7 @@ fun UserPreferences.launchWebUI(context: Context, modId: ModId) {
                 "com.dergoogler.mmrl.wx.ui.activity.webui.WebUIActivity"
             )
             putModId(modId)
+            putPlatform(workingMode.toPlatform())
         }
 
         context.startActivity(intent)
@@ -77,6 +79,7 @@ fun UserPreferences.launchWebUI(context: Context, modId: ModId) {
                 "com.dergoogler.mmrl.wx.ui.activity.webui.KsuWebUIActivity"
             )
             putModId(modId)
+            putPlatform(workingMode.toPlatform())
         }
 
         context.startActivity(intent)
