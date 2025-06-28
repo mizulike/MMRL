@@ -30,8 +30,9 @@ class Terminal {
     val shell by mutableStateOf(createRootShell())
     var currentGroup: GroupBlock? = null
     var currentCard: CardBlock? = null
+    var lineNumbersEnabled: Boolean by mutableStateOf(true)
     var lineNumber = 1
-    var lineAdded: Boolean = true
+    var lineAdded: Boolean by mutableStateOf(true)
     val masks = mutableListOf<String>()
     var event by mutableStateOf(Event.LOADING)
 
