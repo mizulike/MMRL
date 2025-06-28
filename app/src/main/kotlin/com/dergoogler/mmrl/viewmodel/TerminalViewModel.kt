@@ -14,7 +14,6 @@ import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.app.Const.CLEAR_CMD
 import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.datastore.UserPreferencesRepository
-import com.dergoogler.mmrl.ext.nullable
 import com.dergoogler.mmrl.model.local.LocalModule
 import com.dergoogler.mmrl.model.terminal.TextBlock
 import com.dergoogler.mmrl.model.terminal.commands.AddMask
@@ -24,8 +23,8 @@ import com.dergoogler.mmrl.model.terminal.commands.EndGroup
 import com.dergoogler.mmrl.model.terminal.commands.Error
 import com.dergoogler.mmrl.model.terminal.commands.Group
 import com.dergoogler.mmrl.model.terminal.commands.Notice
+import com.dergoogler.mmrl.model.terminal.commands.RemoveLine
 import com.dergoogler.mmrl.model.terminal.commands.ReplaceSelf
-import com.dergoogler.mmrl.model.terminal.commands.SetLines
 import com.dergoogler.mmrl.model.terminal.commands.Warning
 import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -64,7 +63,7 @@ open class TerminalViewModel @Inject constructor(
     private val commands =
         listOf(
             Group(), EndGroup(), Card(), EndCard(), AddMask(), Notice(), Warning(), Error(),
-            ReplaceSelf(), /*SetLines()*/
+            ReplaceSelf(), /*SetLines()*/ RemoveLine()
         )
 
     init {

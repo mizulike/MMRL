@@ -10,6 +10,7 @@ import com.dergoogler.mmrl.app.Event
 import com.dergoogler.mmrl.model.terminal.Block
 import com.dergoogler.mmrl.model.terminal.CardBlock
 import com.dergoogler.mmrl.model.terminal.GroupBlock
+import com.dergoogler.mmrl.model.terminal.TextBlock
 import com.dergoogler.mmrl.utils.createRootShell
 
 interface Command {
@@ -37,7 +38,6 @@ class Terminal {
     val shell by mutableStateOf(createRootShell())
     var currentGroup: GroupBlock? = null
     var currentCard: CardBlock? = null
-
     // var lineNumbersEnabled: Boolean by mutableStateOf(true)
     var lineNumber = 1
     var lineAdded: Boolean by mutableStateOf(true)

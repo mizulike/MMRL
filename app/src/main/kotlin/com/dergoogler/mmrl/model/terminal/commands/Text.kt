@@ -65,3 +65,26 @@ class ReplaceSelf : Command {
         }
     }
 }
+
+class RemoveLine : Command {
+    override val name: String = "remove-line"
+
+    override fun run(action: ActionCommand, terminal: Terminal) {
+        with(terminal) {
+            val key = action.getProp<String>("key")
+            val data = action.data.takeIf { it.isNotBlank() }
+
+            when {
+                data != null -> {
+                    val reg = Regex(data)
+                    console.removeAll { it is TextBlock && it.text.matches(reg) }
+                }
+                !key.isNullOrBlank() -> {
+                    console.removeAll { it is TextBlock && it.key == key }
+                }
+            }
+
+            lineAdded = false
+        }
+    }
+}
