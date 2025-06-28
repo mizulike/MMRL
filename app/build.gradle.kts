@@ -188,6 +188,7 @@ dependencies {
     implementation(projects.platform)
     implementation(projects.ui)
     implementation(projects.ext)
+    implementation(projects.compat)
     implementation(projects.datastore)
 
     implementation(libs.webuix.portable)

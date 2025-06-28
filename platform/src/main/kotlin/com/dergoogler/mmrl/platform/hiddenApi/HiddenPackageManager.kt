@@ -6,7 +6,7 @@ import android.content.pm.IPackageManager
 import android.content.pm.PackageInfo
 import android.content.pm.ResolveInfo
 import android.os.SystemProperties
-import com.dergoogler.mmrl.ext.BuildCompat
+import com.dergoogler.mmrl.compat.BuildCompat
 import com.dergoogler.mmrl.platform.PlatformManager.getSystemService
 import com.dergoogler.mmrl.platform.stub.IServiceManager
 

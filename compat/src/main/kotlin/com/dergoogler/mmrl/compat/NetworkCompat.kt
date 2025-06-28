@@ -1,12 +1,12 @@
 package com.dergoogler.mmrl.compat
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import com.dergoogler.mmrl.BuildConfig
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.ExperimentalSerializationApi
@@ -24,7 +24,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.kotlinx.serialization.asConverterFactory
 import retrofit2.create
-import timber.log.Timber
 import java.io.File
 import java.io.OutputStream
 import java.util.Locale
@@ -54,12 +53,15 @@ object NetworkCompat {
             .toRegex()
             .matches(url)
 
-    private fun createOkHttpClient(): OkHttpClient {
+    private fun createOkHttpClient(
+        debug: Boolean = false,
+        userAgent: String = "NetworkCompat/0x0"
+    ): OkHttpClient {
         val builder = OkHttpClient.Builder().cache(cacheOrNull)
 
-        if (BuildConfig.DEBUG) {
+        if (debug) {
             builder.addInterceptor(
-                HttpLoggingInterceptor { Timber.i(it) }
+                HttpLoggingInterceptor { Log.d(TAG, it) }
                     .apply {
                         level = HttpLoggingInterceptor.Level.BASIC
                     }
@@ -70,7 +72,7 @@ object NetworkCompat {
 
         builder.addInterceptor { chain ->
             val request = chain.request().newBuilder()
-            request.header("User-Agent", "MMRL/${BuildConfig.VERSION_CODE}")
+            request.header("User-Agent", userAgent)
             request.header("Accept-Language", Locale.getDefault().toLanguageTag())
             chain.proceed(request.build())
         }
@@ -243,4 +245,6 @@ object NetworkCompat {
             block = { NetworkCompat.requestJson<T>(url) }
         )
     }
+
+    private const val TAG = "NetworkCompat"
 }
