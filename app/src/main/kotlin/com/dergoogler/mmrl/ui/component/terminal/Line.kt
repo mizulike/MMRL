@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -27,14 +28,7 @@ fun Line(
     content: @Composable RowScope.() -> Unit,
 ) {
     val userPrefs = LocalUserPreferences.current
-
-    val lineNumbersEnabled by remember(
-        userPrefs.showTerminalLineNumbers,
-    ) {
-        derivedStateOf {
-            userPrefs.showTerminalLineNumbers
-        }
-    }
+    val lineNumbersEnabled by rememberUpdatedState(userPrefs.showTerminalLineNumbers)
 
     Row(
         modifier = Modifier
@@ -46,21 +40,25 @@ fun Line(
             ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        LineNumber(index)
+        LineNumber(number = index, enabled = lineNumbersEnabled)
         content()
     }
 }
 
 @Composable
-fun RowScope.LineNumber(number: Int?) {
-    val userPrefs = LocalUserPreferences.current
-    if (!userPrefs.showTerminalLineNumbers) return
+fun RowScope.LineNumber(number: Int?, enabled: Boolean) {
+    if (!enabled) return
 
     val index = remember(number) {
         if (number == null || number == -1) "" else number.toString()
     }
 
     val style = LocalTextStyle.current
+    val colorScheme = MaterialTheme.colorScheme
+
+    val outlineColor = remember {
+        colorScheme.outline.copy(alpha = 0.6f)
+    }
 
     DisableSelection {
         Box(
@@ -69,11 +67,7 @@ fun RowScope.LineNumber(number: Int?) {
         ) {
             Text(
                 text = index,
-                style = style.copy(
-                    color = MaterialTheme.colorScheme.outline.copy(
-                        alpha = 0.6f
-                    ),
-                )
+                style = style.copy(color = outlineColor)
             )
         }
     }

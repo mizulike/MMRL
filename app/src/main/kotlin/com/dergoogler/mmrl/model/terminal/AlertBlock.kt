@@ -1,5 +1,8 @@
 package com.dergoogler.mmrl.model.terminal
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+
 enum class AlertType {
     NOTICE,
     WARNING,
@@ -11,5 +14,5 @@ data class AlertBlock(
     val type: AlertType,
     val title: String? = null,
     val text: String,
-    override val lines: MutableList<Pair<Int, String>> = mutableListOf(),
+    override val lines: SnapshotStateList<Pair<Int, String>> = mutableStateListOf(),
 ) : Block

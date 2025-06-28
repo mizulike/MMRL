@@ -1,5 +1,8 @@
 package com.dergoogler.mmrl.model.terminal
 
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
+
 data class CardBlock(
-    override val lines: MutableList<Pair<Int, String>> = mutableListOf(),
+    override val lines: SnapshotStateList<Pair<Int, String>> = mutableStateListOf(),
 ) : Block

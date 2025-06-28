@@ -160,15 +160,20 @@ android {
             pickFirsts += listOf("lib/arm64-v8a/libmmrl-file-manager.so")
         }
 
-        resources.excludes += setOf(
-            "META-INF/**",
-            "okhttp3/**",
-            // "kotlin/**",
-            "org/**",
-            "**.properties",
-            "**.bin",
-            "**/*.proto"
-        )
+        resources {
+            pickFirsts += setOf(
+                "META-INF/gradle/incremental.annotation.processors"
+            )
+
+            excludes += setOf(
+                "okhttp3/**",
+                // "kotlin/**",
+                "org/**",
+                "**.properties",
+                "**.bin",
+                "**/*.proto"
+            )
+        }
     }
 
     dependenciesInfo.includeInApk = false
@@ -178,6 +183,12 @@ android {
             (this as? ApkVariantOutputImpl)?.outputFileName =
                 "MMRL-$versionName.apk"
         }
+    }
+}
+
+androidComponents {
+    onVariants(selector().withBuildType("release")) {
+        it.packaging.resources.excludes.add("META-INF/**")
     }
 }
 

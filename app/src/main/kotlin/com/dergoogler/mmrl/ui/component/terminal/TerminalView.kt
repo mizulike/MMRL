@@ -1,13 +1,8 @@
 package com.dergoogler.mmrl.ui.component.terminal
 
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -25,15 +20,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.Dp
 import com.dergoogler.mmrl.model.terminal.AlertBlock
+import com.dergoogler.mmrl.model.terminal.Block
 import com.dergoogler.mmrl.model.terminal.CardBlock
 import com.dergoogler.mmrl.model.terminal.GroupBlock
 import com.dergoogler.mmrl.model.terminal.TextBlock
@@ -48,7 +41,6 @@ val LocalTerminalWidth = staticCompositionLocalOf<Dp> {
 val LocalTerminal = staticCompositionLocalOf<Terminal> {
     error("CompositionLocal LocalTerminal not present")
 }
-
 @Composable
 fun TerminalView(
     modifier: Modifier = Modifier,
@@ -61,11 +53,19 @@ fun TerminalView(
 ) {
     val userPrefs = LocalUserPreferences.current
     val density = LocalDensity.current
+    val colorScheme = MaterialTheme.colorScheme
 
-    val list by remember {
-        derivedStateOf {
-            terminal.console
-        }
+    val list by remember(terminal) {
+        derivedStateOf { terminal.console }
+    }
+
+    val textStyle = remember(style, colorScheme) {
+        style.copy(color = colorScheme.onSurfaceVariant)
+    }
+
+    var lazyColumnWidth by remember { mutableIntStateOf(0) }
+    val widthDp = remember(lazyColumnWidth, density) {
+        with(density) { lazyColumnWidth.toDp() }
     }
 
     LaunchedEffect(list.size) {
@@ -74,16 +74,13 @@ fun TerminalView(
         }
     }
 
-    var lazyColumnWidth by remember { mutableIntStateOf(0) }
-
-    ProvideTextStyle(value = style) {
+    ProvideTextStyle(value = textStyle) {
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .let {
-                    if (userPrefs.terminalTextWrap) it else it.horizontalScroll(
-                        rememberScrollState()
-                    )
+                    if (userPrefs.terminalTextWrap) it
+                    else it.horizontalScroll(rememberScrollState())
                 }
         ) {
             SelectionContainer {
@@ -96,19 +93,17 @@ fun TerminalView(
                         .then(modifier),
                     state = state,
                 ) {
-                    val widthDp = with(density) { lazyColumnWidth.toDp() }
-
-                    itemsIndexed(list) { index, block ->
+                    itemsIndexed(
+                        items = list,
+                        key = { index, block ->
+                            "${index}_${block.hashCode()}"
+                        }
+                    ) { _, block ->
                         CompositionLocalProvider(
                             LocalTerminal provides terminal,
                             LocalTerminalWidth provides widthDp
                         ) {
-                            when (block) {
-                                is GroupBlock -> GroupBlockView(block)
-                                is CardBlock -> CardView(block)
-                                is TextBlock -> TextView(block)
-                                is AlertBlock -> AlertView(block)
-                            }
+                            TerminalBlockContent(block)
                         }
                     }
 
@@ -121,3 +116,12 @@ fun TerminalView(
     }
 }
 
+@Composable
+private fun TerminalBlockContent(block: Block) {
+    when (block) {
+        is GroupBlock -> GroupBlockView(block)
+        is CardBlock -> CardView(block)
+        is TextBlock -> TextView(block)
+        is AlertBlock -> AlertView(block)
+    }
+}

@@ -19,10 +19,13 @@ import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 
 @Composable
 fun GroupBlockView(group: GroupBlock) {
-    var expanded by remember { mutableStateOf(group.initiallyExpanded) }
+    var expanded by remember(group.initiallyExpanded) {
+        mutableStateOf(group.initiallyExpanded)
+    }
 
     val width = LocalTerminalWidth.current
     val style = LocalTextStyle.current
+    val colorScheme = MaterialTheme.colorScheme
 
     Column {
         if (group.title != null) {
@@ -32,10 +35,13 @@ fun GroupBlockView(group: GroupBlock) {
                     .clickable { expanded = !expanded },
                 index = group.startLine
             ) {
-                val color = MaterialTheme.colorScheme.primary
+                val color = colorScheme.primary
+                val icon = remember(expanded) {
+                    if (expanded) R.drawable.caret_up_filled else R.drawable.caret_down_filled
+                }
 
                 TextWithIcon(
-                    icon = if (expanded) R.drawable.caret_up_filled else R.drawable.caret_down_filled,
+                    icon = icon,
                     style = TextWithIconDefaults.style.copy(
                         textStyle = style.copy(color = color),
                         iconTint = color
@@ -47,13 +53,10 @@ fun GroupBlockView(group: GroupBlock) {
 
         if (expanded) {
             group.lines.forEach { (index, line) ->
-                val tabCount = 4
-                val tabs = " ".repeat(tabCount)
+                val tabs = remember { " ".repeat(4) }
 
                 Line(index = index) {
-                    BBCodeText(
-                        text = tabs + line
-                    )
+                    BBCodeText(text = tabs + line)
                 }
             }
         }
