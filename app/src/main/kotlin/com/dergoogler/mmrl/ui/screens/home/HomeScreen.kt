@@ -277,7 +277,7 @@ fun HomeScreen(
 
                                         scope.Item {
                                             Title(R.string.kpm_support)
-                                            Description(if (KsuNative.isKPMEnabled()) android.R.string.yes else android.R.string.no)
+                                            Description(if (KsuNative.isKPMEnabled()) R.string.yes else R.string.no)
                                         }
                                     }
                                 }
