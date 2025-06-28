@@ -25,6 +25,7 @@ import com.dergoogler.mmrl.model.terminal.commands.Error
 import com.dergoogler.mmrl.model.terminal.commands.Group
 import com.dergoogler.mmrl.model.terminal.commands.Notice
 import com.dergoogler.mmrl.model.terminal.commands.ReplaceSelf
+import com.dergoogler.mmrl.model.terminal.commands.SetLines
 import com.dergoogler.mmrl.model.terminal.commands.Warning
 import com.dergoogler.mmrl.platform.PlatformManager
 import com.dergoogler.mmrl.repository.LocalRepository
@@ -63,7 +64,7 @@ open class TerminalViewModel @Inject constructor(
     private val commands =
         listOf(
             Group(), EndGroup(), Card(), EndCard(), AddMask(), Notice(), Warning(), Error(),
-            ReplaceSelf()
+            ReplaceSelf(), /*SetLines()*/
         )
 
     init {

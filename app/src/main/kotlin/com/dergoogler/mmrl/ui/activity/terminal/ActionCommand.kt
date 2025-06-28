@@ -30,29 +30,45 @@ class Terminal {
     val shell by mutableStateOf(createRootShell())
     var currentGroup: GroupBlock? = null
     var currentCard: CardBlock? = null
-    var lineNumbersEnabled: Boolean by mutableStateOf(true)
+    // var lineNumbersEnabled: Boolean by mutableStateOf(true)
     var lineNumber = 1
     var lineAdded: Boolean by mutableStateOf(true)
     val masks = mutableListOf<String>()
     var event by mutableStateOf(Event.LOADING)
 
-    val String.applyMasks get(): String {
-        var maskedString = this
-        for (mask in masks) {
-            if (mask.isNotEmpty()) {
-                maskedString = maskedString.replace(mask, "••••••••")
+    val String.applyMasks
+        get(): String {
+            var maskedString = this
+            for (mask in masks) {
+                if (mask.isNotEmpty()) {
+                    maskedString = maskedString.replace(mask, "••••••••")
+                }
             }
+            return maskedString
         }
-        return maskedString
-    }
 
-    val String.fixNewLines get(): String =
-        this.replace("""\\n""".toRegex(), "\n").replace(Regex("\r\n|\r|\n"), "\n")
+    val String.fixNewLines
+        get(): String =
+            this.replace("""\\n""".toRegex(), "\n").replace(Regex("\r\n|\r|\n"), "\n")
 }
 
 class ActionCommand private constructor(val command: String) {
     val properties = mutableMapOf<String, String>()
     var data: String = ""
+
+    inline fun <reified T> getProp(key: String): T? {
+        val value = properties[key]
+        return value as? T
+    }
+
+    inline fun <reified T> getProp(key: String, def: T): T {
+        val value = properties[key]
+        return if (value is T) {
+            value
+        } else {
+            def
+        }
+    }
 
     companion object {
         private const val COMMAND_KEY = "::"

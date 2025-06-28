@@ -9,7 +9,6 @@ class AddMask : Command {
     override val name: String = "add-mask"
 
     override fun run(action: ActionCommand, terminal: Terminal) {
-
         with(terminal) {
             action.data.takeIf { it.isNotBlank() }?.let { masks += it }
         }
@@ -21,7 +20,7 @@ class ReplaceSelf : Command {
 
     override fun run(action: ActionCommand, terminal: Terminal) {
         with(terminal) {
-            val key = action.properties["key"]
+            val key = action.getProp<String>("key")
             if (key.isNullOrBlank()) return
 
             action.data.takeIf { it.isNotBlank() }?.let { data ->

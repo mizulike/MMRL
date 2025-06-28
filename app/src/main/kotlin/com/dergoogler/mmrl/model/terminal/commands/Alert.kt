@@ -26,7 +26,7 @@ abstract class Alerts(
         terminal: Terminal,
     ) {
         with(terminal) {
-            val title = action.properties["title"]
+            val title = action.getProp<String>("title")
 
             action.data.takeIf { it.isNotBlank() }?.let {
                 console += AlertBlock(

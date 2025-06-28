@@ -27,14 +27,12 @@ fun Line(
     content: @Composable RowScope.() -> Unit,
 ) {
     val userPrefs = LocalUserPreferences.current
-    val terminal = LocalTerminal.current
 
     val lineNumbersEnabled by remember(
         userPrefs.showTerminalLineNumbers,
-        terminal.lineNumbersEnabled
     ) {
         derivedStateOf {
-            terminal.lineNumbersEnabled && userPrefs.showTerminalLineNumbers
+            userPrefs.showTerminalLineNumbers
         }
     }
 
@@ -48,10 +46,7 @@ fun Line(
             ),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        if (lineNumbersEnabled) {
-            LineNumber(index)
-        }
-
+        LineNumber(index)
         content()
     }
 }
