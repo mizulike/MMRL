@@ -15,7 +15,7 @@ import com.dergoogler.mmrl.app.utils.NotificationUtils
 import com.dergoogler.mmrl.datastore.model.WorkingMode
 import com.dergoogler.mmrl.platform.PLATFORM_KEY
 import com.dergoogler.mmrl.platform.Platform
-import com.dergoogler.mmrl.platform.model.PlatformIntent.Companion.getPlatform
+import com.dergoogler.mmrl.platform.Platform.Companion.getPlatform
 import com.dergoogler.mmrl.utils.initPlatform
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -45,7 +45,7 @@ class ProviderService : LifecycleService() {
         }
 
         lifecycleScope.launch {
-            isActive = initPlatform(baseContext, intent.getPlatform())
+            isActive = initPlatform(baseContext, intent.getPlatform() ?: return@launch)
         }
 
         return START_STICKY

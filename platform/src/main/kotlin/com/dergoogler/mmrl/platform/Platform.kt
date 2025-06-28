@@ -1,43 +1,9 @@
 package com.dergoogler.mmrl.platform
 
-import android.app.ActivityThread
 import android.content.ComponentName
 import android.content.Context
-import android.content.ContextWrapper
-import android.content.ServiceConnection
+import android.content.Intent
 import android.os.Build
-import android.os.IBinder
-import android.os.IInterface
-import android.os.Parcel
-import android.os.ServiceManager
-import android.util.Log
-import androidx.compose.runtime.DisallowComposableCalls
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import com.dergoogler.mmrl.platform.content.IService
-import com.dergoogler.mmrl.platform.content.Service
-import com.dergoogler.mmrl.platform.hiddenApi.HiddenPackageManager
-import com.dergoogler.mmrl.platform.hiddenApi.HiddenUserManager
-import com.dergoogler.mmrl.platform.model.IProvider
-import com.dergoogler.mmrl.platform.model.PlatformConfig
-import com.dergoogler.mmrl.platform.model.PlatformConfigImpl
-import com.dergoogler.mmrl.platform.stub.IFileManager
-import com.dergoogler.mmrl.platform.stub.IModuleManager
-import com.dergoogler.mmrl.platform.stub.IServiceManager
-import kotlinx.coroutines.CompletableDeferred
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Deferred
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.InternalCoroutinesApi
-import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.suspendCancellableCoroutine
-import kotlinx.coroutines.withContext
-import kotlinx.coroutines.withTimeout
-import org.lsposed.hiddenapibypass.HiddenApiBypass
-import java.io.FileDescriptor
 
 const val TIMEOUT_MILLIS = 15_000L
 const val PLATFORM_KEY = "PLATFORM"
@@ -62,6 +28,42 @@ enum class Platform(val id: String) {
     companion object {
         fun from(value: String): Platform {
             return entries.firstOrNull { it.id == value } ?: NonRoot
+        }
+
+        /**
+         * Creates an [Intent] for a specific platform.
+         *
+         * This function is an inline extension function on the [Context] class.
+         * It takes a reified type parameter `T` which represents the target component (e.g., Activity or Service)
+         * and a [Platform] enum value indicating the platform for which the intent is being created.
+         *
+         * The created [Intent] will have its component set to the fully qualified name of the class `T`
+         * within the current application's package.
+         * It will also include the specified [platform] as an extra, using [PLATFORM_KEY] as the key.
+         *
+         * @param T The reified type of the target component (e.g., an Activity or Service class).
+         * @param platform The [Platform] for which this intent is being created.
+         * @return An [Intent] configured to launch the specified component for the given platform.
+         */
+        inline fun <reified T> Context.createPlatformIntent(platform: Platform): Intent =
+            Intent().apply {
+                component = ComponentName(
+                    packageName,
+                    T::class.java.name
+                )
+                putExtra(PLATFORM_KEY, platform)
+            }
+
+        fun Intent.getPlatform(): Platform? =
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                this.getSerializableExtra(PLATFORM_KEY, Platform::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                this.getSerializableExtra(PLATFORM_KEY) as? Platform
+            }
+
+        fun Intent.putPlatform(platform: Platform) {
+            putExtra(PLATFORM_KEY, platform)
         }
     }
 
