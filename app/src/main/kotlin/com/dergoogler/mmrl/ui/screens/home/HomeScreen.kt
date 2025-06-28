@@ -52,6 +52,7 @@ import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.model.online.Changelog
 import com.dergoogler.mmrl.network.runRequest
 import com.dergoogler.mmrl.platform.file.SuFile.Companion.toFormattedFileSize
+import com.dergoogler.mmrl.platform.ksu.KsuNative
 import com.dergoogler.mmrl.stub.IMMRLApiManager
 import com.dergoogler.mmrl.ui.component.Alert
 import com.dergoogler.mmrl.ui.component.SELinuxStatus
@@ -255,6 +256,29 @@ fun HomeScreen(
                                     scope.Item {
                                         Title(R.string.home_root_provider_se_linux_context)
                                         Description(viewModel.seLinuxContext)
+                                    }
+
+                                    if (viewModel.platform.isKernelSuNext) {
+                                        KsuNative.getHookMode().nullable {
+                                            scope.Item {
+                                                Title("Hook Mode")
+                                                Description(it)
+                                            }
+                                        }
+                                    }
+
+                                    if (viewModel.platform.isSukiSU) {
+                                        KsuNative.getHookType().nullable {
+                                            scope.Item {
+                                                Title("Hook Mode")
+                                                Description(it)
+                                            }
+                                        }
+
+                                        scope.Item {
+                                            Title("KPM Support")
+                                            Description(if (KsuNative.isKPMEnabled()) "Yes" else "No")
+                                        }
                                     }
                                 }
                             }

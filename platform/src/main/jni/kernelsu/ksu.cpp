@@ -6,16 +6,10 @@
 #include <kernelsu/ksu.hpp>
 #include <logging.hpp>
 
-static bool ksuctl(int cmd, void* arg1, void* arg2) {
+bool ksuctl(int cmd, void* arg1, void* arg2) {
     int32_t result = 0;
     prctl(KERNEL_SU_OPTION, cmd, arg1, arg2, &result);
     return result == KERNEL_SU_OPTION;
-}
-
-bool get_hook_mode(char *mode, int mode_len) {
-    if (!mode || mode_len == 0) return false;
-    memset(mode, 0, mode_len);
-    return ksuctl(CMD_HOOK_MODE, mode, nullptr);
 }
 
 bool grant_root() {

@@ -69,6 +69,9 @@ enum class Platform(val id: String) {
     val isKernelSU get() = this == KernelSU
     val isKernelSuNext get() = this == KsuNext
     val isAPatch get() = this == APatch
+    val isMKSU get() = this == MKSU
+    val isSukiSU get() = this == SukiSU
+    val isRKSU get() = this == RKSU
 
     val isNotMagisk get() = !isMagisk
     val isNotKernelSU get() = this != KernelSU && this != KsuNext

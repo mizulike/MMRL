@@ -2,6 +2,8 @@
 #include <sys/prctl.h>
 #include <cstring>
 #include <kernelsu/ksu.hpp>
+#include <kernelsu/ksun.hpp>
+#include <kernelsu/sukisu.hpp>
 #include <logging.hpp>
 
 extern "C"
@@ -71,12 +73,27 @@ Java_com_dergoogler_mmrl_platform_ksu_KsuNative_setSuEnabled(JNIEnv *env, jobjec
                                                              jboolean enabled) {
     return set_su_enabled(enabled);
 }
+
 extern "C"
 JNIEXPORT jstring JNICALL
-Java_com_dergoogler_mmrl_platform_ksu_KsuNative_getHookMode(JNIEnv *env, jobject thiz) {
-    char mode[16] = {0};
-    if (get_hook_mode(mode, sizeof(mode))) {
-        return env->NewStringUTF(mode);
-    }
-    return nullptr;
+Java_com_dergoogler_mmrl_platform_ksu_KsuNative_getHookMode(JNIEnv *env,
+                                                                         jobject thiz) {
+    const char *mode = get_ksun_hook_mode();
+    return env->NewStringUTF(mode);
+}
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_com_dergoogler_mmrl_platform_ksu_KsuNative_isKPMEnabled(JNIEnv *env,
+                                                                         jobject thiz) {
+    return is_KPM_enable();
+}
+
+extern "C"
+JNIEXPORT jstring JNICALL
+Java_com_dergoogler_mmrl_platform_ksu_KsuNative_getHookType(JNIEnv *env, jobject thiz) {
+
+    char hook_type[16];
+    get_suki_hook_type(hook_type, sizeof(hook_type));
+    return env->NewStringUTF(hook_type);
 }

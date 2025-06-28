@@ -21,6 +21,8 @@ target_link_libraries(mmrl-file-manager ${log-lib})
 
 add_library(mmrl-kernelsu SHARED
         kernelsu/ksu.cpp
+        kernelsu/ksun.cpp
+        kernelsu/sukisu.cpp
         kernelsu/jni.cpp
         include/kernelsu/ksu.hpp
         include/logging.hpp

@@ -40,16 +40,6 @@ object KsuNative {
     external fun uidShouldUmount(uid: Int): Boolean
 
     /**
-     * Get a string indicating the SU hook mode enabled in kernel.
-     * The return values are:
-     * - "Manual": Manual hooks was enabled.
-     * - "Kprobes": Kprobes hooks was enabled (CONFIG_KSU_KPROBES_HOOK).
-     *
-     * @return return hook mode, or null if unavailable.
-     */
-    external fun getHookMode(): String?
-
-    /**
      * `su` compat mode can be disabled temporarily.
      *  0: disabled
      *  1: enabled
@@ -65,4 +55,19 @@ object KsuNative {
     fun requireNewKernel(): Boolean {
         return getVersion() < MINIMAL_SUPPORTED_KERNEL
     }
+
+    /**
+     * # KsuNext
+     */
+    external fun getHookMode(): String?
+
+    /**
+     * # SukiSU
+     */
+    external fun isKPMEnabled(): Boolean
+
+    /**
+     * # SukiSU
+     */
+    external fun getHookType(): String
 }

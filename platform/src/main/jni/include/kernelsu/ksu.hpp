@@ -23,7 +23,8 @@
 #define CMD_IS_UID_SHOULD_UMOUNT 13
 #define CMD_IS_SU_ENABLED 14
 #define CMD_ENABLE_SU 15
-#define CMD_HOOK_MODE 16
+
+bool ksuctl(int cmd, void* arg1, void* arg2);
 
 bool grant_root();
 
@@ -32,8 +33,6 @@ bool become_manager(const char *);
 static bool is_lkm = false;
 
 int get_version();
-
-bool get_hook_mode(char *mode, int mode_len);
 
 bool get_allow_list(int *uids, int *size);
 
