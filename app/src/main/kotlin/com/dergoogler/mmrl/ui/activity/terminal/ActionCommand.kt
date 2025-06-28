@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.ui.activity.terminal
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -25,25 +26,37 @@ data class ParsedCommand(
 )
 
 class Terminal {
+    data class Mask(
+        val char: String = "•",
+        val value: String,
+        val flag: RegexOption = RegexOption.IGNORE_CASE,
+    )
+
     val logs = mutableListOf<String>()
     val console = mutableStateListOf<Block>()
     val shell by mutableStateOf(createRootShell())
     var currentGroup: GroupBlock? = null
     var currentCard: CardBlock? = null
+
     // var lineNumbersEnabled: Boolean by mutableStateOf(true)
     var lineNumber = 1
     var lineAdded: Boolean by mutableStateOf(true)
-    val masks = mutableListOf<String>()
+    val masks = mutableListOf<Mask>()
     var event by mutableStateOf(Event.LOADING)
 
     val String.applyMasks
         get(): String {
             var maskedString = this
+
             for (mask in masks) {
-                if (mask.isNotEmpty()) {
-                    maskedString = maskedString.replace(mask, "••••••••")
-                }
+                if (mask.value.isEmpty()) continue
+
+                val reg = Regex(mask.value, mask.flag)
+
+                maskedString =
+                    maskedString.replace(reg, mask.char.repeat(8))
             }
+
             return maskedString
         }
 

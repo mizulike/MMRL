@@ -1,5 +1,7 @@
 package com.dergoogler.mmrl.model.terminal.commands
 
+import com.dergoogler.mmrl.model.terminal.AlertBlock
+import com.dergoogler.mmrl.model.terminal.AlertType
 import com.dergoogler.mmrl.model.terminal.TextBlock
 import com.dergoogler.mmrl.ui.activity.terminal.ActionCommand
 import com.dergoogler.mmrl.ui.activity.terminal.Command
@@ -10,7 +12,27 @@ class AddMask : Command {
 
     override fun run(action: ActionCommand, terminal: Terminal) {
         with(terminal) {
-            action.data.takeIf { it.isNotBlank() }?.let { masks += it }
+            var char = action.getProp<String>("char", "•")
+            var flag = action.getProp<RegexOption>("flag", RegexOption.IGNORE_CASE)
+
+            if (char.length != 1) {
+                console += AlertBlock(
+                    lineNumber = lineNumber,
+                    type = AlertType.ERROR,
+                    title = "Mask Error",
+                    text = "Can't use a mask character that has a length of more or less than one characters."
+                )
+
+                char = "•"
+            }
+
+            action.data.takeIf { it.isNotBlank() }?.let {
+                masks += Terminal.Mask(
+                    char = char,
+                    value = it,
+                    flag = flag
+                )
+            }
         }
     }
 }
