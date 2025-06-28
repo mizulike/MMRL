@@ -186,7 +186,7 @@
     <string name="settings_clear_install_terminal_desc">Clear Install Terminal when installing more than one Module</string>
     <string name="settings_shell_module_state_change">Use Shell for States</string>
     <string name="settings_shell_module_state_change_desc">Uses shell instead of creating files in the module directory. Once enabled you won\'t able to use the restore button due limitations.</string>
-    <string name="settings_modules">Modules &amp; Installer</string>
+    <string name="settings_modules">Modules</string>
     <string name="settings_modules_desc">Change the behavior of handlers for modules or many more about modules</string>
     <string name="settings_modules_handlers">Handlers</string>
     <string name="settings_modules_installer">Installer</string>
@@ -418,4 +418,7 @@
     <string name="view_module_permissions">Permissions</string>
     <string name="settings_always_show_update_alert">Always Show Update Alert</string>
     <string name="update_available">Update available!</string>
+    <string name="settings_terminal">Terminal</string>
+    <string name="settings_behavior">Behavior</string>
+    <string name="settings_terminal_desc">Tailor the terminal to suit your preferences</string>
 </resources>

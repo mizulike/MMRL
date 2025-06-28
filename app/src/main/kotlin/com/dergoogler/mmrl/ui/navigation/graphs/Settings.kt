@@ -17,6 +17,7 @@ import com.dergoogler.mmrl.ui.screens.settings.logviewer.LogScreen
 import com.dergoogler.mmrl.ui.screens.settings.modules.ModulesScreen
 import com.dergoogler.mmrl.ui.screens.settings.other.OtherScreen
 import com.dergoogler.mmrl.ui.screens.settings.security.SecurityScreen
+import com.dergoogler.mmrl.ui.screens.settings.terminal.TerminalScreen
 import com.dergoogler.mmrl.ui.screens.settings.updates.UpdatesScreen
 
 enum class SettingsScreen(val route: String) {
@@ -30,7 +31,8 @@ enum class SettingsScreen(val route: String) {
     Changelog("Settings_Changelog"),
     Developer("Settings_Developer"),
     LogViewer("Settings_LogViewer"),
-    AppTheme("Settings_AppTheme")
+    AppTheme("Settings_AppTheme"),
+    Terminal("Settings_Terminal")
 }
 
 fun NavGraphBuilder.settingsScreen() = navigation(
@@ -123,5 +125,13 @@ fun NavGraphBuilder.settingsScreen() = navigation(
         exitTransition = { fadeOut() }
     ) {
         AppThemeScreen()
+    }
+
+    composable(
+        route = SettingsScreen.Terminal.route,
+        enterTransition = { scaleIn() + fadeIn() },
+        exitTransition = { fadeOut() }
+    ) {
+        TerminalScreen()
     }
 }

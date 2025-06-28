@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.dergoogler.mmrl.R
 import com.dergoogler.mmrl.datastore.model.WebUIEngine
-import com.dergoogler.mmrl.datastore.model.WorkingMode.Companion.isRoot
 import com.dergoogler.mmrl.ui.component.APatchLabel
 import com.dergoogler.mmrl.ui.component.KernelSuLabel
 import com.dergoogler.mmrl.ui.component.SettingsScaffold
@@ -26,7 +25,7 @@ fun ModulesScreen() {
         title = R.string.settings_modules,
     ) {
         Section(
-            title = stringResource(id = R.string.settings_homepage),
+            title = stringResource(id = R.string.settings_behavior),
         ) {
             SwitchItem(
                 enabled = viewModel.isProviderAlive && viewModel.platform.isNotMagisk,
@@ -50,48 +49,8 @@ fun ModulesScreen() {
         }
 
         Section(
-            title = stringResource(id = R.string.settings_modules_installer)
-        ) {
-
-            SwitchItem(
-                checked = userPreferences.clearInstallTerminal,
-                onChange = viewModel::setClearInstallTerminal,
-            ) {
-                Title(R.string.settings_clear_install_terminal)
-                Description(R.string.settings_clear_install_terminal_desc)
-            }
-
-            SwitchItem(
-                checked = userPreferences.deleteZipFile,
-                onChange = viewModel::setDeleteZipFile,
-                enabled = userPreferences.workingMode.isRoot
-            ) {
-                Title(R.string.settings_delete_zip)
-                Description(R.string.settings_delete_zip_desc)
-            }
-
-
-            SwitchItem(
-                checked = userPreferences.allowCancelInstall,
-                onChange = viewModel::setAllowCancelInstall,
-            ) {
-                Title(R.string.allow_cancel_installation)
-            }
-        }
-
-        Section(
-            title = stringResource(id = R.string.action_activity)
-        ) {
-            SwitchItem(
-                checked = userPreferences.allowCancelAction,
-                onChange = viewModel::setAllowCancelAction,
-            ) {
-                Title(R.string.allow_cancel_action)
-            }
-        }
-
-        Section(
-            title = stringResource(id = R.string.view_module_features_webui)
+            title = stringResource(id = R.string.view_module_features_webui),
+            divider = false
         ) {
             RadioDialogItem(
                 enabled = viewModel.isProviderAlive,

@@ -99,6 +99,13 @@ fun SettingsScreen() {
             )
 
             NavButton(
+                route = SettingsScreen.Terminal.route,
+                icon = R.drawable.terminal_2_outlined,
+                title = R.string.settings_terminal,
+                desc = R.string.settings_terminal_desc
+            )
+
+            NavButton(
                 route = SettingsScreen.Other.route,
                 icon = R.drawable.tool,
                 title = R.string.settings_other,

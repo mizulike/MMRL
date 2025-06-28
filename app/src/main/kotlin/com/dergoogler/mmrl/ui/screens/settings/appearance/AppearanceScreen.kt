@@ -31,23 +31,6 @@ fun AppearanceScreen() {
             route = SettingsScreen.AppTheme.route
         )
 
-        SwitchItem(
-            checked = userPreferences.terminalTextWrap,
-            onChange = viewModel::setTerminalTextWrap
-        ) {
-            Title(R.string.settings_text_wrap)
-            Description(R.string.settings_text_wrap_desc)
-
-        }
-
-        SwitchItem(
-            checked = userPreferences.showTerminalLineNumbers,
-            onChange = viewModel::setShowTerminalLineNumbers
-        ) {
-            Title(R.string.settings_terminal_line_numbers)
-            Description(R.string.settings_terminal_line_numbers_desc)
-        }
-
         TextEditDialogItem(
             value = userPreferences.datePattern,
             onConfirm = {
