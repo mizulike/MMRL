@@ -66,6 +66,10 @@ import com.dergoogler.mmrl.ui.component.LabelItemDefaults
 import com.dergoogler.mmrl.ui.component.LocalCover
 import com.dergoogler.mmrl.ui.component.card.component.Absolute
 import com.dergoogler.mmrl.ui.component.card.CardScope
+import com.dergoogler.mmrl.ui.component.lite.column.LiteColumn
+import com.dergoogler.mmrl.ui.component.lite.row.LiteRow
+import com.dergoogler.mmrl.ui.component.lite.row.LiteRowScope
+import com.dergoogler.mmrl.ui.component.lite.row.VerticalAlignment
 import com.dergoogler.mmrl.ui.component.text.TextWithIconDefaults
 import com.dergoogler.mmrl.ui.providable.LocalStoredModule
 import com.dergoogler.mmrl.utils.WebUIXPackageName
@@ -82,8 +86,8 @@ fun ModuleItem(
     decoration: TextDecoration = TextDecoration.None,
     switch: @Composable() (() -> Unit?)? = null,
     indicator: @Composable() (CardScope.() -> Unit?)? = null,
-    startTrailingButton: @Composable() (RowScope.() -> Unit)? = null,
-    trailingButton: @Composable() (RowScope.() -> Unit),
+    startTrailingButton: @Composable() (LiteRowScope.() -> Unit)? = null,
+    trailingButton: @Composable() (LiteRowScope.() -> Unit),
     isBlacklisted: Boolean = false,
     isProviderAlive: Boolean,
 ) {
@@ -135,7 +139,7 @@ fun ModuleItem(
             }
         }
 
-        Column(
+        LiteColumn(
             modifier = Modifier.relative(),
         ) {
             module.config.cover.nullable(menu.showCover) {
@@ -158,15 +162,15 @@ fun ModuleItem(
                 }
             }
 
-            Row(
+            LiteRow(
                 modifier = Modifier.padding(all = 16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = VerticalAlignment.Center
             ) {
-                Column(
+                LiteColumn(
                     modifier = Modifier
                         .alpha(alpha = alpha)
                         .weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(2.dp)
+                    spaceBetweenItem = 2.dp,
                 ) {
                     TextWithIcon(
                         text = module.config.name ?: module.name,
@@ -218,12 +222,12 @@ fun ModuleItem(
                 color = MaterialTheme.colorScheme.outline
             )
 
-            Row(
+            LiteRow(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                verticalAlignment = VerticalAlignment.Center,
+                spaceBetweenItem = 8.dp,
             ) {
                 userPreferences.developerMode.rememberTrue {
                     LabelItem(
@@ -266,11 +270,11 @@ fun ModuleItem(
                 )
             }
 
-            Row(
+            LiteRow(
                 modifier = Modifier
                     .padding(horizontal = 16.dp, vertical = 8.dp)
                     .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
+                verticalAlignment = VerticalAlignment.Center,
             ) {
                 startTrailingButton?.invoke(this)
                 Spacer(modifier = Modifier.weight(1f))
