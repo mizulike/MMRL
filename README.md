@@ -41,7 +41,7 @@ MMRL is an Android app that helps manage your own modules repository.
 
 Get involved with MMRL by translating it into your language!
 
-[![Translation status](https://hosted.weblate.org/widget/mmrl/multi-auto.svg)](https://hosted.weblate.org/engage/mmrl/)
+[![Translation status](https://hosted.weblate.org/widget/mmrlapp/mmrl-main/multi-auto.svg)](https://hosted.weblate.org/engage/mmrlapp/)
 
 ## Modules Repository
 
