@@ -3,7 +3,9 @@ package com.dergoogler.mmrl.platform
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.os.BadParcelableException
 import android.os.Build
+import android.util.Log
 
 const val TIMEOUT_MILLIS = 15_000L
 const val PLATFORM_KEY = "PLATFORM"
@@ -54,13 +56,17 @@ enum class Platform(val id: String) {
                 putExtra(PLATFORM_KEY, platform)
             }
 
-        fun Intent.getPlatform(): Platform? =
+        fun Intent.getPlatform(): Platform? = try {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                 this.getSerializableExtra(PLATFORM_KEY, Platform::class.java)
             } else {
                 @Suppress("DEPRECATION")
                 this.getSerializableExtra(PLATFORM_KEY) as? Platform
             }
+        } catch (e: Exception) {
+            Log.e("Platform", "Error getting platform", e)
+            null
+        }
 
         fun Intent.putPlatform(platform: Platform) {
             putExtra(PLATFORM_KEY, platform)
