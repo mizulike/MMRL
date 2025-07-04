@@ -26,7 +26,6 @@ class ProviderService : LifecycleService() {
         Timber.d("onCreate")
         super.onCreate()
         isActive = true
-        setForeground()
     }
 
     override fun onDestroy() {
@@ -43,6 +42,8 @@ class ProviderService : LifecycleService() {
             Timber.w("onStartCommand: intent is null")
             return START_NOT_STICKY
         }
+
+        setForeground()
 
         lifecycleScope.launch {
             isActive = initPlatform(baseContext, intent.getPlatform() ?: return@launch)
@@ -87,7 +88,8 @@ class ProviderService : LifecycleService() {
                 )
                 putExtra(PLATFORM_KEY, mode.toPlatform())
             }
-            context.startService(intent)
+
+            context.startForegroundService(intent)
         }
 
         fun stop(
