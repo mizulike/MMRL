@@ -275,7 +275,7 @@ class SuFile(
         { this.loadLibrary(path) },
         { System.load(path) }
     )
-
+ 
     override fun listFiles(): Array<SuFile>? {
         return this.list()?.map { SuFile(it, this) }?.toTypedArray()
     }
