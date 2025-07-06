@@ -271,11 +271,11 @@ class SuFile(
     )
 
     @SuppressLint("UnsafeDynamicallyLoadedCode")
-    fun <T> loadLibrary(clazz: Class<T>): Unit = fallback(
+    fun loadSharedObject(): Boolean = fallback(
         {
-            this.loadLibrary(clazz.name, path)
+            this.loadSharedObject(path)
         },
-        { System.load(path) }
+        { false }
     )
 
     override fun listFiles(): Array<SuFile>? {

@@ -184,14 +184,7 @@ class FileManager : IFileManager.Stub() {
     }
 
     @SuppressLint("DiscouragedPrivateApi")
-    override fun loadLibrary(className: String, path: String) {
-        val clazz = Class.forName(className)
-        val runtime = Runtime.getRuntime()
+    override fun loadSharedObject(path: String): Boolean = nativeLoadSharedObject(path)
 
-        val load0 =
-            Runtime::class.java.getDeclaredMethod("load0", Class::class.java, String::class.java)
-        load0.isAccessible = true
-
-        load0.invoke(runtime, clazz, path)
-    }
+    private external fun nativeLoadSharedObject(path: String): Boolean
 }
