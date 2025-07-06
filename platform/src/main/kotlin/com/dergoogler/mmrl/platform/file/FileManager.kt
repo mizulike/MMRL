@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.platform.file
 
+import android.annotation.SuppressLint
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
 import android.system.ErrnoException
@@ -180,5 +181,10 @@ class FileManager : IFileManager.Stub() {
         } catch (e: ErrnoException) {
             0
         }
+    }
+
+    @SuppressLint("UnsafeDynamicallyLoadedCode")
+    override fun loadLibrary(path: String) {
+        System.load(path)
     }
 }

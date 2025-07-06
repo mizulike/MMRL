@@ -1,5 +1,6 @@
 package com.dergoogler.mmrl.platform.file
 
+import android.annotation.SuppressLint
 import android.os.ParcelFileDescriptor
 import android.os.RemoteException
 import android.system.ErrnoException
@@ -267,6 +268,12 @@ class SuFile(
                 false
             }
         }
+    )
+
+    @SuppressLint("UnsafeDynamicallyLoadedCode")
+    fun loadLibrary(): Unit = fallback(
+        { this.loadLibrary(path) },
+        { System.load(path) }
     )
 
     override fun listFiles(): Array<SuFile>? {
