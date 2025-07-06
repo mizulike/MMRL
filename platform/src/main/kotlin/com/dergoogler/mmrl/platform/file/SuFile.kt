@@ -271,8 +271,10 @@ class SuFile(
     )
 
     @SuppressLint("UnsafeDynamicallyLoadedCode")
-    fun loadLibrary(): Unit = fallback(
-        { this.loadLibrary(path) },
+    fun <T> loadLibrary(clazz: Class<T>): Unit = fallback(
+        {
+            this.loadLibrary(clazz.name, path)
+        },
         { System.load(path) }
     )
 

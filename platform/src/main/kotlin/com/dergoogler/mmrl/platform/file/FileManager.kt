@@ -183,8 +183,15 @@ class FileManager : IFileManager.Stub() {
         }
     }
 
-    @SuppressLint("UnsafeDynamicallyLoadedCode")
-    override fun loadLibrary(path: String) {
-        System.load(path)
+    @SuppressLint("DiscouragedPrivateApi")
+    override fun loadLibrary(className: String, path: String) {
+        val clazz = Class.forName(className)
+        val runtime = Runtime.getRuntime()
+
+        val load0 =
+            Runtime::class.java.getDeclaredMethod("load0", Class::class.java, String::class.java)
+        load0.isAccessible = true
+
+        load0.invoke(runtime, clazz, path)
     }
 }
