@@ -54,22 +54,6 @@ import java.io.FileOutputStream
 class SuFile(
     vararg paths: Any,
 ) : ExtFile(*paths) {
-    private fun <R> fallback(
-        root: IFileManager.() -> R,
-        nonRoot: () -> R,
-    ): R {
-        val platform = PlatformManager.platform
-        val fileManager = PlatformManager.fileManagerOrNull
-        try {
-            if (fileManager != null && platform.isNotNonRoot) {
-                return root(fileManager)
-            }
-            return nonRoot()
-        } catch (e: Exception) {
-            return nonRoot()
-        }
-    }
-
     fun readText(): String {
         try {
             val bytes = newInputStream().use { it.readBytes() }
@@ -270,14 +254,6 @@ class SuFile(
         }
     )
 
-    @SuppressLint("UnsafeDynamicallyLoadedCode")
-    fun loadSharedObject(): Boolean = fallback(
-        {
-            this.loadSharedObject(path)
-        },
-        { false }
-    )
-
     override fun listFiles(): Array<SuFile>? {
         return this.list()?.map { SuFile(it, this) }?.toTypedArray()
     }
@@ -365,6 +341,13 @@ class SuFile(
         const val TAG = "SuFile"
         const val PIPE_CAPACITY = 16 * 4096
 
+        fun loadSharedObjects(vararg paths: String): Boolean = fallback(
+            {
+                this.loadSharedObjects(paths)
+            },
+            { false }
+        )
+
         fun String.toSuFile(): SuFile {
             return SuFile(this)
         }
@@ -400,6 +383,22 @@ class SuFile(
                 String.format(Locale.getDefault(), "%.0f %s", size, units[unitIndex])
             } else {
                 String.format(Locale.getDefault(), "%.2f %s", size, units[unitIndex])
+            }
+        }
+
+        private fun <R> fallback(
+            root: IFileManager.() -> R,
+            nonRoot: () -> R,
+        ): R {
+            val platform = PlatformManager.platform
+            val fileManager = PlatformManager.fileManagerOrNull
+            try {
+                if (fileManager != null && platform.isNotNonRoot) {
+                    return root(fileManager)
+                }
+                return nonRoot()
+            } catch (e: Exception) {
+                return nonRoot()
             }
         }
     }
