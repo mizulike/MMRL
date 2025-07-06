@@ -184,7 +184,6 @@ class FileManager : IFileManager.Stub() {
     }
 
     @SuppressLint("DiscouragedPrivateApi")
-    override fun loadSharedObject(path: String): Boolean = nativeLoadSharedObject(path)
-
-    private external fun nativeLoadSharedObject(path: String): Boolean
+    override fun loadSharedObjects(path: Array<String>): Boolean = nativeLoadSharedObjects(path)
+    private external fun nativeLoadSharedObjects(path: Array<String>): Boolean
 }

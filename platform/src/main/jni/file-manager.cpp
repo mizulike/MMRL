@@ -40,20 +40,63 @@ Java_com_dergoogler_mmrl_platform_file_FileManager_nativeSetPermissions(JNIEnv *
     return success ? JNI_TRUE : JNI_FALSE;
 }
 
+static JavaVM* gJvm = nullptr;
+
+extern "C"
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM* vm, void* /*reserved*/) {
+    gJvm = vm;
+    return JNI_VERSION_1_6;
+}
+
+static JNIEnv* getJNIEnv() {
+    if (!gJvm) return nullptr;
+
+    JNIEnv* env = nullptr;
+    if (gJvm->GetEnv(reinterpret_cast<void**>(&env), JNI_VERSION_1_6) != JNI_OK) {
+        if (gJvm->AttachCurrentThread(&env, nullptr) != JNI_OK) {
+            return nullptr;
+        }
+    }
+    return env;
+}
+
 extern "C"
 JNIEXPORT jboolean JNICALL
-Java_com_dergoogler_mmrl_platform_file_FileManager_nativeLoadSharedObject(JNIEnv *env,
-                                                                          jobject /* this */,
-                                                                          jstring jSoPath) {
-    const char *soPath = env->GetStringUTFChars(jSoPath, nullptr);
-    if (!soPath) return JNI_FALSE;
+Java_com_dergoogler_mmrl_platform_file_FileManager_nativeLoadSharedObjects(JNIEnv* env,
+                                                                           jobject /* this */,
+                                                                           jobjectArray jSoPaths) {
+    jsize count = env->GetArrayLength(jSoPaths);
+    if (count == 0) return JNI_FALSE;
 
-    void *handle = dlopen(soPath, RTLD_NOW);
-    env->ReleaseStringUTFChars(jSoPath, soPath);
+    JNIEnv* appEnv = getJNIEnv();
+    if (!appEnv) return JNI_FALSE;
 
-    if (!handle) {
-        return JNI_FALSE;  // failed to load
+    for (jsize i = 0; i < count; ++i) {
+        auto jSoPath = (jstring)env->GetObjectArrayElement(jSoPaths, i);
+        const char* soPath = env->GetStringUTFChars(jSoPath, nullptr);
+        if (!soPath) {
+            env->ReleaseStringUTFChars(jSoPath, soPath);
+            return JNI_FALSE;
+        }
+
+        void* handle = dlopen(soPath, RTLD_NOW);
+        env->ReleaseStringUTFChars(jSoPath, soPath);
+        env->DeleteLocalRef(jSoPath);
+
+        if (!handle) {
+            // Failed to load one .so - consider returning false or continue depending on policy
+            return JNI_FALSE;
+        }
+
+        using RegisterNativesFunc = void (*)(JNIEnv*);
+        auto regFunc = (RegisterNativesFunc)dlsym(handle, "registerNatives");
+        if (!regFunc) {
+            dlclose(handle);
+            return JNI_FALSE;
+        }
+
+        regFunc(appEnv);
     }
 
-    return JNI_TRUE;  // success
+    return JNI_TRUE;
 }
