@@ -232,7 +232,7 @@
     <string name="home_installed_modules">已安裝模組</string>
     <string name="home_enabled_modules">已啟用模組</string>
     <string name="home_disabled_modules">已停用模組</string>
-    <string name="home_updated_modules">已更新模組</string>
+    <string name="home_updated_modules">尚未更新的模組</string>
     <string name="has_a_new_update">%1$s 已可更新！</string>
     <string name="update_available_from_to">將版本 %s（%d）更新至 %s（%d）。</string>
     <string name="events_birthday">祝《MMRL》%1$s 歲生日快樂！</string>
