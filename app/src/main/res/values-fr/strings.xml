@@ -391,4 +391,10 @@
     <string name="settings_webui_engine_wx">WebUI X</string>
     <string name="architecture">Architecture</string>
     <string name="settings_webui_engine_ksu">WebUI KSU</string>
+    <string name="settings_terminal">Terminal</string>
+    <string name="settings_behavior">Comportement</string>
+    <string name="settings_terminal_desc">Adaptez le terminal à vos préférences</string>
+    <string name="kpm_support">Support KPM</string>
+    <string name="yes">Oui</string>
+    <string name="no">Non</string>
 </resources>
