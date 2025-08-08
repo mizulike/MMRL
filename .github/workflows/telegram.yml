@@ -3,12 +3,6 @@ name: Release to Telegram
 on:
   workflow_call:
     inputs:
-      title:
-        type: string
-        required: true
-      message:
-        type: string
-        required: true
       releaseAssetName:
         type: string
         required: true
@@ -40,25 +34,27 @@ jobs:
         run: |
           BUILD_DATE=$(date +"%Y-%m-%d %H:%M:%S")
           COMMIT_COUNT=$(git rev-list --count HEAD)
-          VERSION=$((31320 + COMMIT_COUNT))
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          MESSAGE=$(bash commits.sh 10000)
+          echo "VERSION=$COMMIT_COUNT" >> $GITHUB_ENV
           echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
+          
+          echo "MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Upload files to Telegram
         uses: xz-dev/TelegramFileUploader@v1.1.1
         with:
           to-who: '@MMRLCI'
           message: |
-              ${{ inputs.title }}
-              #ci_${{ env.VERSION }}
-              
-              Build on ${{ env.BUILD_DATE }}.
+            **MMRL**
+            #ci_${{ env.VERSION }}
 
-              **What's new?**
-              
-              ${{ inputs.message }}
-   
-              [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            **What's new?**
+
+            ${{ env.MESSAGE }}
+            
+            [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
           files: |
             ${{ steps.find_release_apk.outputs.APK_PATH }}
         env:
