@@ -52,9 +52,13 @@ jobs:
         run: |
           BUILD_DATE=$(date +"%Y-%m-%d %H:%M:%S")
           COMMIT_COUNT=$(git rev-list --count HEAD)
-          VERSION=$((31320 + COMMIT_COUNT))
-          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          MESSAGE=$(bash commits.sh 10000)
+          echo "VERSION=$COMMIT_COUNT" >> $GITHUB_ENV
           echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
+          
+          echo "MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
 
       - name: Check if release exists
         id: check_release
@@ -75,14 +79,9 @@ jobs:
           tag_name: v${{ env.VERSION }}
           release_name: v${{ env.VERSION }}
           body: |
-            ${{ inputs.title }}
-            #ci_${{ env.VERSION }}
-            
-            Build on ${{ env.BUILD_DATE }}.
-            
             ## What's new?
-              
-            ${{ inputs.message }}
+            
+            ${{ env.MESSAGE }}
             
             [Workflow run](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
         env:

@@ -3,14 +3,6 @@ name: Release CI
 on:
   workflow_dispatch:
     inputs:
-      title:
-        required: false
-        default: '**MMRL**'
-        description: 'Title'
-      message:
-        required: false
-        default: 'No message.'
-        description: 'Message'
       send_telegram:
         description: 'Release to Telegram'
         required: true
@@ -41,8 +33,6 @@ jobs:
     needs: [build-release]
     uses: ./.github/workflows/github.yml
     with:
-      title: ${{ inputs.title }}
-      message: ${{ inputs.message }}
       releaseAssetName: ${{ needs.build-release.outputs.release-name }}
     secrets: inherit
 
@@ -52,8 +42,6 @@ jobs:
     needs: [build-release]
     uses: ./.github/workflows/telegram.yml
     with:
-      title: ${{ inputs.title }}
-      message: ${{ inputs.message }}
       releaseAssetName: ${{ needs.build-release.outputs.release-name }}
     secrets: inherit
 
