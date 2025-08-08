@@ -14,6 +14,7 @@ import com.dergoogler.mmrl.platform.model.ModId
 import com.dergoogler.mmrl.platform.model.ModId.Companion.putModId
 import com.dergoogler.mmrl.platform.model.ModuleConfig.Companion.asModuleConfig
 import com.dergoogler.mmrl.ui.providable.LocalUserPreferences
+import com.dergoogler.mmrl.webui.helper.WebUILauncher
 import com.topjohnwu.superuser.Shell
 
 val Float.toFormattedDateSafely: String
@@ -58,44 +59,33 @@ internal val WebUIXPackageName = "com.dergoogler.mmrl.wx${if (BuildConfig.DEBUG)
 fun UserPreferences.launchWebUI(context: Context, modId: ModId) {
     val config = modId.asModuleConfig
 
-    val launchWX: (ModId) -> Unit = { modId ->
-        val intent = Intent().apply {
-
-            component = ComponentName(
-                WebUIXPackageName,
-                "com.dergoogler.mmrl.wx.ui.activity.webui.WebUIActivity"
-            )
-            putModId(modId)
-            putPlatform(workingMode.toPlatform())
-        }
-
-        context.startActivity(intent)
-    }
-
-    val launchWL: (ModId) -> Unit = { modId ->
-        val intent = Intent().apply {
-            component = ComponentName(
-                WebUIXPackageName,
-                "com.dergoogler.mmrl.wx.ui.activity.webui.KsuWebUIActivity"
-            )
-            putModId(modId)
-            putPlatform(workingMode.toPlatform())
-        }
-
-        context.startActivity(intent)
-    }
+    val launcher = WebUILauncher(BuildConfig.DEBUG)
 
     if (webuiEngine == WebUIEngine.PREFER_MODULE) {
         val configEngine = config.getWebuiEngine(context)
 
         if (configEngine == null) {
-            launchWX(modId)
+            launcher.launchWX(
+                context = context,
+                modId = modId,
+                platform = workingMode.toPlatform()
+            )
             return
         }
 
         when (configEngine) {
-            "wx" -> launchWX(modId)
-            "ksu" -> launchWL(modId)
+            "wx" -> launcher.launchWX(
+                context = context,
+                modId = modId,
+                platform = workingMode.toPlatform()
+            )
+
+            "ksu" -> launcher.launchLegacy(
+                context = context,
+                modId = modId,
+                platform = workingMode.toPlatform()
+            )
+
             else -> Toast.makeText(context, "Unknown WebUI engine", Toast.LENGTH_SHORT).show()
         }
 
@@ -104,13 +94,21 @@ fun UserPreferences.launchWebUI(context: Context, modId: ModId) {
 
 
     if (webuiEngine == WebUIEngine.WX) {
-        launchWX(modId)
+        launcher.launchWX(
+            context = context,
+            modId = modId,
+            platform = workingMode.toPlatform()
+        )
         return
 
     }
 
     if (webuiEngine == WebUIEngine.KSU) {
-        launchWL(modId)
+        launcher.launchLegacy(
+            context = context,
+            modId = modId,
+            platform = workingMode.toPlatform()
+        )
         return
     }
 

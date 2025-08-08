@@ -203,6 +203,7 @@ dependencies {
     implementation(projects.datastore)
 
     implementation(libs.webuix.portable)
+    implementation(libs.webuix.helper)
 
     implementation(libs.kotlin.stdlib)
 
