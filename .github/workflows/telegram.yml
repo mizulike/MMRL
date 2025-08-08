@@ -3,12 +3,6 @@ name: Release to Telegram
 on:
   workflow_call:
     inputs:
-      title:
-        type: string
-        required: true
-      message:
-        type: string
-        required: true
       releaseAssetName:
         type: string
         required: true
