@@ -47,7 +47,8 @@ jobs:
           BUILD_DATE=$(date +"%Y-%m-%d %H:%M:%S")
           COMMIT_COUNT=$(git rev-list --count HEAD)
           MESSAGE=$(bash commits.sh 10000)
-          echo "VERSION=$COMMIT_COUNT" >> $GITHUB_ENV
+          VERSION=$((31320 + COMMIT_COUNT))
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "BUILD_DATE=$BUILD_DATE" >> $GITHUB_ENV
           
           echo "MESSAGE<<EOF" >> $GITHUB_ENV
