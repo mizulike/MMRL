@@ -32,6 +32,7 @@ fun NavigateUpTopBar(
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    bottomBorder: Boolean = true,
 ) = NavigateUpTopBar(
     modifier = modifier,
     title = title,
@@ -41,7 +42,8 @@ fun NavigateUpTopBar(
     windowInsets = windowInsets,
     colors = colors,
     scrollBehavior = scrollBehavior,
-    enable = enable
+    enable = enable,
+    bottomBorder = bottomBorder
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,6 +58,7 @@ fun NavigateUpTopBar(
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    bottomBorder: Boolean = true,
 ) = NavigateUpTopBar(
     modifier = modifier,
     title = title,
@@ -65,7 +68,8 @@ fun NavigateUpTopBar(
     windowInsets = windowInsets,
     colors = colors,
     scrollBehavior = scrollBehavior,
-    enable = enable
+    enable = enable,
+    bottomBorder = bottomBorder
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -80,6 +84,7 @@ fun NavigateUpTopBar(
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    bottomBorder: Boolean = true,
 ) = NavigateUpTopBar(
     modifier = modifier,
     title = {
@@ -90,7 +95,8 @@ fun NavigateUpTopBar(
     windowInsets = windowInsets,
     colors = colors,
     scrollBehavior = scrollBehavior,
-    enable = enable
+    enable = enable,
+    bottomBorder = bottomBorder
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -104,6 +110,7 @@ fun NavigateUpTopBar(
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
+    bottomBorder: Boolean = true,
 ) = Toolbar(
     title = title,
     modifier = modifier,
@@ -122,5 +129,6 @@ fun NavigateUpTopBar(
     actions = actions,
     windowInsets = windowInsets,
     colors = colors,
-    scrollBehavior = scrollBehavior
+    scrollBehavior = scrollBehavior,
+    bottomBorder = bottomBorder
 )

@@ -125,6 +125,7 @@ fun ExploreRepositoryScreen(
                 title = "",
                 scrollBehavior = scrollBehavior,
                 navController = navController,
+                bottomBorder = false
             )
         },
         contentWindowInsets = WindowInsets.none

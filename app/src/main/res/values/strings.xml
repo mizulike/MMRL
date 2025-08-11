@@ -316,6 +316,7 @@
     <string name="settings_blacklist_alerts">Blacklist Alerts</string>
     <string name="settings_blacklist_alerts_desc">Display an alert for local and explore modules, and additionally block the installation of any blacklisted modules</string>
     <string name="page_repositorys">Repos</string>
+    <string name="page_repos">Repositories</string>
     <string name="menu_show_modules_count">Show Modules Count</string>
     <string name="settings_modules_permissions">Modules &amp; Permissions</string>
     <string name="settings_modules_permissions_desc">Allow JavaScript APIs and much more about local modules</string>
@@ -424,4 +425,8 @@
     <string name="kpm_support">KPM Support</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="count_with_plus">%1$d+</string>
+    <string name="available_modules">Available Modules</string>
+    <string name="explore_repos_discover_text">Discover and install modules from [bold]%1$d[/bold] trusted repositories, featuring over [bold]%2$d[/bold] modules for your device.</string>
+    <string name="module_repositories">Module Repositories</string>
 </resources>

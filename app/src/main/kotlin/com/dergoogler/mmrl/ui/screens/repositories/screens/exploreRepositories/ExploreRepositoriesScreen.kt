@@ -30,6 +30,7 @@ import com.dergoogler.mmrl.ui.component.Loading
 import com.dergoogler.mmrl.ui.component.NavigateUpTopBar
 import com.dergoogler.mmrl.ui.component.scaffold.Scaffold
 import com.dergoogler.mmrl.ui.providable.LocalNavController
+import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.items.HeadlineCard
 import com.dergoogler.mmrl.ui.screens.repositories.screens.exploreRepositories.items.RepoCard
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -81,6 +82,13 @@ fun ExploreRepositoriesScreen() {
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         contentPadding = PaddingValues(16.dp)
                     ) {
+                        item {
+                            HeadlineCard(
+                                repoCount = er.size,
+                                moduleCount = er.sumOf { it.modulesCount ?: 0 }
+                            )
+                        }
+
                         items(
                             items = er,
                             key = { it.url }
