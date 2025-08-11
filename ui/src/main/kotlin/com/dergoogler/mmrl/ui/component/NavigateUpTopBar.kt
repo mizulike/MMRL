@@ -17,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import com.dergoogler.mmrl.ext.takeTrue
 import com.dergoogler.mmrl.ui.R
+import com.dergoogler.mmrl.ui.component.toolbar.Toolbar
 import com.dergoogler.mmrl.ui.component.toolbar.ToolbarTitle
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -103,7 +104,7 @@ fun NavigateUpTopBar(
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
-) = TopAppBar(
+) = Toolbar(
     title = title,
     modifier = modifier,
     navigationIcon = {
