@@ -79,7 +79,13 @@ class ModuleService : MMRLLifecycleService() {
         
         localModules.forEach { localModule ->
             onlineModulesOrderedByNewestMap[localModule.id]?.getOrNull(0)?.let { newestOnlineModule ->
-                if (isNewerVersion(newestOnlineModule, localModule)) {
+                val shouldNotify = com.dergoogler.mmrl.utils.Versioning.isUpdateAvailable(
+                    installedVersionName = localModule.version,
+                    installedVersionCode = localModule.versionCode,
+                    remoteVersionName = newestOnlineModule.version,
+                    remoteVersionCode = newestOnlineModule.versionCode
+                )
+                if (shouldNotify) {
                     sendUpdateNotification(localModule, newestOnlineModule)
                 }
             }
@@ -108,7 +114,12 @@ class ModuleService : MMRLLifecycleService() {
     private fun isNewerVersion(
         onlineModule: OnlineModuleEntity,
         localModule: LocalModuleEntity
-    ): Boolean = onlineModule.versionCode > localModule.versionCode
+    ): Boolean = com.dergoogler.mmrl.utils.Versioning.isUpdateAvailable(
+        installedVersionName = localModule.version,
+        installedVersionCode = localModule.versionCode,
+        remoteVersionName = onlineModule.version,
+        remoteVersionCode = onlineModule.versionCode
+    )
 
     private fun sendUpdateNotification(
         localModule: LocalModuleEntity,

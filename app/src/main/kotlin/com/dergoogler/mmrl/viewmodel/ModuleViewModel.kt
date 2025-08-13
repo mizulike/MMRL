@@ -93,7 +93,15 @@ class ModuleViewModel @AssistedInject constructor(
         get() =
             if (notifyUpdates && installed) local!!.versionCode else Int.MAX_VALUE
     val updatableSize by derivedStateOf {
-        versions.count { it.second.versionCode > localVersionCode }
+        versions.count {
+            val item = it.second
+            com.dergoogler.mmrl.utils.Versioning.isUpdateAvailable(
+                installedVersionName = local?.version,
+                installedVersionCode = local?.versionCode ?: Int.MAX_VALUE,
+                remoteVersionName = item.version,
+                remoteVersionCode = item.versionCode
+            )
+        }
     }
 
     val otherSources = mutableStateListOf<OtherSources>()

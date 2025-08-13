@@ -19,7 +19,12 @@ data class OnlineState(
                     && local.author == author
 
             val updatable = if (installed && hasUpdatableTag) {
-                local!!.versionCode < versionCode
+                com.dergoogler.mmrl.utils.Versioning.isUpdateAvailable(
+                    installedVersionName = local!!.version,
+                    installedVersionCode = local.versionCode,
+                    remoteVersionName = version,
+                    remoteVersionCode = versionCode
+                )
             } else {
                 false
             }

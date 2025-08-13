@@ -51,11 +51,16 @@ class MainViewModel @Inject constructor(
                     localRepository.getVersionById(id).firstOrNull()
                 }
 
-                val installedVersionCode = module.versionCode
-                val updateVersionCode = updateVersionItem?.versionCode ?: -1
+                val hasUpdate = updateVersionItem != null &&
+                        com.dergoogler.mmrl.utils.Versioning.isUpdateAvailable(
+                            installedVersionName = module.version,
+                            installedVersionCode = module.versionCode,
+                            remoteVersionName = updateVersionItem.version,
+                            remoteVersionCode = updateVersionItem.versionCode
+                        )
 
 
-                if (updateVersionCode > installedVersionCode) {
+                if (hasUpdate) {
                     count++
                     versionItemCache[id] = updateVersionItem
                 } else {

@@ -192,10 +192,17 @@ private fun ModuleItem(
                 )
             }
         },
-        trailingButton = {
+    trailingButton = {
             item?.let { itm ->
-                val hasUpdate by remember(itm, module.versionCode) {
-                    derivedStateOf { itm.versionCode > module.versionCode }
+                val hasUpdate by remember(itm, module.versionCode, module.version) {
+                    derivedStateOf {
+                        com.dergoogler.mmrl.utils.Versioning.isUpdateAvailable(
+                            installedVersionName = module.version,
+                            installedVersionCode = module.versionCode,
+                            remoteVersionName = itm.version,
+                            remoteVersionCode = itm.versionCode
+                        )
+                    }
                 }
 
                 UpdateButton(
