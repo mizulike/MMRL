@@ -162,11 +162,15 @@ fun HomeScreen(
                         }
 
                         AnimatedVisibility(
-                            visible = userPreferences.developerMode { devAlwaysShowUpdateAlert } || (if (latest.preRelease) {
-                                userPreferences.checkAppUpdatesPreReleases && latest.versionCode > context.managerVersion.second
-                            } else {
-                                latest.versionCode > context.managerVersion.second
-                            }),
+                            visible = userPreferences.developerMode { devAlwaysShowUpdateAlert } || run {
+                                val currentVersionCode = context.managerVersion.second
+                                // Only show update if we have a valid current version and latest is actually newer
+                                currentVersionCode > 0 && if (latest.preRelease) {
+                                    userPreferences.checkAppUpdatesPreReleases && latest.versionCode > currentVersionCode
+                                } else {
+                                    latest.versionCode > currentVersionCode
+                                }
+                            },
                             enter = fadeIn() + expandVertically(),
                             exit = shrinkVertically() + fadeOut()
                         ) {
